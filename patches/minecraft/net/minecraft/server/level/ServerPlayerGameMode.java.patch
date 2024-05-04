@@ -8,7 +8,7 @@
  import com.mojang.logging.LogUtils;
  import java.util.Objects;
  import javax.annotation.Nullable;
-@@ -9,343 +_,507 @@
+@@ -9,20 +_,33 @@
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
  import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -16,7 +16,7 @@
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.InteractionResultHolder;
--import net.minecraft.world.ItemInteractionResult;
+ import net.minecraft.world.ItemInteractionResult;
  import net.minecraft.world.MenuProvider;
 +import net.minecraft.world.item.DoubleHighBlockItem;
  import net.minecraft.world.item.ItemStack;
@@ -42,108 +42,33 @@
  import org.slf4j.Logger;
  
  public class ServerPlayerGameMode {
--    private static final Logger LOGGER = LogUtils.getLogger();
--    protected ServerLevel level;
--    protected final ServerPlayer player;
--    private GameType gameModeForPlayer = GameType.DEFAULT_MODE;
--    @Nullable
--    private GameType previousGameModeForPlayer;
--    private boolean isDestroyingBlock;
--    private int destroyProgressStart;
--    private BlockPos destroyPos = BlockPos.ZERO;
--    private int gameTicks;
--    private boolean hasDelayedDestroy;
--    private BlockPos delayedDestroyPos = BlockPos.ZERO;
--    private int delayedTickStart;
--    private int lastSentState = -1;
--
--    public ServerPlayerGameMode(ServerPlayer p_143472_) {
--        this.player = p_143472_;
--        this.level = p_143472_.serverLevel();
--    }
--
--    public boolean changeGameModeForPlayer(GameType p_143474_) {
--        if (p_143474_ == this.gameModeForPlayer) {
--            return false;
--        } else {
--            this.setGameModeForPlayer(p_143474_, this.previousGameModeForPlayer);
--            this.player.onUpdateAbilities();
--            this.player
--                .server
--                .getPlayerList()
--                .broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.player));
--            this.level.updateSleepingPlayerList();
--            if (p_143474_ == GameType.CREATIVE) {
--                this.player.resetCurrentImpulseContext();
--            }
--
--            return true;
--        }
--    }
--
--    protected void setGameModeForPlayer(GameType p_9274_, @Nullable GameType p_9275_) {
--        this.previousGameModeForPlayer = p_9275_;
--        this.gameModeForPlayer = p_9274_;
--        p_9274_.updatePlayerAbilities(this.player.getAbilities());
--    }
--
--    public GameType getGameModeForPlayer() {
--        return this.gameModeForPlayer;
--    }
--
--    @Nullable
--    public GameType getPreviousGameModeForPlayer() {
--        return this.previousGameModeForPlayer;
--    }
--
--    public boolean isSurvival() {
--        return this.gameModeForPlayer.isSurvival();
--    }
--
--    public boolean isCreative() {
--        return this.gameModeForPlayer.isCreative();
--    }
--
--    public void tick() {
+@@ -50,6 +_,13 @@
+         if (p_143474_ == this.gameModeForPlayer) {
+             return false;
+         } else {
++         // CraftBukkit start
++         PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(player.getBukkitEntity(), GameMode.getByValue(p_143474_.getId()));
++         level.getCraftServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return false;
++         }
++         // CraftBukkit end
+             this.setGameModeForPlayer(p_143474_, this.previousGameModeForPlayer);
+             this.player.onUpdateAbilities();
+             this.player
+@@ -89,7 +_,7 @@
+     }
+ 
+     public void tick() {
 -        this.gameTicks++;
--        if (this.hasDelayedDestroy) {
--            BlockState blockstate = this.level.getBlockState(this.delayedDestroyPos);
--            if (blockstate.isAir()) {
--                this.hasDelayedDestroy = false;
--            } else {
--                float f = this.incrementDestroyProgress(blockstate, this.delayedDestroyPos, this.delayedTickStart);
--                if (f >= 1.0F) {
--                    this.hasDelayedDestroy = false;
--                    this.destroyBlock(this.delayedDestroyPos);
--                }
--            }
--        } else if (this.isDestroyingBlock) {
--            BlockState blockstate1 = this.level.getBlockState(this.destroyPos);
--            if (blockstate1.isAir()) {
--                this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
--                this.lastSentState = -1;
--                this.isDestroyingBlock = false;
--            } else {
--                this.incrementDestroyProgress(blockstate1, this.destroyPos, this.destroyProgressStart);
--            }
--        }
--    }
--
--    private float incrementDestroyProgress(BlockState p_9277_, BlockPos p_9278_, int p_9279_) {
--        int i = this.gameTicks - p_9279_;
--        float f = p_9277_.getDestroyProgress(this.player, this.player.level(), p_9278_) * (float)(i + 1);
--        int j = (int)(f * 10.0F);
--        if (j != this.lastSentState) {
--            this.level.destroyBlockProgress(this.player.getId(), p_9278_, j);
--            this.lastSentState = j;
--        }
--
--        return f;
--    }
--
--    private void debugLogging(BlockPos p_215126_, boolean p_215127_, int p_215128_, String p_215129_) {
--    }
--
++      this.gameTicks = MinecraftServer.currentTick; // CraftBukkit;
+         if (this.hasDelayedDestroy) {
+             BlockState blockstate = this.level.getBlockState(this.delayedDestroyPos);
+             if (blockstate.isAir()) {
+@@ -128,90 +_,163 @@
+     private void debugLogging(BlockPos p_215126_, boolean p_215127_, int p_215128_, String p_215129_) {
+     }
+ 
 -    public void handleBlockBreakAction(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
 -        if (!this.player.canInteractWithBlock(p_215120_, 1.0)) {
 -            this.debugLogging(p_215120_, false, p_215124_, "too far");
@@ -228,245 +153,6 @@
 -            }
 -        }
 -    }
--
--    public void destroyAndAck(BlockPos p_215117_, int p_215118_, String p_215119_) {
--        if (this.destroyBlock(p_215117_)) {
--            this.debugLogging(p_215117_, true, p_215118_, p_215119_);
--        } else {
--            this.player.connection.send(new ClientboundBlockUpdatePacket(p_215117_, this.level.getBlockState(p_215117_)));
--            this.debugLogging(p_215117_, false, p_215118_, p_215119_);
--        }
--    }
--
--    public boolean destroyBlock(BlockPos p_9281_) {
--        BlockState blockstate1 = this.level.getBlockState(p_9281_);
--        if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) {
--            return false;
--        } else {
--            BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
--            Block block = blockstate1.getBlock();
--            if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
--                this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
--                return false;
--            } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
--                return false;
--            } else {
--                BlockState blockstate = block.playerWillDestroy(this.level, p_9281_, blockstate1, this.player);
--                boolean flag1 = this.level.removeBlock(p_9281_, false);
--                if (flag1) {
--                    block.destroy(this.level, p_9281_, blockstate);
--                }
--
--                if (this.isCreative()) {
--                    return true;
--                } else {
--                    ItemStack itemstack = this.player.getMainHandItem();
--                    ItemStack itemstack1 = itemstack.copy();
--                    boolean flag = this.player.hasCorrectToolForDrops(blockstate);
--                    itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
--                    if (flag1 && flag) {
--                        block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
--                    }
--
--                    return true;
--                }
--            }
--        }
--    }
--
--    public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
--        if (this.gameModeForPlayer == GameType.SPECTATOR) {
--            return InteractionResult.PASS;
--        } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
--            return InteractionResult.PASS;
--        } else {
--            int i = p_9264_.getCount();
--            int j = p_9264_.getDamageValue();
--            InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
--            ItemStack itemstack = interactionresultholder.getObject();
--            if (itemstack == p_9264_ && itemstack.getCount() == i && itemstack.getUseDuration() <= 0 && itemstack.getDamageValue() == j) {
--                return interactionresultholder.getResult();
--            } else if (interactionresultholder.getResult() == InteractionResult.FAIL && itemstack.getUseDuration() > 0 && !p_9262_.isUsingItem()) {
--                return interactionresultholder.getResult();
--            } else {
--                if (p_9264_ != itemstack) {
--                    p_9262_.setItemInHand(p_9265_, itemstack);
--                }
--
--                if (itemstack.isEmpty()) {
--                    p_9262_.setItemInHand(p_9265_, ItemStack.EMPTY);
--                }
--
--                if (!p_9262_.isUsingItem()) {
--                    p_9262_.inventoryMenu.sendAllDataToRemote();
--                }
--
--                return interactionresultholder.getResult();
--            }
--        }
--    }
--
--    public InteractionResult useItemOn(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
--        BlockPos blockpos = p_9270_.getBlockPos();
--        BlockState blockstate = p_9267_.getBlockState(blockpos);
--        if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
--            return InteractionResult.FAIL;
--        } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
--            MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
--            if (menuprovider != null) {
--                p_9266_.openMenu(menuprovider);
--                return InteractionResult.SUCCESS;
--            } else {
--                return InteractionResult.PASS;
--            }
--        } else {
--            boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
--            boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
--            ItemStack itemstack = p_9268_.copy();
--            if (!flag1) {
--                ItemInteractionResult iteminteractionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
--                if (iteminteractionresult.consumesAction()) {
--                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
--                    return iteminteractionresult.result();
--                }
--
--                if (iteminteractionresult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && p_9269_ == InteractionHand.MAIN_HAND) {
--                    InteractionResult interactionresult = blockstate.useWithoutItem(p_9267_, p_9266_, p_9270_);
--                    if (interactionresult.consumesAction()) {
--                        CriteriaTriggers.DEFAULT_BLOCK_USE.trigger(p_9266_, blockpos);
--                        return interactionresult;
--                    }
--                }
--            }
--
--            if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
--                UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
--                InteractionResult interactionresult1;
--                if (this.isCreative()) {
--                    int i = p_9268_.getCount();
--                    interactionresult1 = p_9268_.useOn(useoncontext);
--                    p_9268_.setCount(i);
--                } else {
--                    interactionresult1 = p_9268_.useOn(useoncontext);
--                }
--
--                if (interactionresult1.consumesAction()) {
--                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
--                }
--
--                return interactionresult1;
--            } else {
--                return InteractionResult.PASS;
--            }
--        }
--    }
--
--    public void setLevel(ServerLevel p_9261_) {
--        this.level = p_9261_;
--    }
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   protected ServerLevel level;
-+   protected final ServerPlayer player;
-+   private GameType gameModeForPlayer = GameType.DEFAULT_MODE;
-+   @Nullable
-+   private GameType previousGameModeForPlayer;
-+   private boolean isDestroyingBlock;
-+   private int destroyProgressStart;
-+   private BlockPos destroyPos = BlockPos.ZERO;
-+   private int gameTicks;
-+   private boolean hasDelayedDestroy;
-+   private BlockPos delayedDestroyPos = BlockPos.ZERO;
-+   private int delayedTickStart;
-+   private int lastSentState = -1;
-+
-+   public ServerPlayerGameMode(ServerPlayer p_143472_) {
-+      this.player = p_143472_;
-+      this.level = p_143472_.serverLevel();
-+   }
-+
-+   public boolean changeGameModeForPlayer(GameType p_143474_) {
-+      if (p_143474_ == this.gameModeForPlayer) {
-+         return false;
-+      } else {
-+         // CraftBukkit start
-+         PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(player.getBukkitEntity(), GameMode.getByValue(p_143474_.getId()));
-+         level.getCraftServer().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // CraftBukkit end
-+         this.setGameModeForPlayer(p_143474_, this.previousGameModeForPlayer);
-+         this.player.onUpdateAbilities();
-+         this.player.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.player), this.player); // CraftBukkit
-+         this.level.updateSleepingPlayerList();
-+         return true;
-+      }
-+   }
-+
-+   protected void setGameModeForPlayer(GameType p_9274_, @Nullable GameType p_9275_) {
-+      this.previousGameModeForPlayer = p_9275_;
-+      this.gameModeForPlayer = p_9274_;
-+      p_9274_.updatePlayerAbilities(this.player.getAbilities());
-+   }
-+
-+   public GameType getGameModeForPlayer() {
-+      return this.gameModeForPlayer;
-+   }
-+
-+   @Nullable
-+   public GameType getPreviousGameModeForPlayer() {
-+      return this.previousGameModeForPlayer;
-+   }
-+
-+   public boolean isSurvival() {
-+      return this.gameModeForPlayer.isSurvival();
-+   }
-+
-+   public boolean isCreative() {
-+      return this.gameModeForPlayer.isCreative();
-+   }
-+
-+   public void tick() {
-+      this.gameTicks = MinecraftServer.currentTick; // CraftBukkit;
-+      if (this.hasDelayedDestroy) {
-+         BlockState blockstate = this.level.getBlockState(this.delayedDestroyPos);
-+         if (blockstate.isAir()) {
-+            this.hasDelayedDestroy = false;
-+         } else {
-+            float f = this.incrementDestroyProgress(blockstate, this.delayedDestroyPos, this.delayedTickStart);
-+            if (f >= 1.0F) {
-+               this.hasDelayedDestroy = false;
-+               this.destroyBlock(this.delayedDestroyPos);
-+            }
-+         }
-+      } else if (this.isDestroyingBlock) {
-+         BlockState blockstate1 = this.level.getBlockState(this.destroyPos);
-+         if (blockstate1.isAir()) {
-+            this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
-+            this.lastSentState = -1;
-+            this.isDestroyingBlock = false;
-+         } else {
-+            this.incrementDestroyProgress(blockstate1, this.destroyPos, this.destroyProgressStart);
-+         }
-+      }
-+
-+   }
-+
-+   private float incrementDestroyProgress(BlockState p_9277_, BlockPos p_9278_, int p_9279_) {
-+      int i = this.gameTicks - p_9279_;
-+      float f = p_9277_.getDestroyProgress(this.player, this.player.level(), p_9278_) * (float)(i + 1);
-+      int j = (int)(f * 10.0F);
-+      if (j != this.lastSentState) {
-+         this.level.destroyBlockProgress(this.player.getId(), p_9278_, j);
-+         this.lastSentState = j;
-+      }
-+
-+      return f;
-+   }
-+
-+   private void debugLogging(BlockPos p_215126_, boolean p_215127_, int p_215128_, String p_215129_) {
-+   }
-+
 +   public void handleBlockBreakAction(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
 +      if (BanItem.check(player)) {
 +         this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
@@ -624,17 +310,25 @@
 +
 +      }
 +   }
-+
-+   public void destroyAndAck(BlockPos p_215117_, int p_215118_, String p_215119_) {
-+      if (this.destroyBlock(p_215117_)) {
-+         this.debugLogging(p_215117_, true, p_215118_, p_215119_);
-+      } else {
-+         this.player.connection.send(new ClientboundBlockUpdatePacket(p_215117_, this.level.getBlockState(p_215117_)));
-+         this.debugLogging(p_215117_, false, p_215118_, p_215119_);
-+      }
-+
-+   }
-+
+ 
+     public void destroyAndAck(BlockPos p_215117_, int p_215118_, String p_215119_) {
+         if (this.destroyBlock(p_215117_)) {
+@@ -222,40 +_,58 @@
+         }
+     }
+ 
+-    public boolean destroyBlock(BlockPos p_9281_) {
+-        BlockState blockstate1 = this.level.getBlockState(p_9281_);
+-        if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) {
+-            return false;
+-        } else {
+-            BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
+-            Block block = blockstate1.getBlock();
+-            if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
+-                this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
+-                return false;
+-            } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
+-                return false;
 +   public boolean destroyBlock(BlockPos p_9281_) {
 +      if (BanItem.check(player)) {
 +         return false;
@@ -658,7 +352,26 @@
 +            if (this.isCreative()) {
 +               removeBlock(p_9281_, false);
 +               return true;
-+            } else {
+             } else {
+-                BlockState blockstate = block.playerWillDestroy(this.level, p_9281_, blockstate1, this.player);
+-                boolean flag1 = this.level.removeBlock(p_9281_, false);
+-                if (flag1) {
+-                    block.destroy(this.level, p_9281_, blockstate);
+-                }
+-
+-                if (this.isCreative()) {
+-                    return true;
+-                } else {
+-                    ItemStack itemstack = this.player.getMainHandItem();
+-                    ItemStack itemstack1 = itemstack.copy();
+-                    boolean flag = this.player.hasCorrectToolForDrops(blockstate);
+-                    itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
+-                    if (flag1 && flag) {
+-                        block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
+-                    }
+-
+-                    return true;
+-                }
 +               ItemStack itemstack = this.player.getMainHandItem();
 +               ItemStack itemstack1 = itemstack.copy();
 +               boolean flag = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
@@ -675,60 +388,41 @@
 +                  blockstate1.getBlock().popExperience(level, p_9281_, exp);
 +
 +               return true;
-+            }
+             }
 +         }
 +      }
 +   }
 +
-+   private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest) {
-+      BlockState state = this.level.getBlockState(p_180235_1_);
-+      boolean removed = state.onDestroyedByPlayer(this.level, p_180235_1_, this.player, canHarvest, this.level.getFluidState(p_180235_1_));
-+      if (removed)
-+         state.getBlock().destroy(this.level, p_180235_1_, state);
-+      return removed;
-+   }
-+
-+   public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-+      if (this.gameModeForPlayer == GameType.SPECTATOR) {
-+         return InteractionResult.PASS;
-+      } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
-+         return InteractionResult.PASS;
-+      } else {
-+         InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_9262_, p_9265_);
-+         if (cancelResult != null) return cancelResult;
-+         int i = p_9264_.getCount();
-+         int j = p_9264_.getDamageValue();
-+         InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
-+         ItemStack itemstack = interactionresultholder.getObject();
-+         if (itemstack == p_9264_ && itemstack.getCount() == i && itemstack.getUseDuration() <= 0 && itemstack.getDamageValue() == j) {
-+            return interactionresultholder.getResult();
-+         } else if (interactionresultholder.getResult() == InteractionResult.FAIL && itemstack.getUseDuration() > 0 && !p_9262_.isUsingItem()) {
-+            return interactionresultholder.getResult();
-+         } else {
-+            if (p_9264_ != itemstack) {
-+               p_9262_.setItemInHand(p_9265_, itemstack);
-+            }
-+
-+            if (this.isCreative() && itemstack != ItemStack.EMPTY) {
-+               itemstack.setCount(i);
-+               if (itemstack.isDamageableItem() && itemstack.getDamageValue() != j) {
-+                  itemstack.setDamageValue(j);
-+               }
-+            }
-+
-+            if (itemstack.isEmpty()) {
-+               p_9262_.setItemInHand(p_9265_, ItemStack.EMPTY);
-+            }
-+
-+            if (!p_9262_.isUsingItem()) {
-+               p_9262_.inventoryMenu.sendAllDataToRemote();
-+            }
-+
-+            return interactionresultholder.getResult();
-+         }
-+      }
-+   }
-+
++    private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest) {
++        BlockState state = this.level.getBlockState(p_180235_1_);
++        boolean removed = state.onDestroyedByPlayer(this.level, p_180235_1_, this.player, canHarvest, this.level.getFluidState(p_180235_1_));
++        if (removed) {
++             state.getBlock().destroy(this.level, p_180235_1_, state);
+         }
++        return removed;
+     }
+ 
+     public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
+@@ -264,6 +_,8 @@
+         } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
+             return InteractionResult.PASS;
+         } else {
++            InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_9262_, p_9265_);
++            if (cancelResult != null) return cancelResult;
+             int i = p_9264_.getCount();
+             int j = p_9264_.getDamageValue();
+             InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
+@@ -290,13 +_,63 @@
+         }
+     }
+ 
+-    public InteractionResult useItemOn(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
+-        BlockPos blockpos = p_9270_.getBlockPos();
+-        BlockState blockstate = p_9267_.getBlockState(blockpos);
+-        if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
+-            return InteractionResult.FAIL;
+-        } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
+-            MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
 +
 +   // CraftBukkit start - whole method
 +   public boolean interactResult = false;
@@ -786,29 +480,47 @@
 +      } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
 +         MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
 +
-+         if (menuprovider != null) {
-+            p_9266_.openMenu(menuprovider);
-+            return InteractionResult.SUCCESS;
-+         } else {
-+            return InteractionResult.PASS;
-+         }
-+      } else {
-+         UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+            InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
-+            if (result != InteractionResult.PASS) return result;
-+         }
-+         boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
-+         boolean flag1 = (p_9266_.isSecondaryUseActive() && flag) && !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
-+         ItemStack itemstack = p_9268_.copy();
-+         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
-+            InteractionResult interactionresult = blockstate.use(p_9267_, p_9266_, p_9269_, p_9270_);
-+            if (interactionresult.consumesAction()) {
-+               CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
-+               return interactionresult;
+             if (menuprovider != null) {
+                 p_9266_.openMenu(menuprovider);
+                 return InteractionResult.SUCCESS;
+@@ -304,10 +_,16 @@
+                 return InteractionResult.PASS;
+             }
+         } else {
++            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
++            if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++                InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
++                if (result != InteractionResult.PASS) return result;
 +            }
-+         }
-+
+             boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
+             boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
++            flag1 &= !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
+             ItemStack itemstack = p_9268_.copy();
+-            if (!flag1) {
++            if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
+                 ItemInteractionResult iteminteractionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
+                 if (iteminteractionresult.consumesAction()) {
+                     CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
+@@ -323,27 +_,31 @@
+                 }
+             }
+ 
+-            if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
+-                UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
+-                InteractionResult interactionresult1;
+-                if (this.isCreative()) {
+-                    int i = p_9268_.getCount();
+-                    interactionresult1 = p_9268_.useOn(useoncontext);
+-                    p_9268_.setCount(i);
+-                } else {
+-                    interactionresult1 = p_9268_.useOn(useoncontext);
+-                }
+-
+-                if (interactionresult1.consumesAction()) {
+-                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
+-                }
+-
+-                return interactionresult1;
 +         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
 +            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
 +            InteractionResult interactionresult1;
@@ -816,7 +528,11 @@
 +               int i = p_9268_.getCount();
 +               interactionresult1 = p_9268_.useOn(useoncontext);
 +               p_9268_.setCount(i);
-+            } else {
+             } else {
+-                return InteractionResult.PASS;
+-            }
+-        }
+-    }
 +               interactionresult1 = p_9268_.useOn(useoncontext);
 +            }
 +
@@ -834,8 +550,6 @@
 +      }
 +      return enuminteractionresult;
 +   }
-+
-+   public void setLevel(ServerLevel p_9261_) {
-+      this.level = p_9261_;
-+   }
- }
+ 
+     public void setLevel(ServerLevel p_9261_) {
+         this.level = p_9261_;

@@ -15,12 +15,12 @@
          }
 -    };
 +
-+      // CraftBukkit start
-+      @Override
-+      public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+         return wrapper.getServer().console;
-+      }
-+      // CraftBukkit end
++      	// CraftBukkit start
++      	@Override
++      	public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++         	return wrapper.getServer().console;
++      	}
++      	// CraftBukkit end
 +   };
  
      void sendSystemMessage(Component p_230797_);
@@ -30,7 +30,7 @@
          return false;
      }
 +
-+   default org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return NULL.getBukkitSender(wrapper);
-+   }
++   	default org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      	return NULL.getBukkitSender(wrapper);
++   	}
  }

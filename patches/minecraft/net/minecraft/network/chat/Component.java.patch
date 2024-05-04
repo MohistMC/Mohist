@@ -50,10 +50,3 @@
  
      @Override
      default String getString() {
-@@ -269,5 +_,5 @@
-         public JsonElement serialize(Component p_309493_, Type p_310679_, JsonSerializationContext p_312693_) {
-             return Component.Serializer.serialize(p_309493_, this.registries);
-         }
--    }
-+   }
- }

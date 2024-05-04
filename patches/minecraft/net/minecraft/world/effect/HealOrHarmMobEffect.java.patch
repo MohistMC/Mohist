@@ -14,7 +14,7 @@
      public void applyInstantenousEffect(@Nullable Entity p_298495_, @Nullable Entity p_298887_, LivingEntity p_298479_, int p_298172_, double p_298163_) {
          if (this.isHarm == p_298479_.isInvertedHealAndHarm()) {
              int i = (int)(p_298163_ * (double)(4 << p_298172_) + 0.5);
-+         p_298479_.regainReason0(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC); // CraftBukkit // Mohist
++         	p_298479_.regainReason0(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC); // CraftBukkit // Mohist
              p_298479_.heal((float)i);
          } else {
              int j = (int)(p_298163_ * (double)(6 << p_298172_) + 0.5);

@@ -14,14 +14,14 @@
          super.removePlayer(p_136287_);
      }
 +
-+   // CraftBukkit start
-+   private KeyedBossBar bossBar;
++   	// CraftBukkit start
++   	private KeyedBossBar bossBar;
 +
-+   public KeyedBossBar getBukkitEntity() {
-+      if (bossBar == null) {
-+         bossBar = new CraftKeyedBossbar(this);
-+      }
-+      return bossBar;
-+   }
-+   // CraftBukkit end
++   	public KeyedBossBar getBukkitEntity() {
++      	if (bossBar == null) {
++         	bossBar = new CraftKeyedBossbar(this);
++      	}
++      	return bossBar;
++   	}
++   	// CraftBukkit end
  }

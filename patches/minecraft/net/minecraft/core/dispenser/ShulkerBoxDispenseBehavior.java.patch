@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
 +++ b/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
-@@ -8,21 +_,46 @@
+@@ -8,6 +_,8 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.context.DirectionalPlaceContext;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -9,53 +9,34 @@
  import org.slf4j.Logger;
  
  public class ShulkerBoxDispenseBehavior extends OptionalDispenseItemBehavior {
--    private static final Logger LOGGER = LogUtils.getLogger();
--
--    @Override
--    protected ItemStack execute(BlockSource p_123587_, ItemStack p_123588_) {
--        this.setSuccess(false);
--        Item item = p_123588_.getItem();
--        if (item instanceof BlockItem) {
--            Direction direction = p_123587_.state().getValue(DispenserBlock.FACING);
--            BlockPos blockpos = p_123587_.pos().relative(direction);
--            Direction direction1 = p_123587_.level().isEmptyBlock(blockpos.below()) ? direction : Direction.UP;
--
--            try {
-+   private static final Logger LOGGER = LogUtils.getLogger();
+@@ -21,6 +_,30 @@
+             Direction direction = p_123587_.state().getValue(DispenserBlock.FACING);
+             BlockPos blockpos = p_123587_.pos().relative(direction);
+             Direction direction1 = p_123587_.level().isEmptyBlock(blockpos.below()) ? direction : Direction.UP;
 +
-+   protected ItemStack execute(BlockSource p_123587_, ItemStack p_123588_) {
-+      this.setSuccess(false);
-+      Item item = p_123588_.getItem();
-+      if (item instanceof BlockItem) {
-+         Direction direction = p_123587_.state().getValue(DispenserBlock.FACING);
-+         BlockPos blockpos = p_123587_.pos().relative(direction);
-+         Direction direction1 = p_123587_.level().isEmptyBlock(blockpos.below()) ? direction : Direction.UP;
++	         // CraftBukkit start
++	         org.bukkit.block.Block bukkitBlock = p_123587_.level().getWorld().getBlockAt(p_123587_.pos().getX(), p_123587_.pos().getY(), p_123587_.pos().getZ());
++	         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123588_);
 +
-+         // CraftBukkit start
-+         org.bukkit.block.Block bukkitBlock = p_123587_.level().getWorld().getBlockAt(p_123587_.pos().getX(), p_123587_.pos().getY(), p_123587_.pos().getZ());
-+         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123588_);
++	         BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
++	         if (!DispenserBlock.eventFired) {
++	            p_123587_.level().getCraftServer().getPluginManager().callEvent(event);
++	         }
 +
-+         BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
-+         if (!DispenserBlock.eventFired) {
-+            p_123587_.level().getCraftServer().getPluginManager().callEvent(event);
-+         }
++	         if (event.isCancelled()) {
++	            return p_123588_;
++	         }
 +
-+         if (event.isCancelled()) {
-+            return p_123588_;
-+         }
-+
-+         if (!event.getItem().equals(craftItem)) {
-+            // Chain to handler for new item
-+            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+            DispenseItemBehavior idispensebehavior = DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
-+            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
-+               idispensebehavior.dispense(p_123587_, eventStack);
-+               return p_123588_;
-+            }
-+         }
-+         // CraftBukkit end
-+
-+         try {
++	         if (!event.getItem().equals(craftItem)) {
++	            // Chain to handler for new item
++	            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++	            DispenseItemBehavior idispensebehavior = DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++	            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
++	               idispensebehavior.dispense(p_123587_, eventStack);
++	               return p_123588_;
++	            }
++	         }
++	         // CraftBukkit end
+ 
+             try {
                  this.setSuccess(
-                     ((BlockItem)item).place(new DirectionalPlaceContext(p_123587_.level(), blockpos, direction, p_123588_, direction1)).consumesAction()
-                 );

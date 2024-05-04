@@ -17,17 +17,13 @@
                  this.add(resourcelocation);
                  this.addHighlight(resourcelocation);
                  list.add(resourcelocation);
-@@ -62,9 +_,10 @@
+@@ -62,7 +_,8 @@
          return i;
      }
  
 -    private void sendRecipes(ClientboundRecipePacket.State p_12802_, ServerPlayer p_12803_, List<ResourceLocation> p_12804_) {
--        p_12803_.connection.send(new ClientboundRecipePacket(p_12802_, p_12804_, Collections.emptyList(), this.getBookSettings()));
--    }
-+   private void sendRecipes(ClientboundRecipePacket.State p_12802_, ServerPlayer p_12803_, List<ResourceLocation> p_12804_) {
-+      if (p_12803_.connection == null) return; // SPIGOT-4478 during PlayerLoginEvent
-+      p_12803_.connection.send(new ClientboundRecipePacket(p_12802_, p_12804_, Collections.emptyList(), this.getBookSettings()));
-+   }
++   	private void sendRecipes(ClientboundRecipePacket.State p_12802_, ServerPlayer p_12803_, List<ResourceLocation> p_12804_) {
++      	if (p_12803_.connection == null) return; // SPIGOT-4478 during PlayerLoginEvent
+         p_12803_.connection.send(new ClientboundRecipePacket(p_12802_, p_12804_, Collections.emptyList(), this.getBookSettings()));
+     }
  
-     public CompoundTag toNbt() {
-         CompoundTag compoundtag = new CompoundTag();

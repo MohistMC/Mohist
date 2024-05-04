@@ -1,46 +1,10 @@
 --- a/net/minecraft/world/effect/RegenerationMobEffect.java
 +++ b/net/minecraft/world/effect/RegenerationMobEffect.java
-@@ -3,22 +_,25 @@
- import net.minecraft.world.entity.LivingEntity;
+@@ -10,6 +_,7 @@
+     @Override
+     public boolean applyEffectTick(LivingEntity p_301282_, int p_300945_) {
+         if (p_301282_.getHealth() < p_301282_.getMaxHealth()) {
++         	p_301282_.regainReason0(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC_REGEN);
+             p_301282_.heal(1.0F);
+         }
  
- class RegenerationMobEffect extends MobEffect {
--    protected RegenerationMobEffect(MobEffectCategory p_298562_, int p_299015_) {
--        super(p_298562_, p_299015_);
--    }
--
--    @Override
--    public boolean applyEffectTick(LivingEntity p_301282_, int p_300945_) {
--        if (p_301282_.getHealth() < p_301282_.getMaxHealth()) {
--            p_301282_.heal(1.0F);
--        }
--
--        return true;
--    }
--
--    @Override
--    public boolean shouldApplyEffectTickThisTick(int p_300189_, int p_298417_) {
--        int i = 50 >> p_298417_;
--        return i > 0 ? p_300189_ % i == 0 : true;
--    }
-+   protected RegenerationMobEffect(MobEffectCategory p_298562_, int p_299015_) {
-+      super(p_298562_, p_299015_);
-+   }
-+
-+   public void applyEffectTick(LivingEntity p_301282_, int p_300945_) {
-+      super.applyEffectTick(p_301282_, p_300945_);
-+      if (p_301282_.getHealth() < p_301282_.getMaxHealth()) {
-+         p_301282_.regainReason0(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC_REGEN);
-+         p_301282_.heal(1.0F);
-+      }
-+
-+   }
-+
-+   public boolean shouldApplyEffectTickThisTick(int p_300189_, int p_298417_) {
-+      int i = 50 >> p_298417_;
-+      if (i > 0) {
-+         return p_300189_ % i == 0;
-+      } else {
-+         return true;
-+      }
-+   }
- }

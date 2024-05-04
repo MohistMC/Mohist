@@ -34,7 +34,7 @@
 -
 -        return (j > 0 || this.sleepingPlayers > 0) && (i != this.activePlayers || j != this.sleepingPlayers);
 -    }
-+      boolean anySleep = false; // CraftBukkit
++      	boolean anySleep = false; // CraftBukkit
 +
 +      for(ServerPlayer serverplayer : p_144008_) {
 +         if (!serverplayer.isSpectator()) {

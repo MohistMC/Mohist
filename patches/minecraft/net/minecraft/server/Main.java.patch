@@ -8,7 +8,7 @@
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-@@ -8,15 +_,16 @@
+@@ -8,13 +_,15 @@
  import java.awt.GraphicsEnvironment;
  import java.io.File;
  import java.io.IOException;
@@ -23,18 +23,8 @@
 -import java.util.concurrent.Executor;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
--import javax.annotation.Nullable;
+ import javax.annotation.Nullable;
  import joptsimple.OptionParser;
- import joptsimple.OptionSet;
- import joptsimple.OptionSpec;
-@@ -48,7 +_,6 @@
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.LevelSettings;
- import net.minecraft.world.level.WorldDataConfiguration;
--import net.minecraft.world.level.chunk.storage.RegionFileVersion;
- import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.levelgen.WorldDimensions;
- import net.minecraft.world.level.levelgen.WorldOptions;
 @@ -58,10 +_,12 @@
  import net.minecraft.world.level.storage.LevelSummary;
  import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -113,7 +103,7 @@
              Path path = optionset.valueOf(optionspec14);
              if (path != null) {
                  writePidFile(path);
-@@ -105,24 +_,37 @@
+@@ -105,24 +_,38 @@
              Bootstrap.validate();
              Util.startTimerHackThread();
              Path path1 = Paths.get("server.properties");
@@ -127,31 +117,30 @@
 -            Path path2 = Paths.get("eula.txt");
 -            Eula eula = new Eula(path2);
 -            if (optionset.has(optionspec1)) {
--                LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
--                return;
--            }
-+         if (optionset.has(optionspec1)) {
-+            // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
-+            File configFile = (File) optionset.valueOf("bukkit-settings");
-+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
-+            configuration.options().copyDefaults(true);
-+            configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
-+            configuration.save(configFile);
++			RegionFileVersion.configure(dedicatedserversettings.getProperties().regionFileComression);
++	        if (optionset.has(optionspec1)) {
++	            // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
++	            File configFile = (File) optionset.valueOf("bukkit-settings");
++	            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
++	            configuration.options().copyDefaults(true);
++	            configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
++	            configuration.save(configFile);
++
++	            File commandFile = (File) optionset.valueOf("commands-settings");
++	            YamlConfiguration commandsConfiguration = YamlConfiguration.loadConfiguration(commandFile);
++	            commandsConfiguration.options().copyDefaults(true);
++	            commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration( new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
++	            commandsConfiguration.save(commandFile);
++	            // CraftBukkit end
+                 LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
+                 return;
+             }
  
 -            if (!eula.hasAgreedToEULA()) {
 -                LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 -                return;
 -            }
-+            File commandFile = (File) optionset.valueOf("commands-settings");
-+            YamlConfiguration commandsConfiguration = YamlConfiguration.loadConfiguration(commandFile);
-+            commandsConfiguration.options().copyDefaults(true);
-+            commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration( new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
-+            commandsConfiguration.save(commandFile);
-+            // CraftBukkit end
-+            LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
-+            return;
-+         }
- 
+-
              File file1 = new File(optionset.valueOf(optionspec9));
              Services services = Services.create(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
              String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.getProperties().levelName);
@@ -162,181 +151,76 @@
              LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
              LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
              Dynamic<?> dynamic;
-@@ -173,104 +_,90 @@
+@@ -173,6 +_,11 @@
  
              PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
  
--            WorldStem worldstem;
--            try {
--                WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
--                worldstem = Util.<WorldStem>blockUntilDone(
--                        p_248086_ -> WorldLoader.load(
--                                worldloader$initconfig,
--                                p_308589_ -> {
--                                    Registry<LevelStem> registry = p_308589_.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
--                                    if (dynamic1 != null) {
--                                        LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(
--                                            dynamic1, p_308589_.dataConfiguration(), registry, p_308589_.datapackWorldgen()
--                                        );
--                                        return new WorldLoader.DataLoadOutput<>(
--                                            leveldataanddimensions.worldData(), leveldataanddimensions.dimensions().dimensionsRegistryAccess()
--                                        );
--                                    } else {
--                                        LOGGER.info("No existing world data, creating new world");
--                                        LevelSettings levelsettings;
--                                        WorldOptions worldoptions;
--                                        WorldDimensions worlddimensions;
--                                        if (optionset.has(optionspec2)) {
--                                            levelsettings = MinecraftServer.DEMO_SETTINGS;
--                                            worldoptions = WorldOptions.DEMO_OPTIONS;
--                                            worlddimensions = WorldPresets.createNormalWorldDimensions(p_308589_.datapackWorldgen());
--                                        } else {
--                                            DedicatedServerProperties dedicatedserverproperties = dedicatedserversettings.getProperties();
--                                            levelsettings = new LevelSettings(
--                                                dedicatedserverproperties.levelName,
--                                                dedicatedserverproperties.gamemode,
--                                                dedicatedserverproperties.hardcore,
--                                                dedicatedserverproperties.difficulty,
--                                                false,
--                                                new GameRules(),
--                                                p_308589_.dataConfiguration()
--                                            );
--                                            worldoptions = optionset.has(optionspec3)
--                                                ? dedicatedserverproperties.worldOptions.withBonusChest(true)
--                                                : dedicatedserverproperties.worldOptions;
--                                            worlddimensions = dedicatedserverproperties.createDimensions(p_308589_.datapackWorldgen());
--                                        }
--
--                                        WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
--                                        Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_308589_.datapackWorldgen().allRegistriesLifecycle());
--                                        return new WorldLoader.DataLoadOutput<>(
--                                            new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.specialWorldProperty(), lifecycle),
--                                            worlddimensions$complete.dimensionsRegistryAccess()
--                                        );
--                                    }
--                                },
--                                WorldStem::new,
--                                Util.backgroundExecutor(),
--                                p_248086_
--                            )
--                    )
--                    .get();
--            } catch (Exception exception) {
--                LOGGER.warn(
--                    "Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode",
--                    (Throwable)exception
--                );
--                return;
--            }
--
--            RegistryAccess.Frozen registryaccess$frozen = worldstem.registries().compositeAccess();
--            boolean flag1 = optionset.has(optionspec6);
--            if (optionset.has(optionspec4) || flag1) {
--                forceUpgrade(levelstoragesource$levelstorageaccess, DataFixers.getDataFixer(), optionset.has(optionspec5), () -> true, registryaccess$frozen, flag1);
--            }
--
--            WorldData worlddata = worldstem.worldData();
--            levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
++         	AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
++            if (dynamic != null) {
++                net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(levelstoragesource$levelstorageaccess, levelstoragesource$levelstorageaccess.getLevelDirectory());
++            }
++
+             WorldStem worldstem;
+             try {
+                 WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
+@@ -214,6 +_,16 @@
+                                             worlddimensions = dedicatedserverproperties.createDimensions(p_308589_.datapackWorldgen());
+                                         }
+ 
++                                        //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
++                                        var dynamicops = net.minecraft.resources.RegistryOps.create(net.minecraft.nbt.NbtOps.INSTANCE, p_308589_.datapackWorldgen());
++                                        worlddimensions = WorldDimensions.CODEC.encoder()
++                                            .encodeStart(dynamicops, worlddimensions)
++                                            .flatMap((writtenPayloadWithModdedDimensions) ->
++                                                WorldDimensions.CODEC.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)
++                                            )
++                                            .resultOrPartial(LOGGER::error)
++                                            .orElse(worlddimensions);
++
+                                         WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
+                                         Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_308589_.datapackWorldgen().allRegistriesLifecycle());
+                                         return new WorldLoader.DataLoadOutput<>(
+@@ -244,9 +_,17 @@
+ 
+             WorldData worlddata = worldstem.worldData();
+             levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
 -            final DedicatedServer dedicatedserver = MinecraftServer.spin(
--                p_296433_ -> {
++            final MinecraftServer dedicatedserver = MinecraftServer.spin(
+                 p_296433_ -> {
 -                    DedicatedServer dedicatedserver1 = new DedicatedServer(
--                        p_296433_,
--                        levelstoragesource$levelstorageaccess,
--                        packrepository,
--                        worldstem,
--                        dedicatedserversettings,
--                        DataFixers.getDataFixer(),
--                        services,
--                        LoggerChunkProgressListener::createFromGameruleRadius
--                    );
--                    dedicatedserver1.setPort(optionset.valueOf(optionspec11));
--                    dedicatedserver1.setDemo(optionset.has(optionspec2));
--                    dedicatedserver1.setId(optionset.valueOf(optionspec12));
--                    boolean flag2 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
++                    MinecraftServer dedicatedserver1;
++                    if (gametestEnabled) {
++                       net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
++                       var tests = net.minecraft.gametest.framework.GameTestRegistry.getAllTestFunctions();
++                       var spawnPos = optionset.valueOf(spawnPosOpt);
++                       dedicatedserver1 = net.minecraft.gametest.framework.GameTestServer.create(p_296433_, levelstoragesource$levelstorageaccess, packrepository, tests, spawnPos);
++                    } else {
++               			// Mohist start - fix mixin
++                    	dedicatedserver1 = new DedicatedServer(
+                         p_296433_,
+                         levelstoragesource$levelstorageaccess,
+                         packrepository,
+@@ -256,12 +_,17 @@
+                         services,
+                         LoggerChunkProgressListener::createFromGameruleRadius
+                     );
++               		MinecraftServer.options = optionset;
++              		 MinecraftServer.worldLoader = worldLoader.getAndSet(null);
++              		// MinecraftServer.worldLoader = config.get();
++               		// Mohist end
++            		}
+                     dedicatedserver1.setPort(optionset.valueOf(optionspec11));
+                     dedicatedserver1.setDemo(optionset.has(optionspec2));
+                     dedicatedserver1.setId(optionset.valueOf(optionspec12));
+                     boolean flag2 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
 -                    if (flag2 && !GraphicsEnvironment.isHeadless()) {
 -                        dedicatedserver1.showGui();
--                    }
--
--                    return dedicatedserver1;
--                }
--            );
-+         AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
-+         if (dynamic != null)
-+             net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(levelstoragesource$levelstorageaccess, levelstoragesource$levelstorageaccess.getLevelDirectory());
-+         WorldStem worldstem;
-+         try {
-+            WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
-+            worldstem = Util.blockUntilDone((p_248086_) -> {
-+               return WorldLoader.load(worldloader$initconfig, (p_308589_) -> {
-+                  worldLoader.set(p_308589_);
-+                  Registry<LevelStem> registry = p_308589_.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
-+                  if (dynamic1 != null) {
-+                     LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic1, p_308589_.dataConfiguration(), registry, p_308589_.datapackWorldgen());
-+                     return new WorldLoader.DataLoadOutput<>(leveldataanddimensions.worldData(), leveldataanddimensions.dimensions().dimensionsRegistryAccess());
-+                  } else {
-+                     LOGGER.info("No existing world data, creating new world");
-+                     LevelSettings levelsettings;
-+                     WorldOptions worldoptions;
-+                     WorldDimensions worlddimensions;
-+                     if (optionset.has(optionspec2)) {
-+                        levelsettings = MinecraftServer.DEMO_SETTINGS;
-+                        worldoptions = WorldOptions.DEMO_OPTIONS;
-+                        worlddimensions = WorldPresets.createNormalWorldDimensions(p_308589_.datapackWorldgen());
-+                     } else {
-+                        DedicatedServerProperties dedicatedserverproperties = dedicatedserversettings.getProperties();
-+                        levelsettings = new LevelSettings(dedicatedserverproperties.levelName, dedicatedserverproperties.gamemode, dedicatedserverproperties.hardcore, dedicatedserverproperties.difficulty, false, new GameRules(), p_308589_.dataConfiguration());
-+                        worldoptions = optionset.has(optionspec3) ? dedicatedserverproperties.worldOptions.withBonusChest(true) : dedicatedserverproperties.worldOptions;
-+                        worlddimensions = dedicatedserverproperties.createDimensions(p_308589_.datapackWorldgen());
-+                     }
-+
-+                     //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
-+                     net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> dynamicops = net.minecraft.resources.RegistryOps.create(net.minecraft.nbt.NbtOps.INSTANCE, p_308589_.datapackWorldgen());
-+                     worlddimensions = WorldDimensions.CODEC.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.CODEC.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(LOGGER::error).orElse(worlddimensions);
-+                     WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
-+                     Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_308589_.datapackWorldgen().allRegistriesLifecycle());
-+                     return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.specialWorldProperty(), lifecycle), worlddimensions$complete.dimensionsRegistryAccess());
-+                  }
-+               }, WorldStem::new, Util.backgroundExecutor(), p_248086_);
-+            }).get();
-+         } catch (Exception exception) {
-+            LOGGER.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
-+            return;
-+         }
-+
-+         RegistryAccess.Frozen registryaccess$frozen = worldstem.registries().compositeAccess();
-+         if (optionset.has(optionspec4)) {
-+            forceUpgrade(levelstoragesource$levelstorageaccess, DataFixers.getDataFixer(), optionset.has(optionspec5), () -> {
-+               return true;
-+            }, registryaccess$frozen.registryOrThrow(Registries.LEVEL_STEM));
-+         }
-+
-+         WorldData worlddata = worldstem.worldData();
-+         levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
-+         final MinecraftServer dedicatedserver = MinecraftServer.spin((p_129697_) -> {
-+            MinecraftServer dedicatedserver1;
-+            if (gametestEnabled) {
-+               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
-+               var testBatches = net.minecraft.gametest.framework.GameTestRunner.groupTestsIntoBatches(net.minecraft.gametest.framework.GameTestRegistry.getAllTestFunctions());
-+               var spawnPos = optionset.valueOf(spawnPosOpt);
-+               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
-+            } else {
-+               // Mohist start - fix mixin
-+               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.getDataFixer(), services, LoggerChunkProgressListener::new);
-+               MinecraftServer.options = optionset;
-+               MinecraftServer.worldLoader = worldLoader.getAndSet(null);
-+              // MinecraftServer.worldLoader = config.get();
-+               // Mohist end
-+            }
-+            dedicatedserver1.setPort(optionset.valueOf(optionspec10));
-+            dedicatedserver1.setDemo(optionset.has(optionspec2));
-+            dedicatedserver1.setId(optionset.valueOf(optionspec11));
-+            boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
-+            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
-+               //dedicatedServer.showGui();
-+            }
-+
-+            return dedicatedserver1;
-+         });
++                    if (flag2 && !GraphicsEnvironment.isHeadless() && dedicatedserver1 instanceof DedicatedServer ds) {
++                        // ds.showGui();
+                     }
+ 
+                     return dedicatedserver1;
+@@ -270,7 +_,10 @@
              Thread thread = new Thread("Server Shutdown Thread") {
                  @Override
                  public void run() {

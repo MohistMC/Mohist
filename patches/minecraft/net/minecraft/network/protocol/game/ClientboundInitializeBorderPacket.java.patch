@@ -1,15 +1,5 @@
 --- a/net/minecraft/network/protocol/game/ClientboundInitializeBorderPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundInitializeBorderPacket.java
-@@ -1,9 +_,7 @@
- package net.minecraft.network.protocol.game;
- 
- import net.minecraft.network.FriendlyByteBuf;
--import net.minecraft.network.codec.StreamCodec;
- import net.minecraft.network.protocol.Packet;
--import net.minecraft.network.protocol.PacketType;
- import net.minecraft.world.level.border.WorldBorder;
- 
- public class ClientboundInitializeBorderPacket implements Packet<ClientGamePacketListener> {
 @@ -30,9 +_,11 @@
          this.warningTime = p_178879_.readVarInt();
      }

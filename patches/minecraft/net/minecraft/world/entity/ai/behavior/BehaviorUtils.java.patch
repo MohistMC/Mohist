@@ -8,7 +8,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.ProjectileWeaponItem;
  import net.minecraft.world.level.pathfinder.PathComputationType;
-@@ -79,16 +_,24 @@
+@@ -79,14 +_,22 @@
          throwItem(p_22614_, p_22615_, p_22616_, vec3, 0.3F);
      }
  
@@ -23,8 +23,6 @@
          vec3 = vec3.normalize().multiply(p_217137_.x, p_217137_.y, p_217137_.z);
          itementity.setDeltaMovement(vec3);
          itementity.setDefaultPickUpDelay();
--        p_217134_.level().addFreshEntity(itementity);
--    }
 +	    // CraftBukkit start
 +	    org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(p_217134_.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
 +	    itementity.level.getCraftServer().getPluginManager().callEvent(event);
@@ -32,8 +30,6 @@
 +	        return;
 +	    }
 +	    // CraftBukkit end
-+      p_217134_.level().addFreshEntity(itementity);
-+   }
+         p_217134_.level().addFreshEntity(itementity);
+     }
  
-     public static SectionPos findSectionClosestToVillage(ServerLevel p_22582_, SectionPos p_22583_, int p_22584_) {
-         int i = p_22582_.sectionsToVillage(p_22583_);

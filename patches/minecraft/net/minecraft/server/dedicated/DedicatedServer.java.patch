@@ -9,18 +9,6 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-@@ -44,11 +_,6 @@
- import net.minecraft.server.rcon.thread.QueryThreadGs4;
- import net.minecraft.server.rcon.thread.RconThread;
- import net.minecraft.util.Mth;
--import net.minecraft.util.debugchart.DebugSampleSubscriptionTracker;
--import net.minecraft.util.debugchart.RemoteDebugSampleType;
--import net.minecraft.util.debugchart.RemoteSampleLogger;
--import net.minecraft.util.debugchart.SampleLogger;
--import net.minecraft.util.debugchart.TpsDebugDimensions;
- import net.minecraft.util.monitoring.jmx.MinecraftServerStatistics;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.level.GameRules;
 @@ -56,6 +_,12 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -47,23 +35,19 @@
      @Nullable
      private MinecraftServerGui gui;
      @Nullable
-@@ -77,47 +_,75 @@
+@@ -77,6 +_,8 @@
      private RemoteSampleLogger tickTimeLogger;
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
--
--    public DedicatedServer(
--        Thread p_214789_,
--        LevelStorageSource.LevelStorageAccess p_214790_,
--        PackRepository p_214791_,
--        WorldStem p_214792_,
--        DedicatedServerSettings p_214793_,
--        DataFixer p_214794_,
--        Services p_214795_,
--        ChunkProgressListenerFactory p_214796_
--    ) {
--        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
--        this.settings = p_214793_;
++    @Nullable
++    private net.minecraft.client.server.LanServerPinger dediLanPinger;
+ 
+     public DedicatedServer(
+         Thread p_214789_,
+@@ -90,27 +_,61 @@
+     ) {
+         super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
+         this.settings = p_214793_;
 -        this.rconConsoleSource = new RconConsoleSource(this);
 -        this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
 -    }
@@ -80,24 +64,6 @@
 -                    while (!DedicatedServer.this.isStopped() && DedicatedServer.this.isRunning() && (s1 = bufferedreader.readLine()) != null) {
 -                        DedicatedServer.this.handleConsoleInput(s1, DedicatedServer.this.createCommandSourceStack());
 -                    }
--                } catch (IOException ioexception1) {
--                    DedicatedServer.LOGGER.error("Exception handling console input", (Throwable)ioexception1);
--                }
--            }
--        };
--        thread.setDaemon(true);
--        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
--        thread.start();
--        LOGGER.info("Starting minecraft server version {}", SharedConstants.getCurrentVersion().getName());
--        if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
--            LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
--        }
-+    @Nullable
-+    private net.minecraft.client.server.LanServerPinger dediLanPinger;
-+
-+   public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
-+      super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
-+      this.settings = p_214793_;
 +      this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
 +   }
 +
@@ -135,12 +101,11 @@
 +                  }
 +                  // CraftBukkit end
 +               }
-+            } catch (IOException ioexception1) {
-+               DedicatedServer.LOGGER.error("Exception handling console input", (Throwable)ioexception1);
-+            }
-+
-+         }
-+      };
+                 } catch (IOException ioexception1) {
+                     DedicatedServer.LOGGER.error("Exception handling console input", (Throwable)ioexception1);
+                 }
+             }
+         };
 +
 +      // CraftBukkit start - TODO: handle command-line logging arguments
 +      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
@@ -154,16 +119,9 @@
 +      System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
 +      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
 +      // CraftBukkit end
-+      thread.setDaemon(true);
-+      thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
-+      thread.start();
-+      LOGGER.info("Starting minecraft server version {}", (Object)SharedConstants.getCurrentVersion().getName());
-+      if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
-+         LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
-+      }
- 
-         LOGGER.info("Loading properties");
-         DedicatedServerProperties dedicatedserverproperties = this.settings.getProperties();
+         thread.setDaemon(true);
+         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
+         thread.start();
 @@ -134,9 +_,9 @@
          this.setMotd(dedicatedserverproperties.motd);
          super.setPlayerIdleTimeout(dedicatedserverproperties.playerIdleTimeout.get());
@@ -177,7 +135,7 @@
          if (!this.getLocalIp().isEmpty()) {
              inetaddress = InetAddress.getByName(this.getLocalIp());
          }
-@@ -170,21 +_,34 @@
+@@ -170,20 +_,33 @@
              this.getProfileCache().save();
          }
  
@@ -187,15 +145,6 @@
 -            this.setPlayerList(new DedicatedPlayerList(this, this.registries(), this.playerDataStorage));
 -            this.debugSampleSubscriptionTracker = new DebugSampleSubscriptionTracker(this.getPlayerList());
 -            this.tickTimeLogger = new RemoteSampleLogger(TpsDebugDimensions.values().length, this.debugSampleSubscriptionTracker, RemoteDebugSampleType.TICK_TIME);
--            long i = Util.getNanos();
--            SkullBlockEntity.setup(this.services, this);
--            GameProfileCache.setUsesAuthentication(this.usesAuthentication());
--            LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
--            this.loadLevel();
--            long j = Util.getNanos() - i;
--            String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9);
--            LOGGER.info("Done ({})! For help, type \"help\"", s);
--            if (dedicatedserverproperties.announcePlayerAchievements != null) {
 +      if (!OldUsersConverter.serverReadyAfterUserconversion(this)) {
 +         return false;
 +      } else {
@@ -212,21 +161,20 @@
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end
-+         long i = Util.getNanos();
-+         SkullBlockEntity.setup(this.services, this);
-+         GameProfileCache.setUsesAuthentication(this.usesAuthentication());
-+         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-+         LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
-+         this.loadLevel();
-+         long j = Util.getNanos() - i;
-+         String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
-+         LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
-+         Metrics.MohistMetrics.startMetrics();
-+         this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
-+         if (dedicatedserverproperties.announcePlayerAchievements != null) {
+             long i = Util.getNanos();
+             SkullBlockEntity.setup(this.services, this);
+             GameProfileCache.setUsesAuthentication(this.usesAuthentication());
++            if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+             LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
+             this.loadLevel();
+             long j = Util.getNanos() - i;
+             String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9);
+             LOGGER.info("Done ({})! For help, type \"help\"", s);
++         	Metrics.MohistMetrics.startMetrics();
++            this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
+             if (dedicatedserverproperties.announcePlayerAchievements != null) {
                  this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
              }
- 
 @@ -198,7 +_,7 @@
                  this.rconThread = RconThread.create(this);
              }

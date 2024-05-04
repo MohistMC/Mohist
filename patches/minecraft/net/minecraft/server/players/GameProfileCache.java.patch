@@ -6,7 +6,7 @@
          this.safeAdd(gameprofilecache$gameprofileinfo);
 -        this.save();
 -    }
-+      	if( !org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly ) this.save(); // Spigot - skip saving if disabled
++      	if(!org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) this.save(); // Spigot - skip saving if disabled
 +   	}
  
      private long getNextOperation() {

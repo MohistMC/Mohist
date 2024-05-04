@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
-@@ -1,29 +_,59 @@
+@@ -1,13 +_,17 @@
  package net.minecraft.core.dispenser;
  
 +import java.util.concurrent.atomic.AtomicReference;
@@ -18,8 +18,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.BeehiveBlock;
  import net.minecraft.world.level.block.DispenserBlock;
- import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
--import net.minecraft.world.level.block.state.BlockBehaviour;
+@@ -16,14 +_,41 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;

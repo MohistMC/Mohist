@@ -1,14 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -3,7 +_,6 @@
- import com.google.gson.Gson;
- import com.google.gson.GsonBuilder;
- import com.google.gson.JsonElement;
--import com.google.gson.JsonIOException;
- import com.google.gson.JsonParseException;
- import com.google.gson.internal.Streams;
- import com.google.gson.stream.JsonReader;
-@@ -25,16 +_,17 @@
+@@ -25,11 +_,13 @@
  import java.util.function.BiConsumer;
  import javax.annotation.Nullable;
  import net.minecraft.FileUtil;
@@ -22,11 +14,6 @@
  import net.minecraft.advancements.Criterion;
  import net.minecraft.advancements.CriterionProgress;
  import net.minecraft.advancements.CriterionTrigger;
- import net.minecraft.advancements.CriterionTriggerInstance;
--import net.minecraft.advancements.DisplayInfo;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.network.protocol.game.ClientboundSelectAdvancementsTabPacket;
- import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
 @@ -129,6 +_,7 @@
      }
  

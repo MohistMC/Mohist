@@ -1,15 +1,5 @@
 --- a/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
 +++ b/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
-@@ -1,9 +_,7 @@
- package net.minecraft.network.protocol.game;
- 
- import net.minecraft.network.FriendlyByteBuf;
--import net.minecraft.network.codec.StreamCodec;
- import net.minecraft.network.protocol.Packet;
--import net.minecraft.network.protocol.PacketType;
- import net.minecraft.world.InteractionHand;
- 
- public class ServerboundUseItemPacket implements Packet<ServerGamePacketListener> {
 @@ -12,16 +_,18 @@
      );
      private final InteractionHand hand;

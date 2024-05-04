@@ -8,346 +8,57 @@
  import net.minecraft.network.Connection;
  import net.minecraft.network.PacketSendListener;
  import net.minecraft.network.RateKickingConnection;
-@@ -47,168 +_,178 @@
- import org.slf4j.Logger;
+@@ -48,11 +_,12 @@
  
  public class ServerConnectionListener {
--    private static final Logger LOGGER = LogUtils.getLogger();
--    public static final Supplier<NioEventLoopGroup> SERVER_EVENT_GROUP = Suppliers.memoize(
+     private static final Logger LOGGER = LogUtils.getLogger();
++    private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
+     public static final Supplier<NioEventLoopGroup> SERVER_EVENT_GROUP = Suppliers.memoize(
 -        () -> new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Server IO #%d").setDaemon(true).build())
--    );
--    public static final Supplier<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = Suppliers.memoize(
++        () -> new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build())
+     );
+     public static final Supplier<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = Suppliers.memoize(
 -        () -> new EpollEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build())
--    );
--    final MinecraftServer server;
--    public volatile boolean running;
--    private final List<ChannelFuture> channels = Collections.synchronizedList(Lists.newArrayList());
--    final List<Connection> connections = Collections.synchronizedList(Lists.newArrayList());
--
--    public ServerConnectionListener(MinecraftServer p_9707_) {
--        this.server = p_9707_;
--        this.running = true;
--    }
--
--    public void startTcpServerListener(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
--        synchronized (this.channels) {
--            Class<? extends ServerSocketChannel> oclass;
--            EventLoopGroup eventloopgroup;
--            if (Epoll.isAvailable() && this.server.isEpollEnabled()) {
--                oclass = EpollServerSocketChannel.class;
--                eventloopgroup = SERVER_EPOLL_EVENT_GROUP.get();
--                LOGGER.info("Using epoll channel type");
--            } else {
--                oclass = NioServerSocketChannel.class;
--                eventloopgroup = SERVER_EVENT_GROUP.get();
--                LOGGER.info("Using default channel type");
--            }
--
--            this.channels.add(new ServerBootstrap().channel(oclass).childHandler(new ChannelInitializer<Channel>() {
--                @Override
--                protected void initChannel(Channel p_9729_) {
--                    try {
--                        p_9729_.config().setOption(ChannelOption.TCP_NODELAY, true);
--                    } catch (ChannelException channelexception) {
--                    }
--
++        () -> new EpollEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build())
+     );
+     final MinecraftServer server;
+     public volatile boolean running;
+@@ -65,6 +_,8 @@
+     }
+ 
+     public void startTcpServerListener(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
++        if (p_9712_ == null) p_9712_ = new java.net.InetSocketAddress(p_9713_).getAddress();
++        net.minecraftforge.network.DualStackUtils.checkIPv6(p_9712_);
+         synchronized (this.channels) {
+             Class<? extends ServerSocketChannel> oclass;
+             EventLoopGroup eventloopgroup;
+@@ -86,7 +_,7 @@
+                     } catch (ChannelException channelexception) {
+                     }
+ 
 -                    ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
--                    if (ServerConnectionListener.this.server.repliesToStatus()) {
--                        channelpipeline.addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
--                    }
--
--                    Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND, false, null);
--                    int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
--                    Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
--                    ServerConnectionListener.this.connections.add(connection);
--                    connection.configurePacketHandler(channelpipeline);
--                    connection.setListenerForServerboundHandshake(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
--                }
++                    ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT));
+                     if (ServerConnectionListener.this.server.repliesToStatus()) {
+                         channelpipeline.addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
+                     }
+@@ -98,9 +_,19 @@
+                     connection.configurePacketHandler(channelpipeline);
+                     connection.setListenerForServerboundHandshake(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
+                 }
 -            }).group(eventloopgroup).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
--        }
--    }
--
--    public SocketAddress startMemoryChannel() {
--        ChannelFuture channelfuture;
--        synchronized (this.channels) {
--            channelfuture = new ServerBootstrap().channel(LocalServerChannel.class).childHandler(new ChannelInitializer<Channel>() {
--                @Override
--                protected void initChannel(Channel p_9734_) {
--                    Connection connection = new Connection(PacketFlow.SERVERBOUND);
--                    connection.setListenerForServerboundHandshake(new MemoryServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
--                    ServerConnectionListener.this.connections.add(connection);
--                    ChannelPipeline channelpipeline = p_9734_.pipeline();
--                    Connection.configureInMemoryPipeline(channelpipeline, PacketFlow.SERVERBOUND);
--                    connection.configurePacketHandler(channelpipeline);
--                }
--            }).group(SERVER_EVENT_GROUP.get()).localAddress(LocalAddress.ANY).bind().syncUninterruptibly();
--            this.channels.add(channelfuture);
--        }
--
--        return channelfuture.channel().localAddress();
--    }
--
--    public void stop() {
--        this.running = false;
--
--        for (ChannelFuture channelfuture : this.channels) {
--            try {
--                channelfuture.channel().close().sync();
--            } catch (InterruptedException interruptedexception) {
--                LOGGER.error("Interrupted whilst closing channel");
--            }
--        }
--    }
--
--    public void tick() {
--        synchronized (this.connections) {
--            Iterator<Connection> iterator = this.connections.iterator();
--
--            while (iterator.hasNext()) {
--                Connection connection = iterator.next();
--                if (!connection.isConnecting()) {
--                    if (connection.isConnected()) {
--                        try {
--                            connection.tick();
--                        } catch (Exception exception) {
--                            if (connection.isMemoryConnection()) {
--                                throw new ReportedException(CrashReport.forThrowable(exception, "Ticking memory connection"));
--                            }
--
--                            LOGGER.warn("Failed to handle packet for {}", connection.getLoggableAddress(this.server.logIPs()), exception);
--                            Component component = Component.literal("Internal server error");
--                            connection.send(
--                                new ClientboundDisconnectPacket(component), PacketSendListener.thenRun(() -> connection.disconnect(component))
--                            );
--                            connection.setReadOnly();
--                        }
--                    } else {
--                        iterator.remove();
--                        connection.handleDisconnection();
--                    }
--                }
--            }
--        }
--    }
--
--    public MinecraftServer getServer() {
--        return this.server;
--    }
--
--    public List<Connection> getConnections() {
--        return this.connections;
--    }
--
--    static class LatencySimulator extends ChannelInboundHandlerAdapter {
--        private static final Timer TIMER = new HashedWheelTimer();
--        private final int delay;
--        private final int jitter;
--        private final List<ServerConnectionListener.LatencySimulator.DelayedMessage> queuedMessages = Lists.newArrayList();
--
--        public LatencySimulator(int p_143593_, int p_143594_) {
--            this.delay = p_143593_;
--            this.jitter = p_143594_;
--        }
--
--        @Override
--        public void channelRead(ChannelHandlerContext p_143601_, Object p_143602_) {
--            this.delayDownstream(p_143601_, p_143602_);
--        }
--
--        private void delayDownstream(ChannelHandlerContext p_143596_, Object p_143597_) {
--            int i = this.delay + (int)(Math.random() * (double)this.jitter);
--            this.queuedMessages.add(new ServerConnectionListener.LatencySimulator.DelayedMessage(p_143596_, p_143597_));
--            TIMER.newTimeout(this::onTimeout, (long)i, TimeUnit.MILLISECONDS);
--        }
--
--        private void onTimeout(Timeout p_143599_) {
--            ServerConnectionListener.LatencySimulator.DelayedMessage serverconnectionlistener$latencysimulator$delayedmessage = this.queuedMessages.remove(0);
--            serverconnectionlistener$latencysimulator$delayedmessage.ctx
--                .fireChannelRead(serverconnectionlistener$latencysimulator$delayedmessage.msg);
--        }
--
--        static class DelayedMessage {
--            public final ChannelHandlerContext ctx;
--            public final Object msg;
--
--            public DelayedMessage(ChannelHandlerContext p_143606_, Object p_143607_) {
--                this.ctx = p_143606_;
--                this.msg = p_143607_;
--            }
--        }
--    }
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
-+   public static final Supplier<NioEventLoopGroup> SERVER_EVENT_GROUP = Suppliers.memoize(() -> {
-+      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
-+   });
-+   public static final Supplier<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = Suppliers.memoize(() -> {
-+      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
-+   });
-+   final MinecraftServer server;
-+   public volatile boolean running;
-+   private final List<ChannelFuture> channels = Collections.synchronizedList(Lists.newArrayList());
-+   final List<Connection> connections = Collections.synchronizedList(Lists.newArrayList());
++         	}).group(eventloopgroup).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
+         }
+     }
 +
-+   public ServerConnectionListener(MinecraftServer p_9707_) {
-+      this.server = p_9707_;
-+      this.running = true;
-+   }
-+
-+   public void startTcpServerListener(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
-+      if (p_9712_ == null) p_9712_ = new java.net.InetSocketAddress(p_9713_).getAddress();
-+      net.minecraftforge.network.DualStackUtils.checkIPv6(p_9712_);
-+      synchronized(this.channels) {
-+         Class<? extends ServerSocketChannel> oclass;
-+         EventLoopGroup eventloopgroup;
-+         if (Epoll.isAvailable() && this.server.isEpollEnabled()) {
-+            oclass = EpollServerSocketChannel.class;
-+            eventloopgroup = SERVER_EPOLL_EVENT_GROUP.get();
-+            LOGGER.info("Using epoll channel type");
-+         } else {
-+            oclass = NioServerSocketChannel.class;
-+            eventloopgroup = SERVER_EVENT_GROUP.get();
-+            LOGGER.info("Using default channel type");
-+         }
-+
-+         this.channels.add((new ServerBootstrap()).channel(oclass).childHandler(new ChannelInitializer<Channel>() {
-+            protected void initChannel(Channel p_9729_) {
-+               Connection.setInitialProtocolAttributes(p_9729_);
-+
-+               try {
-+                  p_9729_.config().setOption(ChannelOption.TCP_NODELAY, true);
-+               } catch (ChannelException channelexception) {
-+               }
-+
-+               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
-+               Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND, (BandwidthDebugMonitor)null);
-+               int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
-+               Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
-+               ServerConnectionListener.this.connections.add(connection);
-+               connection.configurePacketHandler(channelpipeline);
-+               connection.setListenerForServerboundHandshake(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
-+            }
-+         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
-+      }
-+   }
-+
-+   // CraftBukkit start
-+   public void acceptConnections() {
-+      synchronized (this.channels) {
-+         for (final ChannelFuture future : this.channels) {
-+            future.channel().config().setAutoRead(true);
-+         }
-+      }
-+   }
-+   // CraftBukkit end
-+
-+   public SocketAddress startMemoryChannel() {
-+      ChannelFuture channelfuture;
-+      synchronized(this.channels) {
-+         channelfuture = (new ServerBootstrap()).channel(LocalServerChannel.class).childHandler(new ChannelInitializer<Channel>() {
-+            protected void initChannel(Channel p_9734_) {
-+               Connection.setInitialProtocolAttributes(p_9734_);
-+               Connection connection = new Connection(PacketFlow.SERVERBOUND);
-+               connection.setListenerForServerboundHandshake(new MemoryServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
-+               ServerConnectionListener.this.connections.add(connection);
-+               ChannelPipeline channelpipeline = p_9734_.pipeline();
-+               Connection.configureInMemoryPipeline(channelpipeline, PacketFlow.SERVERBOUND);
-+               connection.configurePacketHandler(channelpipeline);
-+            }
-+         }).group(SERVER_EVENT_GROUP.get()).localAddress(LocalAddress.ANY).bind().syncUninterruptibly();
-+         this.channels.add(channelfuture);
-+      }
-+
-+      return channelfuture.channel().localAddress();
-+   }
-+
-+   public void stop() {
-+      this.running = false;
-+
-+      for(ChannelFuture channelfuture : this.channels) {
-+         try {
-+            channelfuture.channel().close().sync();
-+         } catch (InterruptedException interruptedexception) {
-+            LOGGER.error("Interrupted whilst closing channel");
-+         }
-+      }
-+
-+   }
-+
-+   public void tick() {
-+      synchronized(this.connections) {
-+         Iterator<Connection> iterator = this.connections.iterator();
-+
-+         while(iterator.hasNext()) {
-+            Connection connection = iterator.next();
-+            if (!connection.isConnecting()) {
-+               if (connection.isConnected()) {
-+                  try {
-+                     connection.tick();
-+                  } catch (Exception exception) {
-+                     if (connection.isMemoryConnection()) {
-+                        throw new ReportedException(CrashReport.forThrowable(exception, "Ticking memory connection"));
-+                     }
-+
-+                     LOGGER.warn("Failed to handle packet for {}", connection.getLoggableAddress(this.server.logIPs()), exception);
-+                     Component component = Component.literal("Internal server error");
-+                     connection.send(new ClientboundDisconnectPacket(component), PacketSendListener.thenRun(() -> {
-+                        connection.disconnect(component);
-+                     }));
-+                     connection.setReadOnly();
-+                  }
-+               } else {
-+                  iterator.remove();
-+                  connection.handleDisconnection();
-+               }
-+            }
-+         }
-+
-+      }
-+   }
-+
-+   public MinecraftServer getServer() {
-+      return this.server;
-+   }
-+
-+   public List<Connection> getConnections() {
-+      return this.connections;
-+   }
-+
-+   static class LatencySimulator extends ChannelInboundHandlerAdapter {
-+      private static final Timer TIMER = new HashedWheelTimer();
-+      private final int delay;
-+      private final int jitter;
-+      private final List<ServerConnectionListener.LatencySimulator.DelayedMessage> queuedMessages = Lists.newArrayList();
-+
-+      public LatencySimulator(int p_143593_, int p_143594_) {
-+         this.delay = p_143593_;
-+         this.jitter = p_143594_;
-+      }
-+
-+      public void channelRead(ChannelHandlerContext p_143601_, Object p_143602_) {
-+         this.delayDownstream(p_143601_, p_143602_);
-+      }
-+
-+      private void delayDownstream(ChannelHandlerContext p_143596_, Object p_143597_) {
-+         int i = this.delay + (int)(Math.random() * (double)this.jitter);
-+         this.queuedMessages.add(new ServerConnectionListener.LatencySimulator.DelayedMessage(p_143596_, p_143597_));
-+         TIMER.newTimeout(this::onTimeout, (long)i, TimeUnit.MILLISECONDS);
-+      }
-+
-+      private void onTimeout(Timeout p_143599_) {
-+         ServerConnectionListener.LatencySimulator.DelayedMessage serverconnectionlistener$latencysimulator$delayedmessage = this.queuedMessages.remove(0);
-+         serverconnectionlistener$latencysimulator$delayedmessage.ctx.fireChannelRead(serverconnectionlistener$latencysimulator$delayedmessage.msg);
-+      }
-+
-+      static class DelayedMessage {
-+         public final ChannelHandlerContext ctx;
-+         public final Object msg;
-+
-+         public DelayedMessage(ChannelHandlerContext p_143606_, Object p_143607_) {
-+            this.ctx = p_143606_;
-+            this.msg = p_143607_;
-+         }
-+      }
-+   }
- }
++   	// CraftBukkit start
++   	public void acceptConnections() {
++      	synchronized (this.channels) {
++         	for (final ChannelFuture future : this.channels) {
++            	future.channel().config().setAutoRead(true);
++         	}
++      	}
++   	}
++   	// CraftBukkit end
+ 
+     public SocketAddress startMemoryChannel() {
+         ChannelFuture channelfuture;

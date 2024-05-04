@@ -8,19 +8,6 @@
  import java.util.ArrayList;
  import java.util.Collection;
  import java.util.Collections;
-@@ -11,12 +_,10 @@
- import java.util.function.Consumer;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
--import net.minecraft.core.component.DataComponents;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.game.ClientGamePacketListener;
- import net.minecraft.network.protocol.game.ClientboundBundlePacket;
- import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
--import net.minecraft.network.protocol.game.ClientboundProjectilePowerPacket;
- import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
- import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
- import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 @@ -26,9 +_,12 @@
  import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
  import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -34,14 +21,8 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EquipmentSlot;
  import net.minecraft.world.entity.LivingEntity;
-@@ -36,12 +_,12 @@
- import net.minecraft.world.entity.ai.attributes.AttributeInstance;
- import net.minecraft.world.entity.decoration.ItemFrame;
- import net.minecraft.world.entity.projectile.AbstractArrow;
--import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.MapItem;
--import net.minecraft.world.level.saveddata.maps.MapId;
+@@ -42,6 +_,8 @@
+ import net.minecraft.world.level.saveddata.maps.MapId;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.entity.Player;

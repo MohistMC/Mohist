@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -1,33 +_,41 @@
+@@ -1,30 +_,39 @@
  package net.minecraft.network.protocol.game;
  
 -import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -25,15 +25,6 @@
 -    public PacketType<ClientboundSystemChatPacket> type() {
 -        return GamePacketTypes.CLIENTBOUND_SYSTEM_CHAT;
 -    }
--
--    public void handle(ClientGamePacketListener p_237864_) {
--        p_237864_.handleSystemChat(this);
--    }
--
--    @Override
--    public boolean isSkippable() {
--        return true;
--    }
 +
 +public record ClientboundSystemChatPacket(String a, boolean overlay) implements Packet<ClientGamePacketListener> {
 +
@@ -53,10 +44,10 @@
 +      p_237860_.writeUtf(this.a, 262144); // Spigot
 +      p_237860_.writeBoolean(this.overlay);
 +   }
-+
-+   public void handle(ClientGamePacketListener p_237864_) {
-+      p_237864_.handleSystemChat(this);
-+   }
+ 
+     public void handle(ClientGamePacketListener p_237864_) {
+         p_237864_.handleSystemChat(this);
+     }
 +
 +   public Component content() {
 +      return Component.Serializer.fromJson(a);
@@ -65,8 +56,6 @@
 +   public String content0() {
 +      return a;
 +   }
-+
-+   public boolean isSkippable() {
-+      return true;
-+   }
- }
+ 
+     @Override
+     public boolean isSkippable() {

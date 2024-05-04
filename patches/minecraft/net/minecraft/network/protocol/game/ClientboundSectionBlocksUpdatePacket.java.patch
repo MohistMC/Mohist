@@ -5,15 +5,15 @@
      }
  
 -    private ClientboundSectionBlocksUpdatePacket(FriendlyByteBuf p_179196_) {
-+   // CraftBukkit start - Add constructor
-+   public ClientboundSectionBlocksUpdatePacket(SectionPos sectionposition, ShortSet shortset, net.minecraft.world.level.block.state.BlockState[] states) {
-+      this.sectionPos = sectionposition;
-+      this.positions = shortset.toShortArray();
-+      this.states = states;
-+   }
-+   // CraftBukkit end
++   	// CraftBukkit start - Add constructor
++   	public ClientboundSectionBlocksUpdatePacket(SectionPos sectionposition, ShortSet shortset, net.minecraft.world.level.block.state.BlockState[] states) {
++      	this.sectionPos = sectionposition;
++      	this.positions = shortset.toShortArray();
++      	this.states = states;
++   	}
++   	// CraftBukkit end
 +
-+   public ClientboundSectionBlocksUpdatePacket(FriendlyByteBuf p_179196_) {
++   	public ClientboundSectionBlocksUpdatePacket(FriendlyByteBuf p_179196_) {
          this.sectionPos = SectionPos.of(p_179196_.readLong());
          int i = p_179196_.readVarInt();
          this.positions = new short[i];
@@ -22,7 +22,7 @@
      }
  
 -    private void write(FriendlyByteBuf p_133002_) {
-+   public void write(FriendlyByteBuf p_133002_) {
++   	public void write(FriendlyByteBuf p_133002_) {
          p_133002_.writeLong(this.sectionPos.asLong());
          p_133002_.writeVarInt(this.positions.length);
  

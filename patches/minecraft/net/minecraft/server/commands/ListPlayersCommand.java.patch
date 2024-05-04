@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/commands/ListPlayersCommand.java
 +++ b/net/minecraft/server/commands/ListPlayersCommand.java
-@@ -1,7 +_,6 @@
- package net.minecraft.server.commands;
- 
- import com.mojang.brigadier.CommandDispatcher;
--import com.mojang.brigadier.context.CommandContext;
- import java.util.List;
- import java.util.function.Function;
- import net.minecraft.commands.CommandSourceStack;
 @@ -34,8 +_,15 @@
      private static int format(CommandSourceStack p_137827_, Function<ServerPlayer, Component> p_137828_) {
          PlayerList playerlist = p_137827_.getServer().getPlayerList();

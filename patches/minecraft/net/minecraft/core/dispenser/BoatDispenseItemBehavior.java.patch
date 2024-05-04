@@ -10,20 +10,10 @@
  
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
      private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-@@ -31,29 +_,56 @@
-         ServerLevel serverlevel = p_123375_.level();
-         Vec3 vec3 = p_123375_.center();
-         double d0 = 0.5625 + (double)EntityType.BOAT.getWidth() / 2.0;
--        double d1 = vec3.x() + (double)direction.getStepX() * d0;
--        double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
--        double d3 = vec3.z() + (double)direction.getStepZ() * d0;
--        BlockPos blockpos = p_123375_.pos().relative(direction);
--        double d4;
--        if (serverlevel.getFluidState(blockpos).is(FluidTags.WATER)) {
-+      double d1 = vec3.x() + (double)direction.getStepX() * d0;
-+      double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
-+      double d3 = vec3.z() + (double)direction.getStepZ() * d0;
-+      BlockPos blockpos = p_123375_.pos().relative(direction);
+@@ -35,25 +_,52 @@
+         double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
+         double d3 = vec3.z() + (double)direction.getStepZ() * d0;
+         BlockPos blockpos = p_123375_.pos().relative(direction);
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.split(1);
 +      org.bukkit.block.Block block = CraftBlock.at(serverlevel, p_123375_.pos());
@@ -52,9 +42,10 @@
 +
 +      Boat boat = this.isChestBoat ? new ChestBoat(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()) : new Boat(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +      // CraftBukkit end
-+      boat.setVariant(this.type);
-+      boat.setYRot(direction.toYRot());
-+      double d4;
++        boat.setVariant(this.type);
++        boat.setYRot(direction.toYRot());
+         double d4;
+-        if (serverlevel.getFluidState(blockpos).is(FluidTags.WATER)) {
 +        if (boat.canBoatInFluid(serverlevel.getFluidState(blockpos))) {
              d4 = 1.0;
          } else {

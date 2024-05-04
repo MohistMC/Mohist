@@ -1,29 +1,30 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -110,12 +_,30 @@
+@@ -110,12 +_,31 @@
          }
      }
  
 -    @Override
-+   public EntitySelector parse(StringReader pReader, boolean overridePermissions) throws CommandSyntaxException {
-+      EntitySelectorParser entityselectorparser = new EntitySelectorParser(pReader);
-+      EntitySelector entityselector = entityselectorparser.parse(overridePermissions);
-+      if (entityselector.getMaxResults() > 1 && this.single) {
-+         if (this.playersOnly) {
++   	public EntitySelector parse(StringReader pReader, boolean overridePermissions) throws CommandSyntaxException {
++        EntitySelectorParser entityselectorparser = new EntitySelectorParser(pReader);
++        EntitySelector entityselector = entityselectorparser.parse(overridePermissions);
++        if (entityselector.getMaxResults() > 1 && this.single) {
++            if (this.playersOnly) {
++                pReader.setCursor(0);
++                throw ERROR_NOT_SINGLE_PLAYER.createWithContext(pReader);
++            } else {
++                pReader.setCursor(0);
++                throw ERROR_NOT_SINGLE_ENTITY.createWithContext(pReader);
++            }
++        } else if (entityselector.includesEntities() && this.playersOnly && !entityselector.isSelfSelector()) {
 +            pReader.setCursor(0);
-+            throw ERROR_NOT_SINGLE_PLAYER.createWithContext(pReader);
-+         } else {
-+            pReader.setCursor(0);
-+            throw ERROR_NOT_SINGLE_ENTITY.createWithContext(pReader);
-+         }
-+      } else if (entityselector.includesEntities() && this.playersOnly && !entityselector.isSelfSelector()) {
-+         pReader.setCursor(0);
-+         throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(pReader);
-+      } else {
-+         return entityselector;
-+      }
-+   }
++            throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(pReader);
++        } else {
++            return entityselector;
++        }
++    }
 +
++	@Override
      public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_91482_, SuggestionsBuilder p_91483_) {
          if (p_91482_.getSource() instanceof SharedSuggestionProvider sharedsuggestionprovider) {
              StringReader stringreader = new StringReader(p_91483_.getInput());

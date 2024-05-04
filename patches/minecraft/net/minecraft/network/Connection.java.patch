@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -3,21 +_,18 @@
+@@ -3,6 +_,8 @@
  import com.google.common.base.Suppliers;
  import com.google.common.collect.Queues;
  import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -9,1176 +9,133 @@
  import com.mojang.logging.LogUtils;
  import io.netty.bootstrap.Bootstrap;
  import io.netty.channel.Channel;
- import io.netty.channel.ChannelException;
- import io.netty.channel.ChannelFuture;
- import io.netty.channel.ChannelFutureListener;
--import io.netty.channel.ChannelHandler;
- import io.netty.channel.ChannelHandlerContext;
--import io.netty.channel.ChannelInboundHandler;
- import io.netty.channel.ChannelInitializer;
- import io.netty.channel.ChannelOption;
--import io.netty.channel.ChannelOutboundHandler;
--import io.netty.channel.ChannelOutboundHandlerAdapter;
- import io.netty.channel.ChannelPipeline;
--import io.netty.channel.ChannelPromise;
- import io.netty.channel.DefaultEventLoopGroup;
- import io.netty.channel.EventLoopGroup;
- import io.netty.channel.SimpleChannelInboundHandler;
-@@ -32,10 +_,9 @@
- import io.netty.handler.flow.FlowControlHandler;
- import io.netty.handler.timeout.ReadTimeoutHandler;
- import io.netty.handler.timeout.TimeoutException;
--import io.netty.util.concurrent.Future;
-+import io.netty.util.AttributeKey;
- import java.net.InetSocketAddress;
- import java.net.SocketAddress;
--import java.nio.channels.ClosedChannelException;
- import java.util.Objects;
- import java.util.Queue;
- import java.util.concurrent.RejectedExecutionException;
-@@ -46,579 +_,589 @@
- import net.minecraft.SharedConstants;
- import net.minecraft.Util;
- import net.minecraft.network.chat.Component;
--import net.minecraft.network.protocol.BundlerInfo;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.PacketFlow;
- import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
- import net.minecraft.network.protocol.handshake.ClientIntent;
- import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
--import net.minecraft.network.protocol.handshake.HandshakeProtocols;
--import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
- import net.minecraft.network.protocol.login.ClientLoginPacketListener;
- import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
--import net.minecraft.network.protocol.login.LoginProtocols;
- import net.minecraft.network.protocol.status.ClientStatusPacketListener;
--import net.minecraft.network.protocol.status.StatusProtocols;
- import net.minecraft.server.RunningOnDifferentThreadException;
- import net.minecraft.util.Mth;
--import net.minecraft.util.debugchart.LocalSampleLogger;
-+import net.minecraft.util.SampleLogger;
- import org.apache.commons.lang3.Validate;
- import org.slf4j.Logger;
- import org.slf4j.Marker;
- import org.slf4j.MarkerFactory;
- 
- public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
--    private static final float AVERAGE_PACKETS_SMOOTHING = 0.75F;
--    private static final Logger LOGGER = LogUtils.getLogger();
--    public static final Marker ROOT_MARKER = MarkerFactory.getMarker("NETWORK");
--    public static final Marker PACKET_MARKER = Util.make(MarkerFactory.getMarker("NETWORK_PACKETS"), p_202569_ -> p_202569_.add(ROOT_MARKER));
--    public static final Marker PACKET_RECEIVED_MARKER = Util.make(MarkerFactory.getMarker("PACKET_RECEIVED"), p_202562_ -> p_202562_.add(PACKET_MARKER));
--    public static final Marker PACKET_SENT_MARKER = Util.make(MarkerFactory.getMarker("PACKET_SENT"), p_202557_ -> p_202557_.add(PACKET_MARKER));
--    public static final Supplier<NioEventLoopGroup> NETWORK_WORKER_GROUP = Suppliers.memoize(
--        () -> new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Client IO #%d").setDaemon(true).build())
--    );
--    public static final Supplier<EpollEventLoopGroup> NETWORK_EPOLL_WORKER_GROUP = Suppliers.memoize(
--        () -> new EpollEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Epoll Client IO #%d").setDaemon(true).build())
--    );
--    public static final Supplier<DefaultEventLoopGroup> LOCAL_WORKER_GROUP = Suppliers.memoize(
--        () -> new DefaultEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Local Client IO #%d").setDaemon(true).build())
--    );
--    private static final ProtocolInfo<ServerHandshakePacketListener> INITIAL_PROTOCOL = HandshakeProtocols.SERVERBOUND;
--    private final PacketFlow receiving;
--    private volatile boolean sendLoginDisconnect = true;
--    private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
+@@ -87,8 +_,8 @@
+     private final PacketFlow receiving;
+     private volatile boolean sendLoginDisconnect = true;
+     private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
 -    public Channel channel;
 -    public SocketAddress address;
--    @Nullable
--    private volatile PacketListener disconnectListener;
--    @Nullable
--    private volatile PacketListener packetListener;
--    @Nullable
--    private Component disconnectedReason;
--    private boolean encrypted;
--    private boolean disconnectionHandled;
--    private int receivedPackets;
--    private int sentPackets;
--    private float averageReceivedPackets;
--    private float averageSentPackets;
--    private int tickCount;
--    private boolean handlingFault;
--    @Nullable
--    private volatile Component delayedDisconnect;
--    @Nullable
--    BandwidthDebugMonitor bandwidthDebugMonitor;
--
--    public Connection(PacketFlow p_129482_) {
--        this.receiving = p_129482_;
--    }
--
--    @Override
--    public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
--        super.channelActive(p_129525_);
--        this.channel = p_129525_.channel();
--        this.address = this.channel.remoteAddress();
--        if (this.delayedDisconnect != null) {
--            this.disconnect(this.delayedDisconnect);
--        }
--    }
--
--    @Override
--    public void channelInactive(ChannelHandlerContext p_129527_) {
--        this.disconnect(Component.translatable("disconnect.endOfStream"));
--    }
--
--    @Override
--    public void exceptionCaught(ChannelHandlerContext p_129533_, Throwable p_129534_) {
--        if (p_129534_ instanceof SkipPacketException) {
--            LOGGER.debug("Skipping packet due to errors", p_129534_.getCause());
--        } else {
--            boolean flag = !this.handlingFault;
--            this.handlingFault = true;
--            if (this.channel.isOpen()) {
--                if (p_129534_ instanceof TimeoutException) {
--                    LOGGER.debug("Timeout", p_129534_);
--                    this.disconnect(Component.translatable("disconnect.timeout"));
--                } else {
--                    Component component = Component.translatable("disconnect.genericReason", "Internal Exception: " + p_129534_);
--                    if (flag) {
--                        LOGGER.debug("Failed to sent packet", p_129534_);
--                        if (this.getSending() == PacketFlow.CLIENTBOUND) {
--                            Packet<?> packet = (Packet<?>)(this.sendLoginDisconnect
--                                ? new ClientboundLoginDisconnectPacket(component)
--                                : new ClientboundDisconnectPacket(component));
--                            this.send(packet, PacketSendListener.thenRun(() -> this.disconnect(component)));
--                        } else {
--                            this.disconnect(component);
--                        }
--
--                        this.setReadOnly();
--                    } else {
--                        LOGGER.debug("Double fault", p_129534_);
-+   private static final float AVERAGE_PACKETS_SMOOTHING = 0.75F;
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   public static final Marker ROOT_MARKER = MarkerFactory.getMarker("NETWORK");
-+   public static final Marker PACKET_MARKER = Util.make(MarkerFactory.getMarker("NETWORK_PACKETS"), (p_202569_) -> {
-+      p_202569_.add(ROOT_MARKER);
-+   });
-+   public static final Marker PACKET_RECEIVED_MARKER = Util.make(MarkerFactory.getMarker("PACKET_RECEIVED"), (p_202562_) -> {
-+      p_202562_.add(PACKET_MARKER);
-+   });
-+   public static final Marker PACKET_SENT_MARKER = Util.make(MarkerFactory.getMarker("PACKET_SENT"), (p_202557_) -> {
-+      p_202557_.add(PACKET_MARKER);
-+   });
-+   public static final AttributeKey<ConnectionProtocol.CodecData<?>> ATTRIBUTE_SERVERBOUND_PROTOCOL = AttributeKey.valueOf("serverbound_protocol");
-+   public static final AttributeKey<ConnectionProtocol.CodecData<?>> ATTRIBUTE_CLIENTBOUND_PROTOCOL = AttributeKey.valueOf("clientbound_protocol");
-+   public static final Supplier<NioEventLoopGroup> NETWORK_WORKER_GROUP = Suppliers.memoize(() -> {
-+      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Client IO #%d").setDaemon(true).build());
-+   });
-+   public static final Supplier<EpollEventLoopGroup> NETWORK_EPOLL_WORKER_GROUP = Suppliers.memoize(() -> {
-+      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Client IO #%d").setDaemon(true).build());
-+   });
-+   public static final Supplier<DefaultEventLoopGroup> LOCAL_WORKER_GROUP = Suppliers.memoize(() -> {
-+      return new DefaultEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Client IO #%d").setDaemon(true).build());
-+   });
-+   private final PacketFlow receiving;
-+   private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
-+   public Channel channel;
-+   public SocketAddress address;
-+   @Nullable
-+   private volatile PacketListener disconnectListener;
-+   @Nullable
-+   private volatile PacketListener packetListener;
-+   @Nullable
-+   private Component disconnectedReason;
-+   private boolean encrypted;
-+   private boolean disconnectionHandled;
-+   private int receivedPackets;
-+   private int sentPackets;
-+   private float averageReceivedPackets;
-+   private float averageSentPackets;
-+   private int tickCount;
-+   private boolean handlingFault;
-+   @Nullable
-+   private volatile Component delayedDisconnect;
-+   @Nullable
-+   BandwidthDebugMonitor bandwidthDebugMonitor;
-+   private java.util.function.Consumer<Connection> activationHandler;
-+   private final net.minecraftforge.common.util.PacketLogger packetLogger;
-+   public String hostname = ""; // CraftBukkit - add field
-+   // Spigot Start
-+   public java.util.UUID spoofedUUID;
-+   public com.mojang.authlib.properties.Property[] spoofedProfile;
-+   public boolean preparing = true;
-+   // Spigot End
-+
-+   public Connection(PacketFlow p_129482_) {
-+      this.receiving = p_129482_;
-+      this.packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
-+   }
-+
-+   public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
-+      super.channelActive(p_129525_);
-+      this.channel = p_129525_.channel();
-+      this.address = this.channel.remoteAddress();
-+      if (activationHandler != null) activationHandler.accept(this);
-+      // Spigot Start
-+      this.preparing = false;
-+      // Spigot End
-+      if (this.delayedDisconnect != null) {
-+         this.disconnect(this.delayedDisconnect);
-+      }
-+
-+   }
-+
-+   public static void setInitialProtocolAttributes(Channel p_300821_) {
-+      p_300821_.attr(ATTRIBUTE_SERVERBOUND_PROTOCOL).set(ConnectionProtocol.HANDSHAKING.codec(PacketFlow.SERVERBOUND));
-+      p_300821_.attr(ATTRIBUTE_CLIENTBOUND_PROTOCOL).set(ConnectionProtocol.HANDSHAKING.codec(PacketFlow.CLIENTBOUND));
-+   }
-+
-+   public void channelInactive(ChannelHandlerContext p_129527_) {
-+      this.disconnect(Component.translatable("disconnect.endOfStream"));
-+   }
-+
-+   public void exceptionCaught(ChannelHandlerContext p_129533_, Throwable p_129534_) {
-+      if (p_129534_ instanceof SkipPacketException) {
-+         LOGGER.debug("Skipping packet due to errors", p_129534_.getCause());
-+      } else {
-+         boolean flag = !this.handlingFault;
-+         this.handlingFault = true;
-+         if (this.channel.isOpen()) {
-+            if (p_129534_ instanceof TimeoutException) {
-+               LOGGER.debug("Timeout", p_129534_);
-+               this.disconnect(Component.translatable("disconnect.timeout"));
-+            } else {
-+               Component component = Component.translatable("disconnect.genericReason", "Internal Exception: " + p_129534_);
-+               if (flag) {
-+                  LOGGER.debug("Failed to sent packet", p_129534_);
-+                  if (this.getSending() == PacketFlow.CLIENTBOUND) {
-+                     ConnectionProtocol connectionprotocol = this.channel.attr(ATTRIBUTE_CLIENTBOUND_PROTOCOL).get().protocol();
-+                     Packet<?> packet = (Packet<?>)(connectionprotocol == ConnectionProtocol.LOGIN ? new ClientboundLoginDisconnectPacket(component) : new ClientboundDisconnectPacket(component));
-+                     this.send(packet, PacketSendListener.thenRun(() -> {
-                         this.disconnect(component);
--                    }
--                }
--            }
--        }
--    }
--
--    protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
--        if (this.channel.isOpen()) {
--            PacketListener packetlistener = this.packetListener;
--            if (packetlistener == null) {
--                throw new IllegalStateException("Received a packet before the packet listener was initialized");
--            } else {
--                if (packetlistener.shouldHandleMessage(p_129488_)) {
--                    try {
--                        genericsFtw(p_129488_, packetlistener);
--                    } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
--                    } catch (RejectedExecutionException rejectedexecutionexception) {
--                        this.disconnect(Component.translatable("multiplayer.disconnect.server_shutdown"));
--                    } catch (ClassCastException classcastexception) {
--                        LOGGER.error("Received {} that couldn't be processed", p_129488_.getClass(), classcastexception);
--                        this.disconnect(Component.translatable("multiplayer.disconnect.invalid_packet"));
--                    }
--
--                    this.receivedPackets++;
--                }
--            }
--        }
--    }
--
--    private static <T extends PacketListener> void genericsFtw(Packet<T> p_129518_, PacketListener p_129519_) {
--        p_129518_.handle((T)p_129519_);
--    }
--
--    private void validateListener(ProtocolInfo<?> p_336036_, PacketListener p_331542_) {
--        Validate.notNull(p_331542_, "packetListener");
--        PacketFlow packetflow = p_331542_.flow();
--        if (packetflow != this.receiving) {
--            throw new IllegalStateException("Trying to set listener for wrong side: connection is " + this.receiving + ", but listener is " + packetflow);
--        } else {
--            ConnectionProtocol connectionprotocol = p_331542_.protocol();
--            if (p_336036_.id() != connectionprotocol) {
--                throw new IllegalStateException("Listener protocol (" + connectionprotocol + ") does not match requested one " + p_336036_);
--            }
--        }
--    }
--
--    private static void syncAfterConfigurationChange(ChannelFuture p_330528_) {
--        try {
--            p_330528_.syncUninterruptibly();
--        } catch (Exception exception) {
--            if (exception instanceof ClosedChannelException) {
--                LOGGER.info("Connection closed during protocol change");
--            } else {
--                throw exception;
--            }
--        }
--    }
--
--    public <T extends PacketListener> void setupInboundProtocol(ProtocolInfo<T> p_333271_, T p_330962_) {
--        this.validateListener(p_333271_, p_330962_);
--        if (p_333271_.flow() != this.getReceiving()) {
--            throw new IllegalStateException("Invalid inbound protocol: " + p_333271_.id());
--        } else {
--            this.packetListener = p_330962_;
-+                     }));
-+                  } else {
-+                     this.disconnect(component);
-+                  }
-+
-+                  this.setReadOnly();
-+               } else {
-+                  LOGGER.debug("Double fault", p_129534_);
-+                  this.disconnect(component);
-+               }
-+            }
-+
-+         }
-+      }
-+      if (net.minecraft.server.MinecraftServer.getServer().isDebugging()) p_129534_.printStackTrace(); // Spigot
-+   }
-+
-+   protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
-+      if (this.channel.isOpen()) {
-+         PacketListener packetlistener = this.packetListener;
-+         if (packetlistener == null) {
-+            throw new IllegalStateException("Received a packet before the packet listener was initialized");
-+         } else {
-+            if (packetlistener.shouldHandleMessage(p_129488_)) {
-+               try {
-+                  packetLogger.recv(p_129488_);
-+                  genericsFtw(p_129488_, packetlistener);
-+               } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
-+               } catch (RejectedExecutionException rejectedexecutionexception) {
-+                  this.disconnect(Component.translatable("multiplayer.disconnect.server_shutdown"));
-+               } catch (ClassCastException classcastexception) {
-+                  LOGGER.error("Received {} that couldn't be processed", p_129488_.getClass(), classcastexception);
-+                  this.disconnect(Component.translatable("multiplayer.disconnect.invalid_packet"));
-+               }
-+
-+               ++this.receivedPackets;
-+            }
-+
-+         }
-+      }
-+   }
-+
-+   private static <T extends PacketListener> void genericsFtw(Packet<T> p_129518_, PacketListener p_129519_) {
-+      p_129518_.handle((T)p_129519_);
-+   }
-+
-+   public void suspendInboundAfterProtocolChange() {
-+      this.channel.config().setAutoRead(false);
-+   }
-+
-+   public void resumeInboundAfterProtocolChange() {
-+      this.channel.config().setAutoRead(true);
-+   }
-+
-+   public void setListener(PacketListener p_129506_) {
-+      Validate.notNull(p_129506_, "packetListener");
-+      PacketFlow packetflow = p_129506_.flow();
-+      if (packetflow != this.receiving) {
-+         throw new IllegalStateException("Trying to set listener for wrong side: connection is " + this.receiving + ", but listener is " + packetflow);
-+      } else {
-+         ConnectionProtocol connectionprotocol = p_129506_.protocol();
-+         ConnectionProtocol connectionprotocol1 = this.channel.attr(getProtocolKey(packetflow)).get().protocol();
-+         if (connectionprotocol1 != connectionprotocol) {
-+            throw new IllegalStateException("Trying to set listener for protocol " + connectionprotocol.id() + ", but current " + packetflow + " protocol is " + connectionprotocol1.id());
-+         } else {
-+            this.packetListener = p_129506_;
-             this.disconnectListener = null;
--            UnconfiguredPipelineHandler.InboundConfigurationTask unconfiguredpipelinehandler$inboundconfigurationtask = UnconfiguredPipelineHandler.setupInboundProtocol(
--                p_333271_
--            );
--            BundlerInfo bundlerinfo = p_333271_.bundlerInfo();
--            if (bundlerinfo != null) {
--                PacketBundlePacker packetbundlepacker = new PacketBundlePacker(bundlerinfo);
--                unconfiguredpipelinehandler$inboundconfigurationtask = unconfiguredpipelinehandler$inboundconfigurationtask.andThen(
--                    p_326046_ -> p_326046_.pipeline().addAfter("decoder", "bundler", packetbundlepacker)
--                );
--            }
--
--            syncAfterConfigurationChange(this.channel.writeAndFlush(unconfiguredpipelinehandler$inboundconfigurationtask));
--        }
--    }
--
--    public void setupOutboundProtocol(ProtocolInfo<?> p_329145_) {
--        if (p_329145_.flow() != this.getSending()) {
--            throw new IllegalStateException("Invalid outbound protocol: " + p_329145_.id());
--        } else {
--            UnconfiguredPipelineHandler.OutboundConfigurationTask unconfiguredpipelinehandler$outboundconfigurationtask = UnconfiguredPipelineHandler.setupOutboundProtocol(
--                p_329145_
--            );
--            BundlerInfo bundlerinfo = p_329145_.bundlerInfo();
--            if (bundlerinfo != null) {
--                PacketBundleUnpacker packetbundleunpacker = new PacketBundleUnpacker(bundlerinfo);
--                unconfiguredpipelinehandler$outboundconfigurationtask = unconfiguredpipelinehandler$outboundconfigurationtask.andThen(
--                    p_326044_ -> p_326044_.pipeline().addAfter("encoder", "unbundler", packetbundleunpacker)
--                );
--            }
--
--            boolean flag = p_329145_.id() == ConnectionProtocol.LOGIN;
--            syncAfterConfigurationChange(this.channel.writeAndFlush(unconfiguredpipelinehandler$outboundconfigurationtask.andThen(p_326048_ -> this.sendLoginDisconnect = flag)));
--        }
--    }
--
--    public void setListenerForServerboundHandshake(PacketListener p_299346_) {
--        if (this.packetListener != null) {
--            throw new IllegalStateException("Listener already set");
--        } else if (this.receiving == PacketFlow.SERVERBOUND
--            && p_299346_.flow() == PacketFlow.SERVERBOUND
--            && p_299346_.protocol() == INITIAL_PROTOCOL.id()) {
--            this.packetListener = p_299346_;
--        } else {
--            throw new IllegalStateException("Invalid initial listener");
--        }
--    }
--
--    public void initiateServerboundStatusConnection(String p_297855_, int p_297423_, ClientStatusPacketListener p_300237_) {
--        this.initiateServerboundConnection(p_297855_, p_297423_, StatusProtocols.SERVERBOUND, StatusProtocols.CLIENTBOUND, p_300237_, ClientIntent.STATUS);
--    }
--
--    public void initiateServerboundPlayConnection(String p_300250_, int p_297906_, ClientLoginPacketListener p_297708_) {
--        this.initiateServerboundConnection(p_300250_, p_297906_, LoginProtocols.SERVERBOUND, LoginProtocols.CLIENTBOUND, p_297708_, ClientIntent.LOGIN);
--    }
--
--    public <S extends ServerboundPacketListener, C extends ClientboundPacketListener> void initiateServerboundPlayConnection(
--        String p_332429_, int p_334200_, ProtocolInfo<S> p_332351_, ProtocolInfo<C> p_328002_, C p_329302_, boolean p_331884_
--    ) {
--        this.initiateServerboundConnection(p_332429_, p_334200_, p_332351_, p_328002_, p_329302_, p_331884_ ? ClientIntent.TRANSFER : ClientIntent.LOGIN);
--    }
--
--    private <S extends ServerboundPacketListener, C extends ClientboundPacketListener> void initiateServerboundConnection(
--        String p_300730_, int p_300598_, ProtocolInfo<S> p_328134_, ProtocolInfo<C> p_329827_, C p_330656_, ClientIntent p_297789_
--    ) {
--        if (p_328134_.id() != p_329827_.id()) {
--            throw new IllegalStateException("Mismatched initial protocols");
--        } else {
--            this.disconnectListener = p_330656_;
--            this.runOnceConnected(p_326042_ -> {
--                this.setupInboundProtocol(p_329827_, p_330656_);
++   	public Channel channel;
++   	public SocketAddress address;
+     @Nullable
+     private volatile PacketListener disconnectListener;
+     @Nullable
+@@ -107,9 +_,18 @@
+     private volatile Component delayedDisconnect;
+     @Nullable
+     BandwidthDebugMonitor bandwidthDebugMonitor;
++    private java.util.function.Consumer<Connection> activationHandler;
++    private final net.minecraftforge.common.util.PacketLogger packetLogger;
++   	public String hostname = ""; // CraftBukkit - add field
++   	// Spigot Start
++   	public java.util.UUID spoofedUUID;
++   	public com.mojang.authlib.properties.Property[] spoofedProfile;
++   	public boolean preparing = true;
++   	// Spigot End
+ 
+     public Connection(PacketFlow p_129482_) {
+         this.receiving = p_129482_;
++        this.packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
+     }
+ 
+     @Override
+@@ -117,6 +_,7 @@
+         super.channelActive(p_129525_);
+         this.channel = p_129525_.channel();
+         this.address = this.channel.remoteAddress();
++        if (activationHandler != null) activationHandler.accept(this);
+         if (this.delayedDisconnect != null) {
+             this.disconnect(this.delayedDisconnect);
+         }
+@@ -169,6 +_,7 @@
+             } else {
+                 if (packetlistener.shouldHandleMessage(p_129488_)) {
+                     try {
++                        packetLogger.recv(p_129488_);
+                         genericsFtw(p_129488_, packetlistener);
+                     } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
+                     } catch (RejectedExecutionException rejectedexecutionexception) {
+@@ -249,6 +_,7 @@
+                     p_326044_ -> p_326044_.pipeline().addAfter("encoder", "unbundler", packetbundleunpacker)
+                 );
+             }
++            unconfiguredpipelinehandler$outboundconfigurationtask = unconfiguredpipelinehandler$outboundconfigurationtask.andThen(f -> this.protocol = p_329145_.id());
+ 
+             boolean flag = p_329145_.id() == ConnectionProtocol.LOGIN;
+             syncAfterConfigurationChange(this.channel.writeAndFlush(unconfiguredpipelinehandler$outboundconfigurationtask.andThen(p_326048_ -> this.sendLoginDisconnect = flag)));
+@@ -290,7 +_,8 @@
+             this.disconnectListener = p_330656_;
+             this.runOnceConnected(p_326042_ -> {
+                 this.setupInboundProtocol(p_329827_, p_330656_);
 -                p_326042_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), p_300730_, p_300598_, p_297789_), null, true);
--                this.setupOutboundProtocol(p_328134_);
--            });
--        }
--    }
--
--    public void send(Packet<?> p_129513_) {
--        this.send(p_129513_, null);
--    }
--
--    public void send(Packet<?> p_243248_, @Nullable PacketSendListener p_243316_) {
--        this.send(p_243248_, p_243316_, true);
--    }
--
--    public void send(Packet<?> p_298754_, @Nullable PacketSendListener p_300685_, boolean p_298821_) {
--        if (this.isConnected()) {
--            this.flushQueue();
--            this.sendPacket(p_298754_, p_300685_, p_298821_);
--        } else {
--            this.pendingActions.add(p_296381_ -> p_296381_.sendPacket(p_298754_, p_300685_, p_298821_));
--        }
--    }
--
--    public void runOnceConnected(Consumer<Connection> p_297681_) {
--        if (this.isConnected()) {
--            this.flushQueue();
--            p_297681_.accept(this);
--        } else {
--            this.pendingActions.add(p_297681_);
--        }
--    }
--
--    private void sendPacket(Packet<?> p_129521_, @Nullable PacketSendListener p_243246_, boolean p_299777_) {
--        this.sentPackets++;
--        if (this.channel.eventLoop().inEventLoop()) {
-+         }
-+      }
-+   }
-+
-+   public void setListenerForServerboundHandshake(PacketListener p_299346_) {
-+      if (this.packetListener != null) {
-+         throw new IllegalStateException("Listener already set");
-+      } else if (this.receiving == PacketFlow.SERVERBOUND && p_299346_.flow() == PacketFlow.SERVERBOUND && p_299346_.protocol() == ConnectionProtocol.HANDSHAKING) {
-+         this.packetListener = p_299346_;
-+      } else {
-+         throw new IllegalStateException("Invalid initial listener");
-+      }
-+   }
-+
-+   public void initiateServerboundStatusConnection(String p_297855_, int p_297423_, ClientStatusPacketListener p_300237_) {
-+      this.initiateServerboundConnection(p_297855_, p_297423_, p_300237_, ClientIntent.STATUS);
-+   }
-+
-+   public void initiateServerboundPlayConnection(String p_300250_, int p_297906_, ClientLoginPacketListener p_297708_) {
-+      this.initiateServerboundConnection(p_300250_, p_297906_, p_297708_, ClientIntent.LOGIN);
-+   }
-+
-+   private void initiateServerboundConnection(String p_300730_, int p_300598_, PacketListener p_298739_, ClientIntent p_297789_) {
-+      this.disconnectListener = p_298739_;
-+      this.runOnceConnected((p_296374_) -> {
-+         p_296374_.setClientboundProtocolAfterHandshake(p_297789_);
-+         this.setListener(p_298739_);
-+         // TODO: Change this to be a immediately sent login custom payload packet?
-+         p_296374_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), net.minecraftforge.network.NetworkContext.enhanceHostName(p_300730_), p_300598_, p_297789_), (PacketSendListener)null, true);
-+      });
-+   }
-+
-+   public void setClientboundProtocolAfterHandshake(ClientIntent p_300629_) {
-+      this.channel.attr(ATTRIBUTE_CLIENTBOUND_PROTOCOL).set(p_300629_.protocol().codec(PacketFlow.CLIENTBOUND));
-+   }
-+
-+   public void send(Packet<?> p_129513_) {
-+      this.send(p_129513_, (PacketSendListener)null);
-+   }
-+
-+   public void send(Packet<?> p_243248_, @Nullable PacketSendListener p_243316_) {
-+      this.send(p_243248_, p_243316_, true);
-+   }
-+
-+   public void send(Packet<?> p_298754_, @Nullable PacketSendListener p_300685_, boolean p_298821_) {
-+      if (this.isConnected()) {
-+         this.flushQueue();
-+         this.sendPacket(p_298754_, p_300685_, p_298821_);
-+      } else {
-+         this.pendingActions.add((p_296381_) -> {
-+            p_296381_.sendPacket(p_298754_, p_300685_, p_298821_);
-+         });
-+      }
-+
-+   }
-+
-+   public void runOnceConnected(Consumer<Connection> p_297681_) {
-+      if (this.isConnected()) {
-+         this.flushQueue();
-+         p_297681_.accept(this);
-+      } else {
-+         this.pendingActions.add(p_297681_);
-+      }
-+
-+   }
-+
-+   private void sendPacket(Packet<?> p_129521_, @Nullable PacketSendListener p_243246_, boolean p_299777_) {
-+      ++this.sentPackets;
-+      if (this.channel.eventLoop().inEventLoop()) {
-+         this.doSendPacket(p_129521_, p_243246_, p_299777_);
-+      } else {
-+         this.channel.eventLoop().execute(() -> {
-             this.doSendPacket(p_129521_, p_243246_, p_299777_);
--        } else {
--            this.channel.eventLoop().execute(() -> this.doSendPacket(p_129521_, p_243246_, p_299777_));
--        }
--    }
--
--    private void doSendPacket(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
--        ChannelFuture channelfuture = p_299937_ ? this.channel.writeAndFlush(p_243260_) : this.channel.write(p_243260_);
--        if (p_243290_ != null) {
--            channelfuture.addListener(p_243167_ -> {
--                if (p_243167_.isSuccess()) {
--                    p_243290_.onSuccess();
--                } else {
--                    Packet<?> packet = p_243290_.onFailure();
--                    if (packet != null) {
--                        ChannelFuture channelfuture1 = this.channel.writeAndFlush(packet);
--                        channelfuture1.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
--                    }
--                }
--            });
--        }
--
--        channelfuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
--    }
--
--    public void flushChannel() {
--        if (this.isConnected()) {
--            this.flush();
--        } else {
--            this.pendingActions.add(Connection::flush);
--        }
--    }
--
--    private void flush() {
--        if (this.channel.eventLoop().inEventLoop()) {
--            this.channel.flush();
--        } else {
--            this.channel.eventLoop().execute(() -> this.channel.flush());
--        }
--    }
--
--    private void flushQueue() {
--        if (this.channel != null && this.channel.isOpen()) {
--            synchronized (this.pendingActions) {
--                Consumer<Connection> consumer;
--                while ((consumer = this.pendingActions.poll()) != null) {
--                    consumer.accept(this);
--                }
--            }
--        }
--    }
--
--    public void tick() {
--        this.flushQueue();
--        if (this.packetListener instanceof TickablePacketListener tickablepacketlistener) {
--            tickablepacketlistener.tick();
--        }
--
--        if (!this.isConnected() && !this.disconnectionHandled) {
--            this.handleDisconnection();
--        }
--
--        if (this.channel != null) {
--            this.channel.flush();
--        }
--
--        if (this.tickCount++ % 20 == 0) {
--            this.tickSecond();
--        }
--
--        if (this.bandwidthDebugMonitor != null) {
--            this.bandwidthDebugMonitor.tick();
--        }
--    }
--
--    protected void tickSecond() {
--        this.averageSentPackets = Mth.lerp(0.75F, (float)this.sentPackets, this.averageSentPackets);
--        this.averageReceivedPackets = Mth.lerp(0.75F, (float)this.receivedPackets, this.averageReceivedPackets);
--        this.sentPackets = 0;
--        this.receivedPackets = 0;
--    }
--
--    public SocketAddress getRemoteAddress() {
--        return this.address;
--    }
--
--    public String getLoggableAddress(boolean p_298740_) {
--        if (this.address == null) {
--            return "local";
--        } else {
++                // TODO: Change this to be a immediately sent login custom payload packet?
++                p_326042_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), net.minecraftforge.network.NetworkContext.enhanceHostName(p_300730_), p_300598_, p_297789_), null, true);
+                 this.setupOutboundProtocol(p_328134_);
+             });
+         }
+@@ -333,6 +_,7 @@
+ 
+     private void doSendPacket(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
+         ChannelFuture channelfuture = p_299937_ ? this.channel.writeAndFlush(p_243260_) : this.channel.write(p_243260_);
++        channelfuture.addListener(f -> packetLogger.send(p_243260_));
+         if (p_243290_ != null) {
+             channelfuture.addListener(p_243167_ -> {
+                 if (p_243167_.isSuccess()) {
+@@ -415,11 +_,14 @@
+         if (this.address == null) {
+             return "local";
+         } else {
 -            return p_298740_ ? this.address.toString() : "IP hidden";
--        }
--    }
--
--    public void disconnect(Component p_129508_) {
--        if (this.channel == null) {
--            this.delayedDisconnect = p_129508_;
--        }
--
--        if (this.isConnected()) {
--            this.channel.close().awaitUninterruptibly();
--            this.disconnectedReason = p_129508_;
--        }
--    }
--
--    public boolean isMemoryConnection() {
--        return this.channel instanceof LocalChannel || this.channel instanceof LocalServerChannel;
--    }
--
--    public PacketFlow getReceiving() {
--        return this.receiving;
--    }
--
--    public PacketFlow getSending() {
--        return this.receiving.getOpposite();
--    }
--
--    public static Connection connectToServer(InetSocketAddress p_178301_, boolean p_178302_, @Nullable LocalSampleLogger p_333468_) {
--        Connection connection = new Connection(PacketFlow.CLIENTBOUND);
--        if (p_333468_ != null) {
--            connection.setBandwidthLogger(p_333468_);
--        }
--
--        ChannelFuture channelfuture = connect(p_178301_, p_178302_, connection);
--        channelfuture.syncUninterruptibly();
--        return connection;
--    }
--
--    public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
--        Class<? extends SocketChannel> oclass;
--        EventLoopGroup eventloopgroup;
--        if (Epoll.isAvailable() && p_290035_) {
--            oclass = EpollSocketChannel.class;
--            eventloopgroup = NETWORK_EPOLL_WORKER_GROUP.get();
--        } else {
--            oclass = NioSocketChannel.class;
--            eventloopgroup = NETWORK_WORKER_GROUP.get();
--        }
--
--        return new Bootstrap().group(eventloopgroup).handler(new ChannelInitializer<Channel>() {
--            @Override
--            protected void initChannel(Channel p_129552_) {
--                try {
--                    p_129552_.config().setOption(ChannelOption.TCP_NODELAY, true);
--                } catch (ChannelException channelexception) {
--                }
--
--                ChannelPipeline channelpipeline = p_129552_.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
--                Connection.configureSerialization(channelpipeline, PacketFlow.CLIENTBOUND, false, p_290031_.bandwidthDebugMonitor);
--                p_290031_.configurePacketHandler(channelpipeline);
--            }
--        }).channel(oclass).connect(p_290034_.getAddress(), p_290034_.getPort());
--    }
--
--    private static String outboundHandlerName(boolean p_334174_) {
--        return p_334174_ ? "encoder" : "outbound_config";
--    }
--
--    private static String inboundHandlerName(boolean p_334983_) {
--        return p_334983_ ? "decoder" : "inbound_config";
--    }
--
--    public void configurePacketHandler(ChannelPipeline p_300754_) {
--        p_300754_.addLast("hackfix", new ChannelOutboundHandlerAdapter() {
--            @Override
--            public void write(ChannelHandlerContext p_335545_, Object p_329198_, ChannelPromise p_332397_) throws Exception {
--                super.write(p_335545_, p_329198_, p_332397_);
--            }
--        }).addLast("packet_handler", this);
--    }
--
--    public static void configureSerialization(ChannelPipeline p_265436_, PacketFlow p_265104_, boolean p_328504_, @Nullable BandwidthDebugMonitor p_299297_) {
--        PacketFlow packetflow = p_265104_.getOpposite();
--        boolean flag = p_265104_ == PacketFlow.SERVERBOUND;
--        boolean flag1 = packetflow == PacketFlow.SERVERBOUND;
--        p_265436_.addLast("splitter", createFrameDecoder(p_299297_, p_328504_))
--            .addLast(new FlowControlHandler())
--            .addLast(inboundHandlerName(flag), (ChannelHandler)(flag ? new PacketDecoder<>(INITIAL_PROTOCOL) : new UnconfiguredPipelineHandler.Inbound()))
--            .addLast("prepender", createFrameEncoder(p_328504_))
--            .addLast(outboundHandlerName(flag1), (ChannelHandler)(flag1 ? new PacketEncoder<>(INITIAL_PROTOCOL) : new UnconfiguredPipelineHandler.Outbound()));
--    }
--
--    private static ChannelOutboundHandler createFrameEncoder(boolean p_335200_) {
--        return (ChannelOutboundHandler)(p_335200_ ? new NoOpFrameEncoder() : new Varint21LengthFieldPrepender());
--    }
--
--    private static ChannelInboundHandler createFrameDecoder(@Nullable BandwidthDebugMonitor p_329567_, boolean p_335874_) {
--        if (!p_335874_) {
--            return new Varint21FrameDecoder(p_329567_);
--        } else {
--            return (ChannelInboundHandler)(p_329567_ != null ? new MonitorFrameDecoder(p_329567_) : new NoOpFrameDecoder());
--        }
--    }
--
--    public static void configureInMemoryPipeline(ChannelPipeline p_298130_, PacketFlow p_298133_) {
--        configureSerialization(p_298130_, p_298133_, true, null);
--    }
--
--    public static Connection connectToLocalServer(SocketAddress p_129494_) {
--        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
--        new Bootstrap().group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
--            @Override
--            protected void initChannel(Channel p_332618_) {
--                ChannelPipeline channelpipeline = p_332618_.pipeline();
--                Connection.configureInMemoryPipeline(channelpipeline, PacketFlow.CLIENTBOUND);
--                connection.configurePacketHandler(channelpipeline);
--            }
--        }).channel(LocalChannel.class).connect(p_129494_).syncUninterruptibly();
--        return connection;
--    }
--
--    public void setEncryptionKey(Cipher p_129496_, Cipher p_129497_) {
--        this.encrypted = true;
--        this.channel.pipeline().addBefore("splitter", "decrypt", new CipherDecoder(p_129496_));
--        this.channel.pipeline().addBefore("prepender", "encrypt", new CipherEncoder(p_129497_));
--    }
--
--    public boolean isEncrypted() {
--        return this.encrypted;
--    }
--
--    public boolean isConnected() {
--        return this.channel != null && this.channel.isOpen();
--    }
--
--    public boolean isConnecting() {
--        return this.channel == null;
--    }
--
--    @Nullable
--    public PacketListener getPacketListener() {
--        return this.packetListener;
--    }
--
--    @Nullable
--    public Component getDisconnectedReason() {
--        return this.disconnectedReason;
--    }
--
--    public void setReadOnly() {
--        if (this.channel != null) {
--            this.channel.config().setAutoRead(false);
--        }
--    }
--
--    public void setupCompression(int p_129485_, boolean p_182682_) {
--        if (p_129485_ >= 0) {
--            if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder compressiondecoder) {
--                compressiondecoder.setThreshold(p_129485_, p_182682_);
--            } else {
--                this.channel.pipeline().addAfter("splitter", "decompress", new CompressionDecoder(p_129485_, p_182682_));
--            }
--
--            if (this.channel.pipeline().get("compress") instanceof CompressionEncoder compressionencoder) {
--                compressionencoder.setThreshold(p_129485_);
--            } else {
--                this.channel.pipeline().addAfter("prepender", "compress", new CompressionEncoder(p_129485_));
--            }
--        } else {
--            if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder) {
--                this.channel.pipeline().remove("decompress");
--            }
--
--            if (this.channel.pipeline().get("compress") instanceof CompressionEncoder) {
--                this.channel.pipeline().remove("compress");
--            }
--        }
--    }
--
--    public void handleDisconnection() {
--        if (this.channel != null && !this.channel.isOpen()) {
--            if (this.disconnectionHandled) {
--                LOGGER.warn("handleDisconnection() called twice");
--            } else {
--                this.disconnectionHandled = true;
--                PacketListener packetlistener = this.getPacketListener();
--                PacketListener packetlistener1 = packetlistener != null ? packetlistener : this.disconnectListener;
--                if (packetlistener1 != null) {
--                    Component component = Objects.requireNonNullElseGet(this.getDisconnectedReason(), () -> Component.translatable("multiplayer.disconnect.generic"));
--                    packetlistener1.onDisconnect(component);
--                }
--            }
--        }
--    }
--
--    public float getAverageReceivedPackets() {
--        return this.averageReceivedPackets;
--    }
--
--    public float getAverageSentPackets() {
--        return this.averageSentPackets;
--    }
--
--    public void setBandwidthLogger(LocalSampleLogger p_333554_) {
--        this.bandwidthDebugMonitor = new BandwidthDebugMonitor(p_333554_);
--    }
-+         });
-+      }
++            return p_298740_ ? net.minecraftforge.network.DualStackUtils.getAddressString(this.address) : "IP hidden";
+         }
+     }
+ 
+     public void disconnect(Component p_129508_) {
++      	// Spigot Start
++      	this.preparing = false;
++      	// Spigot End
+         if (this.channel == null) {
+             this.delayedDisconnect = p_129508_;
+         }
+@@ -454,6 +_,8 @@
+     }
+ 
+     public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
++        net.minecraftforge.network.DualStackUtils.checkIPv6(p_290034_.getAddress());
++        p_290031_.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
+         Class<? extends SocketChannel> oclass;
+         EventLoopGroup eventloopgroup;
+         if (Epoll.isAvailable() && p_290035_) {
+@@ -525,6 +_,7 @@
+ 
+     public static Connection connectToLocalServer(SocketAddress p_129494_) {
+         final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
++        connection.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
+         new Bootstrap().group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
+             @Override
+             protected void initChannel(Channel p_332618_) {
+@@ -618,7 +_,24 @@
+         return this.averageSentPackets;
+     }
+ 
++    public Channel channel() {
++        return this.channel;
++    }
 +
-+   }
++    private ConnectionProtocol protocol = INITIAL_PROTOCOL.id();
++    public ConnectionProtocol getProtocol() {
++        return protocol;
++    }
 +
-+   private void doSendPacket(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
-+      ChannelFuture channelfuture = p_299937_ ? this.channel.writeAndFlush(p_243260_) : this.channel.write(p_243260_);
-+      channelfuture.addListener(f -> packetLogger.send(p_243260_));
-+      if (p_243290_ != null) {
-+         channelfuture.addListener((p_243167_) -> {
-+            if (p_243167_.isSuccess()) {
-+               p_243290_.onSuccess();
-+            } else {
-+               Packet<?> packet = p_243290_.onFailure();
-+               if (packet != null) {
-+                  ChannelFuture channelfuture1 = this.channel.writeAndFlush(packet);
-+                  channelfuture1.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-+               }
-+            }
-+
-+         });
-+      }
-+
-+      channelfuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-+   }
-+
-+   public void flushChannel() {
-+      if (this.isConnected()) {
-+         this.flush();
-+      } else {
-+         this.pendingActions.add(Connection::flush);
-+      }
-+
-+   }
-+
-+   private void flush() {
-+      if (this.channel.eventLoop().inEventLoop()) {
-+         this.channel.flush();
-+      } else {
-+         this.channel.eventLoop().execute(() -> {
-+            this.channel.flush();
-+         });
-+      }
-+
-+   }
-+
-+   private static AttributeKey<ConnectionProtocol.CodecData<?>> getProtocolKey(PacketFlow p_298298_) {
-+      AttributeKey attributekey;
-+      switch (p_298298_) {
-+         case CLIENTBOUND:
-+            attributekey = ATTRIBUTE_CLIENTBOUND_PROTOCOL;
-+            break;
-+         case SERVERBOUND:
-+            attributekey = ATTRIBUTE_SERVERBOUND_PROTOCOL;
-+            break;
-+         default:
-+            throw new IncompatibleClassChangeError();
-+      }
-+
-+      return attributekey;
-+   }
-+
-+   private void flushQueue() {
-+      if (this.channel != null && this.channel.isOpen()) {
-+         synchronized(this.pendingActions) {
-+            Consumer<Connection> consumer;
-+            while((consumer = this.pendingActions.poll()) != null) {
-+               consumer.accept(this);
-+            }
-+
-+         }
-+      }
-+   }
-+
-+   public void tick() {
-+      this.flushQueue();
-+      PacketListener packetlistener = this.packetListener;
-+      if (packetlistener instanceof TickablePacketListener tickablepacketlistener) {
-+         tickablepacketlistener.tick();
-+      }
-+
-+      if (!this.isConnected() && !this.disconnectionHandled) {
-+         this.handleDisconnection();
-+      }
-+
-+      if (this.channel != null) {
-+         this.channel.flush();
-+      }
-+
-+      if (this.tickCount++ % 20 == 0) {
-+         this.tickSecond();
-+      }
-+
-+      if (this.bandwidthDebugMonitor != null) {
-+         this.bandwidthDebugMonitor.tick();
-+      }
-+
-+   }
-+
-+   protected void tickSecond() {
-+      this.averageSentPackets = Mth.lerp(0.75F, (float)this.sentPackets, this.averageSentPackets);
-+      this.averageReceivedPackets = Mth.lerp(0.75F, (float)this.receivedPackets, this.averageReceivedPackets);
-+      this.sentPackets = 0;
-+      this.receivedPackets = 0;
-+   }
-+
-+   public SocketAddress getRemoteAddress() {
-+      return this.address;
-+   }
-+
-+   public String getLoggableAddress(boolean p_298740_) {
-+      if (this.address == null) {
-+         return "local";
-+      } else {
-+         return p_298740_ ? net.minecraftforge.network.DualStackUtils.getAddressString(this.address) : "IP hidden";
-+      }
-+   }
-+
-+   public void disconnect(Component p_129508_) {
-+      // Spigot Start
-+      this.preparing = false;
-+      // Spigot End
-+      if (this.channel == null) {
-+         this.delayedDisconnect = p_129508_;
-+      }
-+
-+      if (this.isConnected()) {
-+         this.channel.close().awaitUninterruptibly();
-+         this.disconnectedReason = p_129508_;
-+      }
-+
-+   }
-+
-+   public boolean isMemoryConnection() {
-+      return this.channel instanceof LocalChannel || this.channel instanceof LocalServerChannel;
-+   }
-+
-+   public PacketFlow getReceiving() {
-+      return this.receiving;
-+   }
-+
-+   public PacketFlow getSending() {
-+      return this.receiving.getOpposite();
-+   }
-+
-+   public static Connection connectToServer(InetSocketAddress p_178301_, boolean p_178302_, @Nullable SampleLogger p_300093_) {
-+      Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-+      if (p_300093_ != null) {
-+         connection.setBandwidthLogger(p_300093_);
-+      }
-+
-+      ChannelFuture channelfuture = connect(p_178301_, p_178302_, connection);
-+      channelfuture.syncUninterruptibly();
-+      return connection;
-+   }
-+
-+   public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
-+      net.minecraftforge.network.DualStackUtils.checkIPv6(p_290034_.getAddress());
-+      p_290031_.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
-+      Class<? extends SocketChannel> oclass;
-+      EventLoopGroup eventloopgroup;
-+      if (Epoll.isAvailable() && p_290035_) {
-+         oclass = EpollSocketChannel.class;
-+         eventloopgroup = NETWORK_EPOLL_WORKER_GROUP.get();
-+      } else {
-+         oclass = NioSocketChannel.class;
-+         eventloopgroup = NETWORK_WORKER_GROUP.get();
-+      }
-+
-+      return (new Bootstrap()).group(eventloopgroup).handler(new ChannelInitializer<Channel>() {
-+         protected void initChannel(Channel p_129552_) {
-+            Connection.setInitialProtocolAttributes(p_129552_);
-+
-+            try {
-+               p_129552_.config().setOption(ChannelOption.TCP_NODELAY, true);
-+            } catch (ChannelException channelexception) {
-+            }
-+
-+            ChannelPipeline channelpipeline = p_129552_.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
-+            Connection.configureSerialization(channelpipeline, PacketFlow.CLIENTBOUND, p_290031_.bandwidthDebugMonitor);
-+            p_290031_.configurePacketHandler(channelpipeline);
-+         }
-+      }).channel(oclass).connect(p_290034_.getAddress(), p_290034_.getPort());
-+   }
-+
-+   public static void configureSerialization(ChannelPipeline p_265436_, PacketFlow p_265104_, @Nullable BandwidthDebugMonitor p_299297_) {
-+      PacketFlow packetflow = p_265104_.getOpposite();
-+      AttributeKey<ConnectionProtocol.CodecData<?>> attributekey = getProtocolKey(p_265104_);
-+      AttributeKey<ConnectionProtocol.CodecData<?>> attributekey1 = getProtocolKey(packetflow);
-+      p_265436_.addLast("splitter", new Varint21FrameDecoder(p_299297_)).addLast("decoder", new PacketDecoder(attributekey)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(attributekey1)).addLast("unbundler", new PacketBundleUnpacker(attributekey1)).addLast("bundler", new PacketBundlePacker(attributekey));
-+   }
-+
-+   public void configurePacketHandler(ChannelPipeline p_300754_) {
-+      p_300754_.addLast(new FlowControlHandler()).addLast("packet_handler", this);
-+   }
-+
-+   private static void configureInMemoryPacketValidation(ChannelPipeline p_299383_, PacketFlow p_299305_) {
-+      PacketFlow packetflow = p_299305_.getOpposite();
-+      AttributeKey<ConnectionProtocol.CodecData<?>> attributekey = getProtocolKey(p_299305_);
-+      AttributeKey<ConnectionProtocol.CodecData<?>> attributekey1 = getProtocolKey(packetflow);
-+      p_299383_.addLast("validator", new PacketFlowValidator(attributekey, attributekey1));
-+   }
-+
-+   public static void configureInMemoryPipeline(ChannelPipeline p_298130_, PacketFlow p_298133_) {
-+      configureInMemoryPacketValidation(p_298130_, p_298133_);
-+   }
-+
-+   public static Connection connectToLocalServer(SocketAddress p_129494_) {
-+      final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-+      connection.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
-+      (new Bootstrap()).group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
-+         protected void initChannel(Channel p_129557_) {
-+            Connection.setInitialProtocolAttributes(p_129557_);
-+            ChannelPipeline channelpipeline = p_129557_.pipeline();
-+            Connection.configureInMemoryPipeline(channelpipeline, PacketFlow.CLIENTBOUND);
-+            connection.configurePacketHandler(channelpipeline);
-+         }
-+      }).channel(LocalChannel.class).connect(p_129494_).syncUninterruptibly();
-+      return connection;
-+   }
-+
-+   public void setEncryptionKey(Cipher p_129496_, Cipher p_129497_) {
-+      this.encrypted = true;
-+      this.channel.pipeline().addBefore("splitter", "decrypt", new CipherDecoder(p_129496_));
-+      this.channel.pipeline().addBefore("prepender", "encrypt", new CipherEncoder(p_129497_));
-+   }
-+
-+   public boolean isEncrypted() {
-+      return this.encrypted;
-+   }
-+
-+   public boolean isConnected() {
-+      return this.channel != null && this.channel.isOpen();
-+   }
-+
-+   public boolean isConnecting() {
-+      return this.channel == null;
-+   }
-+
-+   @Nullable
-+   public PacketListener getPacketListener() {
-+      return this.packetListener;
-+   }
-+
-+   @Nullable
-+   public Component getDisconnectedReason() {
-+      return this.disconnectedReason;
-+   }
-+
-+   public void setReadOnly() {
-+      if (this.channel != null) {
-+         this.channel.config().setAutoRead(false);
-+      }
-+
-+   }
-+
-+   public void setupCompression(int p_129485_, boolean p_182682_) {
-+      if (p_129485_ >= 0) {
-+         if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder) {
-+            ((CompressionDecoder)this.channel.pipeline().get("decompress")).setThreshold(p_129485_, p_182682_);
-+         } else {
-+            this.channel.pipeline().addBefore("decoder", "decompress", new CompressionDecoder(p_129485_, p_182682_));
-+         }
-+
-+         if (this.channel.pipeline().get("compress") instanceof CompressionEncoder) {
-+            ((CompressionEncoder)this.channel.pipeline().get("compress")).setThreshold(p_129485_);
-+         } else {
-+            this.channel.pipeline().addBefore("encoder", "compress", new CompressionEncoder(p_129485_));
-+         }
-+      } else {
-+         if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder) {
-+            this.channel.pipeline().remove("decompress");
-+         }
-+
-+         if (this.channel.pipeline().get("compress") instanceof CompressionEncoder) {
-+            this.channel.pipeline().remove("compress");
-+         }
-+      }
-+
-+   }
-+
-+   public void handleDisconnection() {
-+      if (this.channel != null && !this.channel.isOpen()) {
-+         if (this.disconnectionHandled) {
-+            LOGGER.warn("handleDisconnection() called twice");
-+         } else {
-+            this.disconnectionHandled = true;
-+            PacketListener packetlistener = this.getPacketListener();
-+            PacketListener packetlistener1 = packetlistener != null ? packetlistener : this.disconnectListener;
-+            if (packetlistener1 != null) {
-+               Component component = Objects.requireNonNullElseGet(this.getDisconnectedReason(), () -> {
-+                  return Component.translatable("multiplayer.disconnect.generic");
-+               });
-+               packetlistener1.onDisconnect(component);
-+            }
-+
-+         }
-+      }
-+   }
-+
-+   public float getAverageReceivedPackets() {
-+      return this.averageReceivedPackets;
-+   }
-+
-+   public float getAverageSentPackets() {
-+      return this.averageSentPackets;
-+   }
-+
-+   public Channel channel() {
-+      return this.channel;
-+   }
-+
-+   public ConnectionProtocol getProtocol() {
-+      return this.channel.attr(getProtocolKey(getSending())).get().protocol();
-+   }
-+
-+   public void setBandwidthLogger(SampleLogger p_300126_) {
-+      this.bandwidthDebugMonitor = new BandwidthDebugMonitor(p_300126_);
-+   }
+     public void setBandwidthLogger(LocalSampleLogger p_333554_) {
+         this.bandwidthDebugMonitor = new BandwidthDebugMonitor(p_333554_);
++   	}
 +
 +
-+   // Spigot Start
-+   public SocketAddress getRawAddress()
++   	// Spigot Start
++   	public SocketAddress getRawAddress()
 +    {
 +       return this.channel.remoteAddress();
-+    }
+     }
 +    // Spigot End
  }

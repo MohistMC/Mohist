@@ -21,37 +21,25 @@
  
  public class Bat extends AmbientCreature {
      public static final float FLAP_LENGTH_SECONDS = 0.5F;
-@@ -136,18 +_,18 @@
+@@ -136,13 +_,13 @@
                      this.yHeadRot = (float)this.random.nextInt(360);
                  }
  
 -                if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null) {
 -                    this.setResting(false);
--                    if (!flag) {
--                        this.level().levelEvent(null, 1025, blockpos, 0);
++            	if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
++               		this.setResting(false);
+                     if (!flag) {
+                         this.level().levelEvent(null, 1025, blockpos, 0);
 -                    }
 -                }
 -            } else {
--                this.setResting(false);
--                if (!flag) {
--                    this.level().levelEvent(null, 1025, blockpos, 0);
--                }
--            }
-+            if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
-+               this.setResting(false);
-+               if (!flag) {
-+                  this.level().levelEvent((Player)null, 1025, blockpos, 0);
 +               }
 +            }
 +         } else if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
-+            this.setResting(false);
-+            if (!flag) {
-+               this.level().levelEvent((Player)null, 1025, blockpos, 0);
-+            }
-+         }
-         } else {
-             if (this.targetPosition != null && (!this.level().isEmptyBlock(this.targetPosition) || this.targetPosition.getY() <= this.level().getMinBuildHeight())) {
-                 this.targetPosition = null;
+                 this.setResting(false);
+                 if (!flag) {
+                     this.level().levelEvent(null, 1025, blockpos, 0);
 @@ -198,7 +_,7 @@
          if (this.isInvulnerableTo(p_27424_)) {
              return false;

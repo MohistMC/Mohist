@@ -7,15 +7,7 @@
  import com.google.common.collect.Maps;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
-@@ -8,7 +_,6 @@
- import com.mojang.brigadier.builder.ArgumentBuilder;
- import com.mojang.brigadier.builder.LiteralArgumentBuilder;
- import com.mojang.brigadier.builder.RequiredArgumentBuilder;
--import com.mojang.brigadier.context.CommandContext;
- import com.mojang.brigadier.context.CommandContextBuilder;
- import com.mojang.brigadier.context.ContextChain;
- import com.mojang.brigadier.exceptions.CommandSyntaxException;
-@@ -16,14 +_,15 @@
+@@ -16,9 +_,11 @@
  import com.mojang.brigadier.tree.RootCommandNode;
  import com.mojang.logging.LogUtils;
  import java.util.Collection;
@@ -27,28 +19,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
- import java.util.stream.Collectors;
--import java.util.stream.Stream;
- import javax.annotation.Nullable;
- import net.minecraft.ChatFormatting;
- import net.minecraft.SharedConstants;
-@@ -43,7 +_,6 @@
- import net.minecraft.network.chat.ComponentUtils;
- import net.minecraft.network.chat.HoverEvent;
- import net.minecraft.network.chat.MutableComponent;
--import net.minecraft.network.chat.Style;
- import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.server.MinecraftServer;
-@@ -126,7 +_,6 @@
- import net.minecraft.server.commands.TickCommand;
- import net.minecraft.server.commands.TimeCommand;
- import net.minecraft.server.commands.TitleCommand;
--import net.minecraft.server.commands.TransferCommand;
- import net.minecraft.server.commands.TriggerCommand;
- import net.minecraft.server.commands.WardenSpawnTrackerCommand;
- import net.minecraft.server.commands.WeatherCommand;
-@@ -137,97 +_,99 @@
+@@ -137,6 +_,8 @@
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
  import net.minecraft.world.level.GameRules;
@@ -57,186 +28,16 @@
  import org.slf4j.Logger;
  
  public class Commands {
--    private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
--    private static final Logger LOGGER = LogUtils.getLogger();
--    public static final int LEVEL_ALL = 0;
--    public static final int LEVEL_MODERATORS = 1;
--    public static final int LEVEL_GAMEMASTERS = 2;
--    public static final int LEVEL_ADMINS = 3;
--    public static final int LEVEL_OWNERS = 4;
--    private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
--
--    public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
--        AdvancementCommands.register(this.dispatcher);
--        AttributeCommand.register(this.dispatcher, p_230944_);
--        ExecuteCommand.register(this.dispatcher, p_230944_);
--        BossBarCommands.register(this.dispatcher, p_230944_);
--        ClearInventoryCommands.register(this.dispatcher, p_230944_);
--        CloneCommands.register(this.dispatcher, p_230944_);
--        DamageCommand.register(this.dispatcher, p_230944_);
--        DataCommands.register(this.dispatcher);
--        DataPackCommand.register(this.dispatcher);
--        DebugCommand.register(this.dispatcher);
--        DefaultGameModeCommands.register(this.dispatcher);
--        DifficultyCommand.register(this.dispatcher);
--        EffectCommands.register(this.dispatcher, p_230944_);
--        EmoteCommands.register(this.dispatcher);
--        EnchantCommand.register(this.dispatcher, p_230944_);
--        ExperienceCommand.register(this.dispatcher);
--        FillCommand.register(this.dispatcher, p_230944_);
--        FillBiomeCommand.register(this.dispatcher, p_230944_);
--        ForceLoadCommand.register(this.dispatcher);
--        FunctionCommand.register(this.dispatcher);
--        GameModeCommand.register(this.dispatcher);
--        GameRuleCommand.register(this.dispatcher);
--        GiveCommand.register(this.dispatcher, p_230944_);
--        HelpCommand.register(this.dispatcher);
--        ItemCommands.register(this.dispatcher, p_230944_);
--        KickCommand.register(this.dispatcher);
--        KillCommand.register(this.dispatcher);
--        ListPlayersCommand.register(this.dispatcher);
--        LocateCommand.register(this.dispatcher, p_230944_);
--        LootCommand.register(this.dispatcher, p_230944_);
--        MsgCommand.register(this.dispatcher);
--        ParticleCommand.register(this.dispatcher, p_230944_);
--        PlaceCommand.register(this.dispatcher);
--        PlaySoundCommand.register(this.dispatcher);
--        RandomCommand.register(this.dispatcher);
--        ReloadCommand.register(this.dispatcher);
--        RecipeCommand.register(this.dispatcher);
--        ReturnCommand.register(this.dispatcher);
--        RideCommand.register(this.dispatcher);
--        SayCommand.register(this.dispatcher);
--        ScheduleCommand.register(this.dispatcher);
--        ScoreboardCommand.register(this.dispatcher, p_230944_);
--        SeedCommand.register(this.dispatcher, p_230943_ != Commands.CommandSelection.INTEGRATED);
--        SetBlockCommand.register(this.dispatcher, p_230944_);
--        SetSpawnCommand.register(this.dispatcher);
--        SetWorldSpawnCommand.register(this.dispatcher);
--        SpectateCommand.register(this.dispatcher);
--        SpreadPlayersCommand.register(this.dispatcher);
--        StopSoundCommand.register(this.dispatcher);
--        SummonCommand.register(this.dispatcher, p_230944_);
--        TagCommand.register(this.dispatcher);
--        TeamCommand.register(this.dispatcher, p_230944_);
--        TeamMsgCommand.register(this.dispatcher);
--        TeleportCommand.register(this.dispatcher);
--        TellRawCommand.register(this.dispatcher, p_230944_);
--        TickCommand.register(this.dispatcher);
--        TimeCommand.register(this.dispatcher);
--        TitleCommand.register(this.dispatcher, p_230944_);
--        TriggerCommand.register(this.dispatcher);
--        WeatherCommand.register(this.dispatcher);
--        WorldBorderCommand.register(this.dispatcher);
--        if (JvmProfiler.INSTANCE.isAvailable()) {
--            JfrCommand.register(this.dispatcher);
--        }
--
--        if (SharedConstants.IS_RUNNING_IN_IDE) {
--            TestCommand.register(this.dispatcher);
--            ResetChunksCommand.register(this.dispatcher);
--            RaidCommand.register(this.dispatcher, p_230944_);
--            DebugPathCommand.register(this.dispatcher);
--            DebugMobSpawningCommand.register(this.dispatcher);
--            WardenSpawnTrackerCommand.register(this.dispatcher);
--            SpawnArmorTrimsCommand.register(this.dispatcher);
--            ServerPackCommand.register(this.dispatcher);
--            if (p_230943_.includeDedicated) {
--                DebugConfigCommand.register(this.dispatcher);
--            }
--        }
-+   private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   public static final int LEVEL_ALL = 0;
-+   public static final int LEVEL_MODERATORS = 1;
-+   public static final int LEVEL_GAMEMASTERS = 2;
-+   public static final int LEVEL_ADMINS = 3;
-+   public static final int LEVEL_OWNERS = 4;
-+   private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
-+
-+   public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
-+      AdvancementCommands.register(this.dispatcher);
-+      AttributeCommand.register(this.dispatcher, p_230944_);
-+      ExecuteCommand.register(this.dispatcher, p_230944_);
-+      BossBarCommands.register(this.dispatcher);
-+      ClearInventoryCommands.register(this.dispatcher, p_230944_);
-+      CloneCommands.register(this.dispatcher, p_230944_);
-+      DamageCommand.register(this.dispatcher, p_230944_);
-+      DataCommands.register(this.dispatcher);
-+      DataPackCommand.register(this.dispatcher);
-+      DebugCommand.register(this.dispatcher);
-+      DefaultGameModeCommands.register(this.dispatcher);
-+      DifficultyCommand.register(this.dispatcher);
-+      EffectCommands.register(this.dispatcher, p_230944_);
-+      EmoteCommands.register(this.dispatcher);
-+      EnchantCommand.register(this.dispatcher, p_230944_);
-+      ExperienceCommand.register(this.dispatcher);
-+      FillCommand.register(this.dispatcher, p_230944_);
-+      FillBiomeCommand.register(this.dispatcher, p_230944_);
-+      ForceLoadCommand.register(this.dispatcher);
-+      FunctionCommand.register(this.dispatcher);
-+      GameModeCommand.register(this.dispatcher);
-+      GameRuleCommand.register(this.dispatcher);
-+      GiveCommand.register(this.dispatcher, p_230944_);
-+      HelpCommand.register(this.dispatcher);
-+      ItemCommands.register(this.dispatcher, p_230944_);
-+      KickCommand.register(this.dispatcher);
-+      KillCommand.register(this.dispatcher);
-+      ListPlayersCommand.register(this.dispatcher);
-+      LocateCommand.register(this.dispatcher, p_230944_);
-+      LootCommand.register(this.dispatcher, p_230944_);
-+      MsgCommand.register(this.dispatcher);
-+      ParticleCommand.register(this.dispatcher, p_230944_);
-+      PlaceCommand.register(this.dispatcher);
-+      PlaySoundCommand.register(this.dispatcher);
-+      RandomCommand.register(this.dispatcher);
-+      ReloadCommand.register(this.dispatcher);
-+      RecipeCommand.register(this.dispatcher);
-+      ReturnCommand.register(this.dispatcher);
-+      RideCommand.register(this.dispatcher);
-+      SayCommand.register(this.dispatcher);
-+      ScheduleCommand.register(this.dispatcher);
-+      ScoreboardCommand.register(this.dispatcher);
-+      SeedCommand.register(this.dispatcher, p_230943_ != Commands.CommandSelection.INTEGRATED);
-+      SetBlockCommand.register(this.dispatcher, p_230944_);
-+      SetSpawnCommand.register(this.dispatcher);
-+      SetWorldSpawnCommand.register(this.dispatcher);
-+      SpectateCommand.register(this.dispatcher);
-+      SpreadPlayersCommand.register(this.dispatcher);
-+      StopSoundCommand.register(this.dispatcher);
-+      SummonCommand.register(this.dispatcher, p_230944_);
-+      TagCommand.register(this.dispatcher);
-+      TeamCommand.register(this.dispatcher);
-+      TeamMsgCommand.register(this.dispatcher);
-+      TeleportCommand.register(this.dispatcher);
-+      TellRawCommand.register(this.dispatcher);
-+      TickCommand.register(this.dispatcher);
-+      TimeCommand.register(this.dispatcher);
-+      TitleCommand.register(this.dispatcher);
-+      TriggerCommand.register(this.dispatcher);
-+      WeatherCommand.register(this.dispatcher);
-+      WorldBorderCommand.register(this.dispatcher);
-+      if (JvmProfiler.INSTANCE.isAvailable()) {
-+         JfrCommand.register(this.dispatcher);
-+      }
-+
-+      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
-+         TestCommand.register(this.dispatcher);
-+         ResetChunksCommand.register(this.dispatcher);
-+         RaidCommand.register(this.dispatcher);
-+         DebugPathCommand.register(this.dispatcher);
-+         DebugMobSpawningCommand.register(this.dispatcher);
-+         WardenSpawnTrackerCommand.register(this.dispatcher);
-+         SpawnArmorTrimsCommand.register(this.dispatcher);
-+         ServerPackCommand.register(this.dispatcher);
-+         if (p_230943_.includeDedicated) {
-+            DebugConfigCommand.register(this.dispatcher);
-+         }
-+      }
+@@ -215,7 +_,7 @@
+             JfrCommand.register(this.dispatcher);
+         }
  
-         if (p_230943_.includeDedicated) {
-             BanIpCommands.register(this.dispatcher);
-@@ -250,61 +_,126 @@
+-        if (SharedConstants.IS_RUNNING_IN_IDE) {
++        if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
+             TestCommand.register(this.dispatcher);
+             ResetChunksCommand.register(this.dispatcher);
+             RaidCommand.register(this.dispatcher, p_230944_);
+@@ -250,27 +_,93 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
@@ -264,42 +65,6 @@
 -        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
 -        commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
 -        ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
--
--        try {
--            if (contextchain != null) {
--                executeCommandInContext(
--                    commandsourcestack,
--                    p_308343_ -> ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY)
--                );
--            }
--        } catch (Exception exception) {
--            MutableComponent mutablecomponent = Component.literal(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
--            if (LOGGER.isDebugEnabled()) {
--                LOGGER.error("Command exception: /{}", p_242841_, exception);
--                StackTraceElement[] astacktraceelement = exception.getStackTrace();
--
--                for (int i = 0; i < Math.min(astacktraceelement.length, 3); i++) {
--                    mutablecomponent.append("\n\n")
--                        .append(astacktraceelement[i].getMethodName())
--                        .append("\n ")
--                        .append(astacktraceelement[i].getFileName())
--                        .append(":")
--                        .append(String.valueOf(astacktraceelement[i].getLineNumber()));
--                }
--            }
--
--            commandsourcestack.sendFailure(
--                Component.translatable("command.failed").withStyle(p_82137_ -> p_82137_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, mutablecomponent)))
--            );
--            if (SharedConstants.IS_RUNNING_IN_IDE) {
--                commandsourcestack.sendFailure(Component.literal(Util.describeError(exception)));
--                LOGGER.error("'/{}' threw an exception", p_242841_, exception);
--            }
--        } finally {
--            commandsourcestack.getServer().getProfiler().pop();
--        }
--    }
--
 +   // CraftBukkit start
 +   public void  dispatchServerCommand(CommandSourceStack sender, String command) {
 +      Joiner joiner = Joiner.on(" ");
@@ -360,46 +125,25 @@
 +      commandsourcestack.getServer().getProfiler().push(() -> {
 +         return "/" + p_242841_;
 +      });
-+
-+      try {
-+         var event = new net.minecraftforge.event.CommandEvent(p_242844_);
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+            if (event.getException() instanceof Exception exception)
-+               throw exception;
-+            else if (event.getException() != null)
-+               com.google.common.base.Throwables.throwIfUnchecked(event.getException());
-+            return;
-+         }
-+         ContextChain<CommandSourceStack> contextchain = finishParsing(event.getParseResults(), p_242841_, commandsourcestack);
-+         if (contextchain != null) {
-+            executeCommandInContext(commandsourcestack, (p_308343_) -> {
-+               ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY);
-+            });
-+         }
-+      } catch (Exception exception) {
-+         MutableComponent mutablecomponent = Component.literal(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
-+         if (LOGGER.isDebugEnabled()) {
-+            LOGGER.error("Command exception: /{}", p_242841_, exception);
-+            StackTraceElement[] astacktraceelement = exception.getStackTrace();
-+
-+            for(int i = 0; i < Math.min(astacktraceelement.length, 3); ++i) {
-+               mutablecomponent.append("\n\n").append(astacktraceelement[i].getMethodName()).append("\n ").append(astacktraceelement[i].getFileName()).append(":").append(String.valueOf(astacktraceelement[i].getLineNumber()));
+ 
+         try {
++            var event = new net.minecraftforge.event.CommandEvent(p_242844_);
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++                if (event.getException() instanceof Exception exception) {
++                    throw exception;
++                } else if (event.getException() != null) {
++                    com.google.common.base.Throwables.throwIfUnchecked(event.getException());
++                }
++                return;
 +            }
-+         }
-+
-+         commandsourcestack.sendFailure(Component.translatable("command.failed").withStyle((p_82137_) -> {
-+            return p_82137_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, mutablecomponent));
-+         }));
-+         if (SharedConstants.IS_RUNNING_IN_IDE) {
-+            commandsourcestack.sendFailure(Component.literal(Util.describeError(exception)));
-+            LOGGER.error("'/{}' threw an exception", p_242841_, exception);
-+         }
-+      } finally {
-+         commandsourcestack.getServer().getProfiler().pop();
-+      }
-+
-+   }
-+
++            ContextChain<CommandSourceStack> contextchain = finishParsing(event.getParseResults(), p_242841_, commandsourcestack);
+             if (contextchain != null) {
+                 executeCommandInContext(
+                     commandsourcestack,
+@@ -305,6 +_,11 @@
+         }
+     }
+ 
 +   public void performCommand(ParseResults<CommandSourceStack> pParseResults, String pCommand, String label) { // CraftBukkit
 +      mohist$label.set(label);
 +      this.performCommand(pParseResults, pCommand);

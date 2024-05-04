@@ -4,17 +4,17 @@
      private final DamageSource stalagmite;
      private final DamageSource outsideBorder;
      private final DamageSource genericKill;
-+   // CraftBukkit start
-+   private final DamageSource melting;
-+   private final DamageSource poison;
++   	// CraftBukkit start
++   	private final DamageSource melting;
++   	private final DamageSource poison;
  
 -    public DamageSources(RegistryAccess p_270740_) {
 -        this.damageTypes = p_270740_.registryOrThrow(Registries.DAMAGE_TYPE);
-+   public DamageSources(RegistryAccess p_270740_) {
-+      this.damageTypes = p_270740_.registryOrThrow(Registries.DAMAGE_TYPE);
-+      this.melting = this.source(DamageTypes.ON_FIRE).melting();
-+      this.poison = this.source(DamageTypes.MAGIC).poison();
-+      // CraftBukkit end
++   	public DamageSources(RegistryAccess p_270740_) {
++      	this.damageTypes = p_270740_.registryOrThrow(Registries.DAMAGE_TYPE);
++      	this.melting = this.source(DamageTypes.ON_FIRE).melting();
++      	this.poison = this.source(DamageTypes.MAGIC).poison();
++      	// CraftBukkit end
          this.inFire = this.source(DamageTypes.IN_FIRE);
          this.lightningBolt = this.source(DamageTypes.LIGHTNING_BOLT);
          this.onFire = this.source(DamageTypes.ON_FIRE);
@@ -23,15 +23,15 @@
          return new DamageSource(this.damageTypes.getHolderOrThrow(p_270076_), p_270656_, p_270242_);
      }
 +
-+   // CraftBukkit start
-+   public DamageSource melting() {
-+      return this.melting;
-+   }
++   	// CraftBukkit start
++   	public DamageSource melting() {
++      	return this.melting;
++   	}
 +
-+   public DamageSource poison() {
-+      return this.poison;
-+   }
-+   // CraftBukkit end
++   	public DamageSource poison() {
++      	return this.poison;
++   	}
++   	// CraftBukkit end
  
      public DamageSource inFire() {
          return this.inFire;

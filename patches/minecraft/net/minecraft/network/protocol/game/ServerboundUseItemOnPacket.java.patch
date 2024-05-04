@@ -14,7 +14,7 @@
      private final BlockHitResult blockHit;
      private final InteractionHand hand;
      private final int sequence;
-+   public long timestamp; // Spigot
++   	public long timestamp; // Spigot
  
      public ServerboundUseItemOnPacket(InteractionHand p_238005_, BlockHitResult p_238006_, int p_238007_) {
          this.hand = p_238005_;
@@ -23,7 +23,7 @@
      }
  
 -    private ServerboundUseItemOnPacket(FriendlyByteBuf p_179796_) {
-+   public ServerboundUseItemOnPacket(FriendlyByteBuf p_179796_) {
++   	public ServerboundUseItemOnPacket(FriendlyByteBuf p_179796_) {
 +      	this.timestamp = System.currentTimeMillis(); // Spigot
          this.hand = p_179796_.readEnum(InteractionHand.class);
          this.blockHit = p_179796_.readBlockHitResult();

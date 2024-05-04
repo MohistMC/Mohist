@@ -1,49 +1,11 @@
 --- a/net/minecraft/world/level/ExplosionDamageCalculator.java
 +++ b/net/minecraft/world/level/ExplosionDamageCalculator.java
-@@ -8,27 +_,23 @@
- import net.minecraft.world.phys.Vec3;
+@@ -9,7 +_,7 @@
  
  public class ExplosionDamageCalculator {
--    public Optional<Float> getBlockExplosionResistance(Explosion p_46099_, BlockGetter p_46100_, BlockPos p_46101_, BlockState p_46102_, FluidState p_46103_) {
+     public Optional<Float> getBlockExplosionResistance(Explosion p_46099_, BlockGetter p_46100_, BlockPos p_46101_, BlockState p_46102_, FluidState p_46103_) {
 -        return p_46102_.isAir() && p_46103_.isEmpty() ? Optional.empty() : Optional.of(Math.max(p_46102_.getBlock().getExplosionResistance(), p_46103_.getExplosionResistance()));
--    }
--
--    public boolean shouldBlockExplode(Explosion p_46094_, BlockGetter p_46095_, BlockPos p_46096_, BlockState p_46097_, float p_46098_) {
--        return true;
--    }
--
--    public boolean shouldDamageEntity(Explosion p_312772_, Entity p_311132_) {
--        return true;
--    }
--
--    public float getKnockbackMultiplier(Entity p_330296_) {
--        return 1.0F;
--    }
--
--    public float getEntityDamageAmount(Explosion p_310428_, Entity p_310135_) {
--        float f = p_310428_.radius() * 2.0F;
--        Vec3 vec3 = p_310428_.center();
--        double d0 = Math.sqrt(p_310135_.distanceToSqr(vec3)) / (double)f;
--        double d1 = (1.0 - d0) * (double)Explosion.getSeenPercent(vec3, p_310135_);
--        return (float)((d1 * d1 + d1) / 2.0 * 7.0 * (double)f + 1.0);
--    }
-+   public Optional<Float> getBlockExplosionResistance(Explosion p_46099_, BlockGetter p_46100_, BlockPos p_46101_, BlockState p_46102_, FluidState p_46103_) {
-+      return p_46102_.isAir() && p_46103_.isEmpty() ? Optional.empty() : Optional.of(Math.max(p_46102_.getExplosionResistance(p_46100_, p_46101_, p_46099_), p_46103_.getExplosionResistance(p_46100_, p_46101_, p_46099_)));
-+   }
-+
-+   public boolean shouldBlockExplode(Explosion p_46094_, BlockGetter p_46095_, BlockPos p_46096_, BlockState p_46097_, float p_46098_) {
-+      return true;
-+   }
-+
-+   public boolean shouldDamageEntity(Explosion p_312772_, Entity p_311132_) {
-+      return true;
-+   }
-+
-+   public float getEntityDamageAmount(Explosion p_310428_, Entity p_310135_) {
-+      float f = p_310428_.radius() * 2.0F;
-+      Vec3 vec3 = p_310428_.center();
-+      double d0 = Math.sqrt(p_310135_.distanceToSqr(vec3)) / (double)f;
-+      double d1 = (1.0D - d0) * (double)Explosion.getSeenPercent(vec3, p_310135_);
-+      return (float)((d1 * d1 + d1) / 2.0D * 7.0D * (double)f + 1.0D);
-+   }
- }
++        return p_46102_.isAir() && p_46103_.isEmpty() ? Optional.empty() : Optional.of(Math.max(p_46102_.getExplosionResistance(p_46100_, p_46101_, p_46099_), p_46103_.getExplosionResistance(p_46100_, p_46101_, p_46099_)));
+     }
+ 
+     public boolean shouldBlockExplode(Explosion p_46094_, BlockGetter p_46095_, BlockPos p_46096_, BlockState p_46097_, float p_46098_) {

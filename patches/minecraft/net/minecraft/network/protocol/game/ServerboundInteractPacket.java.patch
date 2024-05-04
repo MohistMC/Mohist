@@ -14,13 +14,13 @@
          }
      }
 +
-+   // Paper start - PlayerUseUnknownEntityEvent
-+   public int getEntityId() {
-+      return this.entityId;
-+   }
++   	// Paper start - PlayerUseUnknownEntityEvent
++   	public int getEntityId() {
++      	return this.entityId;
++   	}
 +
-+   public boolean isAttack() {
-+      return this.action.getType() == ActionType.ATTACK;
-+   }
-+   // Paper end - PlayerUseUnknownEntityEvent
++   	public boolean isAttack() {
++      	return this.action.getType() == ActionType.ATTACK;
++   	}
++   	// Paper end - PlayerUseUnknownEntityEvent
  }

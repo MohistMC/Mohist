@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/chat/TextColor.java
 +++ b/net/minecraft/network/chat/TextColor.java
-@@ -22,22 +_,35 @@
+@@ -22,18 +_,31 @@
          .stream()
          .collect(ImmutableMap.toImmutableMap(p_237297_ -> p_237297_.name, Function.identity()));
      private final int value;
@@ -16,39 +16,31 @@
 -        this.value = p_131261_ & 16777215;
 -        this.name = null;
 -    }
--
--    public int getValue() {
--        return this.value;
--    }
-+   @Nullable
-+   public final String name;
++   	@Nullable
++   	public final String name;
 +
-+   // CraftBukkit start
-+   @Nullable
-+   public final ChatFormatting format;
++   	// CraftBukkit start
++   	@Nullable
++   	public final ChatFormatting format;
 +
-+   private TextColor(int pValue, String pName, ChatFormatting format) {
-+      this.value = pValue & 16777215;
-+      this.name = pName;
-+      this.format = format;
-+   }
++   	private TextColor(int pValue, String pName, ChatFormatting format) {
++      	this.value = pValue & 16777215;
++      	this.name = pName;
++      	this.format = format;
++   	}
 +
-+   private TextColor(int p_131263_, String p_131264_) {
-+      this.value = p_131263_ & 16777215;
-+      this.name = p_131264_;
-+      this.format = ChatFormatting.getByName(p_131264_);
-+   }
++   	private TextColor(int p_131263_, String p_131264_) {
++      	this.value = p_131263_ & 16777215;
++      	this.name = p_131264_;
++      	this.format = ChatFormatting.getByName(p_131264_);
++   	}
 +
-+   private TextColor(int p_131261_) {
-+      this.value = p_131261_ & 16777215;
-+      this.name = null;
-+      this.format = null;
-+   }
-+   // CraftBukkit end
-+
-+   public int getValue() {
-+      return this.value;
-+   }
++   	private TextColor(int p_131261_) {
++      	this.value = p_131261_ & 16777215;
++      	this.name = null;
++      	this.format = null;
++   	}
++   	// CraftBukkit end
  
-     public String serialize() {
-         return this.name != null ? this.name : this.formatValue();
+     public int getValue() {
+         return this.value;

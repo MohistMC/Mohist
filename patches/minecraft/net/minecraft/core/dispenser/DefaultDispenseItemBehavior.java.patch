@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -6,9 +_,24 @@
+@@ -6,9 +_,25 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -23,6 +23,7 @@
 +      this.dropper = dropper;
 +   }
 +
++	@Override
      public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
          ItemStack itemstack = this.execute(p_123391_, p_123392_);
          this.playSound(p_123391_);
@@ -33,11 +34,11 @@
 -        spawnItem(p_301824_.level(), itemstack, 6, direction, position);
 -        return p_123386_;
 -    }
-+      // CraftBukkit start
-+      if (!spawnItem(p_301824_.level(), itemstack, 6, direction, p_301824_, dropper)){
-+         itemstack.grow(1);
-+      }
-+      // CraftBukkit end
++      	// CraftBukkit start
++      	if (!spawnItem(p_301824_.level(), itemstack, 6, direction, p_301824_, dropper)){
++         	itemstack.grow(1);
++      	}
++      	// CraftBukkit end
 +      return p_123386_;
 +   }
  

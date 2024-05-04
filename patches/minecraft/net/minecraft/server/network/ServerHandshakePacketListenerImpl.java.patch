@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -1,79 +_,135 @@
+@@ -1,8 +_,12 @@
  package net.minecraft.server.network;
  
 +import java.net.InetAddress;
@@ -13,21 +13,25 @@
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
  import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
--import net.minecraft.network.protocol.login.LoginProtocols;
- import net.minecraft.network.protocol.status.ServerStatus;
--import net.minecraft.network.protocol.status.StatusProtocols;
- import net.minecraft.server.MinecraftServer;
+@@ -15,59 +_,114 @@
+     private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
+     private final MinecraftServer server;
+     private final Connection connection;
++   // CraftBukkit start - add fields
++   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++   private static int throttleCounter = 0;
++   // CraftBukkit end
++   // Spigot start
++   private static final com.google.gson.Gson gson = new com.google.gson.Gson();
++   static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
++   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
++   // Spigot end
  
- public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
--    private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
--    private final MinecraftServer server;
--    private final Connection connection;
--
--    public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
--        this.server = p_9969_;
--        this.connection = p_9970_;
--    }
--
+     public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
+         this.server = p_9969_;
+         this.connection = p_9970_;
+     }
+ 
 -    @Override
 -    public void handleIntention(ClientIntentionPacket p_9975_) {
 -        switch (p_9975_.intention()) {
@@ -75,32 +79,6 @@
 -        }
 -    }
 -
--    @Override
--    public void onDisconnect(Component p_9973_) {
--    }
--
--    @Override
--    public boolean isAcceptingMessages() {
--        return this.connection.isConnected();
--    }
-+   private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
-+   private final MinecraftServer server;
-+   private final Connection connection;
-+   // CraftBukkit start - add fields
-+   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
-+   private static int throttleCounter = 0;
-+   // CraftBukkit end
-+   // Spigot start
-+   private static final com.google.gson.Gson gson = new com.google.gson.Gson();
-+   static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
-+   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
-+   // Spigot end
-+
-+   public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
-+      this.server = p_9969_;
-+      this.connection = p_9970_;
-+   }
-+
 +   public void handleIntention(ClientIntentionPacket p_9975_) {
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
 +      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
@@ -194,11 +172,6 @@
 +      }
 +
 +   }
-+
-+   public void onDisconnect(Component p_9973_) {
-+   }
-+
-+   public boolean isAcceptingMessages() {
-+      return this.connection.isConnected();
-+   }
- }
+     @Override
+     public void onDisconnect(Component p_9973_) {
+     }

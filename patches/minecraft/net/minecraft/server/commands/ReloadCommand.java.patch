@@ -5,13 +5,13 @@
          }));
      }
 +
-+   // CraftBukkit start
-+   public static void reload(MinecraftServer minecraftserver) {
-+      PackRepository resourcepackrepository = minecraftserver.getPackRepository();
-+      WorldData savedata = minecraftserver.getWorldData();
-+      Collection<String> collection = resourcepackrepository.getSelectedIds();
-+      Collection<String> collection1 = discoverNewPacks(resourcepackrepository, savedata, collection);
-+      minecraftserver.reloadResources(collection1);
-+   }
-+   // CraftBukkit end
++   	// CraftBukkit start
++   	public static void reload(MinecraftServer minecraftserver) {
++      	PackRepository resourcepackrepository = minecraftserver.getPackRepository();
++      	WorldData savedata = minecraftserver.getWorldData();
++      	Collection<String> collection = resourcepackrepository.getSelectedIds();
++      	Collection<String> collection1 = discoverNewPacks(resourcepackrepository, savedata, collection);
++      	minecraftserver.reloadResources(collection1);
++   	}
++   	// CraftBukkit end
  }

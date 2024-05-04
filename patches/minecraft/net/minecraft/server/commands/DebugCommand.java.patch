@@ -19,11 +19,10 @@
          public void close() {
              IOUtils.closeQuietly((Writer)this.output);
          }
--    }
 +
-+      @Override
-+      public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+         return null;
-+      }
-+   }
++      	@Override
++      	public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++         	return null;
++		}
+     }
  }

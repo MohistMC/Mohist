@@ -1,19 +1,16 @@
 --- a/net/minecraft/server/level/WorldGenRegion.java
 +++ b/net/minecraft/server/level/WorldGenRegion.java
-@@ -323,8 +_,15 @@
-         this.getChunk(p_9592_).markPosForPostprocessing(p_9592_);
-     }
+@@ -325,6 +_,14 @@
  
--    @Override
--    public boolean addFreshEntity(Entity p_9580_) {
-+   public boolean addFreshEntity(Entity p_9580_) {
-+      // CraftBukkit start
-+      return addFreshEntity(p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
-+   }
+     @Override
+     public boolean addFreshEntity(Entity p_9580_) {
++      	// CraftBukkit start
++      	return addFreshEntity(p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   	}
 +
-+   @Override
-+   public boolean addFreshEntity(Entity p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      // CraftBukkit end
++   	@Override
++   	public boolean addFreshEntity(Entity p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      	// CraftBukkit end
 +        if (p_9580_ instanceof net.minecraft.world.entity.Mob mob && mob.isSpawnCancelled()) return false;
          int i = SectionPos.blockToSectionCoord(p_9580_.getBlockX());
          int j = SectionPos.blockToSectionCoord(p_9580_.getBlockZ());

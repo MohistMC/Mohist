@@ -28,13 +28,13 @@
 +    @Override public ResourceLocation getName() { return this.payload.id(); }
 +    @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return ((DiscardedQueryPayload)this.payload).data(); }
 +
-+   // Paper start - MC Utils - default query payloads
-+   public static record PlayerInfoChannelPayload(ResourceLocation id, FriendlyByteBuf buffer) implements CustomQueryPayload {
++   	// Paper start - MC Utils - default query payloads
++   	public static record PlayerInfoChannelPayload(ResourceLocation id, FriendlyByteBuf buffer) implements CustomQueryPayload {
 +
-+      @Override
-+      public void write(final FriendlyByteBuf buf) {
-+         buf.writeBytes(this.buffer.copy());
-+      }
-+   }
-+   // Paper end - MC Utils - default query payloads
++      	@Override
++      	public void write(final FriendlyByteBuf buf) {
++         	buf.writeBytes(this.buffer.copy());
++      	}
++   	}
++   	// Paper end - MC Utils - default query payloads
  }
