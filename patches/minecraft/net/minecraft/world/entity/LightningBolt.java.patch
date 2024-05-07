@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -6,10 +_,11 @@
+@@ -6,6 +_,8 @@
  import java.util.Set;
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
@@ -9,10 +9,6 @@
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
--import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvents;
 @@ -25,19 +_,21 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;

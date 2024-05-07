@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.mojang.logging.LogUtils;
++import java.util.List;
+ import java.util.Objects;
+ import java.util.function.Predicate;
+ import net.minecraft.core.BlockPos;
 @@ -19,13 +_,19 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -21,19 +_,23 @@
+@@ -21,6 +_,7 @@
  import net.minecraft.world.entity.MobSpawnType;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
@@ -8,11 +8,10 @@
  import net.minecraft.world.level.BlockAndTintGetter;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
+@@ -28,12 +_,15 @@
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Blocks;
--import net.minecraft.world.level.pathfinder.PathType;
-+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+ import net.minecraft.world.level.pathfinder.PathType;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityEnterLoveModeEvent;
  

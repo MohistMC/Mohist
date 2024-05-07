@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -1,17 +_,22 @@
+@@ -1,17 +_,23 @@
  package net.minecraft.world.level.block.entity;
  
 +import java.util.ArrayList;
@@ -9,7 +9,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
--import net.minecraft.core.HolderLookup;
+ import net.minecraft.core.HolderLookup;
  import net.minecraft.core.NonNullList;
 +import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
@@ -24,11 +24,10 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.BrewingStandMenu;
  import net.minecraft.world.inventory.ContainerData;
-@@ -22,6 +_,17 @@
+@@ -22,6 +_,16 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BrewingStandBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.craftbukkit.entity.CraftHumanEntity;

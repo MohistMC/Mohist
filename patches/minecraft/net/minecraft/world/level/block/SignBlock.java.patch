@@ -1,10 +1,19 @@
 --- a/net/minecraft/world/level/block/SignBlock.java
 +++ b/net/minecraft/world/level/block/SignBlock.java
-@@ -38,6 +_,7 @@
+@@ -3,6 +_,7 @@
+ import com.mojang.serialization.MapCodec;
+ import java.util.Arrays;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
+@@ -38,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.event.player.PlayerSignOpenEvent;
++import org.bukkit.event.player.PlayerSignOpenEvent.Cause;
  
  public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
      public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -26,7 +35,7 @@
 -        p_277467_.setAllowedPlayerEditor(p_277738_.getUUID());
 -        p_277738_.openTextEdit(p_277467_, p_277771_);
 -    }
-+   public AtomicReference<PlayerSignOpenEvent.Cause> openTextEditcause = new AtomicReference<>(PlayerSignOpenEvent.Cause.UNKNOWN);
++   public AtomicReference<Cause> openTextEditcause = new AtomicReference<>(PlayerSignOpenEvent.Cause.UNKNOWN);
 +   public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
 +      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, openTextEditcause.getAndSet(PlayerSignOpenEvent.Cause.UNKNOWN))) {
 +         return;

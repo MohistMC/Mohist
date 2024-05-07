@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -2,14 +_,15 @@
+@@ -2,6 +_,8 @@
  
  import java.util.List;
  import java.util.function.BooleanSupplier;
@@ -9,11 +9,10 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
--import net.minecraft.core.HolderLookup;
- import net.minecraft.core.NonNullList;
+@@ -10,6 +_,7 @@
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
--import net.minecraft.tags.BlockTags;
+ import net.minecraft.tags.BlockTags;
 +import net.minecraft.world.CompoundContainer;
  import net.minecraft.world.Container;
  import net.minecraft.world.ContainerHelper;

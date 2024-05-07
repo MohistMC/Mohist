@@ -1,37 +1,23 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -5,7 +_,6 @@
- import com.mojang.logging.LogUtils;
- import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
- import it.unimi.dsi.fastutil.longs.LongSet;
--import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
- import it.unimi.dsi.fastutil.shorts.ShortArrayList;
- import it.unimi.dsi.fastutil.shorts.ShortList;
- import java.util.Collection;
-@@ -13,7 +_,6 @@
+@@ -12,8 +_,8 @@
+ import java.util.Collections;
  import java.util.EnumSet;
  import java.util.Map;
- import java.util.Set;
--import java.util.Map.Entry;
+-import java.util.Set;
+ import java.util.Map.Entry;
++import java.util.Set;
  import java.util.function.BiConsumer;
  import java.util.function.Function;
  import java.util.function.Predicate;
-@@ -25,7 +_,6 @@
- import net.minecraft.SharedConstants;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Holder;
--import net.minecraft.core.HolderLookup;
- import net.minecraft.core.QuartPos;
- import net.minecraft.core.Registry;
- import net.minecraft.core.SectionPos;
-@@ -43,7 +_,6 @@
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.state.BlockState;
--import net.minecraft.world.level.chunk.status.ChunkStatus;
+@@ -47,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEventListenerRegistry;
  import net.minecraft.world.level.levelgen.BelowZeroRetrogen;
  import net.minecraft.world.level.levelgen.Heightmap;
++import net.minecraft.world.level.levelgen.Heightmap.Types;
+ import net.minecraft.world.level.levelgen.NoiseChunk;
+ import net.minecraft.world.level.levelgen.blending.BlendingData;
+ import net.minecraft.world.level.levelgen.structure.Structure;
 @@ -55,6 +_,8 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.ticks.SerializableTickContainer;
@@ -75,6 +61,15 @@
  
      private static void replaceMissingSections(Registry<Biome> p_281389_, LevelChunkSection[] p_282796_) {
          for (int i = 0; i < p_282796_.length; i++) {
+@@ -165,7 +_,7 @@
+         return this.getSections()[p_187657_];
+     }
+ 
+-    public Collection<Entry<Heightmap.Types, Heightmap>> getHeightmaps() {
++    public Collection<Entry<Types, Heightmap>> getHeightmaps() {
+         return Collections.unmodifiableSet(this.heightmaps.entrySet());
+     }
+ 
 @@ -264,10 +_,11 @@
  
      public void setUnsaved(boolean p_62094_) {

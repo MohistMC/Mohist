@@ -1502,6 +1502,15 @@
  
      public InteractionResult interactAt(Player p_19980_, Vec3 p_19981_, InteractionHand p_19982_) {
          return InteractionResult.PASS;
+@@ -3043,7 +_,7 @@
+         return SoundSource.NEUTRAL;
+     }
+ 
+-    protected int getFireImmuneTicks() {
++    public int getFireImmuneTicks() {
+         return 1;
+     }
+ 
 @@ -3097,9 +_,17 @@
          this.yRotO = this.getYRot();
      }

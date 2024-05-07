@@ -7,11 +7,11 @@
 +import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.level.block.entity.LecternBlockEntity.LecternInventory;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryLectern;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.event.player.PlayerTakeLecternBookEvent;
++import org.bukkit.inventory.LecternInventory;
  
  public class LecternMenu extends AbstractContainerMenu {
 -    private static final int DATA_COUNT = 1;

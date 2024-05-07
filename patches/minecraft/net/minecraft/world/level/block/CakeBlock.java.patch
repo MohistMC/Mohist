@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/CakeBlock.java
 +++ b/net/minecraft/world/level/block/CakeBlock.java
-@@ -9,7 +_,6 @@
- import net.minecraft.tags.ItemTags;
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.InteractionResult;
--import net.minecraft.world.ItemInteractionResult;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.Item;
- import net.minecraft.world.item.ItemStack;
 @@ -100,7 +_,18 @@
              return InteractionResult.PASS;
          } else {

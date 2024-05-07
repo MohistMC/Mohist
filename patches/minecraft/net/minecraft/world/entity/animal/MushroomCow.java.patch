@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -1,14 +_,13 @@
- package net.minecraft.world.entity.animal;
- 
-+import java.util.List;
- import java.util.Optional;
- import java.util.UUID;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
--import net.minecraft.core.component.DataComponents;
+@@ -8,7 +_,6 @@
  import net.minecraft.core.particles.ParticleTypes;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.NbtOps;
@@ -16,21 +8,20 @@
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
  import net.minecraft.network.syncher.SynchedEntityData;
-@@ -27,13 +_,12 @@
- import net.minecraft.world.entity.LightningBolt;
+@@ -28,11 +_,13 @@
  import net.minecraft.world.entity.MobSpawnType;
  import net.minecraft.world.entity.Shearable;
--import net.minecraft.world.entity.VariantHolder;
+ import net.minecraft.world.entity.VariantHolder;
++import net.minecraft.world.entity.animal.MushroomCow.MushroomType;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.ItemUtils;
  import net.minecraft.world.item.Items;
--import net.minecraft.world.item.component.SuspiciousStewEffects;
 +import net.minecraft.world.item.SuspiciousStewItem;
+ import net.minecraft.world.item.component.SuspiciousStewEffects;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
 @@ -41,8 +_,12 @@
  import net.minecraft.world.level.block.SuspiciousEffectHolder;
  import net.minecraft.world.level.block.state.BlockState;
@@ -41,7 +32,7 @@
 +import org.bukkit.event.entity.EntityTransformEvent;
  
 -public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
-+public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType>, net.minecraftforge.common.IForgeShearable {
++public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomType>, net.minecraftforge.common.IForgeShearable {
      private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
      private static final int MUTATE_CHANCE = 1024;
      private static final String TAG_STEW_EFFECTS = "stew_effects";

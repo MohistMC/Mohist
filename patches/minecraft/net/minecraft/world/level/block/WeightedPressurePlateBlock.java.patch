@@ -8,7 +8,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-@@ -14,9 +_,11 @@
+@@ -14,6 +_,8 @@
  import net.minecraft.world.level.block.state.properties.BlockSetType;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -16,11 +16,15 @@
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class WeightedPressurePlateBlock extends BasePressurePlateBlock {
--    public static final MapCodec<WeightedPressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec(
-+   public static final MapCodec<WeightedPressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec((p_312418_) -> {
-         p_312418_ -> p_312418_.group(
-                     Codec.intRange(1, 1024).fieldOf("max_weight").forGetter(p_312398_ -> p_312398_.maxWeight),
-                     BlockSetType.CODEC.fieldOf("block_set_type").forGetter(p_310139_ -> p_310139_.type),
+     public static final MapCodec<WeightedPressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec(
+@@ -24,6 +_,7 @@
+                 )
+                 .apply(p_312418_, WeightedPressurePlateBlock::new)
+     );
++   
+     public static final IntegerProperty POWER = BlockStateProperties.POWER;
+     private final int maxWeight;
+ 
 @@ -40,7 +_,31 @@
  
      @Override

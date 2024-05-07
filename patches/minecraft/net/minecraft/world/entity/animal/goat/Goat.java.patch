@@ -8,12 +8,11 @@
  import net.minecraft.world.entity.EntityDimensions;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.Mob;
-@@ -50,8 +_,11 @@
+@@ -50,8 +_,10 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.block.state.BlockState;
 -import net.minecraft.world.level.pathfinder.PathType;
-+import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
 +import org.joml.Vector3f;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;

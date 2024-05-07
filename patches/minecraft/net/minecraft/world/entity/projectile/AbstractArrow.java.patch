@@ -19,12 +19,7 @@
  
  public abstract class AbstractArrow extends Projectile {
      private static final double ARROW_BASE_DAMAGE = 2.0;
-@@ -55,19 +_,20 @@
-     private static final int FLAG_CROSSBOW = 4;
-     @Nullable
-     private BlockState lastState;
--    public boolean inGround;
-+    protected boolean inGround;
+@@ -59,15 +_,16 @@
      protected int inGroundTime;
      public AbstractArrow.Pickup pickup = AbstractArrow.Pickup.DISALLOWED;
      public int shakeTime;

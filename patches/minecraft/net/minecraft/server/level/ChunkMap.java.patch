@@ -33,18 +33,7 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
-@@ -53,10 +_,8 @@
- import net.minecraft.Util;
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.SectionPos;
--import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.nbt.CompoundTag;
--import net.minecraft.nbt.NbtException;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket;
- import net.minecraft.network.protocol.game.ClientboundSetChunkCacheCenterPacket;
-@@ -71,33 +_,31 @@
+@@ -71,7 +_,6 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
@@ -52,21 +41,7 @@
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.chunk.ChunkAccess;
- import net.minecraft.world.level.chunk.ChunkGenerator;
- import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
-+import net.minecraft.world.level.chunk.ChunkStatus;
- import net.minecraft.world.level.chunk.ImposterProtoChunk;
- import net.minecraft.world.level.chunk.LevelChunk;
- import net.minecraft.world.level.chunk.LightChunkGetter;
- import net.minecraft.world.level.chunk.ProtoChunk;
- import net.minecraft.world.level.chunk.UpgradeData;
--import net.minecraft.world.level.chunk.status.ChunkStatus;
--import net.minecraft.world.level.chunk.status.ChunkType;
--import net.minecraft.world.level.chunk.status.WorldGenContext;
- import net.minecraft.world.level.chunk.storage.ChunkSerializer;
- import net.minecraft.world.level.chunk.storage.ChunkStorage;
--import net.minecraft.world.level.chunk.storage.RegionStorageInfo;
- import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
+@@ -92,12 +_,14 @@
  import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
  import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  import net.minecraft.world.level.levelgen.RandomState;
@@ -321,13 +296,7 @@
              if (i != 0) {
                  int j = entitytype.updateInterval();
                  if (this.entityMap.containsKey(p_140200_.getId())) {
-@@ -1289,12 +_,12 @@
-         }
-     }
- 
--    public class TrackedEntity {
-+    class TrackedEntity {
-         final ServerEntity serverEntity;
+@@ -1294,7 +_,7 @@
          final Entity entity;
          private final int range;
          SectionPos lastSectionPos;

@@ -21,11 +21,10 @@
  import net.minecraft.world.inventory.TransientCraftingContainer;
  import net.minecraft.world.item.DyeColor;
  import net.minecraft.world.item.DyeItem;
-@@ -60,10 +_,12 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -61,9 +_,12 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
--import net.minecraft.world.level.storage.loot.LootTable;
+ import net.minecraft.world.level.storage.loot.LootTable;
 +import org.joml.Vector3f;
 +import org.bukkit.event.entity.SheepRegrowWoolEvent;
 +import org.bukkit.inventory.InventoryView;
