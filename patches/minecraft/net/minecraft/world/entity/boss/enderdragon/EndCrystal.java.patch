@@ -13,19 +13,19 @@
  
  public class EndCrystal extends Entity {
      private static final EntityDataAccessor<Optional<BlockPos>> DATA_BEAM_TARGET = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
-@@ -52,8 +_,11 @@
+@@ -52,7 +_,11 @@
          if (this.level() instanceof ServerLevel) {
              BlockPos blockpos = this.blockPosition();
              if (((ServerLevel)this.level()).getDragonFight() != null && this.level().getBlockState(blockpos).isAir()) {
 -                this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
-+            // CraftBukkit start
-+            if (!CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
-+               this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
++                // CraftBukkit start
++                if (!CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
++                    this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
++                }
++                // CraftBukkit end
              }
-+            // CraftBukkit end
          }
      }
- 
 @@ -87,12 +_,23 @@
              return false;
          } else {

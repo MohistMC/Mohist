@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/entity/projectile/windcharge/AbstractWindCharge.java
++++ b/net/minecraft/world/entity/projectile/windcharge/AbstractWindCharge.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ 
+ public abstract class AbstractWindCharge extends AbstractHurtingProjectile implements ItemSupplier {
+     public static final AbstractWindCharge.WindChargeDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new AbstractWindCharge.WindChargeDamageCalculator();
+@@ -104,6 +_,7 @@
+         super.onHitBlock(p_330277_);
+         if (!this.level().isClientSide) {
+             this.explode();
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         }
+     }
+@@ -112,6 +_,7 @@
+     protected void onHit(HitResult p_328815_) {
+         super.onHit(p_328815_);
+         if (!this.level().isClientSide) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         }
+     }
+@@ -146,6 +_,7 @@
+     public void tick() {
+         if (!this.level().isClientSide && this.getBlockY() > this.level().getMaxBuildHeight() + 30) {
+             this.explode();
++            this.putRemoveCause(EntityRemoveEvent.Cause.OUT_OF_WORLD); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         } else {
+             super.tick();

@@ -1,83 +1,31 @@
 --- a/net/minecraft/world/entity/projectile/ThrownExperienceBottle.java
 +++ b/net/minecraft/world/entity/projectile/ThrownExperienceBottle.java
-@@ -6,42 +_,47 @@
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.item.Item;
- import net.minecraft.world.item.Items;
--import net.minecraft.world.item.alchemy.PotionContents;
-+import net.minecraft.world.item.alchemy.PotionUtils;
+@@ -10,6 +_,7 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityRemoveEvent;
  
  public class ThrownExperienceBottle extends ThrowableItemProjectile {
--    public ThrownExperienceBottle(EntityType<? extends ThrownExperienceBottle> p_37510_, Level p_37511_) {
--        super(p_37510_, p_37511_);
--    }
--
--    public ThrownExperienceBottle(Level p_37518_, LivingEntity p_37519_) {
--        super(EntityType.EXPERIENCE_BOTTLE, p_37519_, p_37518_);
--    }
--
--    public ThrownExperienceBottle(Level p_37513_, double p_37514_, double p_37515_, double p_37516_) {
--        super(EntityType.EXPERIENCE_BOTTLE, p_37514_, p_37515_, p_37516_, p_37513_);
--    }
--
--    @Override
--    protected Item getDefaultItem() {
--        return Items.EXPERIENCE_BOTTLE;
--    }
--
--    @Override
--    protected double getDefaultGravity() {
--        return 0.07;
--    }
--
--    @Override
--    protected void onHit(HitResult p_37521_) {
--        super.onHit(p_37521_);
--        if (this.level() instanceof ServerLevel) {
+     public ThrownExperienceBottle(EntityType<? extends ThrownExperienceBottle> p_37510_, Level p_37511_) {
+@@ -38,9 +_,17 @@
+     protected void onHit(HitResult p_37521_) {
+         super.onHit(p_37521_);
+         if (this.level() instanceof ServerLevel) {
 -            this.level().levelEvent(2002, this.blockPosition(), PotionContents.getColor(Potions.WATER));
 -            int i = 3 + this.level().random.nextInt(5) + this.level().random.nextInt(5);
 -            ExperienceOrb.award((ServerLevel)this.level(), this.position(), i);
--            this.discard();
--        }
--    }
-+   public ThrownExperienceBottle(EntityType<? extends ThrownExperienceBottle> p_37510_, Level p_37511_) {
-+      super(p_37510_, p_37511_);
-+   }
++            int i = 3 + this.level.random.nextInt(5) + this.level.random.nextInt(5);
++            // CraftBukkit start
++            org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, p_37521_, i);
++            i = event.getExperience();
++            if (event.getShowEffect()) {
++                this.level().levelEvent(2002, this.blockPosition(), PotionContents.getColor(Potions.WATER));
++            }
++            // CraftBukkit end
 +
-+   public ThrownExperienceBottle(Level p_37518_, LivingEntity p_37519_) {
-+      super(EntityType.EXPERIENCE_BOTTLE, p_37519_, p_37518_);
-+   }
-+
-+   public ThrownExperienceBottle(Level p_37513_, double p_37514_, double p_37515_, double p_37516_) {
-+      super(EntityType.EXPERIENCE_BOTTLE, p_37514_, p_37515_, p_37516_, p_37513_);
-+   }
-+
-+   protected Item getDefaultItem() {
-+      return Items.EXPERIENCE_BOTTLE;
-+   }
-+
-+   protected float getGravity() {
-+      return 0.07F;
-+   }
-+
-+   protected void onHit(HitResult p_37521_) {
-+      super.onHit(p_37521_);
-+      if (this.level() instanceof ServerLevel) {
-+         int i = 3 + this.level.random.nextInt(5) + this.level.random.nextInt(5);
-+         // CraftBukkit start
-+         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, p_37521_, i);
-+         i = event.getExperience();
-+         if (event.getShowEffect()) {
-+            this.level().levelEvent(2002, this.blockPosition(), PotionUtils.getColor(Potions.WATER));
-+         }
-+         // CraftBukkit end
-+
-+         ExperienceOrb.award((ServerLevel)this.level(), this.position(), i);
-+         this.discard();
-+      }
-+
-+   }
- }
++            ExperienceOrb.award((ServerLevel) this.level(), this.position(), i);
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         }
+     }

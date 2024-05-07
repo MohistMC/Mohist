@@ -1,17 +1,21 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
-@@ -1,5 +_,6 @@
+@@ -1,9 +_,11 @@
  package net.minecraft.world.entity.vehicle;
  
 +import java.util.List;
  import javax.annotation.Nullable;
  import net.minecraft.core.NonNullList;
  import net.minecraft.nbt.CompoundTag;
-@@ -22,7 +_,10 @@
- import net.minecraft.world.item.Items;
+ import net.minecraft.resources.ResourceKey;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.Containers;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+@@ -23,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
--import net.minecraft.world.level.storage.loot.LootTable;
+ import net.minecraft.world.level.storage.loot.LootTable;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;

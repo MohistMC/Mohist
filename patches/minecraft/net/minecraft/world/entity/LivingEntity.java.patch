@@ -47,7 +47,7 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.enchantment.Enchantments;
  import net.minecraft.world.item.enchantment.FrostWalkerEnchantment;
-@@ -120,20 +_,40 @@
+@@ -120,20 +_,41 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
@@ -55,7 +55,7 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
--import net.minecraft.world.scores.Scoreboard;
+ import net.minecraft.world.scores.Scoreboard;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import org.bukkit.Location;
@@ -216,20 +216,21 @@
      }
  
      @Override
-@@ -327,9 +_,16 @@
+@@ -327,9 +_,17 @@
                  float f = (float)Mth.ceil((double)this.fallDistance - d0);
                  double d5 = Math.min((double)(0.2F + f / 15.0F), 2.5);
                  int i = (int)(150.0 * d5);
 -                ((ServerLevel)this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_), d1, d2, d3, i, 0.0, 0.0, 0.0, 0.15F);
-+         if (!p_20992_.addLandingEffects((ServerLevel)this.level(), p_20993_, p_20992_, this, i)) {
-+            // CraftBukkit start - visiblity api
-+            if (this instanceof ServerPlayer) {
-+               ((ServerLevel) this.level).sendParticles((ServerPlayer) this, new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F, false);
-+            } else {
-+               ((ServerLevel) this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F);
++            if (!p_20992_.addLandingEffects((ServerLevel)this.level(), p_20993_, p_20992_, this, i)) {
++                // CraftBukkit start - visiblity api
++                if (this instanceof ServerPlayer) {
++                    ((ServerLevel) this.level).sendParticles((ServerPlayer) this, new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F, false);
++                } else {
++                    ((ServerLevel) this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F);
++                }
++                // CraftBukkit end
              }
 -        }
-+            // CraftBukkit end
 +         }
 +      }
  
@@ -573,7 +574,7 @@
  
      public Collection<MobEffectInstance> getActiveEffects() {
          return this.activeEffects.values();
-@@ -971,28 +_,65 @@
+@@ -971,28 +_,68 @@
          return this.addEffect(p_21165_, null);
      }
  
@@ -597,7 +598,10 @@
 +   }
 +
 +   // Mohist start
-+   public static AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++   private AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++   public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
++       addEffectCause.set(cause);
++   }
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 +      boolean isAsync = AsyncCatcher.catchAsync();
 +      if (isTickingEffects) {
@@ -793,16 +797,16 @@
 -                this.actuallyHurt(p_21016_, p_21017_ - this.lastHurt);
 -                this.lastHurt = p_21017_;
 -                flag1 = false;
-+   public AtomicReference<RegainReason> regainReason0 = new AtomicReference<>(RegainReason.CUSTOM);
-+   public void regainReason0(RegainReason reason) {
-+      regainReason0.set(reason);
++   private AtomicReference<RegainReason> heal$regainReason = new AtomicReference<>(RegainReason.CUSTOM);
++   public void heal$regainReason(RegainReason reason) {
++       heal$regainReason.set(reason);
 +   }
 +   public void heal(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
 +      float f = this.getHealth();
 +      if (f > 0.0F) {
-+         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, regainReason0.getAndSet(RegainReason.CUSTOM));
++         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, heal$regainReason.getAndSet(RegainReason.CUSTOM));
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            this.level.getCraftServer().getPluginManager().callEvent(event);
@@ -816,7 +820,7 @@
 +   }
 +
 +   public void heal(float pHealAmount, EntityRegainHealthEvent.RegainReason regainReason) {
-+      this.regainReason0(regainReason);
++      this.heal$regainReason(regainReason);
 +      this.heal(pHealAmount);
 +   }
 +

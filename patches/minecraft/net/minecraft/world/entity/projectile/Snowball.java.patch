@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/projectile/Snowball.java
++++ b/net/minecraft/world/entity/projectile/Snowball.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ 
+ public class Snowball extends ThrowableItemProjectile {
+     public Snowball(EntityType<? extends Snowball> p_37391_, Level p_37392_) {
+@@ -63,6 +_,7 @@
+         super.onHit(p_37406_);
+         if (!this.level().isClientSide) {
+             this.level().broadcastEntityEvent(this, (byte)3);
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         }
+     }

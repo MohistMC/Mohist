@@ -8,7 +8,7 @@
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
  import com.google.gson.JsonDeserializationContext;
-@@ -18,11 +_,13 @@
+@@ -18,10 +_,13 @@
  import java.util.ArrayList;
  import java.util.Collections;
  import java.util.Date;
@@ -18,11 +18,10 @@
  import java.util.UUID;
 +import java.util.stream.Stream;
  import javax.annotation.Nullable;
--import net.minecraft.core.HolderLookup;
 +import net.minecraft.Util;
+ import net.minecraft.core.HolderLookup;
  import net.minecraft.network.chat.contents.DataSource;
  import net.minecraft.network.chat.contents.KeybindContents;
- import net.minecraft.network.chat.contents.NbtContents;
 @@ -34,10 +_,22 @@
  import net.minecraft.util.FormattedCharSequence;
  import net.minecraft.world.level.ChunkPos;

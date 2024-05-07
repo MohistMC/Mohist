@@ -1,220 +1,60 @@
 --- a/net/minecraft/world/entity/projectile/WitherSkull.java
 +++ b/net/minecraft/world/entity/projectile/WitherSkull.java
-@@ -20,108 +_,115 @@
+@@ -20,6 +_,8 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class WitherSkull extends AbstractHurtingProjectile {
--    private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WitherSkull.class, EntityDataSerializers.BOOLEAN);
--
--    public WitherSkull(EntityType<? extends WitherSkull> p_37598_, Level p_37599_) {
--        super(p_37598_, p_37599_);
--    }
--
--    public WitherSkull(Level p_37609_, LivingEntity p_37610_, double p_37611_, double p_37612_, double p_37613_) {
--        super(EntityType.WITHER_SKULL, p_37610_, p_37611_, p_37612_, p_37613_, p_37609_);
--    }
--
--    @Override
--    protected float getInertia() {
--        return this.isDangerous() ? 0.73F : super.getInertia();
--    }
--
--    @Override
--    public boolean isOnFire() {
--        return false;
--    }
--
--    @Override
--    public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
+     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WitherSkull.class, EntityDataSerializers.BOOLEAN);
+@@ -44,7 +_,7 @@
+ 
+     @Override
+     public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
 -        return this.isDangerous() && WitherBoss.canDestroy(p_37622_) ? Math.min(0.8F, p_37624_) : p_37624_;
--    }
--
--    @Override
--    protected void onHitEntity(EntityHitResult p_37626_) {
--        super.onHitEntity(p_37626_);
--        if (!this.level().isClientSide) {
--            Entity entity = p_37626_.getEntity();
--            boolean flag;
--            if (this.getOwner() instanceof LivingEntity livingentity) {
--                flag = entity.hurt(this.damageSources().witherSkull(this, livingentity), 8.0F);
--                if (flag) {
--                    if (entity.isAlive()) {
--                        this.doEnchantDamageEffects(livingentity, entity);
--                    } else {
--                        livingentity.heal(5.0F);
--                    }
--                }
--            } else {
--                flag = entity.hurt(this.damageSources().magic(), 5.0F);
--            }
--
--            if (flag && entity instanceof LivingEntity livingentity1) {
--                int i = 0;
--                if (this.level().getDifficulty() == Difficulty.NORMAL) {
--                    i = 10;
--                } else if (this.level().getDifficulty() == Difficulty.HARD) {
--                    i = 40;
--                }
--
--                if (i > 0) {
++        return this.isDangerous() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
+     }
+ 
+     @Override
+@@ -59,6 +_,7 @@
+                     if (entity.isAlive()) {
+                         this.doEnchantDamageEffects(livingentity, entity);
+                     } else {
++                        livingentity.heal$regainReason(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                         livingentity.heal(5.0F);
+                     }
+                 }
+@@ -75,7 +_,8 @@
+                 }
+ 
+                 if (i > 0) {
 -                    livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource());
--                }
--            }
--        }
--    }
--
--    @Override
--    protected void onHit(HitResult p_37628_) {
--        super.onHit(p_37628_);
--        if (!this.level().isClientSide) {
++                    livingentity1.addEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++               		livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource());
+                 }
+             }
+         }
+@@ -85,10 +_,19 @@
+     protected void onHit(HitResult p_37628_) {
+         super.onHit(p_37628_);
+         if (!this.level().isClientSide) {
 -            this.level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, Level.ExplosionInteraction.MOB);
--            this.discard();
--        }
--    }
--
--    @Override
--    public boolean hurt(DamageSource p_37616_, float p_37617_) {
--        return false;
--    }
--
--    @Override
--    protected void defineSynchedData(SynchedEntityData.Builder p_333142_) {
--        p_333142_.define(DATA_DANGEROUS, false);
--    }
--
--    public boolean isDangerous() {
--        return this.entityData.get(DATA_DANGEROUS);
--    }
--
--    public void setDangerous(boolean p_37630_) {
--        this.entityData.set(DATA_DANGEROUS, p_37630_);
--    }
--
--    @Override
--    protected boolean shouldBurn() {
--        return false;
--    }
--
--    @Override
--    public void addAdditionalSaveData(CompoundTag p_311705_) {
--        super.addAdditionalSaveData(p_311705_);
--        p_311705_.putBoolean("dangerous", this.isDangerous());
--    }
--
--    @Override
--    public void readAdditionalSaveData(CompoundTag p_310393_) {
--        super.readAdditionalSaveData(p_310393_);
--        this.setDangerous(p_310393_.getBoolean("dangerous"));
--    }
-+   private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WitherSkull.class, EntityDataSerializers.BOOLEAN);
++            // CraftBukkit start
++            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
++            this.level.getCraftServer().getPluginManager().callEvent(event);
 +
-+   public WitherSkull(EntityType<? extends WitherSkull> p_37598_, Level p_37599_) {
-+      super(p_37598_, p_37599_);
-+   }
-+
-+   public WitherSkull(Level p_37609_, LivingEntity p_37610_, double p_37611_, double p_37612_, double p_37613_) {
-+      super(EntityType.WITHER_SKULL, p_37610_, p_37611_, p_37612_, p_37613_, p_37609_);
-+   }
-+
-+   protected float getInertia() {
-+      return this.isDangerous() ? 0.73F : super.getInertia();
-+   }
-+
-+   public boolean isOnFire() {
-+      return false;
-+   }
-+
-+   public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
-+      return this.isDangerous() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
-+   }
-+
-+   protected void onHitEntity(EntityHitResult p_37626_) {
-+      super.onHitEntity(p_37626_);
-+      if (!this.level().isClientSide) {
-+         Entity entity = p_37626_.getEntity();
-+         Entity entity1 = this.getOwner();
-+         boolean flag;
-+         if (entity1 instanceof LivingEntity) {
-+            LivingEntity livingentity = (LivingEntity)entity1;
-+            flag = entity.hurt(this.damageSources().witherSkull(this, livingentity), 8.0F);
-+            if (flag) {
-+               if (entity.isAlive()) {
-+                  this.doEnchantDamageEffects(livingentity, entity);
-+               } else {
-+                  livingentity.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
-+               }
++            if (!event.isCancelled()) {
++                this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +            }
-+         } else {
-+            flag = entity.hurt(this.damageSources().magic(), 5.0F);
-+         }
-+
-+         if (flag && entity instanceof LivingEntity) {
-+            LivingEntity livingentity1 = (LivingEntity)entity;
-+            int i = 0;
-+            if (this.level().getDifficulty() == Difficulty.NORMAL) {
-+               i = 10;
-+            } else if (this.level().getDifficulty() == Difficulty.HARD) {
-+               i = 40;
-+            }
-+
-+            if (i > 0) {
-+               livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
-+            }
-+         }
-+
-+      }
-+   }
-+
-+   protected void onHit(HitResult p_37628_) {
-+      super.onHit(p_37628_);
-+      if (!this.level().isClientSide) {
-+         // CraftBukkit start
-+         ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
-+         this.level.getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (!event.isCancelled()) {
-+            this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
-+         }
-+         // CraftBukkit end
-+         this.discard();
-+      }
++            // CraftBukkit end
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         }
+-    }
 +
 +   }
-+
-+   public boolean isPickable() {
-+      return false;
-+   }
-+
-+   public boolean hurt(DamageSource p_37616_, float p_37617_) {
-+      return false;
-+   }
-+
-+   protected void defineSynchedData() {
-+      this.entityData.define(DATA_DANGEROUS, false);
-+   }
-+
-+   public boolean isDangerous() {
-+      return this.entityData.get(DATA_DANGEROUS);
-+   }
-+
-+   public void setDangerous(boolean p_37630_) {
-+      this.entityData.set(DATA_DANGEROUS, p_37630_);
-+   }
-+
-+   protected boolean shouldBurn() {
-+      return false;
-+   }
-+
-+   public void addAdditionalSaveData(CompoundTag p_311705_) {
-+      super.addAdditionalSaveData(p_311705_);
-+      p_311705_.putBoolean("dangerous", this.isDangerous());
-+   }
-+
-+   public void readAdditionalSaveData(CompoundTag p_310393_) {
-+      super.readAdditionalSaveData(p_310393_);
-+      this.setDangerous(p_310393_.getBoolean("dangerous"));
-+   }
- }
+ 
+     @Override
+     public boolean hurt(DamageSource p_37616_, float p_37617_) {

@@ -1,161 +1,38 @@
 --- a/net/minecraft/world/entity/projectile/LlamaSpit.java
 +++ b/net/minecraft/world/entity/projectile/LlamaSpit.java
-@@ -2,8 +_,8 @@
- 
- import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
--import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.util.Mth;
-+import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.animal.horse.Llama;
-@@ -15,79 +_,73 @@
+@@ -13,6 +_,7 @@
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.EntityRemoveEvent;
  
  public class LlamaSpit extends Projectile {
--    public LlamaSpit(EntityType<? extends LlamaSpit> p_37224_, Level p_37225_) {
--        super(p_37224_, p_37225_);
--    }
--
--    public LlamaSpit(Level p_37235_, Llama p_37236_) {
--        this(EntityType.LLAMA_SPIT, p_37235_);
--        this.setOwner(p_37236_);
--        this.setPos(
--            p_37236_.getX() - (double)(p_37236_.getBbWidth() + 1.0F) * 0.5 * (double)Mth.sin(p_37236_.yBodyRot * (float) (Math.PI / 180.0)),
--            p_37236_.getEyeY() - 0.1F,
--            p_37236_.getZ() + (double)(p_37236_.getBbWidth() + 1.0F) * 0.5 * (double)Mth.cos(p_37236_.yBodyRot * (float) (Math.PI / 180.0))
--        );
--    }
--
--    @Override
--    protected double getDefaultGravity() {
--        return 0.06;
--    }
--
--    @Override
--    public void tick() {
--        super.tick();
--        Vec3 vec3 = this.getDeltaMovement();
--        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+     public LlamaSpit(EntityType<? extends LlamaSpit> p_37224_, Level p_37225_) {
+@@ -39,15 +_,18 @@
+         super.tick();
+         Vec3 vec3 = this.getDeltaMovement();
+         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 -        this.hitTargetOrDeflectSelf(hitresult);
--        double d0 = this.getX() + vec3.x;
--        double d1 = this.getY() + vec3.y;
--        double d2 = this.getZ() + vec3.z;
--        this.updateRotation();
--        float f = 0.99F;
--        if (this.level().getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
--            this.discard();
--        } else if (this.isInWaterOrBubble()) {
--            this.discard();
--        } else {
--            this.setDeltaMovement(vec3.scale(0.99F));
--            this.applyGravity();
--            this.setPos(d0, d1, d2);
--        }
--    }
--
--    @Override
--    protected void onHitEntity(EntityHitResult p_37241_) {
--        super.onHitEntity(p_37241_);
--        if (this.getOwner() instanceof LivingEntity livingentity) {
--            p_37241_.getEntity().hurt(this.damageSources().spit(this, livingentity), 1.0F);
--        }
--    }
--
--    @Override
--    protected void onHitBlock(BlockHitResult p_37239_) {
--        super.onHitBlock(p_37239_);
--        if (!this.level().isClientSide) {
--            this.discard();
--        }
--    }
--
--    @Override
--    protected void defineSynchedData(SynchedEntityData.Builder p_335399_) {
--    }
--
--    @Override
--    public void recreateFromPacket(ClientboundAddEntityPacket p_150162_) {
--        super.recreateFromPacket(p_150162_);
--        double d0 = p_150162_.getXa();
--        double d1 = p_150162_.getYa();
--        double d2 = p_150162_.getZa();
--
--        for (int i = 0; i < 7; i++) {
--            double d3 = 0.4 + 0.1 * (double)i;
--            this.level().addParticle(ParticleTypes.SPIT, this.getX(), this.getY(), this.getZ(), d0 * d3, d1, d2 * d3);
--        }
--
--        this.setDeltaMovement(d0, d1, d2);
--    }
-+   public LlamaSpit(EntityType<? extends LlamaSpit> p_37224_, Level p_37225_) {
-+      super(p_37224_, p_37225_);
-+   }
-+
-+   public LlamaSpit(Level p_37235_, Llama p_37236_) {
-+      this(EntityType.LLAMA_SPIT, p_37235_);
-+      this.setOwner(p_37236_);
-+      this.setPos(p_37236_.getX() - (double)(p_37236_.getBbWidth() + 1.0F) * 0.5D * (double)Mth.sin(p_37236_.yBodyRot * ((float)Math.PI / 180F)), p_37236_.getEyeY() - (double)0.1F, p_37236_.getZ() + (double)(p_37236_.getBbWidth() + 1.0F) * 0.5D * (double)Mth.cos(p_37236_.yBodyRot * ((float)Math.PI / 180F)));
-+   }
-+
-+   public void tick() {
-+      super.tick();
-+      Vec3 vec3 = this.getDeltaMovement();
-+      HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-+      if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-+      this.preOnHit(hitresult); // CraftBukkit - projectile hit event
-+      double d0 = this.getX() + vec3.x;
-+      double d1 = this.getY() + vec3.y;
-+      double d2 = this.getZ() + vec3.z;
-+      this.updateRotation();
-+      float f = 0.99F;
-+      float f1 = 0.06F;
-+      if (this.level().getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
-+         this.discard();
-+      } else if (this.isInWaterOrBubble()) {
-+         this.discard();
-+      } else {
-+         this.setDeltaMovement(vec3.scale((double)0.99F));
-+         if (!this.isNoGravity()) {
-+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, (double)-0.06F, 0.0D));
-+         }
-+
-+         this.setPos(d0, d1, d2);
-+      }
-+   }
-+
-+   protected void onHitEntity(EntityHitResult p_37241_) {
-+      super.onHitEntity(p_37241_);
-+      Entity entity = this.getOwner();
-+      if (entity instanceof LivingEntity livingentity) {
-+         p_37241_.getEntity().hurt(this.damageSources().mobProjectile(this, livingentity), 1.0F);
-+      }
-+
-+   }
-+
-+   protected void onHitBlock(BlockHitResult p_37239_) {
-+      super.onHitBlock(p_37239_);
-+      if (!this.level().isClientSide) {
-+         this.discard();
-+      }
-+
-+   }
-+
-+   protected void defineSynchedData() {
-+   }
-+
-+   public void recreateFromPacket(ClientboundAddEntityPacket p_150162_) {
-+      super.recreateFromPacket(p_150162_);
-+      double d0 = p_150162_.getXa();
-+      double d1 = p_150162_.getYa();
-+      double d2 = p_150162_.getZa();
-+
-+      for(int i = 0; i < 7; ++i) {
-+         double d3 = 0.4D + 0.1D * (double)i;
-+         this.level().addParticle(ParticleTypes.SPIT, this.getX(), this.getY(), this.getZ(), d0 * d3, d1, d2 * d3);
-+      }
-+
-+      this.setDeltaMovement(d0, d1, d2);
-+   }
- }
++        if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
++            this.preHitTargetOrDeflectSelf(hitresult);
+         double d0 = this.getX() + vec3.x;
+         double d1 = this.getY() + vec3.y;
+         double d2 = this.getZ() + vec3.z;
+         this.updateRotation();
+         float f = 0.99F;
+         if (this.level().getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+             this.discard();
+         } else if (this.isInWaterOrBubble()) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+             this.discard();
+         } else {
+             this.setDeltaMovement(vec3.scale(0.99F));
+@@ -68,6 +_,7 @@
+     protected void onHitBlock(BlockHitResult p_37239_) {
+         super.onHitBlock(p_37239_);
+         if (!this.level().isClientSide) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT);
+             this.discard();
+         }
+     }

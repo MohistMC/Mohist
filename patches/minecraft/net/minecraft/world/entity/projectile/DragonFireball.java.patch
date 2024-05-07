@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/projectile/DragonFireball.java
++++ b/net/minecraft/world/entity/projectile/DragonFireball.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ 
+ public class DragonFireball extends AbstractHurtingProjectile {
+     public static final float SPLASH_RANGE = 4.0F;
+@@ -54,6 +_,7 @@
+ 
+                 this.level().levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+                 this.level().addFreshEntity(areaeffectcloud);
++                this.putRemoveCause(EntityRemoveEvent.Cause.HIT);
+                 this.discard();
+             }
+         }

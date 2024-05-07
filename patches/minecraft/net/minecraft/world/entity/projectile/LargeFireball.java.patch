@@ -1,113 +1,56 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -8,53 +_,63 @@
+@@ -8,25 +_,40 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
++import org.bukkit.Bukkit;
++import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class LargeFireball extends Fireball {
 -    public int explosionPower = 1;
--
--    public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
--        super(p_37199_, p_37200_);
--    }
--
--    public LargeFireball(Level p_181151_, LivingEntity p_181152_, double p_181153_, double p_181154_, double p_181155_, int p_181156_) {
--        super(EntityType.FIREBALL, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
--        this.explosionPower = p_181156_;
--    }
--
--    @Override
--    protected void onHit(HitResult p_37218_) {
--        super.onHit(p_37218_);
--        if (!this.level().isClientSide) {
++    private int explosionPower = 1;
+ 
+     public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
+         super(p_37199_, p_37200_);
++        isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
+     }
+ 
+     public LargeFireball(Level p_181151_, LivingEntity p_181152_, double p_181153_, double p_181154_, double p_181155_, int p_181156_) {
+         super(EntityType.FIREBALL, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
+         this.explosionPower = p_181156_;
++        isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
+     }
+ 
+     @Override
+     protected void onHit(HitResult p_37218_) {
+         super.onHit(p_37218_);
+         if (!this.level().isClientSide) {
 -            boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 -            this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
--            this.discard();
--        }
--    }
--
--    @Override
--    protected void onHitEntity(EntityHitResult p_37216_) {
--        super.onHitEntity(p_37216_);
--        if (!this.level().isClientSide) {
--            Entity entity = p_37216_.getEntity();
--            Entity entity1 = this.getOwner();
--            entity.hurt(this.damageSources().fireball(this, entity1), 6.0F);
--            if (entity1 instanceof LivingEntity) {
--                this.doEnchantDamageEffects((LivingEntity)entity1, entity);
--            }
--        }
--    }
--
--    @Override
--    public void addAdditionalSaveData(CompoundTag p_37222_) {
--        super.addAdditionalSaveData(p_37222_);
--        p_37222_.putByte("ExplosionPower", (byte)this.explosionPower);
--    }
--
--    @Override
--    public void readAdditionalSaveData(CompoundTag p_37220_) {
--        super.readAdditionalSaveData(p_37220_);
--        if (p_37220_.contains("ExplosionPower", 99)) {
++            // TODO 1.19.3: The creation of Level.ExplosionInteraction means this code path will fire EntityMobGriefingEvent twice. Should we try and fix it? -SS
++            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
++            // CraftBukkit start - fire ExplosionPrimeEvent
++            ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
++            Bukkit.getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++                // give 'this' instead of (Entity) null so we know what causes the damage
++                this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            }
++            // CraftBukkit end
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT);
+             this.discard();
+         }
+     }
+@@ -54,7 +_,8 @@
+     public void readAdditionalSaveData(CompoundTag p_37220_) {
+         super.readAdditionalSaveData(p_37220_);
+         if (p_37220_.contains("ExplosionPower", 99)) {
 -            this.explosionPower = p_37220_.getByte("ExplosionPower");
--        }
--    }
-+   public int explosionPower = 1;
-+
-+   public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
-+      super(p_37199_, p_37200_);
-+      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner()); // Mohist
-+   }
-+
-+   public LargeFireball(Level p_181151_, LivingEntity p_181152_, double p_181153_, double p_181154_, double p_181155_, int p_181156_) {
-+      super(EntityType.FIREBALL, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
-+      this.explosionPower = p_181156_;
-+      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner()); // Mohist
-+   }
-+
-+   protected void onHit(HitResult p_37218_) {
-+      super.onHit(p_37218_);
-+      if (!this.level().isClientSide) {
-+         // CraftBukkit start - fire ExplosionPrimeEvent
-+         ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
-+         this.level().getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (!event.isCancelled()) {
-+            // give 'this' instead of (Entity) null so we know what causes the damage
-+            this.level.explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
-+         }
-+         // CraftBukkit end
-+         this.discard();
-+      }
-+
-+   }
-+
-+   protected void onHitEntity(EntityHitResult p_37216_) {
-+      super.onHitEntity(p_37216_);
-+      if (!this.level().isClientSide) {
-+         Entity entity = p_37216_.getEntity();
-+         Entity entity1 = this.getOwner();
-+         entity.hurt(this.damageSources().fireball(this, entity1), 6.0F);
-+         if (entity1 instanceof LivingEntity) {
-+            this.doEnchantDamageEffects((LivingEntity)entity1, entity);
-+         }
-+
-+      }
-+   }
-+
-+   public void addAdditionalSaveData(CompoundTag p_37222_) {
-+      super.addAdditionalSaveData(p_37222_);
-+      p_37222_.putByte("ExplosionPower", (byte)this.explosionPower);
-+   }
-+
-+   public void readAdditionalSaveData(CompoundTag p_37220_) {
-+      super.readAdditionalSaveData(p_37220_);
-+      if (p_37220_.contains("ExplosionPower", 99)) {
-+         // CraftBukkit - set bukkitYield when setting explosionpower
-+         bukkitYield = this.explosionPower = p_37220_.getByte("ExplosionPower");
-+      }
-+
-+   }
++            // CraftBukkit - set bukkitYield when setting explosionpower
++            bukkitYield = this.explosionPower = p_37220_.getByte("ExplosionPower");
+         }
+     }
  }

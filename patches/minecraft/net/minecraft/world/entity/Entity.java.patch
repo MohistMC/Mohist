@@ -267,27 +267,27 @@
          return this.tags.remove(p_20138_);
      }
  
--    public void kill() {
-+   // Mohist start
-+   private AtomicReference<EntityRemoveEvent.Cause> removeCause = new AtomicReference<>(null);
++    // Mohist start
++    private AtomicReference<EntityRemoveEvent.Cause> mohist$removeCause = new AtomicReference<>(null);
 +
-+   public void putRemoveCause(EntityRemoveEvent.Cause cause) {
-+      removeCause.set(cause);
-+   }
++    public void putRemoveCause(EntityRemoveEvent.Cause cause) {
++        mohist$removeCause.set(cause);
++    }
 +
-+   public void kill() {
-+      putRemoveCause(EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
+     public void kill() {
++        putRemoveCause(EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
          this.remove(Entity.RemovalReason.KILLED);
          this.gameEvent(GameEvent.ENTITY_DIE);
      }
-@@ -330,6 +_,11 @@
+@@ -330,6 +_,12 @@
          this.remove(Entity.RemovalReason.DISCARDED);
      }
  
-+   public final void discard(EntityRemoveEvent.Cause cause) {
-+      this.remove(Entity.RemovalReason.DISCARDED, cause);
-+      // CraftBukkit end
-+   }
++    public final void discard(EntityRemoveEvent.Cause cause) {
++        this.remove(Entity.RemovalReason.DISCARDED, cause);
++        // CraftBukkit end
++    }
++    // Mohist end
 +
      protected abstract void defineSynchedData(SynchedEntityData.Builder p_333664_);
  
@@ -406,7 +406,7 @@
  
          this.checkBelowWorld();
          if (!this.level().isClientSide) {
-@@ -512,14 +_,29 @@
+@@ -512,19 +_,53 @@
          return 0;
      }
  
@@ -426,13 +426,13 @@
 +            this.level.getCraftServer().getPluginManager().callEvent(combustEvent);
 +
 +            if (!combustEvent.isCancelled()) {
-+               this.setSecondsOnFire(combustEvent.getDuration(), false);
++               this.igniteForSeconds(combustEvent.getDuration(), false);
              }
 -        }
 -    }
 +         } else {
 +            // This will be called every single tick the entity is in lava, so don't throw an event
-+            this.setSecondsOnFire(15, false);
++            this.igniteForSeconds(15, false);
 +         }
 +         if (this.hurt(this.damageSources().lava().directBlock(level, lastLavaContact), 4.0F)) {
 +            this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.random.nextFloat() * 0.4F);
@@ -440,24 +440,33 @@
 +         // CraftBukkit end - we also don't throw an event unless the object in lava is living, to save on some event calls
 +      }
 +   }
++
++    // Mohist start
++    public AtomicBoolean callEvent = new AtomicBoolean(true);
  
      public final void igniteForSeconds(int p_332057_) {
++        if (callEvent.getAndSet(true)) {
++            EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_332057_);
++            this.level.getCraftServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                return;
++            }
++
++            p_332057_ = event.getDuration();
++        }
          this.igniteForTicks(p_332057_ * 20);
-@@ -531,6 +_,14 @@
-         }
      }
  
-+   // Mohist start
-+   public AtomicBoolean callEvent = new AtomicBoolean(true);
-+   public void setSecondsOnFire(int i, boolean callEvent) {
-+      this.callEvent.set(callEvent);
-+      igniteForTicks(i);
-+   }
-+   // Mohist end
++    public void igniteForSeconds(int i, boolean callEvent) {
++        this.callEvent.set(callEvent);
++        igniteForTicks(i);
++    }
++    // Mohist end
 +
-     public void setRemainingFireTicks(int p_20269_) {
-         this.remainingFireTicks = p_20269_;
-     }
+     public void igniteForTicks(int p_328241_) {
+         if (this.remainingFireTicks < p_328241_) {
+             this.setRemainingFireTicks(p_328241_);
 @@ -544,6 +_,7 @@
      }
  
@@ -2215,7 +2224,7 @@
  
      @Override
      public final void setRemoved(Entity.RemovalReason p_146876_) {
-+      CraftEventFactory.callEntityRemoveEvent(this, removeCause.getAndSet(null));
++      CraftEventFactory.callEntityRemoveEvent(this, mohist$removeCause.getAndSet(null));
          if (this.removalReason == null) {
              this.removalReason = p_146876_;
          }

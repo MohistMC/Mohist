@@ -1,15 +1,14 @@
 --- a/net/minecraft/world/item/ArmorItem.java
 +++ b/net/minecraft/world/item/ArmorItem.java
-@@ -1,7 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.world.item;
  
--import com.google.common.base.Suppliers;
--import com.mojang.serialization.Codec;
+ import com.google.common.base.Suppliers;
 +import com.google.common.collect.ImmutableMultimap;
 +import com.google.common.collect.Multimap;
+ import com.mojang.serialization.Codec;
  import java.util.EnumMap;
  import java.util.List;
- import java.util.UUID;
 @@ -28,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -55,3 +54,12 @@
              if (livingentity instanceof Mob) {
                  ((Mob)livingentity).setDropChance(equipmentslot, 2.0F);
                  ((Mob)livingentity).setPersistenceRequired();
+@@ -152,7 +_,7 @@
+         BOOTS(EquipmentSlot.FEET, 13, "boots"),
+         BODY(EquipmentSlot.BODY, 16, "body");
+ 
+-        public static final Codec<ArmorItem.Type> CODEC = StringRepresentable.fromValues(ArmorItem.Type::values);
++        public static final Codec<Type> CODEC = StringRepresentable.fromValues(ArmorItem.Type::values);
+         private final EquipmentSlot slot;
+         private final String name;
+         private final int durability;

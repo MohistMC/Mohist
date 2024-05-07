@@ -1,137 +1,65 @@
 --- a/net/minecraft/world/entity/projectile/SmallFireball.java
 +++ b/net/minecraft/world/entity/projectile/SmallFireball.java
-@@ -6,66 +_,79 @@
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.Mob;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.BaseFireBlock;
+@@ -12,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityRemoveEvent;
  
  public class SmallFireball extends Fireball {
--    public SmallFireball(EntityType<? extends SmallFireball> p_37364_, Level p_37365_) {
--        super(p_37364_, p_37365_);
+     public SmallFireball(EntityType<? extends SmallFireball> p_37364_, Level p_37365_) {
+@@ -24,7 +_,10 @@
+ 
+     public SmallFireball(Level p_37367_, double p_37368_, double p_37369_, double p_37370_, double p_37371_, double p_37372_, double p_37373_) {
+         super(EntityType.SMALL_FIREBALL, p_37368_, p_37369_, p_37370_, p_37371_, p_37372_, p_37373_, p_37367_);
 -    }
--
--    public SmallFireball(Level p_37375_, LivingEntity p_37376_, double p_37377_, double p_37378_, double p_37379_) {
--        super(EntityType.SMALL_FIREBALL, p_37376_, p_37377_, p_37378_, p_37379_, p_37375_);
--    }
--
--    public SmallFireball(Level p_37367_, double p_37368_, double p_37369_, double p_37370_, double p_37371_, double p_37372_, double p_37373_) {
--        super(EntityType.SMALL_FIREBALL, p_37368_, p_37369_, p_37370_, p_37371_, p_37372_, p_37373_, p_37367_);
--    }
--
--    @Override
--    protected void onHitEntity(EntityHitResult p_37386_) {
--        super.onHitEntity(p_37386_);
--        if (!this.level().isClientSide) {
--            Entity entity = p_37386_.getEntity();
--            Entity entity1 = this.getOwner();
--            int i = entity.getRemainingFireTicks();
++        // CraftBukkit start
++        isIncendiary = !(this.getOwner() instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner()); // Mohist
++        // CraftBukkit end
++   }
+ 
+     @Override
+     protected void onHitEntity(EntityHitResult p_37386_) {
+@@ -33,11 +_,19 @@
+             Entity entity = p_37386_.getEntity();
+             Entity entity1 = this.getOwner();
+             int i = entity.getRemainingFireTicks();
 -            entity.igniteForSeconds(5);
--            if (!entity.hurt(this.damageSources().fireball(this, entity1), 5.0F)) {
--                entity.setRemainingFireTicks(i);
--            } else if (entity1 instanceof LivingEntity) {
--                this.doEnchantDamageEffects((LivingEntity)entity1, entity);
--            }
--        }
--    }
--
--    @Override
--    protected void onHitBlock(BlockHitResult p_37384_) {
--        super.onHitBlock(p_37384_);
--        if (!this.level().isClientSide) {
--            Entity entity = this.getOwner();
--            if (!(entity instanceof Mob) || this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
--                BlockPos blockpos = p_37384_.getBlockPos().relative(p_37384_.getDirection());
--                if (this.level().isEmptyBlock(blockpos)) {
--                    this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
--                }
--            }
--        }
--    }
--
--    @Override
--    protected void onHit(HitResult p_37388_) {
--        super.onHit(p_37388_);
--        if (!this.level().isClientSide) {
--            this.discard();
--        }
--    }
--
--    @Override
--    public boolean hurt(DamageSource p_37381_, float p_37382_) {
--        return false;
--    }
-+   public SmallFireball(EntityType<? extends SmallFireball> p_37364_, Level p_37365_) {
-+      super(p_37364_, p_37365_);
-+   }
 +
-+   public SmallFireball(Level p_37375_, LivingEntity p_37376_, double p_37377_, double p_37378_, double p_37379_) {
-+      super(EntityType.SMALL_FIREBALL, p_37376_, p_37377_, p_37378_, p_37379_, p_37375_);
-+   }
++            // CraftBukkit start - Entity damage by entity event + combust event
++            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++            entity.level().getCraftServer().getPluginManager().callEvent(event);
 +
-+   public SmallFireball(Level p_37367_, double p_37368_, double p_37369_, double p_37370_, double p_37371_, double p_37372_, double p_37373_) {
-+      super(EntityType.SMALL_FIREBALL, p_37368_, p_37369_, p_37370_, p_37371_, p_37372_, p_37373_, p_37367_);
-+      // CraftBukkit start
-+      isIncendiary = !(this.getOwner() instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner()); // Mohist
-+      // CraftBukkit end
-+   }
-+
-+   protected void onHitEntity(EntityHitResult p_37386_) {
-+      super.onHitEntity(p_37386_);
-+      if (!this.level().isClientSide) {
-+         Entity entity = p_37386_.getEntity();
-+         Entity entity1 = this.getOwner();
-+         int i = entity.getRemainingFireTicks();
-+         // CraftBukkit start - Entity damage by entity event + combust event
-+         EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
-+         entity.level().getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (!event.isCancelled()) {
-+            entity.setSecondsOnFire(event.getDuration(), false);
-+         }
-+         // CraftBukkit end
-+         if (!entity.hurt(this.damageSources().fireball(this, entity1), 5.0F)) {
-+            entity.setRemainingFireTicks(i);
-+         } else if (entity1 instanceof LivingEntity) {
-+            this.doEnchantDamageEffects((LivingEntity)entity1, entity);
-+         }
-+
-+      }
-+   }
-+
-+   protected void onHitBlock(BlockHitResult p_37384_) {
-+      super.onHitBlock(p_37384_);
-+      if (!this.level().isClientSide) {
-+         Entity entity = this.getOwner();
-+         if (isIncendiary) { // CraftBukkit
-+            BlockPos blockpos = p_37384_.getBlockPos().relative(p_37384_.getDirection());
-+            if (this.level().isEmptyBlock(blockpos) && !org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(level(), blockpos, this).isCancelled()) {
-+               this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level, blockpos));
++            if (!event.isCancelled()) {
++                entity.setSecondsOnFire(event.getDuration(), false);
 +            }
-+         }
-+
-+      }
-+   }
-+
-+   protected void onHit(HitResult p_37388_) {
-+      super.onHit(p_37388_);
-+      if (!this.level().isClientSide) {
-+         this.discard();
-+      }
-+
-+   }
-+
-+   public boolean isPickable() {
-+      return false;
-+   }
-+
-+   public boolean hurt(DamageSource p_37381_, float p_37382_) {
-+      return false;
-+   }
- }
++            // CraftBukkit end
+             if (!entity.hurt(this.damageSources().fireball(this, entity1), 5.0F)) {
+                 entity.setRemainingFireTicks(i);
+             } else if (entity1 instanceof LivingEntity) {
+-                this.doEnchantDamageEffects((LivingEntity)entity1, entity);
++                this.doEnchantDamageEffects((LivingEntity) entity1, entity);
+             }
+         }
+     }
+@@ -47,9 +_,9 @@
+         super.onHitBlock(p_37384_);
+         if (!this.level().isClientSide) {
+             Entity entity = this.getOwner();
+-            if (!(entity instanceof Mob) || this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (isIncendiary) { // CraftBukkit
+                 BlockPos blockpos = p_37384_.getBlockPos().relative(p_37384_.getDirection());
+-                if (this.level().isEmptyBlock(blockpos)) {
++                if (this.level().isEmptyBlock(blockpos) && !org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(level(), blockpos, this).isCancelled()) {
+                     this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
+                 }
+             }
+@@ -60,6 +_,7 @@
+     protected void onHit(HitResult p_37388_) {
+         super.onHit(p_37388_);
+         if (!this.level().isClientSide) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+         }
+     }

@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
-@@ -6,8 +_,8 @@
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
+@@ -8,6 +_,7 @@
  import net.minecraft.nbt.CompoundTag;
--import net.minecraft.network.syncher.SynchedEntityData;
+ import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.tags.DamageTypeTags;
  import net.minecraft.util.Mth;
