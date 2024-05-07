@@ -1,58 +1,14 @@
 --- a/net/minecraft/world/level/block/RootedDirtBlock.java
 +++ b/net/minecraft/world/level/block/RootedDirtBlock.java
-@@ -10,34 +_,25 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -33,9 +_,8 @@
  
- public class RootedDirtBlock extends Block implements BonemealableBlock {
--    public static final MapCodec<RootedDirtBlock> CODEC = simpleCodec(RootedDirtBlock::new);
--
--    @Override
--    public MapCodec<RootedDirtBlock> codec() {
--        return CODEC;
--    }
--
--    public RootedDirtBlock(BlockBehaviour.Properties p_154359_) {
--        super(p_154359_);
--    }
--
--    @Override
--    public boolean isValidBonemealTarget(LevelReader p_256100_, BlockPos p_255943_, BlockState p_255655_) {
--        return p_256100_.getBlockState(p_255943_.below()).isAir();
--    }
--
--    @Override
--    public boolean isBonemealSuccess(Level p_221979_, RandomSource p_221980_, BlockPos p_221981_, BlockState p_221982_) {
--        return true;
--    }
--
--    @Override
--    public void performBonemeal(ServerLevel p_221974_, RandomSource p_221975_, BlockPos p_221976_, BlockState p_221977_) {
+     @Override
+     public void performBonemeal(ServerLevel p_221974_, RandomSource p_221975_, BlockPos p_221976_, BlockState p_221977_) {
 -        p_221974_.setBlockAndUpdate(p_221976_.below(), Blocks.HANGING_ROOTS.defaultBlockState());
 -    }
 -
--    @Override
--    public BlockPos getParticlePos(BlockPos p_335934_) {
--        return p_335934_.below();
--    }
-+   public static final MapCodec<RootedDirtBlock> CODEC = simpleCodec(RootedDirtBlock::new);
-+
-+   public MapCodec<RootedDirtBlock> codec() {
-+      return CODEC;
-+   }
-+
-+   public RootedDirtBlock(BlockBehaviour.Properties p_154359_) {
-+      super(p_154359_);
-+   }
-+
-+   public boolean isValidBonemealTarget(LevelReader p_256100_, BlockPos p_255943_, BlockState p_255655_) {
-+      return p_256100_.getBlockState(p_255943_.below()).isAir();
-+   }
-+
-+   public boolean isBonemealSuccess(Level p_221979_, RandomSource p_221980_, BlockPos p_221981_, BlockState p_221982_) {
-+      return true;
-+   }
-+
-+   public void performBonemeal(ServerLevel p_221974_, RandomSource p_221975_, BlockPos p_221976_, BlockState p_221977_) {
-+      org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_221974_, p_221976_, p_221976_.below(), Blocks.HANGING_ROOTS.defaultBlockState()); // CraftBukkit
-+   }
- }
++      	org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_221974_, p_221976_, p_221976_.below(), Blocks.HANGING_ROOTS.defaultBlockState()); // CraftBukkit
++   	}
+     @Override
+     public BlockPos getParticlePos(BlockPos p_335934_) {
+         return p_335934_.below();

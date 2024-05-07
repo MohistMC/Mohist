@@ -77,23 +77,13 @@
  import net.minecraft.world.entity.ai.village.VillageSiege;
  import net.minecraft.world.entity.npc.CatSpawner;
  import net.minecraft.world.entity.npc.WanderingTraderSpawner;
-@@ -158,12 +_,34 @@
- import net.minecraft.world.level.storage.PlayerDataStorage;
- import net.minecraft.world.level.storage.ServerLevelData;
+@@ -160,10 +_,24 @@
  import net.minecraft.world.level.storage.WorldData;
-+import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.world.ForgeChunkManager;
-+import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.level.LevelEvent;
-+import net.minecraftforge.fml.util.thread.SidedThreadGroups;
-+import net.minecraftforge.gametest.ForgeGameTestHooks;
-+import net.minecraftforge.internal.BrandingControl;
-+import net.minecraftforge.network.ServerStatusPing;
-+import net.minecraftforge.resource.ResourcePackLoader;
 +import net.minecraftforge.server.ServerLifecycleHooks;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
@@ -124,7 +114,15 @@
      private final List<Runnable> tickables = Lists.newArrayList();
      private MetricsRecorder metricsRecorder = InactiveMetricsRecorder.INSTANCE;
      private ProfilerFiller profiler = this.metricsRecorder.getProfiler();
-@@ -202,11 +_,11 @@
+@@ -195,18 +_,18 @@
+     @Nullable
+     private MinecraftServer.TimeProfiler debugCommandProfiler;
+     private boolean debugCommandProfilerDelayStart;
+-    private final ServerConnectionListener connection;
++    private ServerConnectionListener connection;
+     private final ChunkProgressListenerFactory progressListenerFactory;
+     @Nullable
+     private ServerStatus status;
      @Nullable
      private ServerStatus.Favicon statusIcon;
      private final RandomSource random = RandomSource.create();
@@ -138,15 +136,6 @@
      private PlayerList playerList;
      private volatile boolean running = true;
      private boolean stopped;
-@@ -231,7 +_,7 @@
-     private long lastOverloadWarningNanos;
-     protected final Services services;
-     private long lastServerStatus;
--    public final Thread serverThread;
-+    private final Thread serverThread;
-     private long lastTickNanos = Util.getNanos();
-     private long taskExecutionStartNanos = Util.getNanos();
-     private long idleTimeNanos;
 @@ -249,19 +_,37 @@
      private final Executor executor;
      @Nullable

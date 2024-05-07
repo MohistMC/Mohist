@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/SimpleContainer.java
 +++ b/net/minecraft/world/SimpleContainer.java
-@@ -4,22 +_,79 @@
- import java.util.List;
- import java.util.stream.Collectors;
+@@ -6,20 +_,78 @@
  import javax.annotation.Nullable;
--import net.minecraft.core.HolderLookup;
+ import net.minecraft.core.HolderLookup;
  import net.minecraft.core.NonNullList;
 +import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.ListTag;

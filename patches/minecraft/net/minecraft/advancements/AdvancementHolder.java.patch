@@ -1,10 +1,8 @@
 --- a/net/minecraft/advancements/AdvancementHolder.java
 +++ b/net/minecraft/advancements/AdvancementHolder.java
-@@ -3,8 +_,8 @@
- import java.util.List;
- import net.minecraft.network.RegistryFriendlyByteBuf;
+@@ -5,6 +_,7 @@
  import net.minecraft.network.codec.ByteBufCodecs;
--import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.resources.ResourceLocation;
 +import org.bukkit.craftbukkit.advancement.CraftAdvancement;
  

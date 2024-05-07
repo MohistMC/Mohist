@@ -39,20 +39,7 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.Tag;
-@@ -96,6 +_,7 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
- import net.minecraft.world.item.UseAnim;
-+import net.minecraft.world.item.alchemy.PotionUtils;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
- import net.minecraft.world.item.enchantment.Enchantments;
- import net.minecraft.world.item.enchantment.FrostWalkerEnchantment;
-@@ -120,20 +_,41 @@
- import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
- import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
- import net.minecraft.world.phys.AABB;
-+import net.minecraft.world.phys.EntityHitResult;
- import net.minecraft.world.phys.HitResult;
+@@ -124,16 +_,36 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;

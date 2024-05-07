@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/item/crafting/CustomRecipe.java
 +++ b/net/minecraft/world/item/crafting/CustomRecipe.java
-@@ -1,7 +_,8 @@
+@@ -1,7 +_,9 @@
  package net.minecraft.world.item.crafting;
  
--import net.minecraft.core.HolderLookup;
+ import net.minecraft.core.HolderLookup;
 +import net.minecraft.core.RegistryAccess;
  import net.minecraft.world.item.ItemStack;
 +import org.bukkit.NamespacedKey;

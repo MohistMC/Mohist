@@ -1,103 +1,15 @@
 --- a/net/minecraft/world/level/block/NetherWartBlock.java
 +++ b/net/minecraft/world/level/block/NetherWartBlock.java
-@@ -17,57 +_,47 @@
- import net.minecraft.world.phys.shapes.VoxelShape;
- 
- public class NetherWartBlock extends BushBlock {
--    public static final MapCodec<NetherWartBlock> CODEC = simpleCodec(NetherWartBlock::new);
--    public static final int MAX_AGE = 3;
--    public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
--    private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
--        Block.box(0.0, 0.0, 0.0, 16.0, 5.0, 16.0),
--        Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0),
--        Block.box(0.0, 0.0, 0.0, 16.0, 11.0, 16.0),
--        Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0)
--    };
--
--    @Override
--    public MapCodec<NetherWartBlock> codec() {
--        return CODEC;
--    }
--
--    public NetherWartBlock(BlockBehaviour.Properties p_54971_) {
--        super(p_54971_);
--        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)));
--    }
--
--    @Override
--    protected VoxelShape getShape(BlockState p_54986_, BlockGetter p_54987_, BlockPos p_54988_, CollisionContext p_54989_) {
--        return SHAPE_BY_AGE[p_54986_.getValue(AGE)];
--    }
--
--    @Override
--    protected boolean mayPlaceOn(BlockState p_54991_, BlockGetter p_54992_, BlockPos p_54993_) {
--        return p_54991_.is(Blocks.SOUL_SAND);
--    }
--
--    @Override
--    protected boolean isRandomlyTicking(BlockState p_54979_) {
--        return p_54979_.getValue(AGE) < 3;
--    }
--
--    @Override
--    protected void randomTick(BlockState p_221806_, ServerLevel p_221807_, BlockPos p_221808_, RandomSource p_221809_) {
--        int i = p_221806_.getValue(AGE);
+@@ -55,9 +_,10 @@
+     @Override
+     protected void randomTick(BlockState p_221806_, ServerLevel p_221807_, BlockPos p_221808_, RandomSource p_221809_) {
+         int i = p_221806_.getValue(AGE);
 -        if (i < 3 && p_221809_.nextInt(10) == 0) {
--            p_221806_ = p_221806_.setValue(AGE, Integer.valueOf(i + 1));
++        if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221807_, p_221808_, p_221806_, p_221809_.nextInt(10) == 0)) {
+             p_221806_ = p_221806_.setValue(AGE, Integer.valueOf(i + 1));
 -            p_221807_.setBlock(p_221808_, p_221806_, 2);
--        }
--    }
--
--    @Override
--    public ItemStack getCloneItemStack(LevelReader p_310014_, BlockPos p_54974_, BlockState p_54975_) {
--        return new ItemStack(Items.NETHER_WART);
--    }
--
--    @Override
--    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_54977_) {
--        p_54977_.add(AGE);
--    }
-+   public static final MapCodec<NetherWartBlock> CODEC = simpleCodec(NetherWartBlock::new);
-+   public static final int MAX_AGE = 3;
-+   public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
-+   private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{Block.box(0.0D, 0.0D, 0.0D, 16.0D, 5.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 11.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D)};
-+
-+   public MapCodec<NetherWartBlock> codec() {
-+      return CODEC;
-+   }
-+
-+   public NetherWartBlock(BlockBehaviour.Properties p_54971_) {
-+      super(p_54971_);
-+      this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)));
-+   }
-+
-+   public VoxelShape getShape(BlockState p_54986_, BlockGetter p_54987_, BlockPos p_54988_, CollisionContext p_54989_) {
-+      return SHAPE_BY_AGE[p_54986_.getValue(AGE)];
-+   }
-+
-+   protected boolean mayPlaceOn(BlockState p_54991_, BlockGetter p_54992_, BlockPos p_54993_) {
-+      return p_54991_.is(Blocks.SOUL_SAND);
-+   }
-+
-+   public boolean isRandomlyTicking(BlockState p_54979_) {
-+      return p_54979_.getValue(AGE) < 3;
-+   }
-+
-+   public void randomTick(BlockState p_221806_, ServerLevel p_221807_, BlockPos p_221808_, RandomSource p_221809_) {
-+      int i = p_221806_.getValue(AGE);
-+      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221807_, p_221808_, p_221806_, p_221809_.nextFloat() < (p_221807_.spigotConfig.wartModifier / (100.0f * 10)))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+         p_221806_ = p_221806_.setValue(AGE, Integer.valueOf(i + 1));
-+         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_221807_, p_221808_, p_221806_, 2); // CraftBukkit
-+         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221807_, p_221808_, p_221806_);
-+      }
-+
-+   }
-+
-+   public ItemStack getCloneItemStack(LevelReader p_310014_, BlockPos p_54974_, BlockState p_54975_) {
-+      return new ItemStack(Items.NETHER_WART);
-+   }
-+
-+   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_54977_) {
-+      p_54977_.add(AGE);
-+   }
- }
++         	org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_221807_, p_221808_, p_221806_, 2); // CraftBukkit
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221807_, p_221808_, p_221806_);
+         }
+     }
+ 

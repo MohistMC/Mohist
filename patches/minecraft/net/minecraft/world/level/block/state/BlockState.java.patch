@@ -1,35 +1,11 @@
 --- a/net/minecraft/world/level/block/state/BlockState.java
 +++ b/net/minecraft/world/level/block/state/BlockState.java
-@@ -1,21 +_,20 @@
- package net.minecraft.world.level.block.state;
- 
-+import com.google.common.collect.ImmutableMap;
- import com.mojang.serialization.Codec;
- import com.mojang.serialization.MapCodec;
--import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
- import net.minecraft.core.registries.BuiltInRegistries;
+@@ -7,7 +_,7 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.properties.Property;
  
 -public class BlockState extends BlockBehaviour.BlockStateBase {
--    public static final Codec<BlockState> CODEC = codec(BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState).stable();
--
--    public BlockState(Block p_61042_, Reference2ObjectArrayMap<Property<?>, Comparable<?>> p_328252_, MapCodec<BlockState> p_61044_) {
--        super(p_61042_, p_328252_, p_61044_);
--    }
--
--    @Override
--    protected BlockState asState() {
--        return this;
--    }
 +public class BlockState extends BlockBehaviour.BlockStateBase implements net.minecraftforge.common.extensions.IForgeBlockState {
-+   public static final Codec<BlockState> CODEC = codec(BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState).stable();
-+
-+   public BlockState(Block p_61042_, ImmutableMap<Property<?>, Comparable<?>> p_61043_, MapCodec<BlockState> p_61044_) {
-+      super(p_61042_, p_61043_, p_61044_);
-+   }
-+
-+   protected BlockState asState() {
-+      return this;
-+   }
- }
+     public static final Codec<BlockState> CODEC = codec(BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState).stable();
+ 
+     public BlockState(Block p_61042_, Reference2ObjectArrayMap<Property<?>, Comparable<?>> p_328252_, MapCodec<BlockState> p_61044_) {

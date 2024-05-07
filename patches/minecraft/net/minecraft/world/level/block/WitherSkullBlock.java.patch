@@ -8,48 +8,26 @@
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-@@ -21,98 +_,95 @@
+@@ -21,6 +_,7 @@
  import net.minecraft.world.level.block.state.pattern.BlockPattern;
  import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
  import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class WitherSkullBlock extends SkullBlock {
--    public static final MapCodec<WitherSkullBlock> CODEC = simpleCodec(WitherSkullBlock::new);
--    @Nullable
--    private static BlockPattern witherPatternFull;
--    @Nullable
--    private static BlockPattern witherPatternBase;
--
--    @Override
--    public MapCodec<WitherSkullBlock> codec() {
--        return CODEC;
--    }
--
--    public WitherSkullBlock(BlockBehaviour.Properties p_58254_) {
--        super(SkullBlock.Types.WITHER_SKELETON, p_58254_);
--    }
--
--    @Override
--    public void setPlacedBy(Level p_58260_, BlockPos p_58261_, BlockState p_58262_, @Nullable LivingEntity p_58263_, ItemStack p_58264_) {
--        checkSpawn(p_58260_, p_58261_);
--    }
--
--    public static void checkSpawn(Level p_335323_, BlockPos p_328733_) {
--        if (p_335323_.getBlockEntity(p_328733_) instanceof SkullBlockEntity skullblockentity) {
--            checkSpawn(p_335323_, p_328733_, skullblockentity);
--        }
--    }
--
--    public static void checkSpawn(Level p_58256_, BlockPos p_58257_, SkullBlockEntity p_58258_) {
--        if (!p_58256_.isClientSide) {
--            BlockState blockstate = p_58258_.getBlockState();
--            boolean flag = blockstate.is(Blocks.WITHER_SKELETON_SKULL) || blockstate.is(Blocks.WITHER_SKELETON_WALL_SKULL);
--            if (flag && p_58257_.getY() >= p_58256_.getMinBuildHeight() && p_58256_.getDifficulty() != Difficulty.PEACEFUL) {
--                BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = getOrCreateWitherFull().find(p_58256_, p_58257_);
--                if (blockpattern$blockpatternmatch != null) {
--                    WitherBoss witherboss = EntityType.WITHER.create(p_58256_);
--                    if (witherboss != null) {
+     public static final MapCodec<WitherSkullBlock> CODEC = simpleCodec(WitherSkullBlock::new);
+@@ -50,6 +_,7 @@
+     }
+ 
+     public static void checkSpawn(Level p_58256_, BlockPos p_58257_, SkullBlockEntity p_58258_) {
++      if (p_58256_.captureBlockStates) return; // CraftBukkit
+         if (!p_58256_.isClientSide) {
+             BlockState blockstate = p_58258_.getBlockState();
+             boolean flag = blockstate.is(Blocks.WITHER_SKELETON_SKULL) || blockstate.is(Blocks.WITHER_SKELETON_WALL_SKULL);
+@@ -58,29 +_,29 @@
+                 if (blockpattern$blockpatternmatch != null) {
+                     WitherBoss witherboss = EntityType.WITHER.create(p_58256_);
+                     if (witherboss != null) {
 -                        CarvedPumpkinBlock.clearPatternBlocks(p_58256_, blockpattern$blockpatternmatch);
 -                        BlockPos blockpos = blockpattern$blockpatternmatch.getBlock(1, 2, 0).getPos();
 -                        witherboss.moveTo(
@@ -70,39 +48,6 @@
 -                        CarvedPumpkinBlock.updatePatternBlocks(p_58256_, blockpattern$blockpatternmatch);
 -                    }
 -                }
-+   public static final MapCodec<WitherSkullBlock> CODEC = simpleCodec(WitherSkullBlock::new);
-+   @Nullable
-+   private static BlockPattern witherPatternFull;
-+   @Nullable
-+   private static BlockPattern witherPatternBase;
-+
-+   public MapCodec<WitherSkullBlock> codec() {
-+      return CODEC;
-+   }
-+
-+   public WitherSkullBlock(BlockBehaviour.Properties p_58254_) {
-+      super(SkullBlock.Types.WITHER_SKELETON, p_58254_);
-+   }
-+
-+   public void setPlacedBy(Level p_58260_, BlockPos p_58261_, BlockState p_58262_, @Nullable LivingEntity p_58263_, ItemStack p_58264_) {
-+      super.setPlacedBy(p_58260_, p_58261_, p_58262_, p_58263_, p_58264_);
-+      BlockEntity blockentity = p_58260_.getBlockEntity(p_58261_);
-+      if (blockentity instanceof SkullBlockEntity) {
-+         checkSpawn(p_58260_, p_58261_, (SkullBlockEntity)blockentity);
-+      }
-+
-+   }
-+
-+   public static void checkSpawn(Level p_58256_, BlockPos p_58257_, SkullBlockEntity p_58258_) {
-+      if (p_58256_.captureBlockStates) return; // CraftBukkit
-+      if (!p_58256_.isClientSide) {
-+         BlockState blockstate = p_58258_.getBlockState();
-+         boolean flag = blockstate.is(Blocks.WITHER_SKELETON_SKULL) || blockstate.is(Blocks.WITHER_SKELETON_WALL_SKULL);
-+         if (flag && p_58257_.getY() >= p_58256_.getMinBuildHeight() && p_58256_.getDifficulty() != Difficulty.PEACEFUL) {
-+            BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = getOrCreateWitherFull().find(p_58256_, p_58257_);
-+            if (blockpattern$blockpatternmatch != null) {
-+               WitherBoss witherboss = EntityType.WITHER.create(p_58256_);
-+               if (witherboss != null) {
 +                  // CarvedPumpkinBlock.clearPatternBlocks(pLevel, blockpattern$blockpatternmatch);
 +                  BlockPos blockpos = blockpattern$blockpatternmatch.getBlock(1, 2, 0).getPos();
 +                  witherboss.moveTo((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.55D, (double)blockpos.getZ() + 0.5D, blockpattern$blockpatternmatch.getForwards().getAxis() == Direction.Axis.X ? 0.0F : 90.0F, 0.0F);
@@ -125,73 +70,9 @@
              }
 -        }
 -    }
--
--    public static boolean canSpawnMob(Level p_58268_, BlockPos p_58269_, ItemStack p_58270_) {
--        return p_58270_.is(Items.WITHER_SKELETON_SKULL)
--                && p_58269_.getY() >= p_58268_.getMinBuildHeight() + 2
--                && p_58268_.getDifficulty() != Difficulty.PEACEFUL
--                && !p_58268_.isClientSide
--            ? getOrCreateWitherBase().find(p_58268_, p_58269_) != null
--            : false;
--    }
--
--    private static BlockPattern getOrCreateWitherFull() {
--        if (witherPatternFull == null) {
--            witherPatternFull = BlockPatternBuilder.start()
--                .aisle("^^^", "###", "~#~")
--                .where('#', p_58272_ -> p_58272_.getState().is(BlockTags.WITHER_SUMMON_BASE_BLOCKS))
--                .where('^', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.WITHER_SKELETON_SKULL).or(BlockStatePredicate.forBlock(Blocks.WITHER_SKELETON_WALL_SKULL))))
--                .where('~', p_284877_ -> p_284877_.getState().isAir())
--                .build();
--        }
--
--        return witherPatternFull;
--    }
--
--    private static BlockPattern getOrCreateWitherBase() {
--        if (witherPatternBase == null) {
--            witherPatternBase = BlockPatternBuilder.start()
--                .aisle("   ", "###", "~#~")
--                .where('#', p_58266_ -> p_58266_.getState().is(BlockTags.WITHER_SUMMON_BASE_BLOCKS))
--                .where('~', p_284878_ -> p_284878_.getState().isAir())
--                .build();
--        }
--
--        return witherPatternBase;
--    }
 +         }
 +      }
 +   }
-+
-+   public static boolean canSpawnMob(Level p_58268_, BlockPos p_58269_, ItemStack p_58270_) {
-+      if (p_58270_.is(Items.WITHER_SKELETON_SKULL) && p_58269_.getY() >= p_58268_.getMinBuildHeight() + 2 && p_58268_.getDifficulty() != Difficulty.PEACEFUL && !p_58268_.isClientSide) {
-+         return getOrCreateWitherBase().find(p_58268_, p_58269_) != null;
-+      } else {
-+         return false;
-+      }
-+   }
-+
-+   private static BlockPattern getOrCreateWitherFull() {
-+      if (witherPatternFull == null) {
-+         witherPatternFull = BlockPatternBuilder.start().aisle("^^^", "###", "~#~").where('#', (p_58272_) -> {
-+            return p_58272_.getState().is(BlockTags.WITHER_SUMMON_BASE_BLOCKS);
-+         }).where('^', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.WITHER_SKELETON_SKULL).or(BlockStatePredicate.forBlock(Blocks.WITHER_SKELETON_WALL_SKULL)))).where('~', (p_284877_) -> {
-+            return p_284877_.getState().isAir();
-+         }).build();
-+      }
-+
-+      return witherPatternFull;
-+   }
-+
-+   private static BlockPattern getOrCreateWitherBase() {
-+      if (witherPatternBase == null) {
-+         witherPatternBase = BlockPatternBuilder.start().aisle("   ", "###", "~#~").where('#', (p_58266_) -> {
-+            return p_58266_.getState().is(BlockTags.WITHER_SUMMON_BASE_BLOCKS);
-+         }).where('~', (p_284878_) -> {
-+            return p_284878_.getState().isAir();
-+         }).build();
-+      }
-+
-+      return witherPatternBase;
-+   }
- }
+ 
+     public static boolean canSpawnMob(Level p_58268_, BlockPos p_58269_, ItemStack p_58270_) {
+         return p_58270_.is(Items.WITHER_SKELETON_SKULL)

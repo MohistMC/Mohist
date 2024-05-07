@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -5,19 +_,17 @@
+@@ -5,11 +_,11 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,9 +13,8 @@
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
  import net.minecraft.Util;
--import net.minecraft.core.Holder;
--import net.minecraft.core.registries.Registries;
--import net.minecraft.resources.RegistryFileCodec;
+@@ -18,6 +_,7 @@
+ import net.minecraft.resources.RegistryFileCodec;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.util.ExtraCodecs;

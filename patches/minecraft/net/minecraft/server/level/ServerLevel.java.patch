@@ -677,7 +677,7 @@
  
      @Override
      public ServerLevel getLevel() {
-@@ -1582,14 +_,43 @@
+@@ -1582,14 +_,38 @@
          }
      }
  
@@ -721,11 +721,6 @@
 +      makeObsidianPlatform(worldserver);
 +   }
 +   // Mohist end
-+
-+   protected void initCapabilities() {
-+      this.gatherCapabilities();
-+      capabilityData = net.minecraftforge.common.util.LevelCapabilityData.compute(this.getDataStorage(), getCapabilities());
-+   }
  
      @Override
      public LevelEntityGetter<Entity> getEntities() {

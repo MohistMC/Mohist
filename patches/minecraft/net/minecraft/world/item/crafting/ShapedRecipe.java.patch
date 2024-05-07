@@ -1,19 +1,19 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -1,18 +_,34 @@
+@@ -1,18 +_,38 @@
  package net.minecraft.world.item.crafting;
  
 +import com.mohistmc.mohist.bukkit.inventory.MohistSpecialRecipe;
  import com.mojang.serialization.Codec;
--import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
 -import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
--import net.minecraft.core.HolderLookup;
+ import net.minecraft.core.HolderLookup;
  import net.minecraft.core.NonNullList;
--import net.minecraft.network.RegistryFriendlyByteBuf;
--import net.minecraft.network.codec.StreamCodec;
 +import net.minecraft.core.RegistryAccess;
 +import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
+ import net.minecraft.network.codec.StreamCodec;
 +import net.minecraft.util.ExtraCodecs;
  import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
+@@ -11,6 +_,7 @@
+ import java.util.Map;
+ import java.util.Objects;
+ import java.util.Optional;
++import java.util.UUID;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
 @@ -41,6 +_,13 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.dimension.DimensionType;
