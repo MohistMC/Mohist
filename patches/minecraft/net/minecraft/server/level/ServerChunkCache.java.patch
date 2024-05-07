@@ -77,23 +77,20 @@
                  ChunkResult<ChunkAccess> chunkresult = chunkholder.getFutureIfPresent(ChunkStatus.FULL).getNow(null);
                  if (chunkresult == null) {
                      return null;
-@@ -303,9 +_,16 @@
-         this.chunkMap.saveAllChunks(p_8420_);
-     }
+@@ -305,7 +_,15 @@
  
--    @Override
--    public void close() throws IOException {
+     @Override
+     public void close() throws IOException {
 -        this.save(true);
-+   public void close() throws IOException {
-+      // CraftBukkit start
-+      close(true);
-+   }
++      	// CraftBukkit start
++      	close(true);
++   	}
 +
-+   public void close(boolean save) throws IOException {
-+      if (save) {
-+         this.save(true);
-+      }
-+      // CraftBukkit end
++   	public void close(boolean save) throws IOException {
++      	if (save) {
++         	this.save(true);
++      	}
++      	// CraftBukkit end
          this.lightEngine.close();
          this.chunkMap.close();
      }

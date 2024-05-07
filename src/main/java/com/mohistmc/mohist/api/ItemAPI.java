@@ -66,7 +66,7 @@ public class ItemAPI {
     }
 
     /**
-     * Parse Base64 into {@link ItemStack}
+     * Parse Base64 into {@link org.bukkit.inventory.ItemStack}
      * it should be noted that this method is only used for ItemStack without any NBT
      *
      * @param base64
@@ -85,7 +85,7 @@ public class ItemAPI {
     }
 
     /**
-     * Parse {@link ItemStack} into Base64
+     * Parse {@link org.bukkit.inventory.ItemStack} into Base64
      * it should be noted that this method is only used for ItemStack without any NBT
      *
      * @param stack

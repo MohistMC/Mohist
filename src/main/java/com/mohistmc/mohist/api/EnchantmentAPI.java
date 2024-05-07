@@ -40,7 +40,7 @@ public class EnchantmentAPI {
         return Collections.emptyList();
     }
 
-    public static String getNameByNMS(Enchantment nms) {
+    public static String getNameByNMS(net.minecraft.world.item.enchantment.Enchantment nms) {
         return MohistDynamEnum.normalizeName(EnchantmentHelper.getEnchantmentId(nms).toString());
     }
 }

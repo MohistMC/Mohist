@@ -15,12 +15,12 @@
                  } else {
                      Vec3 vec3 = optional.get();
 -                    if (!vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_335813_, p_283664_)) {
-+               boolean defaultCancel = !vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_283599_, p_283664_);
-+               Entity entity = p_283664_.sourceEntity();
-+               BlockReceiveGameEvent event = new BlockReceiveGameEvent(CraftGameEvent.minecraftToBukkit(p_283599_), CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
-+               event.setCancelled(defaultCancel);
-+               p_282254_.getCraftServer().getPluginManager().callEvent(event);
-+               if (event.isCancelled()) {
++                    boolean defaultCancel = !vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_335813_, p_283664_);
++                    Entity entity = p_283664_.sourceEntity();
++                    BlockReceiveGameEvent event = new BlockReceiveGameEvent(CraftGameEvent.minecraftToBukkit(p_335813_.value()), CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
++                    event.setCancelled(defaultCancel);
++                    p_282254_.getCraftServer().getPluginManager().callEvent(event);
++                    if (event.isCancelled()) {
                          return false;
                      } else if (isOccluded(p_282254_, p_282426_, vec3)) {
                          return false;

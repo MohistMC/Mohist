@@ -67,33 +67,25 @@
  
      protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
          super(p_21368_, p_21369_);
-@@ -233,14 +_,28 @@
-         return this.target;
+@@ -239,8 +_,26 @@
      }
  
--    @Nullable
--    protected final LivingEntity getTargetFromBrain() {
--        return this.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
--    }
-+   public void setTarget(@Nullable LivingEntity p_21544_) {
-+      if (getTarget() == p_21544_) return;
-+      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
-+      if(!changeTargetEvent.isCanceled()) {
-+         this.target = changeTargetEvent.getNewTarget();
-+      }
-+   }
- 
--    public void setTarget(@Nullable LivingEntity p_21544_) {
+     public void setTarget(@Nullable LivingEntity p_21544_) {
 -        this.target = p_21544_;
--    }
++        var event = net.minecraftforge.event.ForgeEventFactory.onLivingChangeTargetMob(this, p_21544_);
++        if (!event.isCanceled()) {
++            this.target = event.getNewTarget();
++        }
+     }
++
 +   // Mohist start
 +   public boolean setTarget(@Nullable LivingEntity pTarget, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
 +      if (getTarget() == pTarget) return false;
-+      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, pTarget, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
-+      changeTargetEvent.setReason(reason);
-+      changeTargetEvent.setfireCBEvent(fireEvent);
-+      if (!changeTargetEvent.isCanceled()) {
-+         this.target = changeTargetEvent.getNewTarget();
++       var event = net.minecraftforge.event.ForgeEventFactory.onLivingChangeTargetMob(this, pTarget);
++       event.setReason(reason);
++       event.setfireCBEvent(fireEvent);
++      if (!event.isCanceled()) {
++         this.target = event.getNewTarget();
 +      } else {
 +         return false;
 +      }
@@ -412,24 +404,51 @@
              }
          }
      }
-@@ -1486,8 +_,15 @@
+@@ -1477,27 +_,34 @@
+ 
+     @Override
+     public boolean doHurtTarget(Entity p_21372_) {
+-        float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+-        float f1 = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
++        float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
++        float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+         if (p_21372_ instanceof LivingEntity) {
+             f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), p_21372_.getType());
+-            f1 += (float)EnchantmentHelper.getKnockbackBonus(this);
++            f1 += (float) EnchantmentHelper.getKnockbackBonus(this);
+         }
  
          int i = EnchantmentHelper.getFireAspect(this);
          if (i > 0) {
 -            p_21372_.igniteForSeconds(i * 4);
--        }
-+         // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_21372_.getBukkitEntity(), i * 4);
-+         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
++            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_21372_.getBukkitEntity(), i * 4);
++            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
-+         if (!combustEvent.isCancelled()) {
-+            p_21372_.setSecondsOnFire(combustEvent.getDuration(), false);
-+         }
-+         // CraftBukkit end
-+      }
++            if (!combustEvent.isCancelled()) {
++                p_21372_.igniteForSeconds(combustEvent.getDuration(), false);
++            }
++            // CraftBukkit end
+         }
  
          boolean flag = p_21372_.hurt(this.damageSources().mobAttack(this), f);
          if (flag) {
+             if (f1 > 0.0F && p_21372_ instanceof LivingEntity) {
+-                ((LivingEntity)p_21372_)
+-                    .knockback(
+-                        (double)(f1 * 0.5F),
+-                        (double)Mth.sin(this.getYRot() * (float) (Math.PI / 180.0)),
+-                        (double)(-Mth.cos(this.getYRot() * (float) (Math.PI / 180.0)))
+-                    );
++                ((LivingEntity) p_21372_)
++                        .knockback(
++                                (double) (f1 * 0.5F),
++                                (double) Mth.sin(this.getYRot() * (float) (Math.PI / 180.0)),
++                                (double) (-Mth.cos(this.getYRot() * (float) (Math.PI / 180.0)))
++                        );
+                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
+             }
+ 
 @@ -1521,15 +_,25 @@
          return false;
      }

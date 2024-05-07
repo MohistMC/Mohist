@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
+@@ -2,6 +_,7 @@
+ 
+ import com.mojang.logging.LogUtils;
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
++import java.util.Arrays;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
 @@ -29,6 +_,8 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;

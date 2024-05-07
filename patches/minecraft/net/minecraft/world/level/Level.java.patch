@@ -78,7 +78,7 @@
      private final boolean isDebug;
      private int skyDarken;
      protected int randValue = RandomSource.create().nextInt();
-@@ -103,64 +_,139 @@
+@@ -103,64 +_,136 @@
      public final RandomSource random = RandomSource.create();
      @Deprecated
      private final RandomSource threadSafeRandom = RandomSource.createThreadSafe();
@@ -109,40 +109,6 @@
 -    ) {
 -        this.profiler = p_270692_;
 -        this.levelData = p_270739_;
--        this.dimensionTypeRegistration = p_270240_;
--        final DimensionType dimensiontype = p_270240_.value();
--        this.dimension = p_270683_;
--        this.isClientSide = p_270904_;
--        if (dimensiontype.coordinateScale() != 1.0) {
--            this.worldBorder = new WorldBorder() {
--                @Override
--                public double getCenterX() {
--                    return super.getCenterX() / dimensiontype.coordinateScale();
--                }
--
--                @Override
--                public double getCenterZ() {
--                    return super.getCenterZ() / dimensiontype.coordinateScale();
--                }
--            };
--        } else {
--            this.worldBorder = new WorldBorder();
--        }
--
--        this.thread = Thread.currentThread();
--        this.biomeManager = new BiomeManager(this, p_270248_);
--        this.isDebug = p_270470_;
--        this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
--        this.registryAccess = p_270200_;
--        this.damageSources = new DamageSources(p_270200_);
--    }
--
--    @Override
--    public boolean isClientSide() {
--        return this.isClientSide;
--    }
--
--    @Nullable
 +    public boolean restoringBlockSnapshots = false;
 +    public boolean captureBlockSnapshots = false;
 +    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
@@ -192,14 +158,40 @@
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
 +      }
-+      this.dimensionTypeRegistration = p_270240_;
-+      this.dimensionTypeId = p_270240_.unwrapKey().orElseThrow(() -> {
-+         return new IllegalArgumentException("Dimension must be registered, got " + p_270240_);
-+      });
-+      final DimensionType dimensiontype = p_270240_.value();
-+      this.dimension = p_270683_;
-+      this.isClientSide = p_270904_;
-+      if (dimensiontype.coordinateScale() != 1.0D) {
+         this.dimensionTypeRegistration = p_270240_;
+         final DimensionType dimensiontype = p_270240_.value();
+         this.dimension = p_270683_;
+         this.isClientSide = p_270904_;
+         if (dimensiontype.coordinateScale() != 1.0) {
+-            this.worldBorder = new WorldBorder() {
+-                @Override
+-                public double getCenterX() {
+-                    return super.getCenterX() / dimensiontype.coordinateScale();
+-                }
+-
+-                @Override
+-                public double getCenterZ() {
+-                    return super.getCenterZ() / dimensiontype.coordinateScale();
+-                }
+-            };
+-        } else {
+-            this.worldBorder = new WorldBorder();
+-        }
+-
+-        this.thread = Thread.currentThread();
+-        this.biomeManager = new BiomeManager(this, p_270248_);
+-        this.isDebug = p_270470_;
+-        this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
+-        this.registryAccess = p_270200_;
+-        this.damageSources = new DamageSources(p_270200_);
+-    }
+-
+-    @Override
+-    public boolean isClientSide() {
+-        return this.isClientSide;
+-    }
+-
+-    @Nullable
 +         this.worldBorder = new WorldBorder() {
 +            public double getCenterX() {
 +               return super.getCenterX(); // CraftBukkit
@@ -559,6 +551,15 @@
                          this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                      }
                  }
+@@ -1061,7 +_,7 @@
+         return this.isDebug;
+     }
+ 
+-    protected abstract LevelEntityGetter<Entity> getEntities();
++    public abstract LevelEntityGetter<Entity> getEntities();
+ 
+     @Override
+     public long nextSubTickCount() {
 @@ -1079,6 +_,20 @@
  
      public abstract PotionBrewing potionBrewing();

@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/ListTag.java
++++ b/net/minecraft/nbt/ListTag.java
+@@ -135,7 +_,7 @@
+     private final List<Tag> list;
+     private byte type;
+ 
+-    ListTag(List<Tag> p_128721_, byte p_128722_) {
++    public ListTag(List<Tag> p_128721_, byte p_128722_) {
+         this.list = p_128721_;
+         this.type = p_128722_;
+     }

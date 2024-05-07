@@ -119,8 +119,9 @@
      private MinecraftServer.TimeProfiler debugCommandProfiler;
      private boolean debugCommandProfilerDelayStart;
 -    private final ServerConnectionListener connection;
+-    private final ChunkProgressListenerFactory progressListenerFactory;
 +    private ServerConnectionListener connection;
-     private final ChunkProgressListenerFactory progressListenerFactory;
++    public final ChunkProgressListenerFactory progressListenerFactory;
      @Nullable
      private ServerStatus status;
      @Nullable
@@ -136,15 +137,16 @@
      private PlayerList playerList;
      private volatile boolean running = true;
      private boolean stopped;
-@@ -249,19 +_,37 @@
-     private final Executor executor;
+@@ -246,7 +_,7 @@
+     private final ServerFunctionManager functionManager;
+     private boolean enforceWhitelist;
+     private float smoothedTickTimeMillis;
+-    private final Executor executor;
++    public final Executor executor;
      @Nullable
      private String serverId;
--    public MinecraftServer.ReloadableResources resources;
-+    private MinecraftServer.ReloadableResources resources;
-     private final StructureTemplateManager structureTemplateManager;
-     private final ServerTickRateManager tickRateManager;
-     protected final WorldData worldData;
+     public MinecraftServer.ReloadableResources resources;
+@@ -256,12 +_,30 @@
      private final PotionBrewing potionBrewing;
      private volatile boolean isSaving;
  
@@ -959,38 +961,6 @@
 +            return configureRepositoryWithSelection(p_248681_, net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), featureflagset, false);
          } else {
              Set<String> set = Sets.newLinkedHashSet();
- 
-@@ -1671,6 +_,31 @@
- 
-     public abstract boolean isSingleplayerOwner(GameProfile p_129840_);
- 
-+   private Map<ResourceKey<Level>, long[]> perWorldTickTimes = Maps.newIdentityHashMap();
-+   @Nullable
-+   public long[] getTickTime(ResourceKey<Level> dim) {
-+      return perWorldTickTimes.get(dim);
-+   }
-+
-+   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
-+   public synchronized Map<ResourceKey<Level>, ServerLevel> forgeGetWorldMap() {
-+      return this.levels;
-+   }
-+   private int worldArrayMarker = 0;
-+   private int worldArrayLast = -1;
-+   private ServerLevel[] worldArray;
-+   @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
-+   public synchronized void markWorldsDirty() {
-+      worldArrayMarker++;
-+   }
-+   private ServerLevel[] getWorldArray() {
-+      if (worldArrayMarker == worldArrayLast && worldArray != null)
-+         return worldArray;
-+      worldArray = this.levels.values().stream().toArray(x -> new ServerLevel[x]);
-+      worldArrayLast = worldArrayMarker;
-+      return worldArray;
-+   }
-+
-     public void dumpServerProperties(Path p_177911_) throws IOException {
-     }
  
 @@ -1898,6 +_,11 @@
          }

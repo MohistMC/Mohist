@@ -44,49 +44,44 @@
  
  public class HopperBlockEntity extends RandomizableContainerBlockEntity implements Hopper {
      public static final int MOVE_ITEM_SPEED = 8;
-@@ -35,9 +_,39 @@
-     private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
-     private int cooldownTime = -1;
+@@ -37,6 +_,37 @@
      private long tickedGameTime;
--    private Direction facing;
--
--    public HopperBlockEntity(BlockPos p_155550_, BlockState p_155551_) {
+     private Direction facing;
+ 
++    // CraftBukkit start - add fields and methods
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
 +
-+   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-+   private int maxStack = MAX_STACK;
-+
-+   public List<ItemStack> getContents() {
++    public List<ItemStack> getContents() {
 +      return this.items;
 +   }
 +
-+   public void onOpen(CraftHumanEntity who) {
++    public void onOpen(CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(CraftHumanEntity who) {
++    public void onClose(CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
-+   public List<HumanEntity> getViewers() {
++    public List<HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +
-+   @Override
-+   public int getMaxStackSize() {
++    @Override
++    public int getMaxStackSize() {
 +      return maxStack;
 +   }
 +
-+   public void setMaxStackSize(int size) {
++    public void setMaxStackSize(int size) {
 +      maxStack = size;
 +   }
 +
-+   // CraftBukkit end
++    // CraftBukkit end
 +
-+   public HopperBlockEntity(BlockPos p_155550_, BlockState p_155551_) {
+     public HopperBlockEntity(BlockPos p_155550_, BlockState p_155551_) {
          super(BlockEntityType.HOPPER, p_155550_, p_155551_);
          this.facing = p_155551_.getValue(HopperBlock.FACING);
-     }
 @@ -137,6 +_,7 @@
      }
  
@@ -104,88 +99,18 @@
          BlockPos blockpos = BlockPos.containing(p_155554_.getLevelX(), p_155554_.getLevelY() + 1.0, p_155554_.getLevelZ());
          BlockState blockstate = p_155553_.getBlockState(blockpos);
          Container container = getSourceContainer(p_155553_, p_155554_, blockpos, blockstate);
-@@ -239,39 +_,72 @@
+@@ -255,12 +_,19 @@
+             }
          }
-     }
  
--    private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_) {
--        ItemStack itemstack = p_59356_.getItem(p_59357_);
--        if (!itemstack.isEmpty() && canTakeItemFromContainer(p_59355_, p_59356_, itemstack, p_59357_, p_59358_)) {
--            int i = itemstack.getCount();
--            ItemStack itemstack1 = addItem(p_59356_, p_59355_, p_59356_.removeItem(p_59357_, 1), null);
--            if (itemstack1.isEmpty()) {
--                p_59356_.setChanged();
--                return true;
--            }
--
--            itemstack.setCount(i);
--            if (i == 1) {
--                p_59356_.setItem(p_59357_, itemstack);
--            }
--        }
--
 -        return false;
 -    }
--
++      return false;
++   }
+ 
 -    public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
 -        boolean flag = false;
 -        ItemStack itemstack = p_59333_.getItem().copy();
--        ItemStack itemstack1 = addItem(null, p_59332_, itemstack, null);
--        if (itemstack1.isEmpty()) {
--            flag = true;
--            p_59333_.setItem(ItemStack.EMPTY);
--            p_59333_.discard();
--        } else {
--            p_59333_.setItem(itemstack1);
--        }
--
--        return flag;
--    }
-+   private static boolean tryTakeInItemFromSlot(Hopper pHopper, Container pContainer, int pSlot, Direction pDirection, Level world) { // Spigot // Mohist TODO mixin
-+      ItemStack itemstack = pContainer.getItem(pSlot);
-+      if (!itemstack.isEmpty() && canTakeItemFromContainer(pHopper, pContainer, itemstack, pSlot, pDirection)) {
-+         ItemStack itemstack1 = itemstack.copy();
-+         // ItemStack itemstack2 = addItem(iinventory, ihopper, iinventory.removeItem(i, 1), (EnumDirection) null);
-+         // CraftBukkit start - Call event on collection of items from inventories into the hopper
-+         CraftItemStack oitemstack = CraftItemStack.asCraftMirror(pContainer.removeItem(pSlot, world.spigotConfig.hopperAmount)); // Spigot
-+
-+         org.bukkit.inventory.Inventory sourceInventory;
-+         // Have to special case large chests as they work oddly
-+         if (pContainer instanceof CompoundContainer) {
-+            sourceInventory = new CraftInventoryDoubleChest((CompoundContainer) pContainer);
-+         } else if (pContainer.getOwner() != null) {
-+            sourceInventory = pContainer.getOwner().getInventory();
-+         } else {
-+            sourceInventory = new CraftInventory(pContainer);
-+         }
-+
-+         InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), pHopper.getOwner().getInventory(), false);
-+
-+         Bukkit.getServer().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            pContainer.setItem(pSlot, itemstack1);
-+
-+            if (pHopper instanceof HopperBlockEntity) {
-+               ((HopperBlockEntity) pHopper).setCooldown(world.spigotConfig.hopperTransfer); // Spigot
-+            }
-+
-+            return false;
-+         }
-+         int origCount = event.getItem().getAmount(); // Spigot
-+         ItemStack itemstack2 = addItem(pContainer, pHopper, CraftItemStack.asNMSCopy(event.getItem()), null);
-+         // CraftBukkit end
-+         if (itemstack2.isEmpty()) {
-+            pContainer.setChanged();
-+            return true;
-+         }
-+
-+         itemstack1.shrink(origCount - itemstack2.getCount()); // Spigot
-+         pContainer.setItem(pSlot, itemstack1);
-+      }
-+
-+      return false;
-+   }
-+
 +   public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
 +      boolean flag = false;
 +      // CraftBukkit start
@@ -196,70 +121,9 @@
 +      }
 +      // CraftBukkit end
 +      ItemStack itemstack = p_59333_.getItem().copy();
-+      ItemStack itemstack1 = addItem((Container)null, p_59332_, itemstack, (Direction)null);
-+      if (itemstack1.isEmpty()) {
-+         flag = true;
-+         p_59333_.setItem(ItemStack.EMPTY);
-+         p_59333_.discard();
-+      } else {
-+         p_59333_.setItem(itemstack1);
-+      }
-+
-+      return flag;
-+   }
- 
-     public static ItemStack addItem(@Nullable Container p_59327_, Container p_59328_, ItemStack p_59329_, @Nullable Direction p_59330_) {
-         if (p_59328_ instanceof WorldlyContainer worldlycontainer && p_59330_ != null) {
-@@ -351,15 +_,40 @@
-         return p_59323_;
-     }
- 
--    @Nullable
--    private static Container getAttachedContainer(Level p_155593_, BlockPos p_155594_, HopperBlockEntity p_331744_) {
--        return getContainerAt(p_155593_, p_155594_.relative(p_331744_.facing));
--    }
--
--    @Nullable
--    private static Container getSourceContainer(Level p_155597_, Hopper p_155598_, BlockPos p_330370_, BlockState p_334668_) {
--        return getContainerAt(p_155597_, p_330370_, p_334668_, p_155598_.getLevelX(), p_155598_.getLevelY() + 1.0, p_155598_.getLevelZ());
--    }
-+   // CraftBukkit start
-+   @Nullable
-+   private static Container runHopperInventorySearchEvent(Container inventory, CraftBlock hopper, CraftBlock searchLocation, HopperInventorySearchEvent.ContainerType containerType) {
-+      HopperInventorySearchEvent event = new HopperInventorySearchEvent((inventory != null) ? new CraftInventory(inventory) : null, containerType, hopper, searchLocation);
-+      Bukkit.getServer().getPluginManager().callEvent(event);
-+      CraftInventory craftInventory = (CraftInventory) event.getInventory();
-+      return (craftInventory != null) ? craftInventory.getInventory() : null;
-+   }
-+   // CraftBukkit end
-+
-+   @Nullable
-+   public static Container getAttachedContainer(Level p_155593_, BlockPos p_155594_, BlockState p_155595_) {
-+      Direction direction = p_155595_.getValue(HopperBlock.FACING);
-+      // CraftBukkit start
-+      BlockPos searchPosition = p_155594_.relative(direction);
-+      Container inventory = getContainerAt(p_155593_, p_155594_.relative(direction));
-+
-+      CraftBlock hopper = CraftBlock.at(p_155593_, p_155594_);
-+      CraftBlock searchBlock = CraftBlock.at(p_155593_, searchPosition);
-+      return runHopperInventorySearchEvent(inventory, hopper, searchBlock, HopperInventorySearchEvent.ContainerType.DESTINATION);
-+      // CraftBukkit end
-+   }
-+
-+   @Nullable
-+   public static Container getSourceContainer(Level p_155597_, Hopper p_155598_) {
-+      // CraftBukkit start
-+      Container inventory = getContainerAt(p_155597_, p_155598_.getLevelX(), p_155598_.getLevelY() + 1.0D, p_155598_.getLevelZ());
-+
-+      BlockPos blockPosition = BlockPos.containing(p_155598_.getLevelX(), p_155598_.getLevelY(), p_155598_.getLevelZ());
-+      CraftBlock hopper = CraftBlock.at(p_155597_, blockPosition);
-+      CraftBlock container = CraftBlock.at(p_155597_, blockPosition.above());
-+      return runHopperInventorySearchEvent(inventory, hopper, container, HopperInventorySearchEvent.ContainerType.SOURCE);
-+      // CraftBukkit end
-+   }
- 
-     public static List<ItemEntity> getItemsAtAndAbove(Level p_155590_, Hopper p_155591_) {
-         AABB aabb = p_155591_.getSuckAabb().move(p_155591_.getLevelX() - 0.5, p_155591_.getLevelY() - 0.5, p_155591_.getLevelZ() - 0.5);
+         ItemStack itemstack1 = addItem(null, p_59332_, itemstack, null);
+         if (itemstack1.isEmpty()) {
+             flag = true;
 @@ -473,5 +_,14 @@
      @Override
      protected AbstractContainerMenu createMenu(int p_59312_, Inventory p_59313_) {

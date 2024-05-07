@@ -1,9 +1,8 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,70 +_,122 @@
- package net.minecraft.world.food;
+@@ -2,21 +_,42 @@
  
--import net.minecraft.core.component.DataComponents;
+ import net.minecraft.core.component.DataComponents;
  import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 +import net.minecraft.server.level.ServerPlayer;
@@ -25,23 +24,38 @@
 -    public FoodData() {
 -        this.saturationLevel = 5.0F;
 -    }
--
--    private void add(int p_335153_, float p_332105_) {
--        this.foodLevel = Math.min(p_335153_ + this.foodLevel, 20);
--        this.saturationLevel = Math.min(p_332105_ + this.saturationLevel, (float)this.foodLevel);
--    }
--
--    public void eat(int p_38708_, float p_38709_) {
--        this.add(p_38708_, FoodConstants.saturationByModifier(p_38708_, p_38709_));
--    }
--
--    public void eat(ItemStack p_38714_) {
--        FoodProperties foodproperties = p_38714_.get(DataComponents.FOOD);
--        if (foodproperties != null) {
--            this.add(foodproperties.nutrition(), foodproperties.saturation());
--        }
--    }
--
++   public int foodLevel = 20;
++   public float saturationLevel;
++   public float exhaustionLevel;
++   public int tickTimer;
++   public int lastFoodLevel = 20;
++
++   // CraftBukkit start
++   private Player entityhuman;
++   public int saturatedRegenRate = 10;
++   public int unsaturatedRegenRate = 80;
++   public int starvationRate = 80;
++   // CraftBukkit end
++
++   // CraftBukkit start - added Player constructor
++   public FoodData(Player entityhuman) {
++      org.apache.commons.lang3.Validate.notNull(entityhuman);
++      this.entityhuman = entityhuman;
++      this.saturationLevel = 5.0F;
++   }
++   // CraftBukkit end
++
++   public FoodData() {
++      this.entityhuman = null;
++      this.saturationLevel = 5.0F;
++   }
+ 
+     private void add(int p_335153_, float p_332105_) {
+         this.foodLevel = Math.min(p_335153_ + this.foodLevel, 20);
+@@ -34,37 +_,51 @@
+         }
+     }
+ 
 -    public void tick(Player p_38711_) {
 -        Difficulty difficulty = p_38711_.level().getDifficulty();
 -        this.lastFoodLevel = this.foodLevel;
@@ -73,66 +87,6 @@
 -        } else if (this.foodLevel <= 0) {
 -            this.tickTimer++;
 -            if (this.tickTimer >= 80) {
-+   public int foodLevel = 20;
-+   public float saturationLevel;
-+   public float exhaustionLevel;
-+   public int tickTimer;
-+   public int lastFoodLevel = 20;
-+
-+   // CraftBukkit start
-+   private Player entityhuman;
-+   public int saturatedRegenRate = 10;
-+   public int unsaturatedRegenRate = 80;
-+   public int starvationRate = 80;
-+   // CraftBukkit end
-+
-+   // CraftBukkit start - added Player constructor
-+   public FoodData(Player entityhuman) {
-+      org.apache.commons.lang3.Validate.notNull(entityhuman);
-+      this.entityhuman = entityhuman;
-+      this.saturationLevel = 5.0F;
-+   }
-+   // CraftBukkit end
-+
-+   public FoodData() {
-+      this.entityhuman = null;
-+      this.saturationLevel = 5.0F;
-+   }
-+
-+   public void eat(int p_38708_, float p_38709_) {
-+      this.foodLevel = Math.min(p_38708_ + this.foodLevel, 20);
-+      this.saturationLevel = Math.min(this.saturationLevel + (float)p_38708_ * p_38709_ * 2.0F, (float)this.foodLevel);
-+   }
-+
-+   // Use the LivingEntity sensitive version in favour of this.
-+   @Deprecated
-+   public void eat(Item p_38713_, ItemStack p_38714_) {
-+      this.eat(p_38713_, p_38714_, null);
-+   }
-+
-+   public void eat(Item p_38713_, ItemStack p_38714_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
-+      if (p_38713_.isEdible()) {
-+         FoodProperties foodproperties = p_38714_.getFoodProperties(entity);
-+         if (entityhuman != null) {
-+            // CraftBukkit start
-+            int oldFoodLevel = foodLevel;
-+            org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.getNutrition() + oldFoodLevel, p_38714_);
-+
-+            if (!event.isCancelled()) {
-+               this.eat(event.getFoodLevel() - oldFoodLevel, foodproperties.getSaturationModifier());
-+            }
-+
-+            ((ServerPlayer) entityhuman).getBukkitEntity().sendHealthUpdate();
-+            // CraftBukkit end
-+         } else {
-+            if (entity != null && entity instanceof Player player) {
-+               this.entityhuman = player;
-+            }
-+            this.eat(foodproperties.getNutrition(), foodproperties.getSaturationModifier());
-+         }
-+      }
-+   }
-+
 +   public void tick(Player p_38711_) {
 +      Difficulty difficulty = p_38711_.level().getDifficulty();
 +      if (entityhuman == null) entityhuman = p_38711_;

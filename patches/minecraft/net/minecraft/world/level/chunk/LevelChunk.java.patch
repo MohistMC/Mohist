@@ -1,14 +1,21 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -6,7 +_,7 @@
- import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+@@ -7,6 +_,7 @@
  import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  import java.util.Map;
--import java.util.Map.Entry;
+ import java.util.Map.Entry;
 +import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.function.Consumer;
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
+@@ -41,6 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEventListenerRegistry;
+ import net.minecraft.world.level.levelgen.DebugLevelSource;
+ import net.minecraft.world.level.levelgen.Heightmap;
++import net.minecraft.world.level.levelgen.Heightmap.Types;
+ import net.minecraft.world.level.levelgen.blending.BlendingData;
+ import net.minecraft.world.level.lighting.LightEngine;
+ import net.minecraft.world.level.material.Fluid;
 @@ -48,9 +_,11 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.ticks.LevelChunkTicks;
@@ -95,6 +102,15 @@
  
      public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
          this(
+@@ -139,7 +_,7 @@
+         this.setAllStarts(p_196851_.getAllStarts());
+         this.setAllReferences(p_196851_.getAllReferences());
+ 
+-        for (Entry<Heightmap.Types, Heightmap> entry : p_196851_.getHeightmaps()) {
++        for (Entry<Types, Heightmap> entry : p_196851_.getHeightmaps()) {
+             if (ChunkStatus.FULL.heightmapsAfter().contains(entry.getKey())) {
+                 this.setHeightmap(entry.getKey(), entry.getValue().getRawData());
+             }
 @@ -148,7 +_,10 @@
          this.skyLightSources = p_196851_.skyLightSources;
          this.setLightCorrect(p_196851_.isLightCorrect());

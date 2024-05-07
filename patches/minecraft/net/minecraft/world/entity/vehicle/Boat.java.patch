@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -17,12 +_,12 @@
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.tags.EntityTypeTags;
--import net.minecraft.tags.FluidTags;
- import net.minecraft.util.ByIdMap;
- import net.minecraft.util.Mth;
+@@ -23,6 +_,7 @@
  import net.minecraft.util.StringRepresentable;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
@@ -14,164 +8,10 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityDimensions;
  import net.minecraft.world.entity.EntitySelector;
-@@ -30,7 +_,6 @@
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.MoverType;
- import net.minecraft.world.entity.Pose;
--import net.minecraft.world.entity.VariantHolder;
- import net.minecraft.world.entity.animal.Animal;
- import net.minecraft.world.entity.animal.WaterAnimal;
- import net.minecraft.world.entity.player.Player;
-@@ -50,870 +_,952 @@
+@@ -50,8 +_,16 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
--
--public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
--    private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
--    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
--    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
--    private static final EntityDataAccessor<Integer> DATA_ID_BUBBLE_TIME = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
--    public static final int PADDLE_LEFT = 0;
--    public static final int PADDLE_RIGHT = 1;
--    private static final int TIME_TO_EJECT = 60;
--    private static final float PADDLE_SPEED = (float) (Math.PI / 8);
--    public static final double PADDLE_SOUND_TIME = (float) (Math.PI / 4);
--    public static final int BUBBLE_TIME = 60;
--    private final float[] paddlePositions = new float[2];
--    private float invFriction;
--    private float outOfControlTicks;
--    private float deltaRotation;
--    private int lerpSteps;
--    private double lerpX;
--    private double lerpY;
--    private double lerpZ;
--    private double lerpYRot;
--    private double lerpXRot;
--    private boolean inputLeft;
--    private boolean inputRight;
--    private boolean inputUp;
--    private boolean inputDown;
--    private double waterLevel;
--    private float landFriction;
--    public Boat.Status status;
--    private Boat.Status oldStatus;
--    private double lastYd;
--    private boolean isAboveBubbleColumn;
--    private boolean bubbleColumnDirectionIsDown;
--    private float bubbleMultiplier;
--    private float bubbleAngle;
--    private float bubbleAngleO;
--
--    public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
--        super(p_38290_, p_38291_);
--        this.blocksBuilding = true;
--    }
--
--    public Boat(Level p_38293_, double p_38294_, double p_38295_, double p_38296_) {
--        this(EntityType.BOAT, p_38293_);
--        this.setPos(p_38294_, p_38295_, p_38296_);
--        this.xo = p_38294_;
--        this.yo = p_38295_;
--        this.zo = p_38296_;
--    }
--
--    @Override
--    protected Entity.MovementEmission getMovementEmission() {
--        return Entity.MovementEmission.EVENTS;
--    }
--
--    @Override
--    protected void defineSynchedData(SynchedEntityData.Builder p_330790_) {
--        super.defineSynchedData(p_330790_);
--        p_330790_.define(DATA_ID_TYPE, Boat.Type.OAK.ordinal());
--        p_330790_.define(DATA_ID_PADDLE_LEFT, false);
--        p_330790_.define(DATA_ID_PADDLE_RIGHT, false);
--        p_330790_.define(DATA_ID_BUBBLE_TIME, 0);
--    }
--
--    @Override
--    public boolean canCollideWith(Entity p_38376_) {
--        return canVehicleCollide(this, p_38376_);
--    }
--
--    public static boolean canVehicleCollide(Entity p_38324_, Entity p_38325_) {
--        return (p_38325_.canBeCollidedWith() || p_38325_.isPushable()) && !p_38324_.isPassengerOfSameVehicle(p_38325_);
--    }
--
--    @Override
--    public boolean canBeCollidedWith() {
--        return true;
--    }
--
--    @Override
--    public boolean isPushable() {
--        return true;
--    }
--
--    @Override
--    protected Vec3 getRelativePortalPosition(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
--        return LivingEntity.resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_38335_, p_38336_));
--    }
--
--    @Override
--    protected Vec3 getPassengerAttachmentPoint(Entity p_299070_, EntityDimensions p_299244_, float p_298802_) {
--        float f = this.getSinglePassengerXOffset();
--        if (this.getPassengers().size() > 1) {
--            int i = this.getPassengers().indexOf(p_299070_);
--            if (i == 0) {
--                f = 0.2F;
--            } else {
--                f = -0.6F;
--            }
--
--            if (p_299070_ instanceof Animal) {
--                f += 0.2F;
--            }
--        }
--
--        return new Vec3(
--                0.0, this.getVariant() == Boat.Type.BAMBOO ? (double)(p_299244_.height() * 0.8888889F) : (double)(p_299244_.height() / 3.0F), (double)f
--            )
--            .yRot(-this.getYRot() * (float) (Math.PI / 180.0));
--    }
--
--    @Override
--    public void onAboveBubbleCol(boolean p_38381_) {
--        if (!this.level().isClientSide) {
--            this.isAboveBubbleColumn = true;
--            this.bubbleColumnDirectionIsDown = p_38381_;
--            if (this.getBubbleTime() == 0) {
--                this.setBubbleTime(60);
--            }
--        }
--
--        this.level()
--            .addParticle(
--                ParticleTypes.SPLASH,
--                this.getX() + (double)this.random.nextFloat(),
--                this.getY() + 0.7,
--                this.getZ() + (double)this.random.nextFloat(),
--                0.0,
--                0.0,
--                0.0
--            );
--        if (this.random.nextInt(20) == 0) {
--            this.level()
--                .playLocalSound(
--                    this.getX(), this.getY(), this.getZ(), this.getSwimSplashSound(), this.getSoundSource(), 1.0F, 0.8F + 0.4F * this.random.nextFloat(), false
--                );
--            this.gameEvent(GameEvent.SPLASH, this.getControllingPassenger());
--        }
--    }
--
--    @Override
--    public void push(Entity p_38373_) {
--        if (p_38373_ instanceof Boat) {
--            if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
--                super.push(p_38373_);
--            }
--        } else if (p_38373_.getBoundingBox().minY <= this.getBoundingBox().minY) {
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.entity.Vehicle;
@@ -180,46 +20,25 @@
 +import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 +import org.bukkit.event.vehicle.VehicleMoveEvent;
 +import org.joml.Vector3f;
-+
-+public class Boat extends VehicleEntity implements net.minecraftforge.common.extensions.IForgeBoat {
-+   private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-+   private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-+   private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
-+   private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-+   private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
-+   private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
-+   private static final EntityDataAccessor<Integer> DATA_ID_BUBBLE_TIME = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-+   public static final int PADDLE_LEFT = 0;
-+   public static final int PADDLE_RIGHT = 1;
-+   private static final int TIME_TO_EJECT = 60;
-+   private static final float PADDLE_SPEED = ((float)Math.PI / 8F);
-+   public static final double PADDLE_SOUND_TIME = (double)((float)Math.PI / 4F);
-+   public static final int BUBBLE_TIME = 60;
-+   private final float[] paddlePositions = new float[2];
-+   private float invFriction;
-+   private float outOfControlTicks;
-+   private float deltaRotation;
-+   private int lerpSteps;
-+   private double lerpX;
-+   private double lerpY;
-+   private double lerpZ;
-+   private double lerpYRot;
-+   private double lerpXRot;
-+   private boolean inputLeft;
-+   private boolean inputRight;
-+   private boolean inputUp;
-+   private boolean inputDown;
-+   private double waterLevel;
-+   private float landFriction;
-+   public Boat.Status status;
-+   private Boat.Status oldStatus;
-+   private double lastYd;
-+   private boolean isAboveBubbleColumn;
-+   private boolean bubbleColumnDirectionIsDown;
-+   private float bubbleMultiplier;
-+   private float bubbleAngle;
-+   private float bubbleAngleO;
-+
+ 
+-public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
++public class Boat extends VehicleEntity implements VariantHolder<Boat.Type>, net.minecraftforge.common.extensions.IForgeBoat {
+     private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
+     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+@@ -78,7 +_,7 @@
+     private boolean inputDown;
+     private double waterLevel;
+     private float landFriction;
+-    public Boat.Status status;
++    private Boat.Status status;
+     private Boat.Status oldStatus;
+     private double lastYd;
+     private boolean isAboveBubbleColumn;
+@@ -87,6 +_,14 @@
+     private float bubbleAngle;
+     private float bubbleAngleO;
+ 
 +   // CraftBukkit start
 +   // PAIL: Some of these haven't worked since a few updates, and since 1.9 they are less and less applicable.
 +   public double maxSpeed = 0.4D;
@@ -228,71 +47,16 @@
 +   public boolean landBoats = false;
 +   // CraftBukkit end
 +
-+   public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
-+      super(p_38290_, p_38291_);
-+      this.blocksBuilding = true;
-+   }
-+
-+   public Boat(Level p_38293_, double p_38294_, double p_38295_, double p_38296_) {
-+      this(EntityType.BOAT, p_38293_);
-+      this.setPos(p_38294_, p_38295_, p_38296_);
-+      this.xo = p_38294_;
-+      this.yo = p_38295_;
-+      this.zo = p_38296_;
-+   }
-+
-+   protected float getEyeHeight(Pose p_38327_, EntityDimensions p_38328_) {
-+      return p_38328_.height;
-+   }
-+
-+   protected Entity.MovementEmission getMovementEmission() {
-+      return Entity.MovementEmission.EVENTS;
-+   }
-+
-+   protected void defineSynchedData() {
-+      super.defineSynchedData();
-+      this.entityData.define(DATA_ID_TYPE, Boat.Type.OAK.ordinal());
-+      this.entityData.define(DATA_ID_PADDLE_LEFT, false);
-+      this.entityData.define(DATA_ID_PADDLE_RIGHT, false);
-+      this.entityData.define(DATA_ID_BUBBLE_TIME, 0);
-+   }
-+
-+   public boolean canCollideWith(Entity p_38376_) {
-+      return canVehicleCollide(this, p_38376_);
-+   }
-+
-+   public static boolean canVehicleCollide(Entity p_38324_, Entity p_38325_) {
-+      return (p_38325_.canBeCollidedWith() || p_38325_.isPushable()) && !p_38324_.isPassengerOfSameVehicle(p_38325_);
-+   }
-+
-+   public boolean canBeCollidedWith() {
-+      return true;
-+   }
-+
-+   public boolean isPushable() {
-+      return true;
-+   }
-+
-+   protected Vec3 getRelativePortalPosition(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
-+      return LivingEntity.resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_38335_, p_38336_));
-+   }
-+
-+   protected Vector3f getPassengerAttachmentPoint(Entity p_299070_, EntityDimensions p_299244_, float p_298802_) {
-+      float f = this.getSinglePassengerXOffset();
-+      if (this.getPassengers().size() > 1) {
-+         int i = this.getPassengers().indexOf(p_299070_);
-+         if (i == 0) {
-+            f = 0.2F;
-+         } else {
-+            f = -0.6F;
-+         }
-+
-+         if (p_299070_ instanceof Animal) {
-+            f += 0.2F;
-+         }
-+      }
-+
-+      return new Vector3f(0.0F, this.getVariant() == Boat.Type.BAMBOO ? p_299244_.height * 0.8888889F : p_299244_.height / 3.0F, f);
+     public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
+         super(p_38290_, p_38291_);
+         this.blocksBuilding = true;
+@@ -158,9 +_,55 @@
+                 0.0, this.getVariant() == Boat.Type.BAMBOO ? (double)(p_299244_.height() * 0.8888889F) : (double)(p_299244_.height() / 3.0F), (double)f
+             )
+             .yRot(-this.getYRot() * (float) (Math.PI / 180.0));
+-    }
+-
+-    @Override
 +   }
 +
 +   public boolean hurt(DamageSource p_38319_, float p_38320_) {
@@ -340,30 +104,17 @@
 +         return true;
 +      }
 +   }
-+
-+   protected void destroy(DamageSource p_219862_) {
-+      this.spawnAtLocation(this.getDropItem());
-+   }
-+
-+   public void onAboveBubbleCol(boolean p_38381_) {
-+      if (!this.level().isClientSide) {
-+         this.isAboveBubbleColumn = true;
-+         this.bubbleColumnDirectionIsDown = p_38381_;
-+         if (this.getBubbleTime() == 0) {
-+            this.setBubbleTime(60);
-+         }
-+      }
-+
-+      this.level().addParticle(ParticleTypes.SPLASH, this.getX() + (double)this.random.nextFloat(), this.getY() + 0.7D, this.getZ() + (double)this.random.nextFloat(), 0.0D, 0.0D, 0.0D);
-+      if (this.random.nextInt(20) == 0) {
-+         this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), this.getSwimSplashSound(), this.getSoundSource(), 1.0F, 0.8F + 0.4F * this.random.nextFloat(), false);
-+         this.gameEvent(GameEvent.SPLASH, this.getControllingPassenger());
-+      }
-+
-+   }
-+
-+   public void push(Entity p_38373_) {
-+      if (p_38373_ instanceof Boat) {
++	
++	@Override
+     public void onAboveBubbleCol(boolean p_38381_) {
+         if (!this.level().isClientSide) {
+             this.isAboveBubbleColumn = true;
+@@ -192,13 +_,34 @@
+     @Override
+     public void push(Entity p_38373_) {
+         if (p_38373_ instanceof Boat) {
+-            if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
+-                super.push(p_38373_);
 +         if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
 +            // CraftBukkit start
 +            if (!this.isPassengerOfSameVehicle(p_38373_)) {
@@ -373,726 +124,10 @@
 +               if (event.isCancelled()) {
 +                  return;
 +               }
-+            }
+             }
+-        } else if (p_38373_.getBoundingBox().minY <= this.getBoundingBox().minY) {
 +            // CraftBukkit end
              super.push(p_38373_);
--        }
--    }
--
--    @Override
--    public Item getDropItem() {
--        return switch (this.getVariant()) {
--            case SPRUCE -> Items.SPRUCE_BOAT;
--            case BIRCH -> Items.BIRCH_BOAT;
--            case JUNGLE -> Items.JUNGLE_BOAT;
--            case ACACIA -> Items.ACACIA_BOAT;
--            case CHERRY -> Items.CHERRY_BOAT;
--            case DARK_OAK -> Items.DARK_OAK_BOAT;
--            case MANGROVE -> Items.MANGROVE_BOAT;
--            case BAMBOO -> Items.BAMBOO_RAFT;
--            default -> Items.OAK_BOAT;
--        };
--    }
--
--    @Override
--    public void animateHurt(float p_265761_) {
--        this.setHurtDir(-this.getHurtDir());
--        this.setHurtTime(10);
--        this.setDamage(this.getDamage() * 11.0F);
--    }
--
--    @Override
--    public boolean isPickable() {
--        return !this.isRemoved();
--    }
--
--    @Override
--    public void lerpTo(double p_38299_, double p_38300_, double p_38301_, float p_38302_, float p_38303_, int p_38304_) {
--        this.lerpX = p_38299_;
--        this.lerpY = p_38300_;
--        this.lerpZ = p_38301_;
--        this.lerpYRot = (double)p_38302_;
--        this.lerpXRot = (double)p_38303_;
--        this.lerpSteps = 10;
--    }
--
--    @Override
--    public double lerpTargetX() {
--        return this.lerpSteps > 0 ? this.lerpX : this.getX();
--    }
--
--    @Override
--    public double lerpTargetY() {
--        return this.lerpSteps > 0 ? this.lerpY : this.getY();
--    }
--
--    @Override
--    public double lerpTargetZ() {
--        return this.lerpSteps > 0 ? this.lerpZ : this.getZ();
--    }
--
--    @Override
--    public float lerpTargetXRot() {
--        return this.lerpSteps > 0 ? (float)this.lerpXRot : this.getXRot();
--    }
--
--    @Override
--    public float lerpTargetYRot() {
--        return this.lerpSteps > 0 ? (float)this.lerpYRot : this.getYRot();
--    }
--
--    @Override
--    public Direction getMotionDirection() {
--        return this.getDirection().getClockWise();
--    }
--
--    @Override
--    public void tick() {
--        this.oldStatus = this.status;
--        this.status = this.getStatus();
--        if (this.status != Boat.Status.UNDER_WATER && this.status != Boat.Status.UNDER_FLOWING_WATER) {
--            this.outOfControlTicks = 0.0F;
--        } else {
--            this.outOfControlTicks++;
--        }
--
--        if (!this.level().isClientSide && this.outOfControlTicks >= 60.0F) {
--            this.ejectPassengers();
--        }
--
--        if (this.getHurtTime() > 0) {
--            this.setHurtTime(this.getHurtTime() - 1);
--        }
--
--        if (this.getDamage() > 0.0F) {
--            this.setDamage(this.getDamage() - 1.0F);
--        }
--
--        super.tick();
--        this.tickLerp();
--        if (this.isControlledByLocalInstance()) {
--            if (!(this.getFirstPassenger() instanceof Player)) {
--                this.setPaddleState(false, false);
--            }
--
--            this.floatBoat();
--            if (this.level().isClientSide) {
--                this.controlBoat();
--                this.level().sendPacketToServer(new ServerboundPaddleBoatPacket(this.getPaddleState(0), this.getPaddleState(1)));
--            }
--
--            this.move(MoverType.SELF, this.getDeltaMovement());
--        } else {
--            this.setDeltaMovement(Vec3.ZERO);
--        }
--
--        this.tickBubbleColumn();
--
--        for (int i = 0; i <= 1; i++) {
--            if (this.getPaddleState(i)) {
--                if (!this.isSilent()
--                    && (double)(this.paddlePositions[i] % (float) (Math.PI * 2)) <= (float) (Math.PI / 4)
--                    && (double)((this.paddlePositions[i] + (float) (Math.PI / 8)) % (float) (Math.PI * 2)) >= (float) (Math.PI / 4)) {
--                    SoundEvent soundevent = this.getPaddleSound();
--                    if (soundevent != null) {
--                        Vec3 vec3 = this.getViewVector(1.0F);
--                        double d0 = i == 1 ? -vec3.z : vec3.z;
--                        double d1 = i == 1 ? vec3.x : -vec3.x;
--                        this.level()
--                            .playSound(
--                                null,
--                                this.getX() + d0,
--                                this.getY(),
--                                this.getZ() + d1,
--                                soundevent,
--                                this.getSoundSource(),
--                                1.0F,
--                                0.8F + 0.4F * this.random.nextFloat()
--                            );
--                    }
--                }
--
--                this.paddlePositions[i] = this.paddlePositions[i] + (float) (Math.PI / 8);
--            } else {
--                this.paddlePositions[i] = 0.0F;
--            }
--        }
--
--        this.checkInsideBlocks();
--        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
--        if (!list.isEmpty()) {
--            boolean flag = !this.level().isClientSide && !(this.getControllingPassenger() instanceof Player);
--
--            for (Entity entity : list) {
--                if (!entity.hasPassenger(this)) {
--                    if (flag
--                        && this.getPassengers().size() < this.getMaxPassengers()
--                        && !entity.isPassenger()
--                        && this.hasEnoughSpaceFor(entity)
--                        && entity instanceof LivingEntity
--                        && !(entity instanceof WaterAnimal)
--                        && !(entity instanceof Player)) {
--                        entity.startRiding(this);
--                    } else {
--                        this.push(entity);
--                    }
--                }
--            }
--        }
--    }
--
--    private void tickBubbleColumn() {
--        if (this.level().isClientSide) {
--            int i = this.getBubbleTime();
--            if (i > 0) {
--                this.bubbleMultiplier += 0.05F;
--            } else {
--                this.bubbleMultiplier -= 0.1F;
--            }
--
--            this.bubbleMultiplier = Mth.clamp(this.bubbleMultiplier, 0.0F, 1.0F);
--            this.bubbleAngleO = this.bubbleAngle;
--            this.bubbleAngle = 10.0F * (float)Math.sin((double)(0.5F * (float)this.level().getGameTime())) * this.bubbleMultiplier;
--        } else {
--            if (!this.isAboveBubbleColumn) {
--                this.setBubbleTime(0);
--            }
--
--            int k = this.getBubbleTime();
--            if (k > 0) {
--                this.setBubbleTime(--k);
--                int j = 60 - k - 1;
--                if (j > 0 && k == 0) {
--                    this.setBubbleTime(0);
--                    Vec3 vec3 = this.getDeltaMovement();
--                    if (this.bubbleColumnDirectionIsDown) {
--                        this.setDeltaMovement(vec3.add(0.0, -0.7, 0.0));
--                        this.ejectPassengers();
--                    } else {
--                        this.setDeltaMovement(vec3.x, this.hasPassenger(p_150274_ -> p_150274_ instanceof Player) ? 2.7 : 0.6, vec3.z);
--                    }
--                }
--
--                this.isAboveBubbleColumn = false;
--            }
--        }
--    }
--
--    @Nullable
--    protected SoundEvent getPaddleSound() {
--        switch (this.getStatus()) {
--            case IN_WATER:
--            case UNDER_WATER:
--            case UNDER_FLOWING_WATER:
--                return SoundEvents.BOAT_PADDLE_WATER;
--            case ON_LAND:
--                return SoundEvents.BOAT_PADDLE_LAND;
--            case IN_AIR:
--            default:
--                return null;
--        }
--    }
--
--    private void tickLerp() {
--        if (this.isControlledByLocalInstance()) {
--            this.lerpSteps = 0;
--            this.syncPacketPositionCodec(this.getX(), this.getY(), this.getZ());
--        }
--
--        if (this.lerpSteps > 0) {
--            this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
--            this.lerpSteps--;
--        }
--    }
--
--    public void setPaddleState(boolean p_38340_, boolean p_38341_) {
--        this.entityData.set(DATA_ID_PADDLE_LEFT, p_38340_);
--        this.entityData.set(DATA_ID_PADDLE_RIGHT, p_38341_);
--    }
--
--    public float getRowingTime(int p_38316_, float p_38317_) {
--        return this.getPaddleState(p_38316_) ? Mth.clampedLerp(this.paddlePositions[p_38316_] - (float) (Math.PI / 8), this.paddlePositions[p_38316_], p_38317_) : 0.0F;
--    }
--
--    private Boat.Status getStatus() {
--        Boat.Status boat$status = this.isUnderwater();
--        if (boat$status != null) {
--            this.waterLevel = this.getBoundingBox().maxY;
--            return boat$status;
--        } else if (this.checkInWater()) {
--            return Boat.Status.IN_WATER;
--        } else {
--            float f = this.getGroundFriction();
--            if (f > 0.0F) {
--                this.landFriction = f;
--                return Boat.Status.ON_LAND;
--            } else {
--                return Boat.Status.IN_AIR;
--            }
--        }
--    }
--
--    public float getWaterLevelAbove() {
--        AABB aabb = this.getBoundingBox();
--        int i = Mth.floor(aabb.minX);
--        int j = Mth.ceil(aabb.maxX);
--        int k = Mth.floor(aabb.maxY);
--        int l = Mth.ceil(aabb.maxY - this.lastYd);
--        int i1 = Mth.floor(aabb.minZ);
--        int j1 = Mth.ceil(aabb.maxZ);
--        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
--
--        label39:
--        for (int k1 = k; k1 < l; k1++) {
--            float f = 0.0F;
--
--            for (int l1 = i; l1 < j; l1++) {
--                for (int i2 = i1; i2 < j1; i2++) {
--                    blockpos$mutableblockpos.set(l1, k1, i2);
--                    FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
--                    if (fluidstate.is(FluidTags.WATER)) {
--                        f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
--                    }
--
--                    if (f >= 1.0F) {
--                        continue label39;
--                    }
--                }
--            }
--
--            if (f < 1.0F) {
--                return (float)blockpos$mutableblockpos.getY() + f;
--            }
--        }
--
--        return (float)(l + 1);
--    }
--
--    public float getGroundFriction() {
--        AABB aabb = this.getBoundingBox();
--        AABB aabb1 = new AABB(aabb.minX, aabb.minY - 0.001, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
--        int i = Mth.floor(aabb1.minX) - 1;
--        int j = Mth.ceil(aabb1.maxX) + 1;
--        int k = Mth.floor(aabb1.minY) - 1;
--        int l = Mth.ceil(aabb1.maxY) + 1;
--        int i1 = Mth.floor(aabb1.minZ) - 1;
--        int j1 = Mth.ceil(aabb1.maxZ) + 1;
--        VoxelShape voxelshape = Shapes.create(aabb1);
--        float f = 0.0F;
--        int k1 = 0;
--        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
--
--        for (int l1 = i; l1 < j; l1++) {
--            for (int i2 = i1; i2 < j1; i2++) {
--                int j2 = (l1 != i && l1 != j - 1 ? 0 : 1) + (i2 != i1 && i2 != j1 - 1 ? 0 : 1);
--                if (j2 != 2) {
--                    for (int k2 = k; k2 < l; k2++) {
--                        if (j2 <= 0 || k2 != k && k2 != l - 1) {
--                            blockpos$mutableblockpos.set(l1, k2, i2);
--                            BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
--                            if (!(blockstate.getBlock() instanceof WaterlilyBlock)
--                                && Shapes.joinIsNotEmpty(
--                                    blockstate.getCollisionShape(this.level(), blockpos$mutableblockpos).move((double)l1, (double)k2, (double)i2),
--                                    voxelshape,
--                                    BooleanOp.AND
--                                )) {
--                                f += blockstate.getBlock().getFriction();
--                                k1++;
--                            }
--                        }
--                    }
--                }
--            }
--        }
--
--        return f / (float)k1;
--    }
--
--    private boolean checkInWater() {
--        AABB aabb = this.getBoundingBox();
--        int i = Mth.floor(aabb.minX);
--        int j = Mth.ceil(aabb.maxX);
--        int k = Mth.floor(aabb.minY);
--        int l = Mth.ceil(aabb.minY + 0.001);
--        int i1 = Mth.floor(aabb.minZ);
--        int j1 = Mth.ceil(aabb.maxZ);
--        boolean flag = false;
--        this.waterLevel = -Double.MAX_VALUE;
--        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
--
--        for (int k1 = i; k1 < j; k1++) {
--            for (int l1 = k; l1 < l; l1++) {
--                for (int i2 = i1; i2 < j1; i2++) {
--                    blockpos$mutableblockpos.set(k1, l1, i2);
--                    FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
--                    if (fluidstate.is(FluidTags.WATER)) {
--                        float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
--                        this.waterLevel = Math.max((double)f, this.waterLevel);
--                        flag |= aabb.minY < (double)f;
--                    }
--                }
--            }
--        }
--
--        return flag;
--    }
--
--    @Nullable
--    private Boat.Status isUnderwater() {
--        AABB aabb = this.getBoundingBox();
--        double d0 = aabb.maxY + 0.001;
--        int i = Mth.floor(aabb.minX);
--        int j = Mth.ceil(aabb.maxX);
--        int k = Mth.floor(aabb.maxY);
--        int l = Mth.ceil(d0);
--        int i1 = Mth.floor(aabb.minZ);
--        int j1 = Mth.ceil(aabb.maxZ);
--        boolean flag = false;
--        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
--
--        for (int k1 = i; k1 < j; k1++) {
--            for (int l1 = k; l1 < l; l1++) {
--                for (int i2 = i1; i2 < j1; i2++) {
--                    blockpos$mutableblockpos.set(k1, l1, i2);
--                    FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
--                    if (fluidstate.is(FluidTags.WATER)
--                        && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
--                        if (!fluidstate.isSource()) {
--                            return Boat.Status.UNDER_FLOWING_WATER;
--                        }
--
--                        flag = true;
--                    }
--                }
--            }
--        }
--
--        return flag ? Boat.Status.UNDER_WATER : null;
--    }
--
--    @Override
--    protected double getDefaultGravity() {
--        return 0.04;
--    }
--
--    private void floatBoat() {
--        double d0 = -this.getGravity();
--        double d1 = 0.0;
--        this.invFriction = 0.05F;
--        if (this.oldStatus == Boat.Status.IN_AIR && this.status != Boat.Status.IN_AIR && this.status != Boat.Status.ON_LAND) {
--            this.waterLevel = this.getY(1.0);
--            this.setPos(this.getX(), (double)(this.getWaterLevelAbove() - this.getBbHeight()) + 0.101, this.getZ());
--            this.setDeltaMovement(this.getDeltaMovement().multiply(1.0, 0.0, 1.0));
--            this.lastYd = 0.0;
--            this.status = Boat.Status.IN_WATER;
--        } else {
--            if (this.status == Boat.Status.IN_WATER) {
--                d1 = (this.waterLevel - this.getY()) / (double)this.getBbHeight();
--                this.invFriction = 0.9F;
--            } else if (this.status == Boat.Status.UNDER_FLOWING_WATER) {
--                d0 = -7.0E-4;
--                this.invFriction = 0.9F;
--            } else if (this.status == Boat.Status.UNDER_WATER) {
--                d1 = 0.01F;
--                this.invFriction = 0.45F;
--            } else if (this.status == Boat.Status.IN_AIR) {
--                this.invFriction = 0.9F;
--            } else if (this.status == Boat.Status.ON_LAND) {
--                this.invFriction = this.landFriction;
--                if (this.getControllingPassenger() instanceof Player) {
--                    this.landFriction /= 2.0F;
--                }
--            }
--
--            Vec3 vec3 = this.getDeltaMovement();
--            this.setDeltaMovement(vec3.x * (double)this.invFriction, vec3.y + d0, vec3.z * (double)this.invFriction);
--            this.deltaRotation = this.deltaRotation * this.invFriction;
--            if (d1 > 0.0) {
--                Vec3 vec31 = this.getDeltaMovement();
--                this.setDeltaMovement(vec31.x, (vec31.y + d1 * (this.getDefaultGravity() / 0.65)) * 0.75, vec31.z);
--            }
--        }
--    }
--
--    private void controlBoat() {
--        if (this.isVehicle()) {
--            float f = 0.0F;
--            if (this.inputLeft) {
--                this.deltaRotation--;
--            }
--
--            if (this.inputRight) {
--                this.deltaRotation++;
--            }
--
--            if (this.inputRight != this.inputLeft && !this.inputUp && !this.inputDown) {
--                f += 0.005F;
--            }
--
--            this.setYRot(this.getYRot() + this.deltaRotation);
--            if (this.inputUp) {
--                f += 0.04F;
--            }
--
--            if (this.inputDown) {
--                f -= 0.005F;
--            }
--
--            this.setDeltaMovement(
--                this.getDeltaMovement()
--                    .add(
--                        (double)(Mth.sin(-this.getYRot() * (float) (Math.PI / 180.0)) * f),
--                        0.0,
--                        (double)(Mth.cos(this.getYRot() * (float) (Math.PI / 180.0)) * f)
--                    )
--            );
--            this.setPaddleState(this.inputRight && !this.inputLeft || this.inputUp, this.inputLeft && !this.inputRight || this.inputUp);
--        }
--    }
--
--    protected float getSinglePassengerXOffset() {
--        return 0.0F;
--    }
--
--    public boolean hasEnoughSpaceFor(Entity p_273171_) {
--        return p_273171_.getBbWidth() < this.getBbWidth();
--    }
--
--    @Override
--    protected void positionRider(Entity p_289552_, Entity.MoveFunction p_289571_) {
--        super.positionRider(p_289552_, p_289571_);
--        if (!p_289552_.getType().is(EntityTypeTags.CAN_TURN_IN_BOATS)) {
--            p_289552_.setYRot(p_289552_.getYRot() + this.deltaRotation);
--            p_289552_.setYHeadRot(p_289552_.getYHeadRot() + this.deltaRotation);
--            this.clampRotation(p_289552_);
--            if (p_289552_ instanceof Animal && this.getPassengers().size() == this.getMaxPassengers()) {
--                int i = p_289552_.getId() % 2 == 0 ? 90 : 270;
--                p_289552_.setYBodyRot(((Animal)p_289552_).yBodyRot + (float)i);
--                p_289552_.setYHeadRot(p_289552_.getYHeadRot() + (float)i);
--            }
--        }
--    }
--
--    @Override
--    public Vec3 getDismountLocationForPassenger(LivingEntity p_38357_) {
--        Vec3 vec3 = getCollisionHorizontalEscapeVector((double)(this.getBbWidth() * Mth.SQRT_OF_TWO), (double)p_38357_.getBbWidth(), p_38357_.getYRot());
--        double d0 = this.getX() + vec3.x;
--        double d1 = this.getZ() + vec3.z;
--        BlockPos blockpos = BlockPos.containing(d0, this.getBoundingBox().maxY, d1);
--        BlockPos blockpos1 = blockpos.below();
--        if (!this.level().isWaterAt(blockpos1)) {
--            List<Vec3> list = Lists.newArrayList();
--            double d2 = this.level().getBlockFloorHeight(blockpos);
--            if (DismountHelper.isBlockFloorValid(d2)) {
--                list.add(new Vec3(d0, (double)blockpos.getY() + d2, d1));
--            }
--
--            double d3 = this.level().getBlockFloorHeight(blockpos1);
--            if (DismountHelper.isBlockFloorValid(d3)) {
--                list.add(new Vec3(d0, (double)blockpos1.getY() + d3, d1));
--            }
--
--            for (Pose pose : p_38357_.getDismountPoses()) {
--                for (Vec3 vec31 : list) {
--                    if (DismountHelper.canDismountTo(this.level(), vec31, p_38357_, pose)) {
--                        p_38357_.setPose(pose);
--                        return vec31;
--                    }
--                }
--            }
--        }
--
--        return super.getDismountLocationForPassenger(p_38357_);
--    }
--
--    protected void clampRotation(Entity p_38322_) {
--        p_38322_.setYBodyRot(this.getYRot());
--        float f = Mth.wrapDegrees(p_38322_.getYRot() - this.getYRot());
--        float f1 = Mth.clamp(f, -105.0F, 105.0F);
--        p_38322_.yRotO += f1 - f;
--        p_38322_.setYRot(p_38322_.getYRot() + f1 - f);
--        p_38322_.setYHeadRot(p_38322_.getYRot());
--    }
--
--    @Override
--    public void onPassengerTurned(Entity p_38383_) {
--        this.clampRotation(p_38383_);
--    }
--
--    @Override
--    protected void addAdditionalSaveData(CompoundTag p_38359_) {
--        p_38359_.putString("Type", this.getVariant().getSerializedName());
--    }
--
--    @Override
--    protected void readAdditionalSaveData(CompoundTag p_38338_) {
--        if (p_38338_.contains("Type", 8)) {
--            this.setVariant(Boat.Type.byName(p_38338_.getString("Type")));
--        }
--    }
--
--    @Override
--    public InteractionResult interact(Player p_38330_, InteractionHand p_38331_) {
--        if (p_38330_.isSecondaryUseActive()) {
--            return InteractionResult.PASS;
--        } else if (this.outOfControlTicks < 60.0F) {
--            if (!this.level().isClientSide) {
--                return p_38330_.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
--            } else {
--                return InteractionResult.SUCCESS;
--            }
--        } else {
--            return InteractionResult.PASS;
--        }
--    }
--
--    @Override
--    protected void checkFallDamage(double p_38307_, boolean p_38308_, BlockState p_38309_, BlockPos p_38310_) {
--        this.lastYd = this.getDeltaMovement().y;
--        if (!this.isPassenger()) {
--            if (p_38308_) {
--                if (this.fallDistance > 3.0F) {
--                    if (this.status != Boat.Status.ON_LAND) {
--                        this.resetFallDistance();
--                        return;
--                    }
--
--                    this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
--                    if (!this.level().isClientSide && !this.isRemoved()) {
--                        this.kill();
--                        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
--                            for (int i = 0; i < 3; i++) {
--                                this.spawnAtLocation(this.getVariant().getPlanks());
--                            }
--
--                            for (int j = 0; j < 2; j++) {
--                                this.spawnAtLocation(Items.STICK);
--                            }
--                        }
--                    }
--                }
--
--                this.resetFallDistance();
--            } else if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && p_38307_ < 0.0) {
--                this.fallDistance -= (float)p_38307_;
--            }
--        }
--    }
--
--    public boolean getPaddleState(int p_38314_) {
--        return this.entityData.get(p_38314_ == 0 ? DATA_ID_PADDLE_LEFT : DATA_ID_PADDLE_RIGHT) && this.getControllingPassenger() != null;
--    }
--
--    private void setBubbleTime(int p_38367_) {
--        this.entityData.set(DATA_ID_BUBBLE_TIME, p_38367_);
--    }
--
--    private int getBubbleTime() {
--        return this.entityData.get(DATA_ID_BUBBLE_TIME);
--    }
--
--    public float getBubbleAngle(float p_38353_) {
--        return Mth.lerp(p_38353_, this.bubbleAngleO, this.bubbleAngle);
--    }
--
--    public void setVariant(Boat.Type p_38333_) {
--        this.entityData.set(DATA_ID_TYPE, p_38333_.ordinal());
--    }
--
--    public Boat.Type getVariant() {
--        return Boat.Type.byId(this.entityData.get(DATA_ID_TYPE));
--    }
--
--    @Override
--    protected boolean canAddPassenger(Entity p_38390_) {
--        return this.getPassengers().size() < this.getMaxPassengers() && !this.isEyeInFluid(FluidTags.WATER);
--    }
--
--    protected int getMaxPassengers() {
--        return 2;
--    }
--
--    @Nullable
--    @Override
--    public LivingEntity getControllingPassenger() {
--        return this.getFirstPassenger() instanceof LivingEntity livingentity ? livingentity : super.getControllingPassenger();
--    }
--
--    public void setInput(boolean p_38343_, boolean p_38344_, boolean p_38345_, boolean p_38346_) {
--        this.inputLeft = p_38343_;
--        this.inputRight = p_38344_;
--        this.inputUp = p_38345_;
--        this.inputDown = p_38346_;
--    }
--
--    @Override
--    protected Component getTypeName() {
--        return Component.translatable(this.getDropItem().getDescriptionId());
--    }
--
--    @Override
--    public boolean isUnderWater() {
--        return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;
--    }
--
--    @Override
--    public ItemStack getPickResult() {
--        return new ItemStack(this.getDropItem());
--    }
--
--    public static enum Status {
--        IN_WATER,
--        UNDER_WATER,
--        UNDER_FLOWING_WATER,
--        ON_LAND,
--        IN_AIR;
--    }
--
--    public static enum Type implements StringRepresentable {
--        OAK(Blocks.OAK_PLANKS, "oak"),
--        SPRUCE(Blocks.SPRUCE_PLANKS, "spruce"),
--        BIRCH(Blocks.BIRCH_PLANKS, "birch"),
--        JUNGLE(Blocks.JUNGLE_PLANKS, "jungle"),
--        ACACIA(Blocks.ACACIA_PLANKS, "acacia"),
--        CHERRY(Blocks.CHERRY_PLANKS, "cherry"),
--        DARK_OAK(Blocks.DARK_OAK_PLANKS, "dark_oak"),
--        MANGROVE(Blocks.MANGROVE_PLANKS, "mangrove"),
--        BAMBOO(Blocks.BAMBOO_PLANKS, "bamboo");
--
--        private final String name;
--        private final Block planks;
--        public static final StringRepresentable.EnumCodec<Boat.Type> CODEC = StringRepresentable.fromEnum(Boat.Type::values);
--        private static final IntFunction<Boat.Type> BY_ID = ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
--
--        private Type(final Block p_38427_, final String p_38428_) {
--            this.name = p_38428_;
--            this.planks = p_38427_;
--        }
--
--        @Override
--        public String getSerializedName() {
--            return this.name;
--        }
--
--        public String getName() {
--            return this.name;
--        }
--
--        public Block getPlanks() {
--            return this.planks;
--        }
--
--        @Override
--        public String toString() {
--            return this.name;
--        }
--
--        public static Boat.Type byId(int p_38431_) {
--            return BY_ID.apply(p_38431_);
--        }
--
--        public static Boat.Type byName(String p_38433_) {
--            return CODEC.byName(p_38433_, OAK);
 -        }
 -    }
 +         }
@@ -1111,124 +146,23 @@
 +      }
 +
 +   }
-+
-+   public Item getDropItem() {
-+      Item item;
-+      switch (this.getVariant()) {
-+         case SPRUCE:
-+            item = Items.SPRUCE_BOAT;
-+            break;
-+         case BIRCH:
-+            item = Items.BIRCH_BOAT;
-+            break;
-+         case JUNGLE:
-+            item = Items.JUNGLE_BOAT;
-+            break;
-+         case ACACIA:
-+            item = Items.ACACIA_BOAT;
-+            break;
-+         case CHERRY:
-+            item = Items.CHERRY_BOAT;
-+            break;
-+         case DARK_OAK:
-+            item = Items.DARK_OAK_BOAT;
-+            break;
-+         case MANGROVE:
-+            item = Items.MANGROVE_BOAT;
-+            break;
-+         case BAMBOO:
-+            item = Items.BAMBOO_RAFT;
-+            break;
-+         default:
-+            item = Items.OAK_BOAT;
-+      }
-+
-+      return item;
-+   }
-+
-+   public void animateHurt(float p_265761_) {
-+      this.setHurtDir(-this.getHurtDir());
-+      this.setHurtTime(10);
-+      this.setDamage(this.getDamage() * 11.0F);
-+   }
-+
-+   public boolean isPickable() {
-+      return !this.isRemoved();
-+   }
-+
-+   public void lerpTo(double p_38299_, double p_38300_, double p_38301_, float p_38302_, float p_38303_, int p_38304_) {
-+      this.lerpX = p_38299_;
-+      this.lerpY = p_38300_;
-+      this.lerpZ = p_38301_;
-+      this.lerpYRot = (double)p_38302_;
-+      this.lerpXRot = (double)p_38303_;
-+      this.lerpSteps = 10;
-+   }
-+
-+   public double lerpTargetX() {
-+      return this.lerpSteps > 0 ? this.lerpX : this.getX();
-+   }
-+
-+   public double lerpTargetY() {
-+      return this.lerpSteps > 0 ? this.lerpY : this.getY();
-+   }
-+
-+   public double lerpTargetZ() {
-+      return this.lerpSteps > 0 ? this.lerpZ : this.getZ();
-+   }
-+
-+   public float lerpTargetXRot() {
-+      return this.lerpSteps > 0 ? (float)this.lerpXRot : this.getXRot();
-+   }
-+
-+   public float lerpTargetYRot() {
-+      return this.lerpSteps > 0 ? (float)this.lerpYRot : this.getYRot();
-+   }
-+
-+   public Direction getMotionDirection() {
-+      return this.getDirection().getClockWise();
-+   }
-+
-+   private Location lastLocation; // CraftBukkit
-+   public void tick() {
-+      this.oldStatus = this.status;
-+      this.status = this.getStatus();
-+      if (this.status != Boat.Status.UNDER_WATER && this.status != Boat.Status.UNDER_FLOWING_WATER) {
-+         this.outOfControlTicks = 0.0F;
-+      } else {
-+         ++this.outOfControlTicks;
-+      }
-+
-+      if (!this.level().isClientSide && this.outOfControlTicks >= 60.0F) {
-+         this.ejectPassengers();
-+      }
-+
-+      if (this.getHurtTime() > 0) {
-+         this.setHurtTime(this.getHurtTime() - 1);
-+      }
-+
-+      if (this.getDamage() > 0.0F) {
-+         this.setDamage(this.getDamage() - 1.0F);
-+      }
-+
-+      super.tick();
-+      this.tickLerp();
-+      if (this.isControlledByLocalInstance()) {
-+         if (!(this.getFirstPassenger() instanceof Player)) {
-+            this.setPaddleState(false, false);
-+         }
-+
-+         this.floatBoat();
-+         if (this.level().isClientSide) {
-+            this.controlBoat();
-+            this.level().sendPacketToServer(new ServerboundPaddleBoatPacket(this.getPaddleState(0), this.getPaddleState(1)));
-+         }
-+
-+         this.move(MoverType.SELF, this.getDeltaMovement());
-+      } else {
-+         this.setDeltaMovement(Vec3.ZERO);
-+      }
-+
+ 
+     @Override
+     public Item getDropItem() {
+@@ -267,7 +_,8 @@
+         return this.getDirection().getClockWise();
+     }
+ 
+-    @Override
++   	private Location lastLocation; // CraftBukkit
++   	@Override
+     public void tick() {
+         this.oldStatus = this.status;
+         this.status = this.getStatus();
+@@ -307,6 +_,22 @@
+             this.setDeltaMovement(Vec3.ZERO);
+         }
+ 
 +      // CraftBukkit start
 +      org.bukkit.Server server = this.level.getCraftServer();
 +      org.bukkit.World bworld = this.level.getWorld();
@@ -1245,598 +179,95 @@
 +      lastLocation = vehicle.getLocation();
 +      // CraftBukkit end
 +
-+
-+      this.tickBubbleColumn();
-+
-+      for(int i = 0; i <= 1; ++i) {
-+         if (this.getPaddleState(i)) {
-+            if (!this.isSilent() && (double)(this.paddlePositions[i] % ((float)Math.PI * 2F)) <= (double)((float)Math.PI / 4F) && (double)((this.paddlePositions[i] + ((float)Math.PI / 8F)) % ((float)Math.PI * 2F)) >= (double)((float)Math.PI / 4F)) {
-+               SoundEvent soundevent = this.getPaddleSound();
-+               if (soundevent != null) {
-+                  Vec3 vec3 = this.getViewVector(1.0F);
-+                  double d0 = i == 1 ? -vec3.z : vec3.z;
-+                  double d1 = i == 1 ? vec3.x : -vec3.x;
-+                  this.level().playSound((Player)null, this.getX() + d0, this.getY(), this.getZ() + d1, soundevent, this.getSoundSource(), 1.0F, 0.8F + 0.4F * this.random.nextFloat());
-+               }
-+            }
-+
-+            this.paddlePositions[i] += ((float)Math.PI / 8F);
-+         } else {
-+            this.paddlePositions[i] = 0.0F;
-+         }
-+      }
-+
-+      this.checkInsideBlocks();
-+      List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate((double)0.2F, (double)-0.01F, (double)0.2F), EntitySelector.pushableBy(this));
-+      if (!list.isEmpty()) {
-+         boolean flag = !this.level().isClientSide && !(this.getControllingPassenger() instanceof Player);
-+
-+         for(Entity entity : list) {
-+            if (!entity.hasPassenger(this)) {
-+               if (flag && this.getPassengers().size() < this.getMaxPassengers() && !entity.isPassenger() && this.hasEnoughSpaceFor(entity) && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)) {
-+                  entity.startRiding(this);
-+               } else {
-+                  this.push(entity);
-+               }
-+            }
-+         }
-+      }
-+
-+   }
-+
-+   private void tickBubbleColumn() {
-+      if (this.level().isClientSide) {
-+         int i = this.getBubbleTime();
-+         if (i > 0) {
-+            this.bubbleMultiplier += 0.05F;
-+         } else {
-+            this.bubbleMultiplier -= 0.1F;
-+         }
-+
-+         this.bubbleMultiplier = Mth.clamp(this.bubbleMultiplier, 0.0F, 1.0F);
-+         this.bubbleAngleO = this.bubbleAngle;
-+         this.bubbleAngle = 10.0F * (float)Math.sin((double)(0.5F * (float)this.level().getGameTime())) * this.bubbleMultiplier;
-+      } else {
-+         if (!this.isAboveBubbleColumn) {
-+            this.setBubbleTime(0);
-+         }
-+
-+         int k = this.getBubbleTime();
-+         if (k > 0) {
-+            --k;
-+            this.setBubbleTime(k);
-+            int j = 60 - k - 1;
-+            if (j > 0 && k == 0) {
-+               this.setBubbleTime(0);
-+               Vec3 vec3 = this.getDeltaMovement();
-+               if (this.bubbleColumnDirectionIsDown) {
-+                  this.setDeltaMovement(vec3.add(0.0D, -0.7D, 0.0D));
-+                  this.ejectPassengers();
-+               } else {
-+                  this.setDeltaMovement(vec3.x, this.hasPassenger((p_150274_) -> {
-+                     return p_150274_ instanceof Player;
-+                  }) ? 2.7D : 0.6D, vec3.z);
-+               }
-+            }
-+
-+            this.isAboveBubbleColumn = false;
-+         }
-+      }
-+
-+   }
-+
-+   @Nullable
-+   protected SoundEvent getPaddleSound() {
-+      switch (this.getStatus()) {
-+         case IN_WATER:
-+         case UNDER_WATER:
-+         case UNDER_FLOWING_WATER:
-+            return SoundEvents.BOAT_PADDLE_WATER;
-+         case ON_LAND:
-+            return SoundEvents.BOAT_PADDLE_LAND;
-+         case IN_AIR:
-+         default:
-+            return null;
-+      }
-+   }
-+
-+   private void tickLerp() {
-+      if (this.isControlledByLocalInstance()) {
-+         this.lerpSteps = 0;
-+         this.syncPacketPositionCodec(this.getX(), this.getY(), this.getZ());
-+      }
-+
-+      if (this.lerpSteps > 0) {
-+         this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
-+         --this.lerpSteps;
-+      }
-+   }
-+
-+   public void setPaddleState(boolean p_38340_, boolean p_38341_) {
-+      this.entityData.set(DATA_ID_PADDLE_LEFT, p_38340_);
-+      this.entityData.set(DATA_ID_PADDLE_RIGHT, p_38341_);
-+   }
-+
-+   public float getRowingTime(int p_38316_, float p_38317_) {
-+      return this.getPaddleState(p_38316_) ? Mth.clampedLerp(this.paddlePositions[p_38316_] - ((float)Math.PI / 8F), this.paddlePositions[p_38316_], p_38317_) : 0.0F;
-+   }
-+
-+   private Boat.Status getStatus() {
-+      Boat.Status boat$status = this.isUnderwater();
-+      if (boat$status != null) {
-+         this.waterLevel = this.getBoundingBox().maxY;
-+         return boat$status;
-+      } else if (this.checkInWater()) {
-+         return Boat.Status.IN_WATER;
-+      } else {
-+         float f = this.getGroundFriction();
-+         if (f > 0.0F) {
-+            this.landFriction = f;
-+            return Boat.Status.ON_LAND;
-+         } else {
-+            return Boat.Status.IN_AIR;
-+         }
-+      }
-+   }
-+
-+   public float getWaterLevelAbove() {
-+      AABB aabb = this.getBoundingBox();
-+      int i = Mth.floor(aabb.minX);
-+      int j = Mth.ceil(aabb.maxX);
-+      int k = Mth.floor(aabb.maxY);
-+      int l = Mth.ceil(aabb.maxY - this.lastYd);
-+      int i1 = Mth.floor(aabb.minZ);
-+      int j1 = Mth.ceil(aabb.maxZ);
-+      BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+
-+      label39:
-+      for(int k1 = k; k1 < l; ++k1) {
-+         float f = 0.0F;
-+
-+         for(int l1 = i; l1 < j; ++l1) {
-+            for(int i2 = i1; i2 < j1; ++i2) {
-+               blockpos$mutableblockpos.set(l1, k1, i2);
-+               FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
-+               if (this.canBoatInFluid(fluidstate)) {
-+                  f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
-+               }
-+
-+               if (f >= 1.0F) {
-+                  continue label39;
-+               }
-+            }
-+         }
-+
-+         if (f < 1.0F) {
-+            return (float)blockpos$mutableblockpos.getY() + f;
-+         }
-+      }
-+
-+      return (float)(l + 1);
-+   }
-+
-+   public float getGroundFriction() {
-+      AABB aabb = this.getBoundingBox();
-+      AABB aabb1 = new AABB(aabb.minX, aabb.minY - 0.001D, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
-+      int i = Mth.floor(aabb1.minX) - 1;
-+      int j = Mth.ceil(aabb1.maxX) + 1;
-+      int k = Mth.floor(aabb1.minY) - 1;
-+      int l = Mth.ceil(aabb1.maxY) + 1;
-+      int i1 = Mth.floor(aabb1.minZ) - 1;
-+      int j1 = Mth.ceil(aabb1.maxZ) + 1;
-+      VoxelShape voxelshape = Shapes.create(aabb1);
-+      float f = 0.0F;
-+      int k1 = 0;
-+      BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+
-+      for(int l1 = i; l1 < j; ++l1) {
-+         for(int i2 = i1; i2 < j1; ++i2) {
-+            int j2 = (l1 != i && l1 != j - 1 ? 0 : 1) + (i2 != i1 && i2 != j1 - 1 ? 0 : 1);
-+            if (j2 != 2) {
-+               for(int k2 = k; k2 < l; ++k2) {
-+                  if (j2 <= 0 || k2 != k && k2 != l - 1) {
-+                     blockpos$mutableblockpos.set(l1, k2, i2);
-+                     BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
-+                     if (!(blockstate.getBlock() instanceof WaterlilyBlock) && Shapes.joinIsNotEmpty(blockstate.getCollisionShape(this.level(), blockpos$mutableblockpos).move((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.AND)) {
-+                        f += blockstate.getFriction(this.level(), blockpos$mutableblockpos, this);
-+                        ++k1;
-+                     }
-+                  }
-+               }
-+            }
-+         }
-+      }
-+
-+      return f / (float)k1;
-+   }
-+
-+   private boolean checkInWater() {
-+      AABB aabb = this.getBoundingBox();
-+      int i = Mth.floor(aabb.minX);
-+      int j = Mth.ceil(aabb.maxX);
-+      int k = Mth.floor(aabb.minY);
-+      int l = Mth.ceil(aabb.minY + 0.001D);
-+      int i1 = Mth.floor(aabb.minZ);
-+      int j1 = Mth.ceil(aabb.maxZ);
-+      boolean flag = false;
-+      this.waterLevel = -Double.MAX_VALUE;
-+      BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+
-+      for(int k1 = i; k1 < j; ++k1) {
-+         for(int l1 = k; l1 < l; ++l1) {
-+            for(int i2 = i1; i2 < j1; ++i2) {
-+               blockpos$mutableblockpos.set(k1, l1, i2);
-+               FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
-+               if (this.canBoatInFluid(fluidstate)) {
-+                  float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
-+                  this.waterLevel = Math.max((double)f, this.waterLevel);
-+                  flag |= aabb.minY < (double)f;
-+               }
-+            }
-+         }
-+      }
-+
-+      return flag;
-+   }
-+
-+   @Nullable
-+   private Boat.Status isUnderwater() {
-+      AABB aabb = this.getBoundingBox();
-+      double d0 = aabb.maxY + 0.001D;
-+      int i = Mth.floor(aabb.minX);
-+      int j = Mth.ceil(aabb.maxX);
-+      int k = Mth.floor(aabb.maxY);
-+      int l = Mth.ceil(d0);
-+      int i1 = Mth.floor(aabb.minZ);
-+      int j1 = Mth.ceil(aabb.maxZ);
-+      boolean flag = false;
-+      BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+
-+      for(int k1 = i; k1 < j; ++k1) {
-+         for(int l1 = k; l1 < l; ++l1) {
-+            for(int i2 = i1; i2 < j1; ++i2) {
-+               blockpos$mutableblockpos.set(k1, l1, i2);
-+               FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
-+               if (this.canBoatInFluid(fluidstate) && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
-+                  if (!fluidstate.isSource()) {
-+                     return Boat.Status.UNDER_FLOWING_WATER;
-+                  }
-+
-+                  flag = true;
-+               }
-+            }
-+         }
-+      }
-+
-+      return flag ? Boat.Status.UNDER_WATER : null;
-+   }
-+
-+   private void floatBoat() {
-+      double d0 = (double)-0.04F;
-+      double d1 = this.isNoGravity() ? 0.0D : (double)-0.04F;
-+      double d2 = 0.0D;
-+      this.invFriction = 0.05F;
-+      if (this.oldStatus == Boat.Status.IN_AIR && this.status != Boat.Status.IN_AIR && this.status != Boat.Status.ON_LAND) {
-+         this.waterLevel = this.getY(1.0D);
-+         this.setPos(this.getX(), (double)(this.getWaterLevelAbove() - this.getBbHeight()) + 0.101D, this.getZ());
-+         this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
-+         this.lastYd = 0.0D;
-+         this.status = Boat.Status.IN_WATER;
-+      } else {
-+         if (this.status == Boat.Status.IN_WATER) {
-+            d2 = (this.waterLevel - this.getY()) / (double)this.getBbHeight();
-+            this.invFriction = 0.9F;
-+         } else if (this.status == Boat.Status.UNDER_FLOWING_WATER) {
-+            d1 = -7.0E-4D;
-+            this.invFriction = 0.9F;
-+         } else if (this.status == Boat.Status.UNDER_WATER) {
-+            d2 = (double)0.01F;
-+            this.invFriction = 0.45F;
-+         } else if (this.status == Boat.Status.IN_AIR) {
-+            this.invFriction = 0.9F;
-+         } else if (this.status == Boat.Status.ON_LAND) {
-+            this.invFriction = this.landFriction;
-+            if (this.getControllingPassenger() instanceof Player) {
-+               this.landFriction /= 2.0F;
-+            }
-+         }
-+
-+         Vec3 vec3 = this.getDeltaMovement();
-+         this.setDeltaMovement(vec3.x * (double)this.invFriction, vec3.y + d1, vec3.z * (double)this.invFriction);
-+         this.deltaRotation *= this.invFriction;
-+         if (d2 > 0.0D) {
-+            Vec3 vec31 = this.getDeltaMovement();
-+            this.setDeltaMovement(vec31.x, (vec31.y + d2 * 0.06153846016296973D) * 0.75D, vec31.z);
-+         }
-+      }
-+
-+   }
-+
-+   private void controlBoat() {
-+      if (this.isVehicle()) {
-+         float f = 0.0F;
-+         if (this.inputLeft) {
-+            --this.deltaRotation;
-+         }
-+
-+         if (this.inputRight) {
-+            ++this.deltaRotation;
-+         }
-+
-+         if (this.inputRight != this.inputLeft && !this.inputUp && !this.inputDown) {
-+            f += 0.005F;
-+         }
-+
-+         this.setYRot(this.getYRot() + this.deltaRotation);
-+         if (this.inputUp) {
-+            f += 0.04F;
-+         }
-+
-+         if (this.inputDown) {
-+            f -= 0.005F;
-+         }
-+
-+         this.setDeltaMovement(this.getDeltaMovement().add((double)(Mth.sin(-this.getYRot() * ((float)Math.PI / 180F)) * f), 0.0D, (double)(Mth.cos(this.getYRot() * ((float)Math.PI / 180F)) * f)));
-+         this.setPaddleState(this.inputRight && !this.inputLeft || this.inputUp, this.inputLeft && !this.inputRight || this.inputUp);
-+      }
-+   }
-+
-+   protected float getSinglePassengerXOffset() {
-+      return 0.0F;
-+   }
-+
-+   public boolean hasEnoughSpaceFor(Entity p_273171_) {
-+      return p_273171_.getBbWidth() < this.getBbWidth();
-+   }
-+
-+   protected void positionRider(Entity p_289552_, Entity.MoveFunction p_289571_) {
-+      super.positionRider(p_289552_, p_289571_);
-+      if (!p_289552_.getType().is(EntityTypeTags.CAN_TURN_IN_BOATS)) {
-+         p_289552_.setYRot(p_289552_.getYRot() + this.deltaRotation);
-+         p_289552_.setYHeadRot(p_289552_.getYHeadRot() + this.deltaRotation);
-+         this.clampRotation(p_289552_);
-+         if (p_289552_ instanceof Animal && this.getPassengers().size() == this.getMaxPassengers()) {
-+            int i = p_289552_.getId() % 2 == 0 ? 90 : 270;
-+            p_289552_.setYBodyRot(((Animal)p_289552_).yBodyRot + (float)i);
-+            p_289552_.setYHeadRot(p_289552_.getYHeadRot() + (float)i);
-+         }
-+
-+      }
-+   }
-+
-+   public Vec3 getDismountLocationForPassenger(LivingEntity p_38357_) {
-+      Vec3 vec3 = getCollisionHorizontalEscapeVector((double)(this.getBbWidth() * Mth.SQRT_OF_TWO), (double)p_38357_.getBbWidth(), p_38357_.getYRot());
-+      double d0 = this.getX() + vec3.x;
-+      double d1 = this.getZ() + vec3.z;
-+      BlockPos blockpos = BlockPos.containing(d0, this.getBoundingBox().maxY, d1);
-+      BlockPos blockpos1 = blockpos.below();
-+      if (!this.level().isWaterAt(blockpos1)) {
-+         List<Vec3> list = Lists.newArrayList();
-+         double d2 = this.level().getBlockFloorHeight(blockpos);
-+         if (DismountHelper.isBlockFloorValid(d2)) {
-+            list.add(new Vec3(d0, (double)blockpos.getY() + d2, d1));
-+         }
-+
-+         double d3 = this.level().getBlockFloorHeight(blockpos1);
-+         if (DismountHelper.isBlockFloorValid(d3)) {
-+            list.add(new Vec3(d0, (double)blockpos1.getY() + d3, d1));
-+         }
-+
-+         for(Pose pose : p_38357_.getDismountPoses()) {
-+            for(Vec3 vec31 : list) {
-+               if (DismountHelper.canDismountTo(this.level(), vec31, p_38357_, pose)) {
-+                  p_38357_.setPose(pose);
-+                  return vec31;
-+               }
-+            }
-+         }
-+      }
-+
-+      return super.getDismountLocationForPassenger(p_38357_);
-+   }
-+
-+   protected void clampRotation(Entity p_38322_) {
-+      p_38322_.setYBodyRot(this.getYRot());
-+      float f = Mth.wrapDegrees(p_38322_.getYRot() - this.getYRot());
-+      float f1 = Mth.clamp(f, -105.0F, 105.0F);
-+      p_38322_.yRotO += f1 - f;
-+      p_38322_.setYRot(p_38322_.getYRot() + f1 - f);
-+      p_38322_.setYHeadRot(p_38322_.getYRot());
-+   }
-+
-+   public void onPassengerTurned(Entity p_38383_) {
-+      this.clampRotation(p_38383_);
-+   }
-+
-+   protected void addAdditionalSaveData(CompoundTag p_38359_) {
-+      p_38359_.putString("Type", this.getVariant().getSerializedName());
-+   }
-+
-+   protected void readAdditionalSaveData(CompoundTag p_38338_) {
-+      if (p_38338_.contains("Type", 8)) {
-+         this.setVariant(Boat.Type.byName(p_38338_.getString("Type")));
-+      }
-+
-+   }
-+
-+   public InteractionResult interact(Player p_38330_, InteractionHand p_38331_) {
-+      if (p_38330_.isSecondaryUseActive()) {
-+         return InteractionResult.PASS;
-+      } else if (this.outOfControlTicks < 60.0F) {
-+         if (!this.level().isClientSide) {
-+            return p_38330_.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
-+         } else {
-+            return InteractionResult.SUCCESS;
-+         }
-+      } else {
-+         return InteractionResult.PASS;
-+      }
-+   }
-+
-+   protected void checkFallDamage(double p_38307_, boolean p_38308_, BlockState p_38309_, BlockPos p_38310_) {
-+      this.lastYd = this.getDeltaMovement().y;
-+      if (!this.isPassenger()) {
-+         if (p_38308_) {
-+            if (this.fallDistance > 3.0F) {
-+               if (this.status != Boat.Status.ON_LAND) {
-+                  this.resetFallDistance();
-+                  return;
-+               }
-+
-+               this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
-+               if (!this.level().isClientSide && !this.isRemoved()) {
+         this.tickBubbleColumn();
+ 
+         for (int i = 0; i <= 1; i++) {
+@@ -471,7 +_,7 @@
+                 for (int i2 = i1; i2 < j1; i2++) {
+                     blockpos$mutableblockpos.set(l1, k1, i2);
+                     FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                    if (fluidstate.is(FluidTags.WATER)) {
++                    if (this.canBoatInFluid(fluidstate)) {
+                         f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
+                     }
+ 
+@@ -517,7 +_,7 @@
+                                     voxelshape,
+                                     BooleanOp.AND
+                                 )) {
+-                                f += blockstate.getBlock().getFriction();
++                                f += blockstate.getFriction(this.level(), blockpos$mutableblockpos, this);
+                                 k1++;
+                             }
+                         }
+@@ -546,7 +_,7 @@
+                 for (int i2 = i1; i2 < j1; i2++) {
+                     blockpos$mutableblockpos.set(k1, l1, i2);
+                     FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                    if (fluidstate.is(FluidTags.WATER)) {
++                    if (this.canBoatInFluid(fluidstate)) {
+                         float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
+                         this.waterLevel = Math.max((double)f, this.waterLevel);
+                         flag |= aabb.minY < (double)f;
+@@ -576,7 +_,7 @@
+                 for (int i2 = i1; i2 < j1; i2++) {
+                     blockpos$mutableblockpos.set(k1, l1, i2);
+                     FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                    if (fluidstate.is(FluidTags.WATER)
++                    if (this.canBoatInFluid(fluidstate)
+                         && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
+                         if (!fluidstate.isSource()) {
+                             return Boat.Status.UNDER_FLOWING_WATER;
+@@ -780,6 +_,11 @@
+ 
+                     this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
+                     if (!this.level().isClientSide && !this.isRemoved()) {
 +                  // CraftBukkit start
 +                  Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 +                  VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, null);
 +                  this.level.getCraftServer().getPluginManager().callEvent(destroyEvent);
 +                  if (!destroyEvent.isCancelled()) {
-+                     this.kill();
-+                     if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-+                        for (int i = 0; i < 3; ++i) {
-+                           this.spawnAtLocation(this.getVariant().getPlanks());
-+                        }
+                         this.kill();
+                         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                             for (int i = 0; i < 3; i++) {
+@@ -789,12 +_,13 @@
+                             for (int j = 0; j < 2; j++) {
+                                 this.spawnAtLocation(Items.STICK);
+                             }
++                            }
+                         }
+                     }
+                 }
+ 
+                 this.resetFallDistance();
+-            } else if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && p_38307_ < 0.0) {
++            } else if (!this.canBoatInFluid(this.level().getFluidState(this.blockPosition().below())) && p_38307_ < 0.0) {
+                 this.fallDistance -= (float)p_38307_;
+             }
+         }
+@@ -826,7 +_,7 @@
+ 
+     @Override
+     protected boolean canAddPassenger(Entity p_38390_) {
+-        return this.getPassengers().size() < this.getMaxPassengers() && !this.isEyeInFluid(FluidTags.WATER);
++        return this.getPassengers().size() < this.getMaxPassengers() && !this.canBoatInFluid(this.getEyeInFluidType());
+     }
+ 
+     protected int getMaxPassengers() {
+@@ -859,6 +_,16 @@
+     @Override
+     public ItemStack getPickResult() {
+         return new ItemStack(this.getDropItem());
++    }
 +
-+                        for (int j = 0; j < 2; ++j) {
-+                           this.spawnAtLocation(Items.STICK);
-+                        }
-+                     }
-+                  }
-+               } // CraftBukkit end
-+            }
-+
-+            this.resetFallDistance();
-+         } else if (!this.canBoatInFluid(this.level().getFluidState(this.blockPosition().below())) && p_38307_ < 0.0D) {
-+            this.fallDistance -= (float)p_38307_;
-+         }
-+
-+      }
-+   }
-+
-+   public boolean getPaddleState(int p_38314_) {
-+      return this.entityData.<Boolean>get(p_38314_ == 0 ? DATA_ID_PADDLE_LEFT : DATA_ID_PADDLE_RIGHT) && this.getControllingPassenger() != null;
-+   }
-+
-+   private void setBubbleTime(int p_38367_) {
-+      this.entityData.set(DATA_ID_BUBBLE_TIME, p_38367_);
-+   }
-+
-+   private int getBubbleTime() {
-+      return this.entityData.get(DATA_ID_BUBBLE_TIME);
-+   }
-+
-+   public float getBubbleAngle(float p_38353_) {
-+      return Mth.lerp(p_38353_, this.bubbleAngleO, this.bubbleAngle);
-+   }
-+
-+   public void setVariant(Boat.Type p_38333_) {
-+      this.entityData.set(DATA_ID_TYPE, p_38333_.ordinal());
-+   }
-+
-+   public Boat.Type getVariant() {
-+      return Boat.Type.byId(this.entityData.get(DATA_ID_TYPE));
-+   }
-+
-+   protected boolean canAddPassenger(Entity p_38390_) {
-+      return this.getPassengers().size() < this.getMaxPassengers() && !this.canBoatInFluid(this.getEyeInFluidType());
-+   }
-+
-+   protected int getMaxPassengers() {
-+      return 2;
-+   }
-+
-+   @Nullable
-+   public LivingEntity getControllingPassenger() {
-+      Entity entity = this.getFirstPassenger();
-+      LivingEntity livingentity1;
-+      if (entity instanceof LivingEntity livingentity) {
-+         livingentity1 = livingentity;
-+      } else {
-+         livingentity1 = super.getControllingPassenger();
-+      }
-+
-+      return livingentity1;
-+   }
-+
-+   public void setInput(boolean p_38343_, boolean p_38344_, boolean p_38345_, boolean p_38346_) {
-+      this.inputLeft = p_38343_;
-+      this.inputRight = p_38344_;
-+      this.inputUp = p_38345_;
-+      this.inputDown = p_38346_;
-+   }
-+
-+   protected Component getTypeName() {
-+      return Component.translatable(this.getDropItem().getDescriptionId());
-+   }
-+
-+   public boolean isUnderWater() {
-+      return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;
-+   }
-+
-+   // Forge: Fix MC-119811 by instantly completing lerp on board
-+   @Override
-+   protected void addPassenger(Entity passenger) {
-+      super.addPassenger(passenger);
-+      if (this.isControlledByLocalInstance() && this.lerpSteps > 0) {
-+         this.lerpSteps = 0;
-+         this.absMoveTo(this.lerpX, this.lerpY, this.lerpZ, (float)this.lerpYRot, (float)this.lerpXRot);
-+      }
-+   }
-+
-+   public ItemStack getPickResult() {
-+      return new ItemStack(this.getDropItem());
-+   }
-+
-+   public static enum Status {
-+      IN_WATER,
-+      UNDER_WATER,
-+      UNDER_FLOWING_WATER,
-+      ON_LAND,
-+      IN_AIR;
-+   }
-+
-+   public static enum Type implements StringRepresentable {
-+      OAK(Blocks.OAK_PLANKS, "oak"),
-+      SPRUCE(Blocks.SPRUCE_PLANKS, "spruce"),
-+      BIRCH(Blocks.BIRCH_PLANKS, "birch"),
-+      JUNGLE(Blocks.JUNGLE_PLANKS, "jungle"),
-+      ACACIA(Blocks.ACACIA_PLANKS, "acacia"),
-+      CHERRY(Blocks.CHERRY_PLANKS, "cherry"),
-+      DARK_OAK(Blocks.DARK_OAK_PLANKS, "dark_oak"),
-+      MANGROVE(Blocks.MANGROVE_PLANKS, "mangrove"),
-+      BAMBOO(Blocks.BAMBOO_PLANKS, "bamboo");
-+
-+      private final String name;
-+      private final Block planks;
-+      public static final StringRepresentable.EnumCodec<Boat.Type> CODEC = StringRepresentable.fromEnum(Boat.Type::values);
-+      private static final IntFunction<Boat.Type> BY_ID = ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-+
-+      private Type(Block p_38427_, String p_38428_) {
-+         this.name = p_38428_;
-+         this.planks = p_38427_;
-+      }
-+
-+      public String getSerializedName() {
-+         return this.name;
-+      }
-+
-+      public String getName() {
-+         return this.name;
-+      }
-+
-+      public Block getPlanks() {
-+         return this.planks;
-+      }
-+
-+      public String toString() {
-+         return this.name;
-+      }
-+
-+      public static Boat.Type byId(int p_38431_) {
-+         return BY_ID.apply(p_38431_);
-+      }
-+
-+      public static Boat.Type byName(String p_38433_) {
-+         return CODEC.byName(p_38433_, OAK);
-+      }
-+   }
- }
++    // Forge: Fix MC-119811 by instantly completing lerp on board
++    @Override
++    protected void addPassenger(Entity passenger) {
++        super.addPassenger(passenger);
++        if (this.isControlledByLocalInstance() && this.lerpSteps > 0) {
++            this.lerpSteps = 0;
++            this.absMoveTo(this.lerpX, this.lerpY, this.lerpZ, (float)this.lerpYRot, (float)this.lerpXRot);
++        }
+     }
+ 
+     public static enum Status {

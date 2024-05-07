@@ -35,13 +35,12 @@
  
      public CommandSourceStack(
          CommandSource p_81302_,
-@@ -387,10 +_,26 @@
+@@ -387,10 +_,24 @@
      }
  
      @Override
 -    public boolean hasPermission(int p_81370_) {
 +   public boolean hasPermission(int p_81370_) {
-+      	if (PlayerAPI.ignoreOp()) return true;
 +      	// CraftBukkit start
 +      	CommandNode currentCommand = this.currentCommand;
 +      	if (currentCommand != null) {
@@ -54,7 +53,6 @@
  
 +   	// CraftBukkit start
 +   	public boolean hasPermission(int i, String bukkitPermission) {
-+      	if (PlayerAPI.ignoreOp()) return true;
 +      	// World is null when loading functions
 +      	return ((getLevel() == null || !getLevel().getCraftServer().ignoreVanillaPermissions) && this.permissionLevel >= i) || getBukkitSender().hasPermission(bukkitPermission);
 +   	}

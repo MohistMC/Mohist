@@ -42,3 +42,12 @@
              this.discard();
          }
      }
+@@ -211,7 +_,7 @@
+         this.assignPower(d0, d1, d2);
+     }
+ 
+-    private void assignPower(double p_329575_, double p_331475_, double p_330972_) {
++    public void assignPower(double p_329575_, double p_331475_, double p_330972_) {
+         double d0 = Math.sqrt(p_329575_ * p_329575_ + p_331475_ * p_331475_ + p_330972_ * p_330972_);
+         if (d0 != 0.0) {
+             this.xPower = p_329575_ / d0 * 0.1;

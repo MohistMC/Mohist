@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -5,7 +_,6 @@
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
--import net.minecraft.core.HolderLookup;
- import net.minecraft.core.NonNullList;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
 @@ -31,6 +_,8 @@
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
@@ -76,156 +68,32 @@
              this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
              if (this.openCount <= 0) {
                  this.level.gameEvent(p_59688_, GameEvent.CONTAINER_CLOSE, this.worldPosition);
-@@ -186,79 +_,77 @@
+@@ -186,7 +_,6 @@
          }
      }
  
 -    @Override
--    protected Component getDefaultName() {
--        return Component.translatable("container.shulkerBox");
--    }
--
--    @Override
--    protected void loadAdditional(CompoundTag p_327918_, HolderLookup.Provider p_335601_) {
--        super.loadAdditional(p_327918_, p_335601_);
--        this.loadFromTag(p_327918_, p_335601_);
--    }
--
--    @Override
--    protected void saveAdditional(CompoundTag p_187513_, HolderLookup.Provider p_334063_) {
--        super.saveAdditional(p_187513_, p_334063_);
--        if (!this.trySaveLootTable(p_187513_)) {
--            ContainerHelper.saveAllItems(p_187513_, this.itemStacks, false, p_334063_);
--        }
--    }
--
--    public void loadFromTag(CompoundTag p_59694_, HolderLookup.Provider p_333398_) {
--        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
--        if (!this.tryLoadLootTable(p_59694_) && p_59694_.contains("Items", 9)) {
--            ContainerHelper.loadAllItems(p_59694_, this.itemStacks, p_333398_);
--        }
--    }
--
--    @Override
--    protected NonNullList<ItemStack> getItems() {
--        return this.itemStacks;
--    }
--
--    @Override
--    protected void setItems(NonNullList<ItemStack> p_59674_) {
--        this.itemStacks = p_59674_;
--    }
--
--    @Override
--    public int[] getSlotsForFace(Direction p_59672_) {
--        return SLOTS;
--    }
--
--    @Override
--    public boolean canPlaceItemThroughFace(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
+     protected Component getDefaultName() {
+         return Component.translatable("container.shulkerBox");
+     }
+@@ -229,7 +_,7 @@
+ 
+     @Override
+     public boolean canPlaceItemThroughFace(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
 -        return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock);
--    }
--
--    @Override
--    public boolean canTakeItemThroughFace(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
--        return true;
--    }
--
--    public float getProgress(float p_59658_) {
--        return Mth.lerp(p_59658_, this.progressOld, this.progress);
--    }
--
--    @Nullable
--    public DyeColor getColor() {
--        return this.color;
--    }
--
--    @Override
--    protected AbstractContainerMenu createMenu(int p_59660_, Inventory p_59661_) {
--        return new ShulkerBoxMenu(p_59660_, p_59661_, this);
--    }
--
--    public boolean isClosed() {
--        return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
--    }
--
--    public static enum AnimationStatus {
--        CLOSED,
--        OPENING,
--        OPENED,
--        CLOSING;
--    }
-+   protected Component getDefaultName() {
-+      return Component.translatable("container.shulkerBox");
-+   }
++        return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock) && p_59664_.getItem().canFitInsideContainerItems(); // FORGE: Make shulker boxes respect Item#canFitInsideContainerItems
+     }
+ 
+     @Override
+@@ -253,6 +_,11 @@
+ 
+     public boolean isClosed() {
+         return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
++    }
 +
-+   public void load(CompoundTag p_155678_) {
-+      super.load(p_155678_);
-+      this.loadFromTag(p_155678_);
-+   }
-+
-+   protected void saveAdditional(CompoundTag p_187513_) {
-+      super.saveAdditional(p_187513_);
-+      if (!this.trySaveLootTable(p_187513_)) {
-+         ContainerHelper.saveAllItems(p_187513_, this.itemStacks, false);
-+      }
-+
-+   }
-+
-+   public void loadFromTag(CompoundTag p_59694_) {
-+      this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-+      if (!this.tryLoadLootTable(p_59694_) && p_59694_.contains("Items", 9)) {
-+         ContainerHelper.loadAllItems(p_59694_, this.itemStacks);
-+      }
-+
-+   }
-+
-+   protected NonNullList<ItemStack> getItems() {
-+      return this.itemStacks;
-+   }
-+
-+   protected void setItems(NonNullList<ItemStack> p_59674_) {
-+      this.itemStacks = p_59674_;
-+   }
-+
-+   public int[] getSlotsForFace(Direction p_59672_) {
-+      return SLOTS;
-+   }
-+
-+   public boolean canPlaceItemThroughFace(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
-+      return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock) && p_59664_.getItem().canFitInsideContainerItems(); // FORGE: Make shulker boxes respect Item#canFitInsideContainerItems
-+   }
-+
-+   public boolean canTakeItemThroughFace(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
-+      return true;
-+   }
-+
-+   public float getProgress(float p_59658_) {
-+      return Mth.lerp(p_59658_, this.progressOld, this.progress);
-+   }
-+
-+   @Nullable
-+   public DyeColor getColor() {
-+      return this.color;
-+   }
-+
-+   protected AbstractContainerMenu createMenu(int p_59660_, Inventory p_59661_) {
-+      return new ShulkerBoxMenu(p_59660_, p_59661_, this);
-+   }
-+
-+   public boolean isClosed() {
-+      return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
-+   }
-+
-+   @Override
-+   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
-+      return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
-+   }
-+
-+   public static enum AnimationStatus {
-+      CLOSED,
-+      OPENING,
-+      OPENED,
-+      CLOSING;
-+   }
- }
++    @Override
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++       return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
+     }
+ 
+     public static enum AnimationStatus {

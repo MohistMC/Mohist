@@ -1,6 +1,12 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -39,15 +_,18 @@
+@@ -34,20 +_,23 @@
+     private static final CompletableFuture<Unit> DATA_RELOAD_INITIAL_TASK = CompletableFuture.completedFuture(Unit.INSTANCE);
+     private final ReloadableServerRegistries.Holder fullRegistryHolder;
+     private final ReloadableServerResources.ConfigurableRegistryLookup registryLookup;
+-    private final Commands commands;
++    public Commands commands;
+     private final RecipeManager recipes;
      private final TagManager tagManager;
      private final ServerAdvancementManager advancements;
      private final ServerFunctionLibrary functionLibrary;

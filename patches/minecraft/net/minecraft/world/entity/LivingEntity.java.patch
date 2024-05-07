@@ -77,7 +77,7 @@
      public static final int HAND_SLOTS = 2;
      public static final int ARMOR_SLOTS = 4;
      public static final int EQUIPMENT_SLOT_OFFSET = 98;
-@@ -154,10 +_,10 @@
+@@ -154,7 +_,7 @@
      protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
      protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
      protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
@@ -85,22 +85,16 @@
 +    private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
      private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.PARTICLES);
      private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
--    public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-+    private static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Integer> DATA_STINGER_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Optional<BlockPos>> SLEEPING_POS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
-     private static final int PARTICLE_FREQUENCY_WHEN_INVISIBLE = 15;
-@@ -166,8 +_,8 @@
+     public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
+@@ -166,7 +_,7 @@
      public static final float DEFAULT_BABY_SCALE = 0.5F;
      private static final float ITEM_USE_EFFECT_START_FRACTION = 0.21875F;
      private final AttributeMap attributes;
 -    public CombatTracker combatTracker = new CombatTracker(this);
--    public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
 +    private final CombatTracker combatTracker = new CombatTracker(this);
-+    private final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
+     public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
      private final NonNullList<ItemStack> lastHandItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
      private final NonNullList<ItemStack> lastArmorItemStacks = NonNullList.withSize(4, ItemStack.EMPTY);
-     private ItemStack lastBodyItemStack = ItemStack.EMPTY;
 @@ -184,7 +_,7 @@
      public float attackAnim;
      protected int attackStrengthTicker;
@@ -110,24 +104,6 @@
      public final float timeOffs;
      public final float rotA;
      public float yBodyRot;
-@@ -192,7 +_,7 @@
-     public float yHeadRot;
-     public float yHeadRotO;
-     @Nullable
--    public Player lastHurtByPlayer;
-+    protected Player lastHurtByPlayer;
-     protected int lastHurtByPlayerTime;
-     protected boolean dead;
-     protected int noActionTime;
-@@ -202,7 +_,7 @@
-     protected float animStepO;
-     protected float rotOffs;
-     protected int deathScore;
--    public float lastHurt;
-+    protected float lastHurt;
-     protected boolean jumping;
-     public float xxa;
-     public float yya;
 @@ -215,17 +_,17 @@
      protected double lerpXRot;
      protected double lerpYHeadRot;
@@ -669,7 +645,7 @@
 +   // Mohist start
 +   public AtomicReference<EntityPotionEffectEvent.Cause> removeEffectNoUpdateCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
 +   @Nullable
-+   public MobEffectInstance removeEffectNoUpdate(@Nullable MobEffect p_21164_) {
++   public MobEffectInstance removeEffectNoUpdate(@Nullable Holder<MobEffect> p_21164_) {
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(p_21164_, removeEffectNoUpdateCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
 +         return null;
@@ -688,12 +664,12 @@
 +   }
 +
 +   @Nullable
-+   public MobEffectInstance c(@Nullable MobEffect pEffect, EntityPotionEffectEvent.Cause cause) {
++   public MobEffectInstance c(@Nullable Holder<MobEffect> pEffect, EntityPotionEffectEvent.Cause cause) {
 +      removeEffectNoUpdateCause.set(cause);
 +      return removeEffectNoUpdate(pEffect);
 +   }
 +
-+   public boolean removeEffect(MobEffect p_21196_) {
++   public boolean removeEffect(Holder<MobEffect> p_21196_) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
 +      MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_);
 +      if (mobeffectinstance != null) {
@@ -704,7 +680,7 @@
 +      }
 +   }
 +
-+   public boolean removeEffect(MobEffect pEffect, EntityPotionEffectEvent.Cause cause) {
++   public boolean removeEffect(Holder<MobEffect> pEffect, EntityPotionEffectEvent.Cause cause) {
 +      removeEffectNoUpdateCause.set(cause);
 +      return removeEffect(pEffect);
 +   }
@@ -1853,6 +1829,15 @@
          super.tick();
          this.updatingUsingItem();
          this.updateSwimAmount();
+@@ -2460,7 +_,7 @@
+         }
+     }
+ 
+-    private void detectEquipmentUpdates() {
++    public void detectEquipmentUpdates() {
+         Map<EquipmentSlot, ItemStack> map = this.collectEquipmentChanges();
+         if (map != null) {
+             this.handleHandSwap(map);
 @@ -2482,6 +_,7 @@
              };
              ItemStack itemstack1 = this.getItemBySlot(equipmentslot);

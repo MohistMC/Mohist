@@ -23,60 +23,12 @@
  
  public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
      private static final int CONTAINER_SIZE = 27;
-@@ -163,54 +_,115 @@
+@@ -163,8 +_,54 @@
          return this.isChestVehicleStillValid(p_219896_);
      }
  
 -    @Nullable
 -    @Override
--    public AbstractContainerMenu createMenu(int p_219910_, Inventory p_219911_, Player p_219912_) {
--        if (this.lootTable != null && p_219912_.isSpectator()) {
--            return null;
--        } else {
--            this.unpackLootTable(p_219911_.player);
--            return ChestMenu.threeRows(p_219910_, p_219911_, this);
--        }
--    }
--
--    public void unpackLootTable(@Nullable Player p_219914_) {
--        this.unpackChestVehicleLootTable(p_219914_);
--    }
--
--    @Nullable
--    @Override
--    public ResourceKey<LootTable> getLootTable() {
--        return this.lootTable;
--    }
--
--    @Override
--    public void setLootTable(@Nullable ResourceKey<LootTable> p_329383_) {
--        this.lootTable = p_329383_;
--    }
--
--    @Override
--    public long getLootTableSeed() {
--        return this.lootTableSeed;
--    }
--
--    @Override
--    public void setLootTableSeed(long p_219888_) {
--        this.lootTableSeed = p_219888_;
--    }
--
--    @Override
--    public NonNullList<ItemStack> getItemStacks() {
--        return this.itemStacks;
--    }
--
--    @Override
--    public void clearItemStacks() {
--        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
--    }
--
--    @Override
--    public void stopOpen(Player p_270286_) {
--        this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
--    }
 +   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -125,67 +77,34 @@
 +   // CraftBukkit end
 +
 +   @Nullable
-+   public AbstractContainerMenu createMenu(int p_219910_, Inventory p_219911_, Player p_219912_) {
-+      if (this.lootTable != null && p_219912_.isSpectator()) {
-+         return null;
-+      } else {
-+         this.unpackLootTable(p_219911_.player);
-+         return ChestMenu.threeRows(p_219910_, p_219911_, this);
-+      }
-+   }
+     public AbstractContainerMenu createMenu(int p_219910_, Inventory p_219911_, Player p_219912_) {
+         if (this.lootTable != null && p_219912_.isSpectator()) {
+             return null;
+@@ -212,5 +_,27 @@
+     @Override
+     public void stopOpen(Player p_270286_) {
+         this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
++    }
 +
-+   public void unpackLootTable(@Nullable Player p_219914_) {
-+      this.unpackChestVehicleLootTable(p_219914_);
-+   }
++    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
-+   @Nullable
-+   public ResourceLocation getLootTable() {
-+      return this.lootTable;
-+   }
++    @Override
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++        if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive()) {
++             return itemHandler.cast();
++        }
++        return super.getCapability(capability, facing);
++    }
 +
-+   public void setLootTable(@Nullable ResourceLocation p_219890_) {
-+      this.lootTable = p_219890_;
-+   }
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        itemHandler.invalidate();
++    }
 +
-+   public long getLootTableSeed() {
-+      return this.lootTableSeed;
-+   }
-+
-+   public void setLootTableSeed(long p_219888_) {
-+      this.lootTableSeed = p_219888_;
-+   }
-+
-+   public NonNullList<ItemStack> getItemStacks() {
-+      return this.itemStacks;
-+   }
-+
-+   public void clearItemStacks() {
-+      this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-+   }
-+
-+   // Forge Start
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
-+
-+   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive())
-+         return itemHandler.cast();
-+      return super.getCapability(capability, facing);
-+   }
-+
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      itemHandler.invalidate();
-+   }
-+
-+   @Override
-+   public void reviveCaps() {
-+      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
-+   }
-+
-+   public void stopOpen(Player p_270286_) {
-+      this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
-+   }
++    @Override
++    public void reviveCaps() {
++        super.reviveCaps();
++        itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
+     }
  }

@@ -110,7 +110,7 @@
 -            p_155409_.sendBlockUpdated(p_155410_, p_155411_, p_155411_, 2);
 -        }
 -    }
-+               player.addEffectCause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONDUIT); // CraftBukkit
++               player.addEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONDUIT); // CraftBukkit
 +               player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true));
 +            }
 +         }
