@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/inventory/ContainerLevelAccess.java
 +++ b/net/minecraft/world/inventory/ContainerLevelAccess.java
+@@ -5,6 +_,7 @@
+ import java.util.function.BiFunction;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.world.level.Level;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+ 
+ public interface ContainerLevelAccess {
+    ContainerLevelAccess f_39287_ = new ContainerLevelAccess() {
 @@ -18,6 +_,18 @@
           public <T> Optional<T> m_6721_(BiFunction<Level, BlockPos, T> p_39311_) {
              return Optional.of(p_39311_.apply(p_39290_, p_39291_));
@@ -19,22 +27,29 @@
        };
     }
  
-@@ -33,4 +_,18 @@
+@@ -33,4 +_,25 @@
           return Optional.empty();
        });
     }
 +
 +   // CraftBukkit start
 +   default Level getWorld() {
-+      throw new UnsupportedOperationException("Not supported yet.");
++      return this.m_6721_((level, blockpos) -> level).orElse(null); // Mohist
 +   }
 +
 +   default BlockPos getPosition() {
-+      throw new UnsupportedOperationException("Not supported yet.");
++      return this.m_6721_((level, blockpos) -> blockpos).orElse(null); // Mohist
 +   }
 +
 +   default org.bukkit.Location getLocation() {
-+      return new org.bukkit.Location(getWorld().getWorld(), getPosition().m_123341_(), getPosition().m_123342_(), getPosition().m_123343_());
++      BlockPos blockPos = getPosition();
++      if (blockPos == null) {
++         return null;
++      } else {
++         Level level = getWorld();
++         CraftWorld world = level == null ? null : level.getWorld();
++         return new org.bukkit.Location(world, blockPos.m_123341_(), blockPos.m_123342_(), blockPos.m_123343_());
++      }
 +   }
 +   // CraftBukkit end
  }
