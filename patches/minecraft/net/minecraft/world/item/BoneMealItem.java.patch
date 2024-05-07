@@ -1,25 +1,14 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -9,7 +_,6 @@
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.tags.BiomeTags;
- import net.minecraft.tags.BlockTags;
--import net.minecraft.util.ParticleUtils;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.item.context.UseOnContext;
-@@ -17,9 +_,9 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.biome.Biome;
  import net.minecraft.world.level.block.BaseCoralWallFanBlock;
 +import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.BonemealableBlock;
--import net.minecraft.world.level.block.state.BlockBehaviour;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
- 
-@@ -34,14 +_,20 @@
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+@@ -34,12 +_,18 @@
  
      @Override
      public InteractionResult useOn(UseOnContext p_40637_) {
@@ -36,25 +25,19 @@
 +        if (applyBonemeal(p_40637_.getItemInHand(), level, blockpos, p_40637_.getPlayer())) {
              if (!level.isClientSide) {
 -                p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
--                level.levelEvent(1505, blockpos, 15);
--            }
-+            if (p_40637_.getPlayer() != null) p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH); // CraftBukkit - SPIGOT-7518
-+            level.levelEvent(1505, blockpos, 0);
-+         }
++            	if (p_40637_.getPlayer() != null) p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH); // CraftBukkit - SPIGOT-7518
+                 level.levelEvent(1505, blockpos, 15);
+             }
  
-             return InteractionResult.sidedSuccess(level.isClientSide);
-         } else {
-@@ -49,8 +_,8 @@
+@@ -49,7 +_,7 @@
              boolean flag = blockstate.isFaceSturdy(level, blockpos, p_40637_.getClickedFace());
              if (flag && growWaterPlant(p_40637_.getItemInHand(), level, blockpos1, p_40637_.getClickedFace())) {
                  if (!level.isClientSide) {
 -                    p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
--                    level.levelEvent(1505, blockpos1, 15);
-+               if (p_40637_.getPlayer() != null) p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH); // CraftBukkit - SPIGOT-7518
-+               level.levelEvent(1505, blockpos1, 0);
++               		if (p_40637_.getPlayer() != null) p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH); // CraftBukkit - SPIGOT-7518
+                     level.levelEvent(1505, blockpos1, 15);
                  }
  
-                 return InteractionResult.sidedSuccess(level.isClientSide);
 @@ -59,9 +_,20 @@
              }
          }

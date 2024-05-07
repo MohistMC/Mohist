@@ -1,23 +1,15 @@
 --- a/net/minecraft/world/item/DyeItem.java
 +++ b/net/minecraft/world/item/DyeItem.java
-@@ -11,7 +_,7 @@
- import net.minecraft.world.entity.player.Player;
+@@ -12,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SignBlockEntity;
--import net.minecraft.world.level.block.entity.SignText;
+ import net.minecraft.world.level.block.entity.SignText;
 +import org.bukkit.event.entity.SheepDyeWoolEvent;
  
  public class DyeItem extends Item implements SignApplicator {
      private static final Map<DyeColor, DyeItem> ITEM_BY_COLOR = Maps.newEnumMap(DyeColor.class);
-@@ -24,19 +_,31 @@
-     }
- 
-     @Override
--    public InteractionResult interactLivingEntity(ItemStack p_41085_, Player p_41086_, LivingEntity p_41087_, InteractionHand p_41088_) {
--        if (p_41087_ instanceof Sheep sheep && sheep.isAlive() && !sheep.isSheared() && sheep.getColor() != this.dyeColor) {
-+   public InteractionResult interactLivingEntity(ItemStack p_41085_, Player p_41086_, LivingEntity p_41087_, InteractionHand p_41088_) {
-+      if (p_41087_ instanceof Sheep sheep) {
-+         if (sheep.isAlive() && !sheep.isSheared() && sheep.getColor() != this.dyeColor) {
+@@ -28,8 +_,18 @@
+         if (p_41087_ instanceof Sheep sheep && sheep.isAlive() && !sheep.isSheared() && sheep.getColor() != this.dyeColor) {
              sheep.level().playSound(p_41086_, sheep, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
              if (!p_41086_.level().isClientSide) {
 -                sheep.setColor(this.dyeColor);
@@ -37,14 +29,3 @@
              }
  
              return InteractionResult.sidedSuccess(p_41086_.level().isClientSide);
--        }
-+         }
-+      }
- 
--        return InteractionResult.PASS;
--    }
-+      return InteractionResult.PASS;
-+   }
- 
-     public DyeColor getDyeColor() {
-         return this.dyeColor;

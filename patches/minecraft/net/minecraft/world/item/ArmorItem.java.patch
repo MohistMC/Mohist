@@ -54,12 +54,3 @@
              if (livingentity instanceof Mob) {
                  ((Mob)livingentity).setDropChance(equipmentslot, 2.0F);
                  ((Mob)livingentity).setPersistenceRequired();
-@@ -152,7 +_,7 @@
-         BOOTS(EquipmentSlot.FEET, 13, "boots"),
-         BODY(EquipmentSlot.BODY, 16, "body");
- 
--        public static final Codec<ArmorItem.Type> CODEC = StringRepresentable.fromValues(ArmorItem.Type::values);
-+        public static final Codec<Type> CODEC = StringRepresentable.fromValues(ArmorItem.Type::values);
-         private final EquipmentSlot slot;
-         private final String name;
-         private final int durability;

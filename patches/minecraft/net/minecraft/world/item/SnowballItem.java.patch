@@ -1,50 +1,14 @@
 --- a/net/minecraft/world/item/SnowballItem.java
 +++ b/net/minecraft/world/item/SnowballItem.java
-@@ -12,36 +_,34 @@
- import net.minecraft.world.entity.projectile.Snowball;
- import net.minecraft.world.level.Level;
- 
--public class SnowballItem extends Item implements ProjectileItem {
--    public SnowballItem(Item.Properties p_43140_) {
--        super(p_43140_);
--    }
--
--    @Override
--    public InteractionResultHolder<ItemStack> use(Level p_43142_, Player p_43143_, InteractionHand p_43144_) {
--        ItemStack itemstack = p_43143_.getItemInHand(p_43144_);
--        p_43142_.playSound(
--            null,
--            p_43143_.getX(),
--            p_43143_.getY(),
--            p_43143_.getZ(),
--            SoundEvents.SNOWBALL_THROW,
--            SoundSource.NEUTRAL,
--            0.5F,
--            0.4F / (p_43142_.getRandom().nextFloat() * 0.4F + 0.8F)
--        );
--        if (!p_43142_.isClientSide) {
--            Snowball snowball = new Snowball(p_43142_, p_43143_);
--            snowball.setItem(itemstack);
--            snowball.shootFromRotation(p_43143_, p_43143_.getXRot(), p_43143_.getYRot(), 0.0F, 1.5F, 1.0F);
+@@ -34,11 +_,21 @@
+             Snowball snowball = new Snowball(p_43142_, p_43143_);
+             snowball.setItem(itemstack);
+             snowball.shootFromRotation(p_43143_, p_43143_.getXRot(), p_43143_.getYRot(), 0.0F, 1.5F, 1.0F);
 -            p_43142_.addFreshEntity(snowball);
 -        }
 -
 -        p_43143_.awardStat(Stats.ITEM_USED.get(this));
 -        itemstack.consume(1, p_43143_);
--        return InteractionResultHolder.sidedSuccess(itemstack, p_43142_.isClientSide());
--    }
--
-+public class SnowballItem extends Item {
-+   public SnowballItem(Item.Properties p_43140_) {
-+      super(p_43140_);
-+   }
-+
-+   public InteractionResultHolder<ItemStack> use(Level p_43142_, Player p_43143_, InteractionHand p_43144_) {
-+      ItemStack itemstack = p_43143_.getItemInHand(p_43144_);
-+      if (!p_43142_.isClientSide) {
-+         Snowball snowball = new Snowball(p_43142_, p_43143_);
-+         snowball.setItem(itemstack);
-+         snowball.shootFromRotation(p_43143_, p_43143_.getXRot(), p_43143_.getYRot(), 0.0F, 1.5F, 1.0F);
 +         // CraftBukkit - start
 +         if (p_43142_.addFreshEntity(snowball)) {
 +            if (!p_43143_.getAbilities().instabuild) {
@@ -60,8 +24,6 @@
 +
 +      p_43143_.awardStat(Stats.ITEM_USED.get(this));
 +
-+      return InteractionResultHolder.sidedSuccess(itemstack, p_43142_.isClientSide());
-+   }
-     @Override
-     public Projectile asProjectile(Level p_331733_, Position p_331858_, ItemStack p_327677_, Direction p_328077_) {
-         Snowball snowball = new Snowball(p_331733_, p_331858_.x(), p_331858_.y(), p_331858_.z());
+         return InteractionResultHolder.sidedSuccess(itemstack, p_43142_.isClientSide());
+     }
+ 

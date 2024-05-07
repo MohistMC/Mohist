@@ -1,26 +1,6 @@
 --- a/net/minecraft/world/item/HangingEntityItem.java
 +++ b/net/minecraft/world/item/HangingEntityItem.java
-@@ -2,13 +_,12 @@
- 
- import java.util.List;
- import java.util.Optional;
-+import javax.annotation.Nullable;
- import net.minecraft.ChatFormatting;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
--import net.minecraft.core.Holder;
--import net.minecraft.core.component.DataComponents;
-+import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
--import net.minecraft.resources.ResourceKey;
- import net.minecraft.util.Mth;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.entity.EntityType;
-@@ -17,10 +_,11 @@
- import net.minecraft.world.entity.decoration.ItemFrame;
- import net.minecraft.world.entity.decoration.Painting;
- import net.minecraft.world.entity.player.Player;
--import net.minecraft.world.item.component.CustomData;
+@@ -21,6 +_,8 @@
  import net.minecraft.world.item.context.UseOnContext;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;

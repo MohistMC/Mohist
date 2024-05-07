@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
-@@ -5,10 +_,11 @@
- import javax.annotation.Nullable;
- import net.minecraft.advancements.CriteriaTriggers;
+@@ -7,8 +_,10 @@
  import net.minecraft.core.BlockPos;
--import net.minecraft.core.component.DataComponents;
+ import net.minecraft.core.component.DataComponents;
  import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.nbt.ListTag;
  import net.minecraft.network.chat.Component;
@@ -13,16 +11,6 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
-@@ -16,9 +_,6 @@
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.flag.FeatureFlagSet;
--import net.minecraft.world.item.component.BlockItemStateProperties;
--import net.minecraft.world.item.component.CustomData;
--import net.minecraft.world.item.component.ItemContainerContents;
- import net.minecraft.world.item.context.BlockPlaceContext;
- import net.minecraft.world.item.context.UseOnContext;
- import net.minecraft.world.level.Level;
 @@ -28,8 +_,15 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.BlockEntityType;

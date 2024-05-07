@@ -1,16 +1,14 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -1,37 +_,63 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.item.crafting;
  
 +import com.mohistmc.mohist.bukkit.inventory.MohistSpecialRecipe;
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.MapCodec;
- import com.mojang.serialization.codecs.RecordCodecBuilder;
--import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
--import java.util.List;
-+import it.unimi.dsi.fastutil.ints.IntList;
+@@ -8,30 +_,56 @@
+ import java.util.List;
  import net.minecraft.core.HolderLookup;
  import net.minecraft.core.NonNullList;
 +import net.minecraft.core.RegistryAccess;

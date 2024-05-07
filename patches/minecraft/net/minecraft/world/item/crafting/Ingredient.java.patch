@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -1,11 +_,12 @@
+@@ -1,9 +_,11 @@
  package net.minecraft.world.item.crafting;
  
  import com.google.common.collect.Lists;
@@ -10,10 +10,8 @@
  import com.mojang.serialization.DataResult;
 +import com.mojang.serialization.JsonOps;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
--import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
- import it.unimi.dsi.fastutil.ints.IntComparators;
- import it.unimi.dsi.fastutil.ints.IntList;
 @@ -16,30 +_,43 @@
  import java.util.function.Predicate;
  import java.util.stream.Stream;

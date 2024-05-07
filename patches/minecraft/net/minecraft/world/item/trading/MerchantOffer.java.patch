@@ -22,16 +22,16 @@
 -    public int demand;
 -    public final float priceMultiplier;
 -    public final int xp;
-+   public ItemStack baseCostA;
-+   public ItemStack costB;
++   public ItemCost baseCostA;
++   public Optional<ItemCost> costB;
 +   public final ItemStack result;
 +   public int uses;
 +   public int maxUses;
-+   public boolean rewardExp = true;
++   public boolean rewardExp;
 +   public int specialPriceDiff;
 +   public int demand;
 +   public float priceMultiplier;
-+   public int xp = 1;
++   public int xp;
 +
 +   // CraftBukkit start
 +   private CraftMerchantRecipe bukkitHandle; // CraftBukkit

@@ -41,7 +41,7 @@
                      return Optional.empty();
                  } else {
                      mob.moveTo(p_43220_.x(), p_43220_.y(), p_43220_.z(), 0.0F, 0.0F);
-+               mob.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++               		mob.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
                      p_43219_.addFreshEntityWithPassengers(mob);
                      mob.setCustomName(p_43221_.get(DataComponents.CUSTOM_NAME));
                      p_43221_.consume(1, p_43216_);

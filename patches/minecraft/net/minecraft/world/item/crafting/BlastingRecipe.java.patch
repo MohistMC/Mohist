@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/BlastingRecipe.java
 +++ b/net/minecraft/world/item/crafting/BlastingRecipe.java
-@@ -2,19 +_,35 @@
+@@ -2,6 +_,11 @@
  
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
@@ -11,30 +11,11 @@
 +import org.bukkit.inventory.Recipe;
  
  public class BlastingRecipe extends AbstractCookingRecipe {
--    public BlastingRecipe(String p_251053_, CookingBookCategory p_249936_, Ingredient p_251550_, ItemStack p_251027_, float p_250843_, int p_249841_) {
--        super(RecipeType.BLASTING, p_251053_, p_249936_, p_251550_, p_251027_, p_250843_, p_249841_);
--    }
--
--    @Override
--    public ItemStack getToastSymbol() {
--        return new ItemStack(Blocks.BLAST_FURNACE);
--    }
--
--    @Override
--    public RecipeSerializer<?> getSerializer() {
--        return RecipeSerializer.BLASTING_RECIPE;
--    }
-+   public BlastingRecipe(String p_251053_, CookingBookCategory p_249936_, Ingredient p_251550_, ItemStack p_251027_, float p_250843_, int p_249841_) {
-+      super(RecipeType.BLASTING, p_251053_, p_249936_, p_251550_, p_251027_, p_250843_, p_249841_);
-+   }
-+
-+   public ItemStack getToastSymbol() {
-+      return new ItemStack(Blocks.BLAST_FURNACE);
-+   }
-+
-+   public RecipeSerializer<?> getSerializer() {
-+      return RecipeSerializer.BLASTING_RECIPE;
-+   }
+     public BlastingRecipe(String p_251053_, CookingBookCategory p_249936_, Ingredient p_251550_, ItemStack p_251027_, float p_250843_, int p_249841_) {
+@@ -17,4 +_,17 @@
+     public RecipeSerializer<?> getSerializer() {
+         return RecipeSerializer.BLASTING_RECIPE;
+     }
 +
 +   // CraftBukkit start
 +   @Override
