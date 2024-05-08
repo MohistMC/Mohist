@@ -562,7 +562,7 @@
 +
 +   // Mohist start
 +   private AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
-+   public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
++   public static void addEffectCause(EntityPotionEffectEvent.Cause cause) {
 +       addEffectCause.set(cause);
 +   }
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {

@@ -52,7 +52,22 @@
  
      private void add(int p_335153_, float p_332105_) {
          this.foodLevel = Math.min(p_335153_ + this.foodLevel, 20);
-@@ -34,37 +_,51 @@
+@@ -30,41 +_,65 @@
+     public void eat(ItemStack p_38714_) {
+         FoodProperties foodproperties = p_38714_.get(DataComponents.FOOD);
+         if (foodproperties != null) {
+-            this.add(foodproperties.nutrition(), foodproperties.saturation());
++            // CraftBukkit start
++            int oldFoodLevel = foodLevel;
++
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.nutrition() + oldFoodLevel, p_38714_);
++
++            if (!event.isCancelled()) {
++                this.add(event.getFoodLevel() - oldFoodLevel, foodproperties.saturation());
++            }
++
++            ((ServerPlayer) entityhuman).getBukkitEntity().sendHealthUpdate();
++            // CraftBukkit end
          }
      }
  
@@ -114,7 +129,7 @@
 +         ++this.tickTimer;
 +         if (this.tickTimer >= this.saturatedRegenRate) { // CraftBukkit
 +            float f = Math.min(this.saturationLevel, 6.0F);
-+            p_38711_.regainReason0(EntityRegainHealthEvent.RegainReason.SATIATED);
++            p_38711_.heal$regainReason(EntityRegainHealthEvent.RegainReason.SATIATED);
 +            p_38711_.heal(f / 6.0F);
 +            p_38711_.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN);
 +            p_38711_.causeFoodExhaustion(f);
@@ -123,7 +138,7 @@
 +      } else if (flag && this.foodLevel >= 18 && p_38711_.isHurt()) {
 +         ++this.tickTimer;
 +         if (this.tickTimer >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
-+            p_38711_.regainReason0(EntityRegainHealthEvent.RegainReason.SATIATED);
++            p_38711_.heal$regainReason(EntityRegainHealthEvent.RegainReason.SATIATED);
 +            p_38711_.heal(1.0F);
 +            p_38711_.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
 +            p_38711_.causeFoodExhaustion(6.0f);

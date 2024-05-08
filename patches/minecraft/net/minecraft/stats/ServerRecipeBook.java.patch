@@ -8,12 +8,13 @@
  import org.slf4j.Logger;
  
  public class ServerRecipeBook extends RecipeBook {
-@@ -29,7 +_,7 @@
+@@ -29,7 +_,8 @@
  
          for (RecipeHolder<?> recipeholder : p_12792_) {
              ResourceLocation resourcelocation = recipeholder.id();
 -            if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial()) {
-+            if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial() && CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) {
++            if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial()
++                    && CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) {
                  this.add(resourcelocation);
                  this.addHighlight(resourcelocation);
                  list.add(resourcelocation);

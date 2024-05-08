@@ -1,92 +1,113 @@
 --- a/net/minecraft/world/damagesource/DamageSource.java
 +++ b/net/minecraft/world/damagesource/DamageSource.java
-@@ -21,7 +_,88 @@
+@@ -21,6 +_,89 @@
      @Nullable
      private final Vec3 damageSourcePosition;
  
--    @Override
-+   // CraftBukkit start
-+   @Nullable
-+   private org.bukkit.block.Block directBlock; // The block that caused the damage. damageSourcePosition is not used for all block damages
-+   private boolean withSweep = false;
-+   private boolean melting = false;
-+   private boolean poison = false;
-+   private Entity customCausingEntity = null; // This field is a helper for when causing entity damage is not set by vanilla
++    // CraftBukkit start
++    @Nullable
++    private org.bukkit.block.Block directBlock; // The block that caused the damage. damageSourcePosition is not used for all block damages
++    @Nullable
++    public org.bukkit.block.BlockState blockState; // The block state of the block relevant to this damage source
++    private boolean withSweep = false;
++    private boolean melting = false;
++    private boolean poison = false;
++    private Entity customCausingEntity = null; // This field is a helper for when causing entity damage is not set by vanilla
 +
-+   public DamageSource sweep() {
-+      this.withSweep  = true;
-+      return this;
-+   }
++    public DamageSource sweep() {
++        this.withSweep = true;
++        return this;
++    }
 +
-+   public boolean isSweep() {
-+      return this.withSweep;
-+   }
++    public boolean isSweep() {
++        return this.withSweep;
++    }
 +
-+   public DamageSource melting() {
-+      this.melting = true;
-+      return this;
-+   }
++    public DamageSource melting() {
++        this.melting = true;
++        return this;
++    }
 +
-+   public boolean isMelting() {
-+      return this.melting;
-+   }
++    public boolean isMelting() {
++        return this.melting;
++    }
 +
-+   public DamageSource poison() {
-+      this.poison = true;
-+      return this;
-+   }
++    public DamageSource poison() {
++        this.poison = true;
++        return this;
++    }
 +
-+   public boolean isPoison() {
-+      return this.poison;
-+   }
++    public boolean isPoison() {
++        return this.poison;
++    }
 +
-+   public Entity getCausingEntity() {
-+      return (this.customCausingEntity != null) ? this.customCausingEntity : this.causingEntity;
-+   }
++    public Entity getCausingEntity() {
++        return (this.customCausingEntity != null) ? this.customCausingEntity : this.causingEntity;
++    }
 +
-+   public DamageSource customCausingEntity(Entity entity) {
-+      // This method is not intended for change the causing entity if is already set
-+      // also is only necessary if the entity passed is not the direct entity or different from the current causingEntity
-+      if (this.customCausingEntity != null || this.directEntity == entity || this.causingEntity == entity) {
-+         return this;
-+      }
-+      DamageSource damageSource = this.cloneInstance();
-+      damageSource.customCausingEntity = entity;
-+      return damageSource;
-+   }
++    public DamageSource customCausingEntity(Entity entity) {
++        // This method is not intended for change the causing entity if is already set
++        // also is only necessary if the entity passed is not the direct entity or different from the current causingEntity
++        if (this.customCausingEntity != null || this.directEntity == entity || this.causingEntity == entity) {
++            return this;
++        }
++        DamageSource damageSource = this.cloneInstance();
++        damageSource.customCausingEntity = entity;
++        return damageSource;
++    }
 +
-+   public org.bukkit.block.Block getDirectBlock() {
-+      return this.directBlock;
-+   }
++    public org.bukkit.block.Block getDirectBlock() {
++        return this.directBlock;
++    }
 +
-+   public DamageSource directBlock(net.minecraft.world.level.Level world, net.minecraft.core.BlockPos blockPosition) {
-+      if (blockPosition == null || world == null) {
-+         return this;
-+      }
-+      return directBlock(org.bukkit.craftbukkit.block.CraftBlock.at(world, blockPosition));
-+   }
++    public DamageSource directBlock(net.minecraft.world.level.Level world, net.minecraft.core.BlockPos blockPosition) {
++        if (blockPosition == null || world == null) {
++            return this;
++        }
++        return directBlock(org.bukkit.craftbukkit.block.CraftBlock.at(world, blockPosition));
++    }
 +
-+   public DamageSource directBlock(org.bukkit.block.Block block) {
-+      if (block == null) {
-+         return this;
-+      }
-+      // Cloning the instance lets us return unique instances of DamageSource without affecting constants defined in DamageSources
-+      DamageSource damageSource = this.cloneInstance();
-+      damageSource.directBlock = block;
-+      return damageSource;
-+   }
++    public DamageSource directBlock(org.bukkit.block.Block block) {
++        if (block == null) {
++            return this;
++        }
++        // Cloning the instance lets us return unique instances of DamageSource without affecting constants defined in DamageSources
++        DamageSource damageSource = this.cloneInstance();
++        damageSource.directBlock = block;
++        return damageSource;
++    }
 +
-+   private DamageSource cloneInstance() {
-+      DamageSource damageSource = new DamageSource(this.type, this.directEntity, this.causingEntity, this.damageSourcePosition);
-+      damageSource.directBlock = this.getDirectBlock();
-+      damageSource.withSweep = this.isSweep();
-+      damageSource.poison = this.isPoison();
-+      damageSource.melting = this.isMelting();
-+      return damageSource;
-+   }
-+   // CraftBukkit end
-+   
-+   	@Override
++    private DamageSource cloneInstance() {
++        DamageSource damageSource = new DamageSource(this.type, this.directEntity, this.causingEntity, this.damageSourcePosition);
++        damageSource.directBlock = this.getDirectBlock();
++        damageSource.withSweep = this.isSweep();
++        damageSource.poison = this.isPoison();
++        damageSource.melting = this.isMelting();
++        return damageSource;
++    }
++    // CraftBukkit end
++
+     @Override
      public String toString() {
          return "DamageSource (" + this.type().msgId() + ")";
+@@ -77,8 +_,8 @@
+             Component component = this.causingEntity == null ? this.directEntity.getDisplayName() : this.causingEntity.getDisplayName();
+             ItemStack itemstack = this.causingEntity instanceof LivingEntity livingentity ? livingentity.getMainHandItem() : ItemStack.EMPTY;
+             return !itemstack.isEmpty() && itemstack.has(DataComponents.CUSTOM_NAME)
+-                ? Component.translatable(s + ".item", p_19343_.getDisplayName(), component, itemstack.getDisplayName())
+-                : Component.translatable(s, p_19343_.getDisplayName(), component);
++                    ? Component.translatable(s + ".item", p_19343_.getDisplayName(), component, itemstack.getDisplayName())
++                    : Component.translatable(s, p_19343_.getDisplayName(), component);
+         }
+     }
+ 
+@@ -89,7 +_,8 @@
+     public boolean scalesWithDifficulty() {
+         return switch (this.type().scaling()) {
+             case NEVER -> false;
+-            case WHEN_CAUSED_BY_LIVING_NON_PLAYER -> this.causingEntity instanceof LivingEntity && !(this.causingEntity instanceof Player);
++            case WHEN_CAUSED_BY_LIVING_NON_PLAYER ->
++                    this.causingEntity instanceof LivingEntity && !(this.causingEntity instanceof Player);
+             case ALWAYS -> true;
+         };
      }

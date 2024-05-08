@@ -4,7 +4,7 @@
      @Override
      public boolean applyEffectTick(LivingEntity p_301282_, int p_300945_) {
          if (p_301282_.getHealth() < p_301282_.getMaxHealth()) {
-+         	p_301282_.regainReason0(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC_REGEN);
++         	p_301282_.heal$regainReason(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC_REGEN);
              p_301282_.heal(1.0F);
          }
  

@@ -11,7 +11,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.Mob;
-@@ -15,37 +_,35 @@
+@@ -15,37 +_,36 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class SpawnUtil {
@@ -56,10 +56,11 @@
 +         int k = Mth.randomBetweenInclusive(pLevel.random, -p_216409_, p_216409_);
 +         blockpos$mutableblockpos.setWithOffset(pPos, j, pYOffset, k);
 +         if (pLevel.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(pLevel, pYOffset, blockpos$mutableblockpos, pStrategy)) {
-+            T t = pEntityType.create(pLevel, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, pSpawnType, false, false);
++            T t = pEntityType.create(pLevel, (Consumer<T>)null, blockpos$mutableblockpos, pSpawnType, false, false);
 +            if (t != null) {
 +               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, pLevel, pSpawnType)) {
-+                  pLevel.addFreshEntityWithPassengers(t, reason); // CraftBukkit
++                   t.spawnReason(reason); // CraftBukkit
++                   pLevel.addFreshEntityWithPassengers(t);
 +                  return Optional.of(t);
 +               }
 +

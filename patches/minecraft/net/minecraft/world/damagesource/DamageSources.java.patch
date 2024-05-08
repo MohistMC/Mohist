@@ -18,11 +18,10 @@
          this.inFire = this.source(DamageTypes.IN_FIRE);
          this.lightningBolt = this.source(DamageTypes.LIGHTNING_BOLT);
          this.onFire = this.source(DamageTypes.ON_FIRE);
-@@ -79,6 +_,16 @@
-     private DamageSource source(ResourceKey<DamageType> p_270076_, @Nullable Entity p_270656_, @Nullable Entity p_270242_) {
+@@ -80,6 +_,16 @@
          return new DamageSource(this.damageTypes.getHolderOrThrow(p_270076_), p_270656_, p_270242_);
      }
-+
+ 
 +   	// CraftBukkit start
 +   	public DamageSource melting() {
 +      	return this.melting;
@@ -32,6 +31,23 @@
 +      	return this.poison;
 +   	}
 +   	// CraftBukkit end
- 
++
      public DamageSource inFire() {
          return this.inFire;
+     }
+@@ -250,6 +_,15 @@
+ 
+     public DamageSource badRespawnPointExplosion(Vec3 p_270175_) {
+         return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), p_270175_);
++    }
++
++    public DamageSource badRespawnPointExplosion(Vec3 vec3d, net.minecraft.world.level.Level world, net.minecraft.world.level.block.state.BlockState blockData, net.minecraft.core.BlockPos position) {
++        DamageSource damageSource = new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), vec3d);
++        if (world != null && blockData != null && position != null) {
++            damageSource.blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(world, position, blockData, null);
++        }
++        return damageSource;
++        // CraftBukkit end
+     }
+ 
+     public DamageSource outOfBorder() {
