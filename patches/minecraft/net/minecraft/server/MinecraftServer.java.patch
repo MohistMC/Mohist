@@ -61,7 +61,7 @@
  import net.minecraft.server.level.progress.ChunkProgressListener;
  import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
  import net.minecraft.server.network.ServerConnectionListener;
-@@ -101,6 +_,7 @@
+@@ -101,9 +_,11 @@
  import net.minecraft.util.ModCheck;
  import net.minecraft.util.Mth;
  import net.minecraft.util.NativeModuleLister;
@@ -69,6 +69,10 @@
  import net.minecraft.util.RandomSource;
  import net.minecraft.util.SignatureValidator;
  import net.minecraft.util.TimeUtil;
++import net.minecraft.util.Unit;
+ import net.minecraft.util.debugchart.RemoteDebugSampleType;
+ import net.minecraft.util.debugchart.SampleLogger;
+ import net.minecraft.util.debugchart.TpsDebugDimensions;
 @@ -122,6 +_,7 @@
  import net.minecraft.util.thread.ReentrantBlockableEventLoop;
  import net.minecraft.world.Difficulty;
@@ -175,7 +179,7 @@
          thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> LOGGER.error("Uncaught exception in server thread", p_177910_));
          if (Runtime.getRuntime().availableProcessors() > 4) {
 -            thread.setPriority(8);
-+         thread.setPriority(MohistConfig.yml.getInt("threadpriority.server_thread", 8));
++         	thread.setPriority(MohistConfig.yml.getInt("threadpriority.server_thread", 8));
          }
  
          S s = (S)p_129873_.apply(thread);
@@ -231,39 +235,10 @@
          if (!serverleveldata.isInitialized()) {
              try {
                  setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -387,41 +_,74 @@
-             this.getCustomBossEvents().load(this.worldData.getCustomBossEvents(), this.registryAccess());
-         }
- 
--        RandomSequences randomsequences = serverlevel.getRandomSequences();
-+      RandomSequences randomsequences = serverlevel.getRandomSequences();
- 
--        for (Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
--            ResourceKey<LevelStem> resourcekey = entry.getKey();
--            if (resourcekey != LevelStem.OVERWORLD) {
--                ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
--                DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
--                ServerLevel serverlevel1 = new ServerLevel(
--                    this,
--                    this.executor,
--                    this.storageSource,
--                    derivedleveldata,
--                    resourcekey1,
--                    entry.getValue(),
--                    p_129816_,
--                    flag,
--                    j,
--                    ImmutableList.of(),
--                    false,
--                    randomsequences
--                );
--                worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
--                this.levels.put(resourcekey1, serverlevel1);
-+      for(Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
-+         ResourceKey<LevelStem> resourcekey = entry.getKey();
-+         if (resourcekey != LevelStem.OVERWORLD) {
-+            ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
-+            DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
+@@ -394,6 +_,19 @@
+             if (resourcekey != LevelStem.OVERWORLD) {
+                 ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
+                 DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
 +            String name = resourcekey == LevelStem.NETHER ? "DIM1" : "DIM-1";
 +            if (resourcekey == LevelStem.NETHER) {
 +               if (!this.isNetherEnabled()) {
@@ -273,23 +248,27 @@
 +               if (!this.server.getAllowEnd()) {
 +                  continue;
 +               }
-             }
--        }
--
--        worldborder.applySettings(serverleveldata.getWorldBorder());
--    }
++            }
 +            Level.craftWorldData(this.server.getGenerator(name), ForgeInjectBukkit.environment.get(resourcekey), this.server.getBiomeProvider(name));
 +            // Mohist start - split calculate for ServerLeverl Preparing
 +            ChunkProgressListener mohist$progressListener = this.progressListenerFactory.create(11);
-+            ServerLevel serverlevel1 = new ServerLevel(this, this.executor, this.storageSource, derivedleveldata, resourcekey1, entry.getValue(), mohist$progressListener, flag, j, ImmutableList.of(), false, randomsequences);
-+            this.initWorld(serverlevel1, derivedleveldata, worldData, worldoptions); // CraftBukkit
-+            // Mohist end
-+            worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
-+            this.levels.put(resourcekey1, serverlevel1);
-+            MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(levels.get(resourcekey)));
-+         }
-+      }
-+
+                 ServerLevel serverlevel1 = new ServerLevel(
+                     this,
+                     this.executor,
+@@ -408,20 +_,53 @@
+                     false,
+                     randomsequences
+                 );
++				this.initWorld(serverlevel1, derivedleveldata, worldData, worldoptions); // CraftBukkit
++            	// Mohist end
+                 worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
+                 this.levels.put(resourcekey1, serverlevel1);
++                net.minecraftforge.event.ForgeEventFactory.onLevelLoad(serverlevel1);
+             }
+         }
+ 
+-        worldborder.applySettings(serverleveldata.getWorldBorder());
+-    }
 +      worldborder.applySettings(serverleveldata.getWorldBorder());
 +
 +      for (ServerLevel worldserver : this.getAllLevels()) {
@@ -462,7 +441,7 @@
 +      	for (ServerLevel world : this.getAllLevels()) {
 +         	if (world.convertable != this.storageSource) {
 +            	world.K.setWorldBorder(world.getWorldBorder().createSettings());
-+            	world.K.setCustomBossEvents(this.getCustomBossEvents().save());
++            	world.K.setCustomBossEvents(this.getCustomBossEvents().save(this.registryAccess()));
 +            	world.convertable.saveDataTag(this.registryAccess(), world.K, this.getPlayerList().getSingleplayerData());
 +         	}
 +      	}
@@ -518,43 +497,10 @@
  
      public String getLocalIp() {
          return this.localIp;
-@@ -649,39 +_,128 @@
+@@ -649,16 +_,80 @@
          }
      }
  
--    protected void runServer() {
--        try {
--            if (!this.initServer()) {
--                throw new IllegalStateException("Failed to initialize server");
--            }
--
--            this.nextTickTimeNanos = Util.getNanos();
--            this.statusIcon = this.loadStatusIcon().orElse(null);
--            this.status = this.buildServerStatus();
--
--            while (this.running) {
--                long i;
--                if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
--                    i = 0L;
--                    this.nextTickTimeNanos = Util.getNanos();
--                    this.lastOverloadWarningNanos = this.nextTickTimeNanos;
--                } else {
--                    i = this.tickRateManager.nanosecondsPerTick();
--                    long k = Util.getNanos() - this.nextTickTimeNanos;
--                    if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
--                        long j = k / i;
--                        LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", k / TimeUtil.NANOSECONDS_PER_MILLISECOND, j);
--                        this.nextTickTimeNanos += j * i;
--                        this.lastOverloadWarningNanos = this.nextTickTimeNanos;
--                    }
--                }
--
--                boolean flag = i == 0L;
--                if (this.debugCommandProfilerDelayStart) {
--                    this.debugCommandProfilerDelayStart = false;
--                    this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
--                }
--
 +   // Spigot Start
 +   private static double calcTps(double avg, double exp, double tps)
 +    {
@@ -614,39 +560,41 @@
 +   // Paper End
 +   // Spigot End
 +
-+   protected void runServer() {
-+      try {
-+         if (!this.initServer()) {
-+            throw new IllegalStateException("Failed to initialize server");
-+         }
-+
-+         ServerLifecycleHooks.handleServerStarted(this);
-+         this.nextTickTimeNanos = Util.getNanos();
-+         this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon)null);
-+         this.status = this.buildServerStatus();
-+         resetStatusCache(status);
-+
+     protected void runServer() {
+         try {
+             if (!this.initServer()) {
+                 throw new IllegalStateException("Failed to initialize server");
+             }
+ 
++            net.minecraftforge.server.ServerLifecycleHooks.handleServerStarted(this);
+             this.nextTickTimeNanos = Util.getNanos();
+             this.statusIcon = this.loadStatusIcon().orElse(null);
+             this.status = this.buildServerStatus();
++            resetStatusCache(status);
+ 
 +         // Spigot start
 +         Arrays.fill( recentTps, 20 );
 +         long tickSection = Util.getNanos(), curTime, tickCount = 1; // Paper
-+         while(this.running) {
-+            long i;
-+            if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
-+               i = 0L;
-+               this.nextTickTimeNanos = Util.getNanos();
-+               this.lastOverloadWarningNanos = this.nextTickTimeNanos;
-+            } else {
-+               i = this.tickRateManager.nanosecondsPerTick();
-+               long k = Util.getNanos() - this.nextTickTimeNanos;
-+               if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
-+                  long j = k / i;
-+                  if (server.getWarnOnOverload()) // CraftBukkit
-+                  LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", k / TimeUtil.NANOSECONDS_PER_MILLISECOND, j);
-+                  this.nextTickTimeNanos += j * i;
-+                  this.lastOverloadWarningNanos = this.nextTickTimeNanos;
-+               }
-+            }
-+
+             while (this.running) {
+                 long i;
+                 if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
+@@ -670,18 +_,43 @@
+                     long k = Util.getNanos() - this.nextTickTimeNanos;
+                     if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
+                         long j = k / i;
++                  		if (server.getWarnOnOverload()) // CraftBukkit
+                         LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", k / TimeUtil.NANOSECONDS_PER_MILLISECOND, j);
+                         this.nextTickTimeNanos += j * i;
+                         this.lastOverloadWarningNanos = this.nextTickTimeNanos;
+                     }
+                 }
+ 
+-                boolean flag = i == 0L;
+-                if (this.debugCommandProfilerDelayStart) {
+-                    this.debugCommandProfilerDelayStart = false;
+-                    this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
+-                }
+-
 +            if ( ++MinecraftServer.currentTick % MinecraftServer.SAMPLE_INTERVAL == 0 )
 +            {
 +               // Paper start
@@ -820,7 +768,7 @@
          this.profiler.pop();
 -    }
 +      	WatchdogThread.tick(); // Spigot
-+      	 net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
++        net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +   }
  
      private void logTickMethodTime(long p_331549_) {

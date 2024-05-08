@@ -22,7 +22,7 @@
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
-@@ -49,21 +_,29 @@
+@@ -49,21 +_,28 @@
      private static final int HALF_MAP_SIZE = 64;
      public static final int MAX_SCALE = 4;
      public static final int TRACKED_DECORATION_LIMIT = 256;
@@ -57,14 +57,13 @@
 +   public final CraftMapView mapView;
 +   private CraftServer server;
 +   public UUID uniqueId = null;
-+   public String id;
-+   private RenderData vanillaRender = new RenderData();
++   public MapId id;
 +   // CraftBukkit end
 +   
      public static SavedData.Factory<MapItemSavedData> factory() {
          return new SavedData.Factory<>(() -> {
              throw new IllegalStateException("Should never create an empty map saved data");
-@@ -81,6 +_,12 @@
+@@ -81,6 +_,11 @@
          this.unlimitedTracking = p_164772_;
          this.locked = p_164773_;
          this.setDirty();
@@ -72,7 +71,6 @@
 +      // CraftBukkit start
 +      mapView = new CraftMapView(this);
 +      server = (CraftServer) org.bukkit.Bukkit.getServer();
-+      this.vanillaRender.buffer = colors;
 +      // CraftBukkit end
      }
  

@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/storage/DimensionDataStorage.java
 +++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
-@@ -25,7 +_,7 @@
- 
- public class DimensionDataStorage {
-     private static final Logger LOGGER = LogUtils.getLogger();
--    public final Map<String, SavedData> cache = Maps.newHashMap();
-+    private final Map<String, SavedData> cache = Maps.newHashMap();
-     private final DataFixer fixerUpper;
-     private final HolderLookup.Provider registries;
-     private final File dataFolder;
 @@ -54,9 +_,13 @@
      @Nullable
      public <T extends SavedData> T get(SavedData.Factory<T> p_297465_, String p_164860_) {

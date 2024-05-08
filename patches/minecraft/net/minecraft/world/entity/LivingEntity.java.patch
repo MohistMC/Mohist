@@ -86,15 +86,6 @@
      private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.PARTICLES);
      private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
      public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-@@ -166,7 +_,7 @@
-     public static final float DEFAULT_BABY_SCALE = 0.5F;
-     private static final float ITEM_USE_EFFECT_START_FRACTION = 0.21875F;
-     private final AttributeMap attributes;
--    public CombatTracker combatTracker = new CombatTracker(this);
-+    private final CombatTracker combatTracker = new CombatTracker(this);
-     public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
-     private final NonNullList<ItemStack> lastHandItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
-     private final NonNullList<ItemStack> lastArmorItemStacks = NonNullList.withSize(4, ItemStack.EMPTY);
 @@ -184,7 +_,7 @@
      public float attackAnim;
      protected int attackStrengthTicker;
@@ -133,7 +124,7 @@
      protected Brain<?> brain;
 -    private boolean skipDropExperience;
 -    protected float appliedScale = 1.0F;
-+   	private boolean skipDropExperience;
++   	public boolean skipDropExperience;
 +	protected float appliedScale = 1.0F;
 +   // CraftBukkit start
 +   public boolean forceDrops;

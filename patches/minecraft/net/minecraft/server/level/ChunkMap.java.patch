@@ -1,13 +1,16 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -6,6 +_,7 @@
+@@ -6,9 +_,9 @@
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
  import com.google.common.collect.ImmutableList.Builder;
 +import com.google.common.util.concurrent.AtomicDouble;
  import com.google.gson.JsonElement;
  import com.mojang.datafixers.DataFixer;
- import com.mojang.datafixers.util.Pair;
+-import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.JsonOps;
 @@ -40,6 +_,7 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
@@ -16,14 +19,15 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
-@@ -92,12 +_,14 @@
- import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
- import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
- import net.minecraft.world.level.levelgen.RandomState;
-+import net.minecraft.world.level.levelgen.blending.BlendingData;
- import net.minecraft.world.level.levelgen.structure.StructureStart;
- import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
- import net.minecraft.world.level.storage.DimensionDataStorage;
+@@ -71,7 +_,6 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.ai.village.poi.PoiManager;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.chunk.ChunkAccess;
+@@ -98,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -76,42 +80,47 @@
 +   	public int serverViewDistance;
 +	private WorldGenContext worldGenContext;
 +
-+   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
-+   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
-+   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++    // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
++    public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++    public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
 +
-+      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
++        private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
 +
-+      @Override
-+      public void execute(Runnable runnable) {
-+         queue.add(runnable);
-+      }
++        @Override
++        public void execute(Runnable runnable) {
++            queue.add(runnable);
++        }
 +
-+      @Override
-+      public void run() {
-+         Runnable task;
-+         while ((task = queue.poll()) != null) {
-+            task.run();
-+         }
-+      }
-+   };
-+   // CraftBukkit end
++        @Override
++        public void run() {
++            Runnable task;
++            while ((task = queue.poll()) != null) {
++                task.run();
++            }
++        }
++    };
++    // CraftBukkit end
  
      public ChunkMap(
          ServerLevel p_214836_,
-@@ -166,6 +_,12 @@
+@@ -166,9 +_,16 @@
          this.storageName = path.getFileName().toString();
          this.level = p_214836_;
          this.generator = p_214843_;
 +
-+      	// CraftBukkit start - SPIGOT-7051: It's a rigged game! Use delegate for random state creation, otherwise it is not so random.
-+      	if (p_214843_ instanceof CustomChunkGenerator) {
-+         	p_214843_ = ((CustomChunkGenerator) p_214843_).getDelegate();
-+      	}
-+      	// CraftBukkit end
          RegistryAccess registryaccess = p_214836_.registryAccess();
          long i = p_214836_.getSeed();
-         if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
+-        if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
++        // CraftBukkit start - SPIGOT-7051: It's a rigged game! Use delegate for random state creation, otherwise it is not so random.
++        ChunkGenerator randomGenerator = p_214843_;
++        if (p_214843_ instanceof CustomChunkGenerator customChunkGenerator) {
++            randomGenerator = customChunkGenerator.getDelegate();
++        }
++        // CraftBukkit end
++        if (randomGenerator instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
+             this.randomState = RandomState.create(noisebasedchunkgenerator.generatorSettings().value(), registryaccess.lookupOrThrow(Registries.NOISE), i);
+         } else {
+             this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), registryaccess.lookupOrThrow(Registries.NOISE), i);
 @@ -413,6 +_,7 @@
                  this.modified = true;
              }
@@ -128,38 +137,31 @@
                      }
  
                      this.save(p_203002_);
-@@ -695,11 +_,26 @@
-         return chunkstatus;
+@@ -697,8 +_,23 @@
+ 
+     private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
+         if (!p_143066_.isEmpty()) {
+-            p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_));
++            // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
++            p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter((entity) -> {
++                boolean needsRemoval = false;
++                net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++                if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++                    entity.discard();
++                    needsRemoval = true;
++                }
++                if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++                    entity.discard();
++                    needsRemoval = true;
++                }
++                return !needsRemoval;
++            }));
++            // CraftBukkit end
+         }
++
      }
  
--    private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
--        if (!p_143066_.isEmpty()) {
--            p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_));
--        }
--    }
-+   private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
-+      if (!p_143066_.isEmpty()) {
-+         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter((entity) -> {
-+            boolean needsRemoval = false;
-+            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+            if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+               entity.discard();
-+               needsRemoval = true;
-+            }
-+            if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+               entity.discard();
-+               needsRemoval = true;
-+            }
-+            return !needsRemoval;
-+         }));
-+         // CraftBukkit end
-+      }
-+
-+   }
- 
      private CompletableFuture<ChunkAccess> protoChunkToFullChunk(ChunkHolder p_140384_, ChunkAccess p_328123_) {
-         return CompletableFuture.supplyAsync(() -> {
 @@ -717,8 +_,14 @@
              levelchunk.runPostLoad();
              if (this.entitiesInLevel.add(chunkpos.toLong())) {
@@ -183,80 +185,54 @@
                  this.write(chunkpos, compoundtag).exceptionallyAsync(p_326408_ -> {
                      this.level.getServer().reportChunkSaveFailure(chunkpos);
                      return null;
-@@ -977,19 +_,34 @@
+@@ -977,11 +_,26 @@
          return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
      }
  
--    boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
--        if (!this.distanceManager.hasPlayersNearby(p_183880_.toLong())) {
--            return false;
--        } else {
--            for (ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
--                if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_)) {
--                    return true;
--                }
-+   // Mohist start - fix mixin
-+   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
-+   public boolean anyPlayerCloseEnoughForSpawning(ChunkPos pChunkPos, boolean reducedRange) {
-+      reducedRange0.set(reducedRange);
-+      return anyPlayerCloseEnoughForSpawning(pChunkPos);
-+   }
++    // Mohist start - fix mixin
++    AtomicBoolean reducedRange0 = new AtomicBoolean(false);
++    public boolean anyPlayerCloseEnoughForSpawning(ChunkPos pChunkPos, boolean reducedRange) {
++        reducedRange0.set(reducedRange);
++        return anyPlayerCloseEnoughForSpawning(pChunkPos);
++    }
 +
-+   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
-+      int chunkRange = level.spigotConfig.mobSpawnRange;
-+      chunkRange = (chunkRange > level.spigotConfig.viewDistance) ? (byte) level.spigotConfig.viewDistance : chunkRange;
-+      chunkRange = Math.min(chunkRange, 8);
+     boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
++        int chunkRange = level.spigotConfig.mobSpawnRange;
++        chunkRange = (chunkRange > level.spigotConfig.viewDistance) ? (byte) level.spigotConfig.viewDistance : chunkRange;
++        chunkRange = Math.min(chunkRange, 8);
 +
-+      double blockRange = (reducedRange0.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
-+      // Spigot end
-+      // Mohist end
-+      if (!this.distanceManager.hasPlayersNearby(p_183880_.toLong())) {
-+         return false;
-+      } else {
-+         for(ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
-+            this.mobSpawnRange.set(blockRange);
-+            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_)) {
-+               return true;
-             }
-+         }
- 
--            return false;
--        }
--    }
-+         return false;
-+      }
-+   }
- 
-     public List<ServerPlayer> getPlayersCloseForSpawning(ChunkPos p_183889_) {
-         long i = p_183889_.toLong();
++        double blockRange = (reducedRange0.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++        // Spigot end
++        // Mohist end
+         if (!this.distanceManager.hasPlayersNearby(p_183880_.toLong())) {
+             return false;
+         } else {
+             for (ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
++                this.mobSpawnRange.set(blockRange);
+                 if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_)) {
+                     return true;
+                 }
 @@ -1008,14 +_,22 @@
          }
      }
  
--    private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
--        if (p_183752_.isSpectator()) {
--            return false;
--        } else {
--            double d0 = euclideanDistanceSquared(p_183753_, p_183752_);
++    // Mohist start - fix mixin
++    public AtomicDouble mobSpawnRange = new AtomicDouble(16384.0D);
+     private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
+         if (p_183752_.isSpectator()) {
+             return false;
+         } else {
+             double d0 = euclideanDistanceSquared(p_183753_, p_183752_);
 -            return d0 < 16384.0;
--        }
--    }
-+   // Mohist start - fix mixin
-+   public AtomicDouble mobSpawnRange = new AtomicDouble(16384.0D);
-+   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
-+      if (p_183752_.isSpectator()) {
-+         return false;
-+      } else {
-+         double d0 = euclideanDistanceSquared(p_183753_, p_183752_);
-+         return d0 < mobSpawnRange.getAndSet(16384.0D);
-+      }
-+   }
++            return d0 < mobSpawnRange.getAndSet(16384.0D);
+         }
+     }
 +
-+   private boolean playerIsCloseEnoughForSpawning(ServerPlayer pPlayer, ChunkPos pChunkPos, double range) { // Spigot
-+      mobSpawnRange.set(range);
-+      return playerIsCloseEnoughForSpawning(pPlayer, pChunkPos);
-+   }
-+   // Mohist end
++    private boolean playerIsCloseEnoughForSpawning(ServerPlayer pPlayer, ChunkPos pChunkPos, double range) { // Spigot
++        mobSpawnRange.set(range);
++        return playerIsCloseEnoughForSpawning(pPlayer, pChunkPos);
++    }
++    // Mohist end
  
      private boolean skipPlayer(ServerPlayer p_140330_) {
          return p_140330_.isSpectator() && !this.level.getGameRules().getBoolean(GameRules.RULE_SPECTATORSGENERATECHUNKS);
