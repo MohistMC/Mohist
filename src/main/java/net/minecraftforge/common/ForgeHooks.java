@@ -116,6 +116,7 @@ import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;

@@ -59,47 +59,46 @@
 -    public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
 -        p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
 -        this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
--    }
++    // CraftBukkit start
++    public void dispatchServerCommand(CommandSourceStack sender, String command) {
++        Joiner joiner = Joiner.on(" ");
++        if (command.startsWith("/")) {
++            command = command.substring(1);
++        }
++
++        ServerCommandEvent event = new ServerCommandEvent(sender.getBukkitSender(), command);
++        org.bukkit.Bukkit.getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return;
++        }
++        command = event.getCommand();
++
++        String[] args = command.split(" ");
++
++        String cmd = args[0];
++        if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
++        if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++
++        // Block disallowed commands
++        if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
++                || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
++                || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++            return;
++        }
++
++        // Handle vanilla commands;
++        if (sender.getLevel().getCraftServer().getCommandBlockOverride(args[0])) {
++            args[0] = "minecraft:" + args[0];
++        }
++
++        String newCommand = joiner.join(args);
++        this.performPrefixedCommand(sender, newCommand, newCommand);
+     }
 -
 -    public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
 -        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
 -        commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
 -        ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
-+   // CraftBukkit start
-+   public void  dispatchServerCommand(CommandSourceStack sender, String command) {
-+      Joiner joiner = Joiner.on(" ");
-+      if (command.startsWith("/")) {
-+         command = command.substring(1);
-+      }
-+
-+      ServerCommandEvent event = new ServerCommandEvent(sender.getBukkitSender(), command);
-+      org.bukkit.Bukkit.getPluginManager().callEvent(event);
-+      if (event.isCancelled()) {
-+         return;
-+      }
-+      command = event.getCommand();
-+
-+      String[] args = command.split(" ");
-+
-+      String cmd = args[0];
-+      if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
-+      if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
-+
-+      // Block disallowed commands
-+      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
-+              || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
-+              || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
-+         return;
-+      }
-+
-+      // Handle vanilla commands;
-+      if (sender.getLevel().getCraftServer().getCommandBlockOverride(args[0])) {
-+         args[0] = "minecraft:" + args[0];
-+      }
-+
-+      String newCommand = joiner.join(args);
-+      this.performPrefixedCommand(sender, newCommand, newCommand);
-+   }
 +   // CraftBukkit end
 +
 +   public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
@@ -192,7 +191,7 @@
 +      // Remove labels that were removed during the event
 +      for (String orig : bukkit) {
 +         if (!event.getCommands().contains(orig)) {
-+            // rootcommandnode.removeCommand(orig); // Mohist TODO
++            // rootcommandnode.removeCommand(orig); // TODO Mohist
 +         }
 +      }
 +      // CraftBukkit end

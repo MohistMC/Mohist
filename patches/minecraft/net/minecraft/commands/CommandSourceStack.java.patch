@@ -8,7 +8,7 @@
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.Message;
  import com.mojang.brigadier.context.CommandContext;
-@@ -9,6 +_,7 @@
+@@ -9,10 +_,12 @@
  import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
  import com.mojang.brigadier.suggestion.Suggestions;
  import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -16,6 +16,11 @@
  import java.util.Collection;
  import java.util.Objects;
  import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BinaryOperator;
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
 @@ -42,8 +_,9 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.phys.Vec2;
@@ -35,12 +40,23 @@
  
      public CommandSourceStack(
          CommandSource p_81302_,
-@@ -387,10 +_,24 @@
+@@ -386,11 +_,36 @@
+         return this.textName;
      }
  
++    // Mohist start
++    private AtomicReference<String> bukkitPermission = new AtomicReference<>(null);
++
++    public void setBukkitPermission(String permission) {
++        this.bukkitPermission.set(permission);
++    }
++
      @Override
--    public boolean hasPermission(int p_81370_) {
-+   public boolean hasPermission(int p_81370_) {
+     public boolean hasPermission(int p_81370_) {
++        if (bukkitPermission.get() != null) {
++            return hasPermission(p_81370_, bukkitPermission.getAndSet(null));
++        }
++        // Mohist end
 +      	// CraftBukkit start
 +      	CommandNode currentCommand = this.currentCommand;
 +      	if (currentCommand != null) {

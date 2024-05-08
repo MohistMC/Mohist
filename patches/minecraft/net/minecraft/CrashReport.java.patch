@@ -1,11 +1,19 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
+@@ -18,6 +_,7 @@
+ import net.minecraft.util.MemoryReserve;
+ import org.apache.commons.io.IOUtils;
+ import org.apache.commons.lang3.ArrayUtils;
++import org.bukkit.Bukkit;
+ import org.slf4j.Logger;
+ 
+ public class CrashReport {
 @@ -35,7 +_,8 @@
      public CrashReport(String p_127509_, Throwable p_127510_) {
          this.title = p_127509_;
          this.exception = p_127510_;
 -    }
-+      	this.systemReport.setDetail("CraftBukkit Information", new org.bukkit.craftbukkit.CraftCrashReport()); // CraftBukkit
++        this.systemReport.setDetail("CraftBukkit Information", new org.bukkit.craftbukkit.CraftCrashReport()); // CraftBukkit
 +   }
  
      public String getTitle() {
