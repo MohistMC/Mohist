@@ -537,8 +537,12 @@
  
      public Collection<MobEffectInstance> getActiveEffects() {
          return this.activeEffects.values();
-@@ -971,28 +_,68 @@
-         return this.addEffect(p_21165_, null);
+@@ -968,31 +_,71 @@
+     }
+ 
+     public final boolean addEffect(MobEffectInstance p_21165_) {
+-        return this.addEffect(p_21165_, null);
++        return this.addEffect(p_21165_, (Entity)null);
      }
  
 -    public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
@@ -561,7 +565,7 @@
 +   }
 +
 +   // Mohist start
-+   private AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++   private static AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
 +   public static void addEffectCause(EntityPotionEffectEvent.Cause cause) {
 +       addEffectCause.set(cause);
 +   }

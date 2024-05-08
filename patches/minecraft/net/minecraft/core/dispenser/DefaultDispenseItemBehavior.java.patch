@@ -12,16 +12,16 @@
  public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
 -    @Override
 +
-+   // CraftBukkit start // Mohist TODO super();
-+   private boolean dropper = true;
++    // CraftBukkit start // Mohist TODO super();
++    private boolean dropper = true;
 +
-+   public DefaultDispenseItemBehavior() {
-+      this(true);
-+   }
++    public DefaultDispenseItemBehavior() {
++        this(true);
++    }
 +
-+   public DefaultDispenseItemBehavior(boolean dropper) {
-+      this.dropper = dropper;
-+   }
++    public DefaultDispenseItemBehavior(boolean dropper) {
++        this.dropper = dropper;
++    }
 +
 +	@Override
      public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {

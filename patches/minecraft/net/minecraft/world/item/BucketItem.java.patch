@@ -7,9 +7,12 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
-@@ -31,15 +_,29 @@
+@@ -29,17 +_,31 @@
+ import net.minecraft.world.phys.HitResult;
+ 
  public class BucketItem extends Item implements DispensibleContainerItem {
-     private final Fluid content;
+-    private final Fluid content;
++    public final Fluid content;
  
 +    // Forge: Use the other constructor that takes a Supplier
 +    @Deprecated
