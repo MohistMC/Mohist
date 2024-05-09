@@ -7,10 +7,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
+import com.mohistmc.bukkit.pluginfix.PluginDynamicRegistrFix;
 import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MohistPlugin;
@@ -239,7 +238,6 @@ import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
 import com.mohistmc.org.yaml.snakeyaml.Yaml;
 import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
 import com.mohistmc.org.yaml.snakeyaml.error.MarkedYAMLException;
-import org.spigotmc.SpigotConfig;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -440,7 +438,7 @@ public final class CraftServer implements Server {
                     String message = String.format("Loading %s", plugin.getDescription().getFullName());
                     plugin.getLogger().info(message);
                     plugin.onLoad();
-                    UltraCosmetics.unlockRegistries(plugin);
+                    PluginDynamicRegistrFix.unlockRegistries(plugin);
                 } catch (Throwable ex) {
                     Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
                 }
