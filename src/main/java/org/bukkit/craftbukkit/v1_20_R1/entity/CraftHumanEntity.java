@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.mohistmc.plugins.PermissionUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -188,12 +189,20 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public boolean hasPermission(String name) {
-        return perm.hasPermission(name);
+        boolean is = perm.hasPermission(name);
+        if (!is) {
+            PermissionUtils.debug(this, Thread.currentThread().getStackTrace(), name); // Mohist
+        }
+        return is;
     }
 
     @Override
     public boolean hasPermission(Permission perm) {
-        return this.perm.hasPermission(perm);
+        boolean is = this.perm.hasPermission(perm);
+        if (!is) {
+            PermissionUtils.debug(this, Thread.currentThread().getStackTrace(), perm.getName()); // Mohist
+        }
+        return is;
     }
 
     @Override

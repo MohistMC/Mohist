@@ -231,6 +231,8 @@ public class MohistConfig {
 
     public static boolean tpa_enable;
     public static boolean back_enable;
+    public static boolean permissions_debug_console;
+    public static boolean permissions_send_player;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -270,7 +272,7 @@ public class MohistConfig {
         ban_entity_types = getStringList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getStringList("ban.enchantment.list", new ArrayList<>());
-        motdEnable = getBoolean("motd.enable", true);
+        motdEnable = getBoolean("motd.enable", false);
         motdFirstLine = getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>");
         motdSecondLine = getString("motd.secondline", "");
 
@@ -286,5 +288,8 @@ public class MohistConfig {
         recipe_warn = getBoolean("recipe.warn", false);
         tpa_enable = getBoolean("tpa.enable", false);
         back_enable = getBoolean("back.enable", false);
+
+        permissions_debug_console = getBoolean("permissions.debug.console", false);
+        permissions_send_player = getBoolean("permissions.debug.player", false);
     }
 }

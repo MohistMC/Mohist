@@ -1516,7 +1516,7 @@
 +   // CraftBukkit start - collidable API
 +   @Override
 +   public boolean canCollideWithBukkit(Entity entity) {
-+     return m_6094_() && this.collides != this.collidableExemptions.contains(entity.m_20148_());
++     return this.m_6094_() && this.collides != this.collidableExemptions.contains(entity.m_20148_());
 +   }
 +   // CraftBukkit end
  

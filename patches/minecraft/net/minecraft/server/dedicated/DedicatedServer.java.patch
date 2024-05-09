@@ -1,11 +1,12 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,6 +_,8 @@
+@@ -1,6 +_,9 @@
  package net.minecraft.server.dedicated;
  
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
 +import com.mohistmc.MohistConfig;
++import com.mohistmc.paper.brigadier.PaperBrigadierProviderImpl;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
@@ -105,7 +106,14 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -115,7 +_,7 @@
+@@ -110,12 +_,14 @@
+          this.m_129913_(dedicatedserverproperties.f_139730_);
+       }
+ 
++      PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
++
+       this.m_129997_(dedicatedserverproperties.f_139733_);
+       this.m_129999_(dedicatedserverproperties.f_139734_);
        this.m_129989_(dedicatedserverproperties.f_139736_);
        super.m_7196_(dedicatedserverproperties.f_139725_.get());
        this.m_130004_(dedicatedserverproperties.f_139738_);
