@@ -86,15 +86,6 @@
      private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.PARTICLES);
      private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
      public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-@@ -184,7 +_,7 @@
-     public float attackAnim;
-     protected int attackStrengthTicker;
-     public final WalkAnimationState walkAnimation = new WalkAnimationState();
--    public int invulnerableDuration = 20;
-+    public final int invulnerableDuration = 20;
-     public final float timeOffs;
-     public final float rotA;
-     public float yBodyRot;
 @@ -215,17 +_,17 @@
      protected double lerpXRot;
      protected double lerpYHeadRot;

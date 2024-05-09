@@ -1,31 +1,10 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -1,42 +_,51 @@
- package net.minecraft.world.inventory;
- 
--import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
--import net.minecraft.core.BlockPos;
--import net.minecraft.core.Holder;
--import net.minecraft.core.component.DataComponents;
-+import java.util.Map;
-+import java.util.stream.Collectors;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.world.Container;
- import net.minecraft.world.SimpleContainer;
- import net.minecraft.world.entity.ExperienceOrb;
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
-+import net.minecraft.world.item.Item;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
- import net.minecraft.world.item.enchantment.Enchantment;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
--import net.minecraft.world.item.enchantment.ItemEnchantments;
+@@ -18,25 +_,35 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryGrindstone;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  

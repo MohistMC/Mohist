@@ -1,6 +1,21 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -24,6 +_,16 @@
+@@ -1,11 +_,14 @@
+ package net.minecraft.world.inventory;
+ 
++import com.mohistmc.mohist.plugins.ban.bans.BanEnchantment;
+ import com.mojang.datafixers.util.Pair;
+ import java.util.List;
++import java.util.Map;
+ import net.minecraft.Util;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvents;
+@@ -24,6 +_,17 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.EnchantingTableBlock;
@@ -11,6 +26,7 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.util.CraftNamespacedKey;
++import org.bukkit.enchantments.Enchantment;
 +import org.bukkit.enchantments.EnchantmentOffer;
 +import org.bukkit.event.enchantment.EnchantItemEvent;
 +import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
@@ -138,157 +154,6 @@
                      this.broadcastChanges();
                  });
              } else {
-@@ -136,58 +_,98 @@
-         }
-     }
- 
--    @Override
--    public boolean clickMenuButton(Player p_39465_, int p_39466_) {
--        if (p_39466_ >= 0 && p_39466_ < this.costs.length) {
--            ItemStack itemstack = this.enchantSlots.getItem(0);
--            ItemStack itemstack1 = this.enchantSlots.getItem(1);
--            int i = p_39466_ + 1;
--            if ((itemstack1.isEmpty() || itemstack1.getCount() < i) && !p_39465_.hasInfiniteMaterials()) {
--                return false;
--            } else if (this.costs[p_39466_] <= 0
--                || itemstack.isEmpty()
--                || (p_39465_.experienceLevel < i || p_39465_.experienceLevel < this.costs[p_39466_]) && !p_39465_.getAbilities().instabuild) {
--                return false;
--            } else {
--                this.access.execute((p_327081_, p_327082_) -> {
--                    ItemStack itemstack2 = itemstack;
--                    List<EnchantmentInstance> list = this.getEnchantmentList(p_327081_.enabledFeatures(), itemstack, p_39466_, this.costs[p_39466_]);
--                    if (!list.isEmpty()) {
--                        p_39465_.onEnchantmentPerformed(itemstack, i);
--                        if (itemstack.is(Items.BOOK)) {
--                            itemstack2 = itemstack.transmuteCopy(Items.ENCHANTED_BOOK, 1);
--                            this.enchantSlots.setItem(0, itemstack2);
--                        }
--
--                        for (EnchantmentInstance enchantmentinstance : list) {
--                            itemstack2.enchant(enchantmentinstance.enchantment, enchantmentinstance.level);
--                        }
--
--                        if (!p_39465_.hasInfiniteMaterials()) {
--                            itemstack1.shrink(i);
--                            if (itemstack1.isEmpty()) {
--                                this.enchantSlots.setItem(1, ItemStack.EMPTY);
--                            }
--                        }
--
--                        p_39465_.awardStat(Stats.ENCHANT_ITEM);
--                        if (p_39465_ instanceof ServerPlayer) {
--                            CriteriaTriggers.ENCHANTED_ITEM.trigger((ServerPlayer)p_39465_, itemstack2, i);
--                        }
--
--                        this.enchantSlots.setChanged();
--                        this.enchantmentSeed.set(p_39465_.getEnchantmentSeed());
--                        this.slotsChanged(this.enchantSlots);
--                        p_327081_.playSound(null, p_327082_, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, p_327081_.random.nextFloat() * 0.1F + 0.9F);
--                    }
--                });
--                return true;
--            }
--        } else {
--            Util.logAndPauseIfInIde(p_39465_.getName() + " pressed invalid button id: " + p_39466_);
--            return false;
--        }
--    }
-+   public boolean clickMenuButton(Player p_39465_, int p_39466_) {
-+      if (p_39466_ >= 0 && p_39466_ < this.costs.length) {
-+         ItemStack itemstack = this.enchantSlots.getItem(0);
-+         ItemStack itemstack1 = this.enchantSlots.getItem(1);
-+         int i = p_39466_ + 1;
-+         if ((itemstack1.isEmpty() || itemstack1.getCount() < i) && !p_39465_.getAbilities().instabuild) {
-+            return false;
-+         } else if (this.costs[p_39466_] <= 0 || itemstack.isEmpty() || (p_39465_.experienceLevel < i || p_39465_.experienceLevel < this.costs[p_39466_]) && !p_39465_.getAbilities().instabuild) {
-+            return false;
-+         } else {
-+            this.access.execute((p_296875_, p_296876_) -> {
-+               ItemStack itemstack2 = itemstack;
-+               List<EnchantmentInstance> list = this.getEnchantmentList(itemstack, p_39466_, this.costs[p_39466_]);
-+               if (true || !list.isEmpty()) {
-+                  // pPlayer.onEnchantmentPerformed(itemstack, i); // Moved down
-+                  boolean flag = itemstack.is(Items.BOOK);
-+                  Map<org.bukkit.enchantments.Enchantment, Integer> enchants = new java.util.HashMap<>();
-+                  for (Object obj : list) {
-+                     EnchantmentInstance instance = (EnchantmentInstance) obj;
-+                     enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(instance.enchantment))), instance.level);
-+                  }
-+                  CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
-+
-+                  org.bukkit.enchantments.Enchantment hintedEnchantment = org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(Enchantment.byId(enchantClue[p_39466_]))));
-+                  if (BanEnchantment.check(hintedEnchantment)) return;
-+                  int hintedEnchantmentLevel = levelClue[p_39466_];
-+                  EnchantItemEvent event = new EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), access.getLocation().getBlock(), item, this.costs[p_39466_], enchants, hintedEnchantment, hintedEnchantmentLevel, p_39466_);
-+                  Bukkit.getPluginManager().callEvent(event);
-+
-+                  int level = event.getExpLevelCost();
-+                  if (event.isCancelled() || (level > p_39465_.experienceLevel && !p_39465_.getAbilities().instabuild) || event.getEnchantsToAdd().isEmpty()) {
-+                     return;
-+                  }
-+                  if (flag) {
-+                     itemstack2 = new ItemStack(Items.ENCHANTED_BOOK);
-+                     CompoundTag compoundtag = itemstack.getTag();
-+                     if (compoundtag != null) {
-+                        itemstack2.setTag(compoundtag.copy());
-+                     }
-+
-+                     this.enchantSlots.setItem(0, itemstack2);
-+                  }
-+
-+                  for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : event.getEnchantsToAdd().entrySet()) {
-+                     try {
-+                        if (flag) {
-+                           NamespacedKey enchantId = entry.getKey().getKey();
-+                           net.minecraft.world.item.enchantment.Enchantment nms = BuiltInRegistries.ENCHANTMENT.get(CraftNamespacedKey.toMinecraft(enchantId));
-+                           if (nms == null) {
-+                              continue;
-+                           }
-+
-+                           EnchantmentInstance weightedrandomenchant = new EnchantmentInstance(nms, entry.getValue());
-+                           EnchantedBookItem.addEnchantment(itemstack2, weightedrandomenchant);
-+                        } else {
-+                           item.addUnsafeEnchantment(entry.getKey(), entry.getValue());
-+                        }
-+                     } catch (IllegalArgumentException e) {
-+                        /* Just swallow invalid enchantments */
-+                     }
-+                  }
-+
-+                  p_39465_.onEnchantmentPerformed(itemstack, i);
-+                  // CraftBukkit end
-+
-+                  // CraftBukkit - TODO: let plugins change this
-+                  if (!p_39465_.getAbilities().instabuild) {
-+                     itemstack1.shrink(i);
-+                     if (itemstack1.isEmpty()) {
-+                        this.enchantSlots.setItem(1, ItemStack.EMPTY);
-+                     }
-+                  }
-+
-+                  p_39465_.awardStat(Stats.ENCHANT_ITEM);
-+                  if (p_39465_ instanceof ServerPlayer) {
-+                     CriteriaTriggers.ENCHANTED_ITEM.trigger((ServerPlayer)p_39465_, itemstack2, i);
-+                  }
-+
-+                  this.enchantSlots.setChanged();
-+                  this.enchantmentSeed.set(p_39465_.getEnchantmentSeed());
-+                  this.slotsChanged(this.enchantSlots);
-+                  p_296875_.playSound((Player)null, p_296876_, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, p_296875_.random.nextFloat() * 0.1F + 0.9F);
-+               }
-+
-+            });
-+            return true;
-+         }
-+      } else {
-+         Util.logAndPauseIfInIde(p_39465_.getName() + " pressed invalid button id: " + p_39466_);
-+         return false;
-+      }
-+   }
- 
-     private List<EnchantmentInstance> getEnchantmentList(FeatureFlagSet p_330227_, ItemStack p_39472_, int p_39473_, int p_39474_) {
-         this.random.setSeed((long)(this.enchantmentSeed.get() + p_39473_));
 @@ -216,6 +_,7 @@
  
      @Override

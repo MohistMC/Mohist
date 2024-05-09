@@ -81,7 +81,7 @@
  import net.minecraft.world.entity.ai.village.VillageSiege;
  import net.minecraft.world.entity.npc.CatSpawner;
  import net.minecraft.world.entity.npc.WanderingTraderSpawner;
-@@ -160,10 +_,24 @@
+@@ -160,10 +_,25 @@
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -92,6 +92,7 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.command.ConsoleCommandSender;
++import org.bukkit.craftbukkit.CraftRegistry;
 +import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 +import org.bukkit.event.server.ServerLoadEvent;
@@ -971,7 +972,7 @@
      public static record ReloadableResources(CloseableResourceManager resourceManager, ReloadableServerResources managers) implements AutoCloseable {
          @Override
          public void close() {
-@@ -1981,4 +_,14 @@
+@@ -1981,4 +_,19 @@
              };
          }
      }
@@ -980,6 +981,11 @@
 +   public static MinecraftServer getServer() {
 +      return ( Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
 +   }
++
++    @Deprecated
++    public static RegistryAccess getDefaultRegistryAccess() {
++        return CraftRegistry.getMinecraftRegistry();
++    }
 +
 +   public boolean isDebugging() {
 +      return false;

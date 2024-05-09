@@ -40,12 +40,7 @@
      private int ticketLevel;
      private int queueLevel;
      private final ChunkPos pos;
-@@ -60,10 +_,11 @@
-     private final BitSet skyChangedLightSectionFilter = new BitSet();
-     private final LevelLightEngine lightEngine;
-     private final ChunkHolder.LevelChangeListener onLevelChange;
--    public final ChunkHolder.PlayerProvider playerProvider;
-+    private final ChunkHolder.PlayerProvider playerProvider;
+@@ -64,6 +_,7 @@
      private boolean wasAccessibleSinceLastSave;
      private CompletableFuture<Void> pendingFullStateConfirmation = CompletableFuture.completedFuture(null);
      private CompletableFuture<?> sendSync = CompletableFuture.completedFuture(null);

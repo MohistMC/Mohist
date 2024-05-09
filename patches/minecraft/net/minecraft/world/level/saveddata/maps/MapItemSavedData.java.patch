@@ -75,15 +75,6 @@
      }
  
      public static MapItemSavedData createFresh(
-@@ -377,7 +_,7 @@
-         return mapitemsaveddata$holdingplayer == null ? null : mapitemsaveddata$holdingplayer.nextUpdatePacket(p_328547_);
-     }
- 
--    public void setColorsDirty(int p_164790_, int p_164791_) {
-+    private void setColorsDirty(int p_164790_, int p_164791_) {
-         this.setDirty();
- 
-         for (MapItemSavedData.HoldingPlayer mapitemsaveddata$holdingplayer : this.carriedBy) {
 @@ -385,7 +_,7 @@
          }
      }

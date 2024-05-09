@@ -18,7 +18,7 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.advancements.Advancement;
-@@ -29,23 +_,41 @@
+@@ -29,23 +_,43 @@
  import org.slf4j.Logger;
  
  public class ServerAdvancementManager extends SimpleJsonResourceReloadListener {
@@ -48,11 +48,13 @@
          RegistryOps<JsonElement> registryops = this.registries.createSerializationContext(JsonOps.INSTANCE);
          Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
          p_136034_.forEach((p_326203_, p_326204_) -> {
-+         // Spigot start
-+         if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*") || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_326203_.toString()) || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_308595_.getNamespace()))) {
-+            return;
-+         }
-+         // Spigot end
++            // Spigot start
++            if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*")
++                    || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_326203_.toString())
++                    || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_326203_.getNamespace()))) {
++                return;
++            }
++            // Spigot end
              try {
 -                Advancement advancement = Advancement.CODEC.parse(registryops, p_326204_).getOrThrow(JsonParseException::new);
 +                var json = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(registryops, (com.google.gson.JsonObject)p_326204_);

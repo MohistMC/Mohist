@@ -24,7 +24,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -28,39 +_,81 @@
+@@ -28,9 +_,16 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.flag.FeatureFlagSet;
  import net.minecraft.world.item.ItemStack;
@@ -42,61 +42,27 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
--    private static final Logger LOGGER = LogUtils.getLogger();
--    public static final int SLOT_CLICKED_OUTSIDE = -999;
--    public static final int QUICKCRAFT_TYPE_CHARITABLE = 0;
--    public static final int QUICKCRAFT_TYPE_GREEDY = 1;
--    public static final int QUICKCRAFT_TYPE_CLONE = 2;
--    public static final int QUICKCRAFT_HEADER_START = 0;
--    public static final int QUICKCRAFT_HEADER_CONTINUE = 1;
--    public static final int QUICKCRAFT_HEADER_END = 2;
--    public static final int CARRIED_SLOT_SIZE = Integer.MAX_VALUE;
+@@ -43,11 +_,11 @@
+     public static final int QUICKCRAFT_HEADER_CONTINUE = 1;
+     public static final int QUICKCRAFT_HEADER_END = 2;
+     public static final int CARRIED_SLOT_SIZE = Integer.MAX_VALUE;
 -    public NonNullList<ItemStack> lastSlots = NonNullList.create();
 -    public NonNullList<Slot> slots = NonNullList.create();
 -    private final List<DataSlot> dataSlots = Lists.newArrayList();
 -    private ItemStack carried = ItemStack.EMPTY;
 -    public NonNullList<ItemStack> remoteSlots = NonNullList.create();
--    private final IntList remoteDataSlots = new IntArrayList();
--    private ItemStack remoteCarried = ItemStack.EMPTY;
--    private int stateId;
--    @Nullable
--    private final MenuType<?> menuType;
--    public final int containerId;
--    private int quickcraftType = -1;
--    private int quickcraftStatus;
--    private final Set<Slot> quickcraftSlots = Sets.newHashSet();
--    private final List<ContainerListener> containerListeners = Lists.newArrayList();
--    @Nullable
--    private ContainerSynchronizer synchronizer;
--    private boolean suppressRemoteUpdates;
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   public static final int SLOT_CLICKED_OUTSIDE = -999;
-+   public static final int QUICKCRAFT_TYPE_CHARITABLE = 0;
-+   public static final int QUICKCRAFT_TYPE_GREEDY = 1;
-+   public static final int QUICKCRAFT_TYPE_CLONE = 2;
-+   public static final int QUICKCRAFT_HEADER_START = 0;
-+   public static final int QUICKCRAFT_HEADER_CONTINUE = 1;
-+   public static final int QUICKCRAFT_HEADER_END = 2;
-+   public static final int CARRIED_SLOT_SIZE = Integer.MAX_VALUE;
 +   public NonNullList<ItemStack> lastSlots = NonNullList.create();
 +   public NonNullList<Slot> slots = NonNullList.create();
 +   private final List<DataSlot> dataSlots = Lists.newArrayList();
 +   private ItemStack carried = ItemStack.EMPTY;
 +   public NonNullList<ItemStack> remoteSlots = NonNullList.create();
-+   private final IntList remoteDataSlots = new IntArrayList();
-+   private ItemStack remoteCarried = ItemStack.EMPTY;
-+   private int stateId;
-+   @Nullable
-+   private final MenuType<?> menuType;
-+   public final int containerId;
-+   private int quickcraftType = -1;
-+   private int quickcraftStatus;
-+   private final Set<Slot> quickcraftSlots = Sets.newHashSet();
-+   private final List<ContainerListener> containerListeners = Lists.newArrayList();
-+   @Nullable
-+   private ContainerSynchronizer synchronizer;
-+   private boolean suppressRemoteUpdates;
-+
+     private final IntList remoteDataSlots = new IntArrayList();
+     private ItemStack remoteCarried = ItemStack.EMPTY;
+     private int stateId;
+@@ -62,6 +_,45 @@
+     private ContainerSynchronizer synchronizer;
+     private boolean suppressRemoteUpdates;
+ 
 +   // CraftBukkit start
 +   public boolean checkReachable = true;
 +   // Mohist start
@@ -120,7 +86,11 @@
 +      if (this.title == null) {
 +         if (this.menuType != null) {
 +            ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.menuType);
-+            return Component.translatable(key.toString());
++             if (key == null) {
++                 this.title = Component.literal(this.toString());
++             } else {
++                 this.title = Component.translatable(key.toString());
++             }
 +         } else {
 +            this.title = Component.literal(this.toString());
 +         }
@@ -131,148 +101,28 @@
 +      this.title = title;
 +   }
 +   // CraftBukkit end
- 
++
      protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
          this.menuType = p_38851_;
-@@ -297,94 +_,128 @@
-         }
-     }
+         this.containerId = p_38852_;
+@@ -340,6 +_,7 @@
  
--    private void doClick(int p_150431_, int p_150432_, ClickType p_150433_, Player p_150434_) {
--        Inventory inventory = p_150434_.getInventory();
--        if (p_150433_ == ClickType.QUICK_CRAFT) {
--            int i = this.quickcraftStatus;
--            this.quickcraftStatus = getQuickcraftHeader(p_150432_);
--            if ((i != 1 || this.quickcraftStatus != 2) && i != this.quickcraftStatus) {
--                this.resetQuickCraft();
--            } else if (this.getCarried().isEmpty()) {
--                this.resetQuickCraft();
--            } else if (this.quickcraftStatus == 0) {
--                this.quickcraftType = getQuickcraftType(p_150432_);
--                if (isValidQuickcraftType(this.quickcraftType, p_150434_)) {
--                    this.quickcraftStatus = 1;
--                    this.quickcraftSlots.clear();
--                } else {
--                    this.resetQuickCraft();
--                }
--            } else if (this.quickcraftStatus == 1) {
--                Slot slot = this.slots.get(p_150431_);
--                ItemStack itemstack = this.getCarried();
--                if (canItemQuickReplace(slot, itemstack, true)
--                    && slot.mayPlace(itemstack)
--                    && (this.quickcraftType == 2 || itemstack.getCount() > this.quickcraftSlots.size())
--                    && this.canDragTo(slot)) {
--                    this.quickcraftSlots.add(slot);
--                }
--            } else if (this.quickcraftStatus == 2) {
--                if (!this.quickcraftSlots.isEmpty()) {
--                    if (this.quickcraftSlots.size() == 1) {
--                        int i1 = this.quickcraftSlots.iterator().next().index;
--                        this.resetQuickCraft();
--                        this.doClick(i1, this.quickcraftType, ClickType.PICKUP, p_150434_);
--                        return;
--                    }
--
--                    ItemStack itemstack3 = this.getCarried().copy();
--                    if (itemstack3.isEmpty()) {
--                        this.resetQuickCraft();
--                        return;
--                    }
--
--                    int k1 = this.getCarried().getCount();
--
--                    for (Slot slot1 : this.quickcraftSlots) {
--                        ItemStack itemstack1 = this.getCarried();
--                        if (slot1 != null
--                            && canItemQuickReplace(slot1, itemstack1, true)
--                            && slot1.mayPlace(itemstack1)
--                            && (this.quickcraftType == 2 || itemstack1.getCount() >= this.quickcraftSlots.size())
--                            && this.canDragTo(slot1)) {
--                            int j = slot1.hasItem() ? slot1.getItem().getCount() : 0;
--                            int k = Math.min(itemstack3.getMaxStackSize(), slot1.getMaxStackSize(itemstack3));
--                            int l = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack3) + j, k);
--                            k1 -= l - j;
+                     int k1 = this.getCarried().getCount();
+ 
++               		Map<Integer, ItemStack> draggedSlots = new HashMap<>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
+                     for (Slot slot1 : this.quickcraftSlots) {
+                         ItemStack itemstack1 = this.getCarried();
+                         if (slot1 != null
+@@ -351,12 +_,49 @@
+                             int k = Math.min(itemstack3.getMaxStackSize(), slot1.getMaxStackSize(itemstack3));
+                             int l = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack3) + j, k);
+                             k1 -= l - j;
 -                            slot1.setByPlayer(itemstack3.copyWithCount(l));
 -                        }
 -                    }
 -
 -                    itemstack3.setCount(k1);
 -                    this.setCarried(itemstack3);
--                }
--
--                this.resetQuickCraft();
-+   private void doClick(int p_150431_, int p_150432_, ClickType p_150433_, Player p_150434_) {
-+      Inventory inventory = p_150434_.getInventory();
-+      if (p_150433_ == ClickType.QUICK_CRAFT) {
-+         int i = this.quickcraftStatus;
-+         this.quickcraftStatus = getQuickcraftHeader(p_150432_);
-+         if ((i != 1 || this.quickcraftStatus != 2) && i != this.quickcraftStatus) {
-+            this.resetQuickCraft();
-+         } else if (this.getCarried().isEmpty()) {
-+            this.resetQuickCraft();
-+         } else if (this.quickcraftStatus == 0) {
-+            this.quickcraftType = getQuickcraftType(p_150432_);
-+            if (isValidQuickcraftType(this.quickcraftType, p_150434_)) {
-+               this.quickcraftStatus = 1;
-+               this.quickcraftSlots.clear();
-             } else {
--                this.resetQuickCraft();
--            }
--        } else if (this.quickcraftStatus != 0) {
--            this.resetQuickCraft();
--        } else if ((p_150433_ == ClickType.PICKUP || p_150433_ == ClickType.QUICK_MOVE) && (p_150432_ == 0 || p_150432_ == 1)) {
--            ClickAction clickaction = p_150432_ == 0 ? ClickAction.PRIMARY : ClickAction.SECONDARY;
--            if (p_150431_ == -999) {
--                if (!this.getCarried().isEmpty()) {
--                    if (clickaction == ClickAction.PRIMARY) {
--                        p_150434_.drop(this.getCarried(), true);
--                        this.setCarried(ItemStack.EMPTY);
--                    } else {
--                        p_150434_.drop(this.getCarried().split(1), true);
--                    }
--                }
--            } else if (p_150433_ == ClickType.QUICK_MOVE) {
--                if (p_150431_ < 0) {
--                    return;
--                }
--
--                Slot slot6 = this.slots.get(p_150431_);
--                if (!slot6.mayPickup(p_150434_)) {
--                    return;
--                }
-+               this.resetQuickCraft();
-+            }
-+         } else if (this.quickcraftStatus == 1) {
-+            Slot slot = this.slots.get(p_150431_);
-+            ItemStack itemstack = this.getCarried();
-+            if (canItemQuickReplace(slot, itemstack, true) && slot.mayPlace(itemstack) && (this.quickcraftType == 2 || itemstack.getCount() > this.quickcraftSlots.size()) && this.canDragTo(slot)) {
-+               this.quickcraftSlots.add(slot);
-+            }
-+         } else if (this.quickcraftStatus == 2) {
-+            if (!this.quickcraftSlots.isEmpty()) {
-+               if (false && this.quickcraftSlots.size() == 1) { // CraftBukkit - treat everything as a drag since we are unable to easily call InventoryClickEvent instead
-+                  int i1 = (this.quickcraftSlots.iterator().next()).index;
-+                  this.resetQuickCraft();
-+                  this.doClick(i1, this.quickcraftType, ClickType.PICKUP, p_150434_);
-+                  return;
-+               }
-+
-+               ItemStack itemstack3 = this.getCarried().copy();
-+               if (itemstack3.isEmpty()) {
-+                  this.resetQuickCraft();
-+                  return;
-+               }
-+
-+               int k1 = this.getCarried().getCount();
-+
-+               Map<Integer, ItemStack> draggedSlots = new HashMap<>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
-+               for(Slot slot1 : this.quickcraftSlots) {
-+                  ItemStack itemstack1 = this.getCarried();
-+                  if (slot1 != null && canItemQuickReplace(slot1, itemstack1, true) && slot1.mayPlace(itemstack1) && (this.quickcraftType == 2 || itemstack1.getCount() >= this.quickcraftSlots.size()) && this.canDragTo(slot1)) {
-+                     int j = slot1.hasItem() ? slot1.getItem().getCount() : 0;
-+                     int k = Math.min(itemstack3.getMaxStackSize(), slot1.getMaxStackSize(itemstack3));
-+                     int l = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack3) + j, k);
-+                     k1 -= l - j;
 +
 +                     // slot1.setByPlayer(itemstack2.copyWithCount(l));
 +                     draggedSlots.put(slot1.index, itemstack3.copyWithCount(l)); // CraftBukkit - Put in map instead of setting
@@ -316,40 +166,23 @@
 +                  this.sendAllDataToRemote();
 +               }
 +               // CraftBukkit end
-+            }
-+
-+            this.resetQuickCraft();
-+         } else {
-+            this.resetQuickCraft();
-+         }
-+      } else if (this.quickcraftStatus != 0) {
-+         this.resetQuickCraft();
-+      } else if ((p_150433_ == ClickType.PICKUP || p_150433_ == ClickType.QUICK_MOVE) && (p_150432_ == 0 || p_150432_ == 1)) {
-+         ClickAction clickaction = p_150432_ == 0 ? ClickAction.PRIMARY : ClickAction.SECONDARY;
-+         if (p_150431_ == -999) {
-+            if (!this.getCarried().isEmpty()) {
-+               if (clickaction == ClickAction.PRIMARY) {
+                 }
+ 
+                 this.resetQuickCraft();
+@@ -370,8 +_,11 @@
+             if (p_150431_ == -999) {
+                 if (!this.getCarried().isEmpty()) {
+                     if (clickaction == ClickAction.PRIMARY) {
+-                        p_150434_.drop(this.getCarried(), true);
+-                        this.setCarried(ItemStack.EMPTY);
 +                  // CraftBukkit start
 +                  ItemStack carried = this.getCarried();
 +                  this.setCarried(ItemStack.EMPTY);
 +                  p_150434_.drop(carried, true);
 +                  // CraftBukkit end
-+               } else {
-+                  p_150434_.drop(this.getCarried().split(1), true);
-+               }
-+            }
-+         } else if (p_150433_ == ClickType.QUICK_MOVE) {
-+            if (p_150431_ < 0) {
-+               return;
-+            }
-+
-+            Slot slot6 = this.slots.get(p_150431_);
-+            if (!slot6.mayPickup(p_150434_)) {
-+               return;
-+            }
- 
-                 ItemStack itemstack8 = this.quickMoveStack(p_150434_, p_150431_);
- 
+                     } else {
+                         p_150434_.drop(this.getCarried().split(1), true);
+                     }
 @@ -401,6 +_,7 @@
                  ItemStack itemstack10 = this.getCarried();
                  p_150434_.updateTutorialInventoryAction(itemstack10, slot7.getItem(), clickaction);
@@ -375,14 +208,10 @@
          } else if (p_150433_ == ClickType.SWAP && (p_150432_ >= 0 && p_150432_ < 9 || p_150432_ == 40)) {
              ItemStack itemstack2 = inventory.getItem(p_150432_);
              Slot slot5 = this.slots.get(p_150431_);
-@@ -531,20 +_,22 @@
-         return true;
-     }
- 
--    public void removed(Player p_38940_) {
--        if (p_38940_ instanceof ServerPlayer) {
--            ItemStack itemstack = this.getCarried();
--            if (!itemstack.isEmpty()) {
+@@ -535,16 +_,18 @@
+         if (p_38940_ instanceof ServerPlayer) {
+             ItemStack itemstack = this.getCarried();
+             if (!itemstack.isEmpty()) {
 -                if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
 -                    p_38940_.getInventory().placeItemBackInInventory(itemstack);
 -                } else {
@@ -390,10 +219,6 @@
 -                }
 -
 -                this.setCarried(ItemStack.EMPTY);
-+   public void removed(Player p_38940_) {
-+      if (p_38940_ instanceof ServerPlayer) {
-+         ItemStack itemstack = this.getCarried();
-+         if (!itemstack.isEmpty()) {
 +            this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
 +            if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
 +               p_38940_.getInventory().placeItemBackInInventory(itemstack);

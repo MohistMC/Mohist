@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.mohist.Mohist;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -897,84 +898,7 @@ public final class CraftServer implements Server {
 
     @Override
     public void reload() {
-        this.reloadCount++;
-        this.configuration = YamlConfiguration.loadConfiguration(this.getConfigFile());
-        this.commandsConfiguration = YamlConfiguration.loadConfiguration(this.getCommandsConfigFile());
-
-        this.console.settings = new DedicatedServerSettings(this.console.options);
-        DedicatedServerProperties config = this.console.settings.getProperties();
-
-        this.console.setPvpAllowed(config.pvp);
-        this.console.setFlightAllowed(config.allowFlight);
-        this.console.setMotd(config.motd);
-        this.overrideSpawnLimits();
-        this.warningState = WarningState.value(this.configuration.getString("settings.deprecated-verbose"));
-        TicketType.PLUGIN.timeout = this.configuration.getInt("chunk-gc.period-in-ticks");
-        this.minimumAPI = ApiVersion.getOrCreateVersion(this.configuration.getString("settings.minimum-api"));
-        this.printSaveWarning = false;
-        this.console.autosavePeriod = this.configuration.getInt("ticks-per.autosave");
-        this.loadIcon();
-
-        try {
-            this.playerList.getIpBans().load();
-        } catch (IOException ex) {
-            this.logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
-        }
-        try {
-            this.playerList.getBans().load();
-        } catch (IOException ex) {
-            this.logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
-        }
-
-        org.spigotmc.SpigotConfig.init((File) this.console.options.valueOf("spigot-settings")); // Spigot
-        for (ServerLevel world : this.console.getAllLevels()) {
-            world.serverLevelData.setDifficulty(config.difficulty);
-            world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
-
-            for (SpawnCategory spawnCategory : SpawnCategory.values()) {
-                if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
-                    long ticksPerCategorySpawn = this.getTicksPerSpawns(spawnCategory);
-                    if (ticksPerCategorySpawn < 0) {
-                        world.ticksPerSpawnCategory.put(spawnCategory, CraftSpawnCategory.getDefaultTicksPerSpawn(spawnCategory));
-                    } else {
-                        world.ticksPerSpawnCategory.put(spawnCategory, ticksPerCategorySpawn);
-                    }
-                }
-            }
-            world.spigotConfig.init(); // Spigot
-        }
-
-        this.pluginManager.clearPlugins();
-        this.commandMap.clearCommands();
-        this.reloadData();
-        org.spigotmc.SpigotConfig.registerCommands(); // Spigot
-        this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
-        this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
-
-        int pollCount = 0;
-
-        // Wait for at most 2.5 seconds for plugins to close their threads
-        while (pollCount < 50 && this.getScheduler().getActiveWorkers().size() > 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {}
-            pollCount++;
-        }
-
-        List<BukkitWorker> overdueWorkers = this.getScheduler().getActiveWorkers();
-        for (BukkitWorker worker : overdueWorkers) {
-            Plugin plugin = worker.getOwner();
-            this.getLogger().log(Level.SEVERE, String.format(
-                "Nag author(s): '%s' of '%s' about the following: %s",
-                plugin.getDescription().getAuthors(),
-                plugin.getDescription().getFullName(),
-                "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
-            ));
-        }
-        this.loadPlugins();
-        this.enablePlugins(PluginLoadOrder.STARTUP);
-        this.enablePlugins(PluginLoadOrder.POSTWORLD);
-        this.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
+        Mohist.LOGGER.warn("For your server security, Bukkit reloading is not supported by Mohist.");
     }
 
     @Override
