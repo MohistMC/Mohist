@@ -14,25 +14,23 @@
  
  public class RconConsoleSource implements CommandSource {
      private static final String RCON = "Rcon";
-@@ -14,9 +_,15 @@
+@@ -14,8 +_,14 @@
      private final StringBuffer buffer = new StringBuffer();
      private final MinecraftServer server;
  
 -    public RconConsoleSource(MinecraftServer p_11505_) {
 -        this.server = p_11505_;
--    }
-+   // CraftBukkit start
-+   public final SocketAddress socketAddress;
-+   private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
++    // CraftBukkit start
++    public final SocketAddress socketAddress;
++    private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
 +
-+   public RconConsoleSource(MinecraftServer pServer, SocketAddress socketAddress) {
-+      this.socketAddress = socketAddress;
-+      // CraftBukkit end
-+      this.server = pServer;
-+   }
++    public RconConsoleSource(MinecraftServer pServer, SocketAddress socketAddress) {
++        this.socketAddress = socketAddress;
++        // CraftBukkit end
++        this.server = pServer;
+     }
  
      public void prepareForCommand() {
-         this.buffer.setLength(0);
 @@ -33,7 +_,7 @@
  
      @Override
@@ -48,14 +46,14 @@
      }
 +
 +
-+   // CraftBukkit start - Send a String
-+   public void sendMessage(String message) {
-+      this.buffer.append(message);
-+   }
++    // CraftBukkit start - Send a String
++    public void sendMessage(String message) {
++        this.buffer.append(message);
++    }
 +
-+   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return this.remoteConsole;
-+   }
-+   // CraftBukkit end
++    @Override
++    public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++        return this.remoteConsole;
++    }
++    // CraftBukkit end
  }

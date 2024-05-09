@@ -118,7 +118,7 @@
      protected int fallFlyTicks;
      private BlockPos lastPos;
      private Optional<BlockPos> lastClimbablePos = Optional.empty();
-@@ -236,8 +_,27 @@
+@@ -236,8 +_,28 @@
      private float swimAmount;
      private float swimAmountO;
      protected Brain<?> brain;
@@ -126,25 +126,26 @@
 -    protected float appliedScale = 1.0F;
 +   	public boolean skipDropExperience;
 +	protected float appliedScale = 1.0F;
-+   // CraftBukkit start
-+   public boolean forceDrops;
-+   public CraftAttributeMap craftAttributes;
-+   public boolean collides = true;
-+   public Set<UUID> collidableExemptions = new HashSet<>();
-+   public boolean bukkitPickUpLoot;
++    // CraftBukkit start
++    public int expToDrop;
++    public boolean forceDrops;
++    public CraftAttributeMap craftAttributes;
++    public boolean collides = true;
++    public Set<UUID> collidableExemptions = new HashSet<>();
++    public boolean bukkitPickUpLoot;
 +
-+   @Override
-+   public float getBukkitYaw() {
++    @Override
++    public float getBukkitYaw() {
 +      return getYHeadRot();
 +   }
-+   // CraftBukkit end
-+   // Spigot start
-+   public void inactiveTick()
-+   {
-+      super.inactiveTick();
-+      ++this.noActionTime; // Above all the floats
-+   }
-+   // Spigot end
++    // CraftBukkit end
++    // Spigot start
++    public void inactiveTick()
++    {
++        super.inactiveTick();
++        ++this.noActionTime; // Above all the floats
++    }
++    // Spigot end
  
      protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
          super(p_20966_, p_20967_);
@@ -2077,7 +2078,7 @@
              Item item = this.useItem.getItem();
 -            return item.getUseAnimation(this.useItem) != UseAnim.BLOCK ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
 +            boolean canBlock = this.useItem.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK);
-+            return canBlock ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
++            return !canBlock ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
          } else {
              return false;
          }

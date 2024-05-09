@@ -1,55 +1,43 @@
 --- a/net/minecraft/server/players/SleepStatus.java
 +++ b/net/minecraft/server/players/SleepStatus.java
-@@ -13,10 +_,13 @@
-         return this.sleepingPlayers >= this.sleepersNeeded(p_144003_);
+@@ -14,8 +_,13 @@
      }
  
--    public boolean areEnoughDeepSleeping(int p_144005_, List<ServerPlayer> p_144006_) {
+     public boolean areEnoughDeepSleeping(int p_144005_, List<ServerPlayer> p_144006_) {
 -        int i = (int)p_144006_.stream().filter(Player::isSleepingLongEnough).count();
 -        return i >= this.sleepersNeeded(p_144005_);
--    }
-+   public boolean areEnoughDeepSleeping(int p_144005_, List<ServerPlayer> p_144006_) {
-+      // CraftBukkit start
-+      int i = (int) p_144006_.stream().filter((eh) -> { return eh.isSleepingLongEnough() || eh.fauxSleeping; }).count();
-+      boolean anyDeepSleep = p_144006_.stream().anyMatch(Player::isSleepingLongEnough);
-+      return anyDeepSleep && i >= this.sleepersNeeded(p_144005_);
-+      // CraftBukkit end
-+   }
++        // CraftBukkit start
++        int i = (int) p_144006_.stream().filter((eh) -> {
++            return eh.isSleepingLongEnough() || eh.fauxSleeping;
++        }).count();
++        boolean anyDeepSleep = p_144006_.stream().anyMatch(Player::isSleepingLongEnough);
++        return anyDeepSleep && i >= this.sleepersNeeded(p_144005_);
++        // CraftBukkit end
+     }
  
      public int sleepersNeeded(int p_144011_) {
-         return Math.max(1, Mth.ceil((float)(this.activePlayers * p_144011_) / 100.0F));
 @@ -35,16 +_,22 @@
          int j = this.sleepingPlayers;
          this.activePlayers = 0;
          this.sleepingPlayers = 0;
--
--        for (ServerPlayer serverplayer : p_144008_) {
--            if (!serverplayer.isSpectator()) {
--                this.activePlayers++;
--                if (serverplayer.isSleeping()) {
++        boolean anySleep = false; // CraftBukkit
+ 
+         for (ServerPlayer serverplayer : p_144008_) {
+             if (!serverplayer.isSpectator()) {
+                 this.activePlayers++;
++                if (serverplayer.isSleeping() || serverplayer.fauxSleeping) { // CraftBukkit
++                    ++this.sleepingPlayers;
++                }
++                // CraftBukkit start
+                 if (serverplayer.isSleeping()) {
 -                    this.sleepingPlayers++;
--                }
--            }
--        }
--
++                    anySleep = true;
+                 }
++                // CraftBukkit end
+             }
+         }
+ 
 -        return (j > 0 || this.sleepingPlayers > 0) && (i != this.activePlayers || j != this.sleepingPlayers);
--    }
-+      	boolean anySleep = false; // CraftBukkit
-+
-+      for(ServerPlayer serverplayer : p_144008_) {
-+         if (!serverplayer.isSpectator()) {
-+            this.activePlayers++;
-+            if (serverplayer.isSleeping() || serverplayer.fauxSleeping) { // CraftBukkit
-+               ++this.sleepingPlayers;
-+            }
-+            // CraftBukkit start
-+            if (serverplayer.isSleeping()) {
-+               anySleep = true;
-+            }
-+            // CraftBukkit end
-+         }
-+      }
-+
-+      return anySleep && (j > 0 || this.sleepingPlayers > 0) && (i != this.activePlayers || j != this.sleepingPlayers); // CraftBukkit
-+   }
++        return anySleep && (j > 0 || this.sleepingPlayers > 0) && (i != this.activePlayers || j != this.sleepingPlayers); // CraftBukkit
+     }
  }

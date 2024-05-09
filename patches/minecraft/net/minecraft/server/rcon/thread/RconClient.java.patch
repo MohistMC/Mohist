@@ -15,28 +15,26 @@
      private final byte[] buf = new byte[1460];
      private final String rconPassword;
 -    private final ServerInterface serverInterface;
++    // CraftBukkit start
 +   	private final DedicatedServer serverInterface;
-+   	// CraftBukkit start
 +   	private final RconConsoleSource rconConsoleSource;
 +   	// CraftBukkit end
  
      RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
          super("RCON Client " + p_11589_.getInetAddress());
 -        this.serverInterface = p_11587_;
-+      this.serverInterface = (DedicatedServer) p_11587_;
++        this.serverInterface = (DedicatedServer) p_11587_;
          this.client = p_11589_;
  
          try {
-@@ -37,7 +_,8 @@
+@@ -37,6 +_,7 @@
          }
  
          this.rconPassword = p_11588_;
--    }
-+      this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.serverInterface, p_11589_.getRemoteSocketAddress()); // CraftBukkit
-+   }
++        this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.serverInterface, p_11589_.getRemoteSocketAddress()); // CraftBukkit
+     }
  
      @Override
-     public void run() {
 @@ -123,14 +_,11 @@
      }
  

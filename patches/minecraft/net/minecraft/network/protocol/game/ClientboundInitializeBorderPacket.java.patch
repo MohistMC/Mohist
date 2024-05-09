@@ -8,10 +8,10 @@
 -        this.newCenterX = p_178877_.getCenterX();
 -        this.newCenterZ = p_178877_.getCenterZ();
 +   public ClientboundInitializeBorderPacket(WorldBorder p_178877_) {
-+      // CraftBukkit start - multiply out nether border
-+      this.newCenterX = p_178877_.getCenterX() * p_178877_.world.dimensionType().coordinateScale();
-+      this.newCenterZ = p_178877_.getCenterZ() * p_178877_.world.dimensionType().coordinateScale();
-+      // CraftBukkit end
++        // CraftBukkit start - multiply out nether border
++        this.newCenterX = p_178877_.getCenterX() * p_178877_.world.dimensionType().coordinateScale();
++        this.newCenterZ = p_178877_.getCenterZ() * p_178877_.world.dimensionType().coordinateScale();
++        // CraftBukkit end
          this.oldSize = p_178877_.getSize();
          this.newSize = p_178877_.getLerpTarget();
          this.lerpTime = p_178877_.getLerpRemainingTime();

@@ -32,7 +32,7 @@
 +   	private TextColor(int p_131263_, String p_131264_) {
 +      	this.value = p_131263_ & 16777215;
 +      	this.name = p_131264_;
-+      	this.format = ChatFormatting.getByName(p_131264_);
++      	this.format = ChatFormatting.getByName(p_131264_); // Mohist
 +   	}
 +
 +   	private TextColor(int p_131261_) {

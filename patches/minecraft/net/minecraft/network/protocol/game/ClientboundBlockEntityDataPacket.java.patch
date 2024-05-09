@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket.java
+@@ -36,7 +_,7 @@
+         return create(p_195641_, BlockEntity::getUpdateTag);
+     }
+ 
+-    private ClientboundBlockEntityDataPacket(BlockPos p_195637_, BlockEntityType<?> p_195638_, CompoundTag p_195639_) {
++    public ClientboundBlockEntityDataPacket(BlockPos p_195637_, BlockEntityType<?> p_195638_, CompoundTag p_195639_) {
+         this.pos = p_195637_;
+         this.type = p_195638_;
+         this.tag = p_195639_;

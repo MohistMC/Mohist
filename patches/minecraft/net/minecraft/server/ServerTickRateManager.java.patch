@@ -1,0 +1,45 @@
+--- a/net/minecraft/server/ServerTickRateManager.java
++++ b/net/minecraft/server/ServerTickRateManager.java
+@@ -1,5 +_,7 @@
+ package net.minecraft.server;
+ 
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicInteger;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.protocol.game.ClientboundTickingStatePacket;
+ import net.minecraft.network.protocol.game.ClientboundTickingStepPacket;
+@@ -57,6 +_,9 @@
+         }
+     }
+ 
++    // Mohist start
++    public AtomicBoolean mohist$sendLog = new AtomicBoolean(true);
++
+     public boolean stopSprinting() {
+         if (this.remainingSprintTicks > 0L) {
+             this.finishTickSprint();
+@@ -66,6 +_,11 @@
+         }
+     }
+ 
++    public boolean stopSprinting(boolean sendLog) {
++        mohist$sendLog.set(sendLog);
++        return stopSprinting();
++    }
++
+     public boolean requestGameToSprint(int p_311983_) {
+         boolean flag = this.remainingSprintTicks > 0L;
+         this.sprintTimeSpend = 0L;
+@@ -83,7 +_,11 @@
+         String s = String.format("%.2f", i == 0L ? (double)this.millisecondsPerTick() : d0 / (double)i);
+         this.scheduledCurrentSprintTicks = 0L;
+         this.sprintTimeSpend = 0L;
+-        this.server.createCommandSourceStack().sendSuccess(() -> Component.translatable("commands.tick.sprint.report", j, s), true);
++        // CraftBukkit start - add sendLog parameter
++        if (mohist$sendLog.getAndSet(true)) {
++            this.server.createCommandSourceStack().sendSuccess(() -> Component.translatable("commands.tick.sprint.report", j, s), true);
++        }
++        // CraftBukkit end
+         this.remainingSprintTicks = 0L;
+         this.setFrozen(this.previousIsFrozen);
+         this.server.onTickRateChanged();

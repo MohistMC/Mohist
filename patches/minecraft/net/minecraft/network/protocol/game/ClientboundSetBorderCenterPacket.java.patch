@@ -1,13 +1,11 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSetBorderCenterPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSetBorderCenterPacket.java
-@@ -13,9 +_,11 @@
-     private final double newCenterX;
+@@ -14,8 +_,10 @@
      private final double newCenterZ;
  
--    public ClientboundSetBorderCenterPacket(WorldBorder p_179214_) {
+     public ClientboundSetBorderCenterPacket(WorldBorder p_179214_) {
 -        this.newCenterX = p_179214_.getCenterX();
 -        this.newCenterZ = p_179214_.getCenterZ();
-+   public ClientboundSetBorderCenterPacket(WorldBorder p_179214_) {
 +      // CraftBukkit start - multiply out nether border
 +      this.newCenterX = p_179214_.getCenterX() * (p_179214_.world != null ? p_179214_.world.dimensionType().coordinateScale() : 1.0);
 +      this.newCenterZ = p_179214_.getCenterZ() * (p_179214_.world != null ? p_179214_.world.dimensionType().coordinateScale() : 1.0);

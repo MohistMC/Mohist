@@ -1,5 +1,93 @@
 --- a/net/minecraft/server/ServerScoreboard.java
 +++ b/net/minecraft/server/ServerScoreboard.java
+@@ -64,7 +_,7 @@
+     @Override
+     public void onPlayerRemoved(ScoreHolder p_310662_) {
+         super.onPlayerRemoved(p_310662_);
+-        this.server.getPlayerList().broadcastAll(new ClientboundResetScorePacket(p_310662_.getScoreboardName(), null));
++        this.broadcastAll(new ClientboundResetScorePacket(p_310662_.getScoreboardName(), null));
+         this.setDirty();
+     }
+ 
+@@ -72,7 +_,7 @@
+     public void onPlayerScoreRemoved(ScoreHolder p_310122_, Objective p_136213_) {
+         super.onPlayerScoreRemoved(p_310122_, p_136213_);
+         if (this.trackedObjectives.contains(p_136213_)) {
+-            this.server.getPlayerList().broadcastAll(new ClientboundResetScorePacket(p_310122_.getScoreboardName(), p_136213_.getName()));
++            this.broadcastAll(new ClientboundResetScorePacket(p_310122_.getScoreboardName(), p_136213_.getName()));
+         }
+ 
+         this.setDirty();
+@@ -84,7 +_,7 @@
+         super.setDisplayObjective(p_297629_, p_136200_);
+         if (objective != p_136200_ && objective != null) {
+             if (this.getObjectiveDisplaySlotCount(objective) > 0) {
+-                this.server.getPlayerList().broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_));
++                this.broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_));
+             } else {
+                 this.stopTrackingObjective(objective);
+             }
+@@ -92,7 +_,7 @@
+ 
+         if (p_136200_ != null) {
+             if (this.trackedObjectives.contains(p_136200_)) {
+-                this.server.getPlayerList().broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_));
++                this.broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_));
+             } else {
+                 this.startTrackingObjective(p_136200_);
+             }
+@@ -104,7 +_,7 @@
+     @Override
+     public boolean addPlayerToTeam(String p_136215_, PlayerTeam p_136216_) {
+         if (super.addPlayerToTeam(p_136215_, p_136216_)) {
+-            this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136216_, p_136215_, ClientboundSetPlayerTeamPacket.Action.ADD));
++            this.broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136216_, p_136215_, ClientboundSetPlayerTeamPacket.Action.ADD));
+             this.setDirty();
+             return true;
+         } else {
+@@ -115,7 +_,7 @@
+     @Override
+     public void removePlayerFromTeam(String p_136223_, PlayerTeam p_136224_) {
+         super.removePlayerFromTeam(p_136223_, p_136224_);
+-        this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136224_, p_136223_, ClientboundSetPlayerTeamPacket.Action.REMOVE));
++        this.broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136224_, p_136223_, ClientboundSetPlayerTeamPacket.Action.REMOVE));
+         this.setDirty();
+     }
+ 
+@@ -129,7 +_,7 @@
+     public void onObjectiveChanged(Objective p_136219_) {
+         super.onObjectiveChanged(p_136219_);
+         if (this.trackedObjectives.contains(p_136219_)) {
+-            this.server.getPlayerList().broadcastAll(new ClientboundSetObjectivePacket(p_136219_, 2));
++            this.broadcastAll(new ClientboundSetObjectivePacket(p_136219_, 2));
+         }
+ 
+         this.setDirty();
+@@ -148,21 +_,21 @@
+     @Override
+     public void onTeamAdded(PlayerTeam p_136204_) {
+         super.onTeamAdded(p_136204_);
+-        this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136204_, true));
++        this.broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136204_, true));
+         this.setDirty();
+     }
+ 
+     @Override
+     public void onTeamChanged(PlayerTeam p_136221_) {
+         super.onTeamChanged(p_136221_);
+-        this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136221_, false));
++        this.broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136221_, false));
+         this.setDirty();
+     }
+ 
+     @Override
+     public void onTeamRemoved(PlayerTeam p_136228_) {
+         super.onTeamRemoved(p_136228_);
+-        this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createRemovePacket(p_136228_));
++        this.broadcastAll(ClientboundSetPlayerTeamPacket.createRemovePacket(p_136228_));
+         this.setDirty();
+     }
+ 
 @@ -206,6 +_,7 @@
  
          for (ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
@@ -21,15 +109,15 @@
          return this.createData().load(p_180014_, p_336023_);
      }
 +
-+   // CraftBukkit start - Send to players
-+   private void broadcastAll(Packet packet) {
-+      for (ServerPlayer entityplayer : this.server.getPlayerList().players) {
-+         if (entityplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
-+            entityplayer.connection.send(packet);
-+         }
-+      }
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start - Send to players
++    private void broadcastAll(Packet packet) {
++        for (ServerPlayer entityplayer : this.server.getPlayerList().players) {
++            if (entityplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
++                entityplayer.connection.send(packet);
++            }
++        }
++    }
++    // CraftBukkit end
  
      public static enum Method {
          CHANGE,

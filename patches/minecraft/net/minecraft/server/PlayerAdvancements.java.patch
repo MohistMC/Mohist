@@ -22,16 +22,6 @@
          JsonElement jsonelement = this.codec.encodeStart(JsonOps.INSTANCE, this.asData()).getOrThrow();
  
          try {
-@@ -146,7 +_,8 @@
-         p_300341_.forEach((p_296440_, p_296441_) -> {
-             AdvancementHolder advancementholder = p_299201_.get(p_296440_);
-             if (advancementholder == null) {
--                LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", p_296440_, this.playerSavePath);
-+            if (!p_296440_.getNamespace().equals("minecraft")) return; // CraftBukkit
-+            LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", p_296440_, this.playerSavePath);
-             } else {
-                 this.startProgress(advancementholder, p_296441_);
-                 this.progressChanged.add(advancementholder);
 @@ -173,6 +_,7 @@
              this.unregisterListeners(p_298135_);
              this.progressChanged.add(p_298135_);
