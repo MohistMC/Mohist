@@ -518,8 +518,7 @@ public final class CraftServer implements Server {
                     }
                     node = clone;
                 }
-                final Predicate<CommandSourceStack> original = node.getRequirement();
-                node.setRequirement(original.or(source -> source.getBukkitSender().hasPermission(command.getPermission())));
+
                 dispatcher.getDispatcher().getRoot().addChild(node);
             } else {
                 new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
