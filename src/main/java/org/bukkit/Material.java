@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
+import com.mohistmc.paper.inventory.ItemRarity;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -4481,7 +4482,7 @@ public enum Material implements Keyed, Translatable, net.kyori.adventure.transla
      * @return the item rarity
      */
     @NotNull
-    public io.papermc.paper.inventory.ItemRarity getItemRarity() {
+    public ItemRarity getItemRarity() {
         return Bukkit.getUnsafe().getItemRarity(this);
     }
     // Paper end

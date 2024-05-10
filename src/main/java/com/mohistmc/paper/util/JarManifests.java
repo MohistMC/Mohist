@@ -1,4 +1,4 @@
-package io.papermc.paper.util;
+package com.mohistmc.paper.util;
 
 import java.io.IOException;
 import java.io.InputStream;

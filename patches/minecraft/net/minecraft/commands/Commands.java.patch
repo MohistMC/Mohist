@@ -1,10 +1,11 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -1,6 +_,8 @@
+@@ -1,6 +_,9 @@
  package net.minecraft.commands;
  
 +import com.google.common.base.Joiner;
  import com.google.common.collect.Maps;
++import com.mohistmc.paper.adventure.PaperAdventure;
 +import com.mohistmc.paper.brigadier.PaperBrigadier;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
@@ -22,6 +23,14 @@
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
  import java.util.stream.Collectors;
+@@ -34,7 +_,6 @@
+ import net.minecraft.network.chat.ClickEvent;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 @@ -118,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
@@ -193,13 +202,13 @@
 +                  }
 +
 +                  mutablecomponent1.m_7220_(Component.m_237115_("command.context.here").m_130944_(ChatFormatting.RED, ChatFormatting.ITALIC));
-+                  builder.append(net.kyori.adventure.text.Component.newline()).append(io.papermc.paper.adventure.PaperAdventure.asAdventure(mutablecomponent1));
++                  builder.append(net.kyori.adventure.text.Component.newline()).append(PaperAdventure.asAdventure(mutablecomponent1));
 +               }
 +            }
 +            org.bukkit.event.command.UnknownCommandEvent event = new org.bukkit.event.command.UnknownCommandEvent(commandsourcestack.getBukkitSender(), p_242841_, org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty() ? null : builder.build());
 +            org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +            if (event.message() != null) {
-+               commandsourcestack.sendFailure(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.message()), false);
++               commandsourcestack.sendFailure(PaperAdventure.asVanilla(event.message()), false);
 +               // Paper end
              }
           } catch (Exception exception) {

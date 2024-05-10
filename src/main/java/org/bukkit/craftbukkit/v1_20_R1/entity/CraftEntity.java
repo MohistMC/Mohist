@@ -18,6 +18,7 @@ import com.mohistmc.bukkit.entity.MohistModsSkeleton;
 import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
 import com.mohistmc.bukkit.entity.MohistModsThrowableEntity;
 import com.mohistmc.bukkit.entity.MohistModsThrowableProjectile;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -789,12 +790,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public net.kyori.adventure.text.Component customName() {
         final Component name = this.getHandle().getCustomName();
-        return name != null ? io.papermc.paper.adventure.PaperAdventure.asAdventure(name) : null;
+        return name != null ? PaperAdventure.asAdventure(name) : null;
     }
 
     @Override
     public void customName(final net.kyori.adventure.text.Component customName) {
-        this.getHandle().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
+        this.getHandle().setCustomName(customName != null ? PaperAdventure.asVanilla(customName) : null);
     }
 
     @Override

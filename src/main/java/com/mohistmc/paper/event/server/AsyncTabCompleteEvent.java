@@ -1,7 +1,7 @@
 package com.mohistmc.paper.event.server;
 
 import com.google.common.base.Preconditions;
-import io.papermc.paper.util.TransformingRandomAccessList;
+import com.mohistmc.paper.util.TransformingRandomAccessList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;

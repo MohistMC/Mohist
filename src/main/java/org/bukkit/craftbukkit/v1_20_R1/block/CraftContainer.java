@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import org.bukkit.World;
@@ -31,12 +32,12 @@ public abstract class CraftContainer<T extends BaseContainerBlockEntity> extends
     @Override
     public net.kyori.adventure.text.Component customName() {
         final T be = this.getSnapshot();
-        return be.hasCustomName() ? io.papermc.paper.adventure.PaperAdventure.asAdventure(be.getCustomName()) : null;
+        return be.hasCustomName() ? PaperAdventure.asAdventure(be.getCustomName()) : null;
     }
 
     @Override
     public void customName(final net.kyori.adventure.text.Component customName) {
-        this.getSnapshot().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
+        this.getSnapshot().setCustomName(customName != null ? PaperAdventure.asVanilla(customName) : null);
     }
     // Paper end
 

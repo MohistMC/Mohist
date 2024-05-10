@@ -12,7 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.mohistmc.api.ItemAPI;
-import net.md_5.bungee.api.chat.BaseComponent;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -888,12 +888,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     // Paper start
     @Override
     public List<net.kyori.adventure.text.Component> lore() {
-        return this.lore != null ? io.papermc.paper.adventure.PaperAdventure.asAdventureFromJson(this.lore) : null;
+        return this.lore != null ? PaperAdventure.asAdventureFromJson(this.lore) : null;
     }
 
     @Override
     public void lore(final List<? extends net.kyori.adventure.text.Component> lore) {
-        this.lore = lore != null ? io.papermc.paper.adventure.PaperAdventure.asJson(lore) : null;
+        this.lore = lore != null ? PaperAdventure.asJson(lore) : null;
     }
 
     @Override

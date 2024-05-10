@@ -1,4 +1,4 @@
-package io.papermc.paper.attribute;
+package com.mohistmc.paper.attribute;
 
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import org.bukkit.attribute.Attributable;

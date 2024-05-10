@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
@@ -72,12 +73,12 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implem
     @Override
     public net.kyori.adventure.text.Component customName() {
         final BeaconBlockEntity be = this.getSnapshot();
-        return be.name != null ? io.papermc.paper.adventure.PaperAdventure.asAdventure(be.name) : null;
+        return be.name != null ? PaperAdventure.asAdventure(be.name) : null;
     }
 
     @Override
     public void customName(final net.kyori.adventure.text.Component customName) {
-        this.getSnapshot().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
+        this.getSnapshot().setCustomName(customName != null ? PaperAdventure.asVanilla(customName) : null);
     }
     // Paper end
 

@@ -1,4 +1,4 @@
-package io.papermc.paper.inventory;
+package com.mohistmc.paper.inventory;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;

@@ -1,4 +1,4 @@
-package io.papermc.paper.util;
+package com.mohistmc.paper.util;
 
 public final class IntegerUtil {
 

@@ -1,4 +1,4 @@
-package io.papermc.paper.adventure;
+package com.mohistmc.paper.adventure;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;

@@ -1,4 +1,4 @@
-package io.papermc.paper.util;
+package com.mohistmc.paper.util;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

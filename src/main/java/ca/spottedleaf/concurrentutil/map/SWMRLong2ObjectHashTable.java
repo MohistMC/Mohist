@@ -3,7 +3,7 @@ package ca.spottedleaf.concurrentutil.map;
 import ca.spottedleaf.concurrentutil.util.ArrayUtil;
 import ca.spottedleaf.concurrentutil.util.ConcurrentUtil;
 import ca.spottedleaf.concurrentutil.util.Validate;
-import io.papermc.paper.util.IntegerUtil;
+import com.mohistmc.paper.util.IntegerUtil;
 import java.lang.invoke.VarHandle;
 import java.util.Arrays;
 import java.util.function.Consumer;

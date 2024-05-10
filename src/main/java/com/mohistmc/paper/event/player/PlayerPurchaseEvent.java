@@ -1,4 +1,4 @@
-package io.papermc.paper.event.player;
+package com.mohistmc.paper.event.player;
 
 import java.util.Objects;
 import org.bukkit.entity.Player;

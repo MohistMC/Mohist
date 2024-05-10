@@ -1,4 +1,4 @@
-package io.papermc.paper.adventure;
+package com.mohistmc.paper.adventure;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.util.AttributeKey;

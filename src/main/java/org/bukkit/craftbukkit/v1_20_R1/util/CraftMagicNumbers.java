@@ -11,6 +11,8 @@ import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.paper.attribute.UnmodifiableAttributeMap;
+import com.mohistmc.paper.inventory.ItemRarity;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.SharedConstants;
@@ -481,17 +483,17 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     @Override
-    public io.papermc.paper.inventory.ItemRarity getItemRarity(org.bukkit.Material material) {
+    public ItemRarity getItemRarity(org.bukkit.Material material) {
         Item item = getItem(material);
         if (item == null) {
             throw new IllegalArgumentException(material + " is not an item, and rarity does not apply to blocks");
         }
-        return io.papermc.paper.inventory.ItemRarity.values()[item.rarity.ordinal()];
+        return ItemRarity.values()[item.rarity.ordinal()];
     }
 
     @Override
-    public io.papermc.paper.inventory.ItemRarity getItemStackRarity(org.bukkit.inventory.ItemStack itemStack) {
-        return io.papermc.paper.inventory.ItemRarity.values()[getItem(itemStack.getType()).getRarity(CraftItemStack.asNMSCopy(itemStack)).ordinal()];
+    public ItemRarity getItemStackRarity(org.bukkit.inventory.ItemStack itemStack) {
+        return ItemRarity.values()[getItem(itemStack.getType()).getRarity(CraftItemStack.asNMSCopy(itemStack)).ordinal()];
     }
 
     @Override
@@ -529,7 +531,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public org.bukkit.attribute.Attributable getDefaultEntityAttributes(NamespacedKey bukkitEntityKey) {
         Preconditions.checkArgument(hasDefaultEntityAttributes(bukkitEntityKey), bukkitEntityKey + " doesn't have default attributes");
         var supplier = net.minecraft.world.entity.ai.attributes.DefaultAttributes.getSupplier((net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.LivingEntity>) net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(bukkitEntityKey)));
-        return new io.papermc.paper.attribute.UnmodifiableAttributeMap(supplier);
+        return new UnmodifiableAttributeMap(supplier);
     }
 
     @Override

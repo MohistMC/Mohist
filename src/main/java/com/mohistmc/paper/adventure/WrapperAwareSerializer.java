@@ -1,4 +1,4 @@
-package io.papermc.paper.adventure;
+package com.mohistmc.paper.adventure;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;

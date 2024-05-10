@@ -2,6 +2,7 @@ package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.paper.inventory.ItemRarity;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -897,7 +898,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * @return the itemstack rarity
      */
     @NotNull
-    public io.papermc.paper.inventory.ItemRarity getRarity() {
+    public ItemRarity getRarity() {
         return Bukkit.getUnsafe().getItemStackRarity(this);
     }
 

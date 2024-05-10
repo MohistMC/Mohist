@@ -4,7 +4,7 @@ import ca.spottedleaf.concurrentutil.util.ArrayUtil;
 import ca.spottedleaf.concurrentutil.util.CollectionUtil;
 import ca.spottedleaf.concurrentutil.util.ConcurrentUtil;
 import ca.spottedleaf.concurrentutil.util.Validate;
-import io.papermc.paper.util.IntegerUtil;
+import com.mohistmc.paper.util.IntegerUtil;
 import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.Arrays;

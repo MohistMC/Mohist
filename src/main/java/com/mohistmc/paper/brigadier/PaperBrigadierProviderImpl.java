@@ -1,7 +1,7 @@
 package com.mohistmc.paper.brigadier;
 
 import com.mojang.brigadier.Message;
-import io.papermc.paper.adventure.PaperAdventure;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.minecraft.network.chat.ComponentUtils;

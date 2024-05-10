@@ -1,4 +1,4 @@
-package io.papermc.paper.util;
+package com.mohistmc.paper.util;
 
 import java.util.AbstractList;
 import java.util.Iterator;

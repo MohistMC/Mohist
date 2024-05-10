@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.collect.Multimap;
+import com.mohistmc.paper.inventory.ItemRarity;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -136,7 +137,7 @@ public interface UnsafeValues {
      * @param material the material to get the rarity of
      * @return the item rarity
      */
-    public io.papermc.paper.inventory.ItemRarity getItemRarity(Material material);
+    public ItemRarity getItemRarity(Material material);
 
     /**
      * Gets the item rarity of the itemstack. The rarity can change based on enchantements.
@@ -144,7 +145,7 @@ public interface UnsafeValues {
      * @param itemStack the itemstack to get the rarity of
      * @return the itemstack rarity
      */
-    public io.papermc.paper.inventory.ItemRarity getItemStackRarity(ItemStack itemStack);
+    public ItemRarity getItemStackRarity(ItemStack itemStack);
 
     /**
      * Checks if an itemstack can be repaired with another itemstack.
