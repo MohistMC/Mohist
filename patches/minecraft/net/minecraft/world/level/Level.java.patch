@@ -72,6 +72,15 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
+@@ -82,7 +_,7 @@
+    public static final int f_151509_ = 24000;
+    public static final int f_151510_ = 20000000;
+    public static final int f_151511_ = -20000000;
+-   protected final List<TickingBlockEntity> f_151512_ = Lists.newArrayList();
++   protected final List<TickingBlockEntity> f_151512_ = Lists.newArrayList(); public final int getTotalTileEntityTickers() { return this.f_151512_.size(); } // Paper
+    protected final NeighborUpdater f_220350_;
+    private final List<TickingBlockEntity> f_151503_ = Lists.newArrayList();
+    private boolean f_151504_;
 @@ -101,19 +_,64 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;

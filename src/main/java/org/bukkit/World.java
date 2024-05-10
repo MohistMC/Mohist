@@ -48,6 +48,23 @@ import java.util.function.Predicate;
  */
 public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, Keyed {
 
+    // Paper start
+    /**
+     * @return The amount of Entities in this world
+     */
+    int getEntityCount();
+
+    /**
+     * @return The amount of Tickable Tile Entities in this world
+     */
+    int getTickableTileEntityCount();
+
+    /**
+     * @return The amount of Players in this world
+     */
+    int getPlayerCount();
+    // Paper end
+
     /**
      * Gets the {@link Block} at the given coordinates
      *

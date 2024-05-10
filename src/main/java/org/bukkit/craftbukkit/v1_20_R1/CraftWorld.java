@@ -152,6 +152,27 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     private static final Random rand = new Random();
 
+    // Paper start - Provide fast information methods
+    @Override
+    public int getEntityCount() {
+        int ret = 0;
+        for (net.minecraft.world.entity.Entity entity : world.getEntities().getAll()) {
+            if (entity.isChunkLoaded()) {
+                ++ret;
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public int getTickableTileEntityCount() {
+        return world.getTotalTileEntityTickers();
+    }
+    @Override
+    public int getPlayerCount() {
+        return world.players().size();
+    }
+
     public CraftWorld(ServerLevel world, ChunkGenerator gen, BiomeProvider biomeProvider,  Environment env) {
         this.world = world;
         this.generator = gen;
