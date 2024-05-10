@@ -12,15 +12,36 @@
  
  public class CampfireBlockEntity extends BlockEntity implements Clearable {
     private static final int f_155298_ = 2;
-@@ -51,6 +_,20 @@
+@@ -37,6 +_,12 @@
+       super(BlockEntityType.f_58911_, p_155301_, p_155302_);
+    }
+ 
++   // Mohist start - Fix pmmo mixin
++   public static CraftItemStack source;
++   public static org.bukkit.inventory.ItemStack result;
++   public static BlockCookEvent blockCookEvent;
++   // Mohist end
++
+    public static void m_155306_(Level p_155307_, BlockPos p_155308_, BlockState p_155309_, CampfireBlockEntity p_155310_) {
+       boolean flag = false;
+ 
+@@ -44,13 +_,27 @@
+          ItemStack itemstack = p_155310_.f_59042_.get(i);
+          if (!itemstack.m_41619_()) {
+             flag = true;
+-            int j = p_155310_.f_59043_[i]++;
++            // int j = pBlockEntity.cookingProgress[i]++; // Mohist not use
+             if (p_155310_.f_59043_[i] >= p_155310_.f_59044_[i]) {
+                Container container = new SimpleContainer(itemstack);
+                ItemStack itemstack1 = p_155310_.f_222760_.m_213657_(container, p_155307_).map((p_270054_) -> {
                    return p_270054_.m_5874_(container, p_155307_.m_9598_());
                 }).orElse(itemstack);
                 if (itemstack1.m_246617_(p_155307_.m_246046_())) {
 +                  // CraftBukkit start - fire BlockCookEvent
-+                  CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
-+                  org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++                  source = CraftItemStack.asCraftMirror(itemstack);
++                  result = CraftItemStack.asBukkitCopy(itemstack1);
 +
-+                  BlockCookEvent blockCookEvent = new BlockCookEvent(CraftBlock.at(p_155307_, p_155308_), source, result);
++                  blockCookEvent = new BlockCookEvent(CraftBlock.at(p_155307_, p_155308_), source, result);
 +                  p_155307_.getCraftServer().getPluginManager().callEvent(blockCookEvent);
 +
 +                  if (blockCookEvent.isCancelled()) {
