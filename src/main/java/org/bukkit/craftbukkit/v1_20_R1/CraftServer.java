@@ -1043,7 +1043,7 @@ public final class CraftServer implements Server {
 
         LevelStorageSource.LevelStorageAccess worldSession;
         try {
-            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).validateAndCreateAccess(name);
+            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).validateAndCreateAccess(name, actualDimension);
         } catch (IOException | ContentValidationException ex) {
             throw new RuntimeException(ex);
         }
