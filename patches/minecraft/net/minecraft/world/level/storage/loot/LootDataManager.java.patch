@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
+@@ -7,7 +_,9 @@
+ import com.mojang.logging.LogUtils;
+ import java.util.Collection;
+ import java.util.HashMap;
++import java.util.HashSet;
+ import java.util.Map;
++import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+ import java.util.function.BiFunction;
 @@ -33,6 +_,7 @@
     public static final LootDataId<LootTable> f_278474_ = new LootDataId<>(LootDataType.f_278413_, BuiltInLootTables.f_78712_);
     private Map<LootDataId<?>, ?> f_278415_ = Map.of();
@@ -17,13 +27,21 @@
                 map.put(p_279416_, p_279295_);
              });
           });
-@@ -90,6 +_,11 @@
+@@ -90,6 +_,19 @@
        });
        this.f_278415_ = map;
        this.f_278404_ = builder1.build();
 +      // CraftBukkit start - build a reversed registry map
 +      ImmutableMap.Builder<Object, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
-+      this.f_278415_.forEach((key, lootTable) -> lootTableToKeyBuilder.put(lootTable, key.f_278500_()));
++      // Mohist start
++      Set<Object> processedKeys = new HashSet<>();
++      this.f_278415_.forEach((key, lootTable) -> {
++         if (!processedKeys.contains(lootTable)) {
++            lootTableToKeyBuilder.put((Object) lootTable, key.f_278500_());
++            processedKeys.add(lootTable);
++         }
++      });
++      // Mohist end
 +      this.lootTableToKey = lootTableToKeyBuilder.build();
 +      // CraftBukkit end
     }
