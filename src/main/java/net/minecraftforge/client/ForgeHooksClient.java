@@ -12,6 +12,7 @@ import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Constants;
@@ -511,7 +512,7 @@ public class ForgeHooksClient
     public static void fillNormal(int[] faceData, Direction facing, boolean calculateNormals)
     {
         Vector3f v2;
-        if (calculateNormals || ForgeConfig.CLIENT.calculateAllNormals.get()) {
+        if (calculateNormals || ForgeConfig.CLIENT.calculateAllNormals()) {
             Vector3f v1 = getVertexPos(faceData, 3);
             Vector3f t1 = getVertexPos(faceData, 1);
             v2 = getVertexPos(faceData, 2);

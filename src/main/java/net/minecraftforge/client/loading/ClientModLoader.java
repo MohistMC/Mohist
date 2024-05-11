@@ -119,12 +119,7 @@ public class ClientModLoader
     public static boolean completeModLoading()
     {
         var warnings = ModLoader.get().getWarnings();
-        boolean showWarnings = true;
-        try {
-            showWarnings = ForgeConfig.CLIENT.showLoadWarnings.get();
-        } catch (NullPointerException | IllegalStateException e) {
-            // We're in an early error state, config is not available. Assume true.
-        }
+        boolean showWarnings = ForgeConfig.CLIENT.showLoadWarnings();
         if (!showWarnings) {
             //User disabled warning screen, as least log them
             if (!warnings.isEmpty()) {
