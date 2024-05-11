@@ -38,52 +38,7 @@
        for(int i = 0; i < 3; ++i) {
           for(int j = 0; j < 9; ++j) {
              this.m_38897_(new Slot(p_40037_, j + i * 9 + 9, 108 + j * 18, 84 + i * 18));
-@@ -109,12 +_,13 @@
-          ItemStack itemstack1 = slot.m_7993_();
-          itemstack = itemstack1.m_41777_();
-          if (p_40054_ == 2) {
-+            this.isCheck(true); // Mohist - paper api
-             if (!this.m_38903_(itemstack1, 3, 39, true)) {
-                return ItemStack.f_41583_;
-             }
- 
--            slot.m_40234_(itemstack1, itemstack);
--            this.m_40077_();
-+            // slot.onQuickCraft(itemstack1, itemstack); // Paper - moved to after the non-check moveItemStackTo call
-+            // this.playTradeSound();
-          } else if (p_40054_ != 0 && p_40054_ != 1) {
-             if (p_40054_ >= 3 && p_40054_ < 30) {
-                if (!this.m_38903_(itemstack1, 30, 39, false)) {
-@@ -127,6 +_,7 @@
-             return ItemStack.f_41583_;
-          }
- 
-+         if (p_40054_ != 2) { // Paper - moved down for slot 2
-          if (itemstack1.m_41619_()) {
-             slot.m_269060_(ItemStack.f_41583_);
-          } else {
-@@ -138,13 +_,28 @@
-          }
- 
-          slot.m_142406_(p_40053_, itemstack1);
-+         } // Paper start - handle slot 2
-+         if (p_40054_ == 2) { // is merchant result slot
-+            slot.m_142406_(p_40053_, itemstack1);
-+            if (itemstack1.m_41619_()) {
-+               slot.m_5852_(ItemStack.f_41583_);
-+               return ItemStack.f_41583_;
-+            }
-+
-+            this.moveItemStackTo(itemstack1, 3, 39, true, false); // This should always succeed because it's checked above
-+
-+            slot.m_40234_(itemstack1, itemstack);
-+            this.m_40077_();
-+            slot.m_5852_(ItemStack.f_41583_); // itemstack1 should ALWAYS be empty
-+         }
-+         // Paper end
-       }
- 
-       return itemstack;
+@@ -144,7 +_,7 @@
     }
  
     private void m_40077_() {
