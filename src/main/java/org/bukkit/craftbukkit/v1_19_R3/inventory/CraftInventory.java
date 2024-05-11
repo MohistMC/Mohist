@@ -501,7 +501,7 @@ public class CraftInventory implements Inventory {
             return InventoryType.STONECUTTER;
         } else if (inventory instanceof ComposterBlock.EmptyContainer || inventory instanceof ComposterBlock.InputContainer || inventory instanceof ComposterBlock.OutputContainer) {
             return InventoryType.COMPOSTER;
-        } else if (inventory instanceof JukeboxBlock) {
+        } else if (inventory instanceof JukeboxBlockEntity) {
             return InventoryType.JUKEBOX;
         } else if (this instanceof CraftInventorySmithingNew) {
             return InventoryType.SMITHING_NEW;
