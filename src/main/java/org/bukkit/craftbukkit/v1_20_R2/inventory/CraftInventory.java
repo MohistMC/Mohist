@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.DropperBlockEntity;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.entity.SmokerBlockEntity;
@@ -501,7 +502,7 @@ public class CraftInventory implements Inventory {
             return InventoryType.STONECUTTER;
         } else if (inventory instanceof ComposterBlock.EmptyContainer || inventory instanceof ComposterBlock.InputContainer || inventory instanceof ComposterBlock.OutputContainer) {
             return InventoryType.COMPOSTER;
-        } else if (inventory instanceof JukeboxBlock) {
+        } else if (inventory instanceof JukeboxBlockEntity) {
             return InventoryType.JUKEBOX;
         } else {
             return InventoryType.CHEST;
