@@ -782,5 +782,5 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      * @param slot the slot of the stack to damage
      * @param amount the amount of damage to do
      */
-    void damageItemStack(org.bukkit.inventory.@NotNull EquipmentSlot slot, int amount);
+    void damageItemStack(@NotNull org.bukkit.inventory.EquipmentSlot slot, int amount);
 }

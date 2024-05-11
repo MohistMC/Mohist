@@ -637,7 +637,8 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      *
      * @return display name of the {@link ItemStack}
      */
-    public net.kyori.adventure.text.@NotNull Component displayName() {
+    @NotNull
+    public net.kyori.adventure.text.Component displayName() {
         return Bukkit.getServer().getItemFactory().displayName(this);
     }
 

@@ -14,12 +14,12 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.util.FormattedCharSequence;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class AdventureComponent implements net.minecraft.network.chat.Component {
     final Component adventure;
-    private net.minecraft.network.chat.@MonotonicNonNull Component vanilla;
+
+    private net.minecraft.network.chat.Component vanilla;
 
     public AdventureComponent(final Component adventure) {
         this.adventure = adventure;
@@ -34,7 +34,8 @@ public final class AdventureComponent implements net.minecraft.network.chat.Comp
         return vanilla;
     }
 
-    public net.minecraft.network.chat.@Nullable Component deepConvertedIfPresent() {
+    @Nullable
+    public net.minecraft.network.chat.Component deepConvertedIfPresent() {
         return this.vanilla;
     }
 

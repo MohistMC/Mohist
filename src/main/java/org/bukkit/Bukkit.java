@@ -1432,7 +1432,7 @@ public final class Bukkit {
      * @throws IllegalArgumentException if the size is not a multiple of 9
      */
     @NotNull
-    public static Inventory createInventory(@Nullable InventoryHolder owner, int size, net.kyori.adventure.text.@NotNull Component title) throws IllegalArgumentException {
+    public static Inventory createInventory(@Nullable InventoryHolder owner, int size, @Nullable net.kyori.adventure.text.Component title) throws IllegalArgumentException {
         return server.createInventory(owner, size, title);
     }
     // Paper end

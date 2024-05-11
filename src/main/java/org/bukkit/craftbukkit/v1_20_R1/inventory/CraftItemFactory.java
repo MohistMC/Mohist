@@ -19,6 +19,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class CraftItemFactory implements ItemFactory {
     static final Color DEFAULT_LEATHER_COLOR = Color.fromRGB(0xA06540);
@@ -477,8 +479,9 @@ public final class CraftItemFactory implements ItemFactory {
         return net.kyori.adventure.text.event.HoverEvent.showItem(op.apply(net.kyori.adventure.text.event.HoverEvent.ShowItem.showItem(item.getType().getKey(), item.getAmount(), PaperAdventure.asBinaryTagHolder(tag))));
     }
 
+    @NotNull
     @Override
-    public net.kyori.adventure.text.@org.jetbrains.annotations.NotNull Component displayName(@org.jetbrains.annotations.NotNull ItemStack itemStack) {
+    public net.kyori.adventure.text. Component displayName(@Nullable ItemStack itemStack) {
         return PaperAdventure.asAdventure(CraftItemStack.asNMSCopy(itemStack).getDisplayName());
     }
     // Paper end - Adventure

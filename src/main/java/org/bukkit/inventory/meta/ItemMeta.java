@@ -41,14 +41,15 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @return the display name
      */
-    net.kyori.adventure.text.@Nullable Component displayName();
+    @Nullable
+    net.kyori.adventure.text.Component displayName();
 
     /**
      * Sets the display name.
      *
      * @param displayName the display name to set
      */
-    void displayName(final net.kyori.adventure.text.@Nullable Component displayName);
+    void displayName(final @Nullable net.kyori.adventure.text.Component displayName);
 
     /**
      * Gets the display name that is set.

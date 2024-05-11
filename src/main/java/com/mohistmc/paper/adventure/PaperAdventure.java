@@ -329,7 +329,7 @@ public final class PaperAdventure {
         };
     }
 
-    public static @Nullable SoundSource asVanillaNullable(final Sound.@Nullable Source source) {
+    public static @Nullable SoundSource asVanillaNullable(final @Nullable Sound.Source source) {
         if (source == null) {
             return null;
         }

@@ -15,7 +15,8 @@ public interface Nameable {
      *
      * @return the custom name
      */
-    net.kyori.adventure.text.@Nullable Component customName();
+    @Nullable
+    net.kyori.adventure.text.Component customName();
 
     /**
      * Sets the custom name.
@@ -28,7 +29,7 @@ public interface Nameable {
      *
      * @param customName the custom name to set
      */
-    void customName(final net.kyori.adventure.text.@Nullable Component customName);
+    void customName(final @Nullable net.kyori.adventure.text.Component customName);
     // Paper end
 
     /**

@@ -211,12 +211,12 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public WorldBorder.@NotNull Settings getWorldBorder() {
+    public @NotNull WorldBorder.Settings getWorldBorder() {
         return derivedWorldInfo.getWorldBorder();
     }
 
     @Override
-    public void setWorldBorder(WorldBorder.@NotNull Settings serializer) {
+    public void setWorldBorder(@NotNull WorldBorder.Settings serializer) {
         derivedWorldInfo.setWorldBorder(serializer);
     }
 
