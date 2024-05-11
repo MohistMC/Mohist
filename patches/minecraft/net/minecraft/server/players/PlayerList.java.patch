@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -8,21 +_,27 @@
+@@ -8,21 +_,26 @@
  import com.mojang.serialization.Dynamic;
  import io.netty.buffer.Unpooled;
  import java.io.File;
@@ -11,7 +11,6 @@
  import java.text.SimpleDateFormat;
 -import java.time.Instant;
  import java.util.EnumSet;
-+import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
@@ -42,14 +41,6 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -85,6 +_,7 @@
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
-+import net.minecraft.world.entity.Mob;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.flag.FeatureFlags;
- import net.minecraft.world.level.GameRules;
 @@ -102,6 +_,19 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;

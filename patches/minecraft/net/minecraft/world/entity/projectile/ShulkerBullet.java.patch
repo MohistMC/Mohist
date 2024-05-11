@@ -28,15 +28,14 @@
              this.m_6532_(hitresult);
           }
        }
-@@ -273,7 +_,7 @@
+@@ -273,6 +_,7 @@
           this.m_19970_(livingentity, entity);
           if (entity instanceof LivingEntity) {
              LivingEntity livingentity1 = (LivingEntity)entity;
--            livingentity1.m_147207_(new MobEffectInstance(MobEffects.f_19620_, 200), MoreObjects.firstNonNull(entity1, this));
-+            livingentity1.addEffect(new MobEffectInstance(MobEffects.f_19620_, 200), MoreObjects.firstNonNull(entity1, this), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++            livingentity1.pushEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+             livingentity1.m_147207_(new MobEffectInstance(MobEffects.f_19620_, 200), MoreObjects.firstNonNull(entity1, this));
           }
        }
- 
 @@ -300,6 +_,11 @@
     }
  
