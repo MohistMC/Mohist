@@ -3,7 +3,7 @@ package org.bukkit.plugin.java;
 import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.PluginsLibrarySource;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
-import com.mohistmc.tools.ConnectionUtil;
+import com.mohistmc.util.ConnectionUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
