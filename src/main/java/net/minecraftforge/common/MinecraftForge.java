@@ -47,8 +47,8 @@ public class MinecraftForge
     */
    public static void initialize()
    {
-       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", MohistMC.versionInfo.forge());
-       LOGGER.info(FORGE,"NeoForge v{} Initialized", ForgeVersion.getVersion());
+       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
+       LOGGER.info(FORGE,"NeoForge v{} Initialized", MohistMC.versionInfo.neoforge());
 
        UsernameCache.load();
        TierSortingRegistry.init();
