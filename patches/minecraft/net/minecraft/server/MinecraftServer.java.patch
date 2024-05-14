@@ -333,18 +333,6 @@
     }
  
     public GameType m_130008_() {
-@@ -504,11 +_,6 @@
-          flag = true;
-       }
- 
--      ServerLevel serverlevel2 = this.m_129783_();
--      ServerLevelData serverleveldata = this.f_129749_.m_5996_();
--      serverleveldata.m_7831_(serverlevel2.m_6857_().m_61970_());
--      this.f_129749_.m_5917_(this.m_129901_().m_136307_());
--      this.f_129744_.m_78290_(this.m_206579_(), this.f_129749_, this.m_6846_().m_6960_());
-       if (p_129887_) {
-          for(ServerLevel serverlevel1 : this.m_129785_()) {
-             f_129750_.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)serverlevel1.m_7726_().f_8325_.m_182285_());
 @@ -537,12 +_,34 @@
        this.m_7041_();
     }

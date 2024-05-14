@@ -385,15 +385,17 @@
           if (p_8644_ != null) {
              p_8644_.m_6309_(Component.m_237115_("menu.savingLevel"));
           }
-@@ -735,13 +_,19 @@
-          } else {
+@@ -736,12 +_,21 @@
              this.f_143244_.m_157554_();
           }
-+         ServerLevel worldserver1 = this;
  
-+         this.K.m_7831_(worldserver1.m_6857_().m_61970_());
-+         this.K.m_5917_(this.f_8548_.m_129901_().m_136307_());
-+         this.convertable.m_78290_(this.f_8548_.m_206579_(), this.K, this.f_8548_.m_6846_().m_6960_());
++         // CraftBukkit start
++         ServerLevel worldserver1 = this;
++         if (worldserver1 != this.f_8548_.m_129783_()) {
++            this.K.m_7831_(worldserver1.m_6857_().m_61970_());
++            this.K.m_5917_(this.f_8548_.m_129901_().m_136307_());
++            this.convertable.m_78290_(this.f_8548_.m_206579_(), this.K, this.f_8548_.m_6846_().m_6960_());
++         }
 +         // CraftBukkit end
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
