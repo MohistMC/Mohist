@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/SmallDripleafBlock.java
++++ b/net/minecraft/world/level/block/SmallDripleafBlock.java
+@@ -93,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected BlockState updateShape(
++    public BlockState updateShape(
+         BlockState p_154625_, Direction p_154626_, BlockState p_154627_, LevelAccessor p_154628_, BlockPos p_154629_, BlockPos p_154630_
+     ) {
+         if (p_154625_.getValue(WATERLOGGED)) {

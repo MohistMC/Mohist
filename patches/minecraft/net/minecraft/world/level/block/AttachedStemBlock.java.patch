@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/AttachedStemBlock.java
++++ b/net/minecraft/world/level/block/AttachedStemBlock.java
+@@ -71,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected BlockState updateShape(BlockState p_48848_, Direction p_48849_, BlockState p_48850_, LevelAccessor p_48851_, BlockPos p_48852_, BlockPos p_48853_) {
++    public BlockState updateShape(BlockState p_48848_, Direction p_48849_, BlockState p_48850_, LevelAccessor p_48851_, BlockPos p_48852_, BlockPos p_48853_) {
+         if (!p_48850_.is(this.fruit) && p_48849_ == p_48848_.getValue(FACING)) {
+             Optional<Block> optional = p_48851_.registryAccess().registryOrThrow(Registries.BLOCK).getOptional(this.stem);
+             if (optional.isPresent()) {

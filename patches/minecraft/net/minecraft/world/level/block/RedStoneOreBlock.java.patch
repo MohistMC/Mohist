@@ -47,6 +47,15 @@
  
      @Override
      protected ItemInteractionResult useItemOn(
+@@ -58,7 +_,7 @@
+         if (p_334994_.isClientSide) {
+             spawnParticles(p_334994_, p_336118_);
+         } else {
+-            interact(p_328847_, p_334994_, p_336118_);
++            interact(p_328847_, p_334994_, p_336118_, p_329891_);
+         }
+ 
+         return p_331692_.getItem() instanceof BlockItem && new BlockPlaceContext(p_329891_, p_331867_, p_331692_, p_329149_).canPlace()
 @@ -66,12 +_,18 @@
              : ItemInteractionResult.SUCCESS;
      }
@@ -72,7 +81,7 @@
  
      @Override
      protected boolean isRandomlyTicking(BlockState p_55486_) {
-@@ -81,20 +_,38 @@
+@@ -81,20 +_,26 @@
      @Override
      protected void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
          if (p_221918_.getValue(LIT)) {
@@ -100,18 +109,6 @@
      }
  
 -    @Override
-+   // CraftBukkit start - Delegated to getExpDrop
-+   @Override
-+   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
-+      if (flag && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, itemstack) == 0) {
-+         int i = 1 + worldserver.random.nextInt(5);
-+         return i;
-+      }
-+
-+      return 0;
-+   }
-+   // CraftBukkit end
-+
 +	@Override
      public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
          if (p_221913_.getValue(LIT)) {

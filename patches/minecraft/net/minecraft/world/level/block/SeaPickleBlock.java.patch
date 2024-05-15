@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/SeaPickleBlock.java
++++ b/net/minecraft/world/level/block/SeaPickleBlock.java
+@@ -73,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected BlockState updateShape(BlockState p_56113_, Direction p_56114_, BlockState p_56115_, LevelAccessor p_56116_, BlockPos p_56117_, BlockPos p_56118_) {
++    public BlockState updateShape(BlockState p_56113_, Direction p_56114_, BlockState p_56115_, LevelAccessor p_56116_, BlockPos p_56117_, BlockPos p_56118_) {
+         if (!p_56113_.canSurvive(p_56116_, p_56117_)) {
+             return Blocks.AIR.defaultBlockState();
+         } else {

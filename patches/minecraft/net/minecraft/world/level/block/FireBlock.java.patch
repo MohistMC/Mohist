@@ -200,17 +200,17 @@
 +            boolean flag1 = p_221161_.getBiome(p_221162_).is(BiomeTags.INCREASED_FIRE_BURNOUT);
 +            int k = flag1 ? -50 : 0;
 +            sourceposition.set(p_221162_);
-+            this.tryCatchFire(p_221161_, p_221162_.east(), 300 + k, p_221163_, i, Direction.WEST);
++            this.checkBurnOut(p_221161_, p_221162_.east(), 300 + k, p_221163_, i, Direction.WEST);
 +            sourceposition.set(p_221162_);
-+            this.tryCatchFire(p_221161_, p_221162_.west(), 300 + k, p_221163_, i, Direction.EAST);
++            this.checkBurnOut(p_221161_, p_221162_.west(), 300 + k, p_221163_, i, Direction.EAST);
 +            sourceposition.set(p_221162_);
-+            this.tryCatchFire(p_221161_, p_221162_.below(), 250 + k, p_221163_, i, Direction.UP);
++            this.checkBurnOut(p_221161_, p_221162_.below(), 250 + k, p_221163_, i, Direction.UP);
 +            sourceposition.set(p_221162_);
-+            this.tryCatchFire(p_221161_, p_221162_.above(), 250 + k, p_221163_, i, Direction.DOWN);
++            this.checkBurnOut(p_221161_, p_221162_.above(), 250 + k, p_221163_, i, Direction.DOWN);
 +            sourceposition.set(p_221162_);
-+            this.tryCatchFire(p_221161_, p_221162_.north(), 300 + k, p_221163_, i, Direction.SOUTH);
++            this.checkBurnOut(p_221161_, p_221162_.north(), 300 + k, p_221163_, i, Direction.SOUTH);
 +            sourceposition.set(p_221162_);
-+            this.tryCatchFire(p_221161_, p_221162_.south(), 300 + k, p_221163_, i, Direction.NORTH);
++            this.checkBurnOut(p_221161_, p_221162_.south(), 300 + k, p_221163_, i, Direction.NORTH);
 +            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 +
 +            for(int l = -1; l <= 1; ++l) {
@@ -301,7 +301,7 @@
                  return true;
              }
          }
-@@ -291,13 +_,14 @@
+@@ -291,20 +_,21 @@
  
              for (Direction direction : Direction.values()) {
                  BlockState blockstate = p_221157_.getBlockState(p_221158_.relative(direction));
@@ -317,6 +317,14 @@
      @Override
      protected boolean canBurn(BlockState p_53489_) {
          return this.getIgniteOdds(p_53489_) > 0;
+     }
+ 
+     @Override
+-    protected void onPlace(BlockState p_53479_, Level p_53480_, BlockPos p_53481_, BlockState p_53482_, boolean p_53483_) {
++    public void onPlace(BlockState p_53479_, Level p_53480_, BlockPos p_53481_, BlockState p_53482_, boolean p_53483_) {
+         super.onPlace(p_53479_, p_53480_, p_53481_, p_53482_, p_53483_);
+         p_53480_.scheduleTick(p_53481_, this, getFireTickDelay(p_53480_.random));
+     }
 @@ -319,8 +_,21 @@
      }
  

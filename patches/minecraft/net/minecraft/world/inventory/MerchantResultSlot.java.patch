@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/inventory/MerchantResultSlot.java
 +++ b/net/minecraft/world/inventory/MerchantResultSlot.java
-@@ -7,59 +_,74 @@
+@@ -5,61 +_,78 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.trading.Merchant;
  import net.minecraft.world.item.trading.MerchantOffer;
++import org.bukkit.Bukkit;
  
  public class MerchantResultSlot extends Slot {
 -    private final MerchantContainer slots;
@@ -100,7 +103,8 @@
 +            event = new io.papermc.paper.event.player.PlayerPurchaseEvent(serverPlayer.getBukkitEntity(), merchantoffer.asBukkit(), false, true);
 +         }
 +         if (event != null) {
-+            if (!event.callEvent()) {
++            Bukkit.getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
 +               p_150632_.setCount(0);
 +               event.getPlayer().updateInventory();
 +               return;

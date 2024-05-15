@@ -105,7 +105,12 @@
      protected void tick(BlockState p_221015_, ServerLevel p_221016_, BlockPos p_221017_, RandomSource p_221018_) {
          if (p_221015_.getValue(LEVEL) == 7) {
              p_221016_.setBlock(p_221017_, p_221015_.cycle(LEVEL), 3);
-@@ -346,9 +_,10 @@
+@@ -342,13 +_,14 @@
+         if (i == 8) {
+             return new ComposterBlock.OutputContainer(p_51956_, p_51957_, p_51958_, new ItemStack(Items.BONE_MEAL));
+         } else {
+-            return (WorldlyContainer)(i < 7 ? new ComposterBlock.InputContainer(p_51956_, p_51957_, p_51958_) : new ComposterBlock.EmptyContainer());
++            return (WorldlyContainer)(i < 7 ? new ComposterBlock.InputContainer(p_51956_, p_51957_, p_51958_) : new ComposterBlock.EmptyContainer(p_51957_, p_51958_));
          }
      }
  

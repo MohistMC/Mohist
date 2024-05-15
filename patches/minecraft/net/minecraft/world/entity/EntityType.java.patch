@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
+@@ -5,6 +_,7 @@
+ import java.util.List;
+ import java.util.Optional;
+ import java.util.Spliterator;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Consumer;
+ import java.util.function.Function;
+ import java.util.stream.Stream;
+@@ -168,6 +_,8 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+ import org.slf4j.Logger;
+ 
+ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T> {
 @@ -740,6 +_,11 @@
      private final float spawnDimensionsScale;
      private final FeatureFlagSet requiredFeatures;
@@ -44,6 +61,27 @@
      }
  
      @Nullable
+@@ -820,6 +_,12 @@
+         return !customdata.isEmpty() ? p_263579_.andThen(p_326771_ -> updateCustomEntityTag(p_263571_, p_263574_, p_326771_, customdata)) : p_263579_;
+     }
+ 
++    // Mohist start
++    public AtomicReference<SpawnReason> mohist$spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
++
++    public void spawnReason(SpawnReason spawnReason) {
++        mohist$spawnReason.set(spawnReason);
++    }
+     @Nullable
+     public T spawn(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_) {
+         return this.spawn(p_262634_, null, p_262707_, p_262597_, false, false);
+@@ -829,6 +_,7 @@
+     public T spawn(ServerLevel p_262704_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
+         T t = this.create(p_262704_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
+         if (t != null) {
++            t.spawnReason(mohist$spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT));
+             p_262704_.addFreshEntityWithPassengers(t);
+         }
+ 
 @@ -1054,14 +_,26 @@
      }
  

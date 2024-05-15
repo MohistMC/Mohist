@@ -13,7 +13,7 @@
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
  import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-@@ -12,68 +_,142 @@
+@@ -12,17 +_,27 @@
  import net.minecraft.server.MinecraftServer;
  
  public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
@@ -28,34 +28,43 @@
 -
 -    @Override
 -    public void handleIntention(ClientIntentionPacket p_9975_) {
--        switch (p_9975_.intention()) {
--            case LOGIN:
--                this.beginLogin(p_9975_, false);
--                break;
--            case STATUS:
--                ServerStatus serverstatus = this.server.getStatus();
--                this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
--                if (this.server.repliesToStatus() && serverstatus != null) {
++   private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
++   private final MinecraftServer server;
++   private final Connection connection;
++   // CraftBukkit start - add fields
++   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++   private static int throttleCounter = 0;
++   // CraftBukkit end
++   // Spigot start
++   private static final com.google.gson.Gson gson = new com.google.gson.Gson();
++   static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
++   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
++   // Spigot end
++
++   public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
++      this.server = p_9969_;
++      this.connection = p_9970_;
++   }
++
++   public void handleIntention(ClientIntentionPacket p_9975_) {
++      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
++      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
+         switch (p_9975_.intention()) {
+             case LOGIN:
+                 this.beginLogin(p_9975_, false);
+@@ -31,7 +_,7 @@
+                 ServerStatus serverstatus = this.server.getStatus();
+                 this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
+                 if (this.server.repliesToStatus() && serverstatus != null) {
 -                    this.connection.setupInboundProtocol(StatusProtocols.SERVERBOUND, new ServerStatusPacketListenerImpl(serverstatus, this.connection));
--                } else {
--                    this.connection.disconnect(IGNORE_STATUS_REASON);
--                }
--                break;
--            case TRANSFER:
--                if (!this.server.acceptsTransfers()) {
--                    this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
--                    Component component = Component.translatable("multiplayer.disconnect.transfers_disabled");
--                    this.connection.send(new ClientboundLoginDisconnectPacket(component));
--                    this.connection.disconnect(component);
--                } else {
--                    this.beginLogin(p_9975_, true);
--                }
--                break;
--            default:
--                throw new UnsupportedOperationException("Invalid intention " + p_9975_.intention());
--        }
--    }
--
++                    this.connection.setupInboundProtocol(StatusProtocols.SERVERBOUND, new ServerStatusPacketListenerImpl(serverstatus, this.connection, this.server.getStatusJson()));
+                 } else {
+                     this.connection.disconnect(IGNORE_STATUS_REASON);
+                 }
+@@ -51,29 +_,90 @@
+         }
+     }
+ 
 -    private void beginLogin(ClientIntentionPacket p_330592_, boolean p_332714_) {
 -        this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
 -        if (p_330592_.protocolVersion() != SharedConstants.getCurrentVersion().getProtocolVersion()) {
@@ -81,58 +90,6 @@
 -    public boolean isAcceptingMessages() {
 -        return this.connection.isConnected();
 -    }
-+   private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
-+   private final MinecraftServer server;
-+   private final Connection connection;
-+   // CraftBukkit start - add fields
-+   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
-+   private static int throttleCounter = 0;
-+   // CraftBukkit end
-+   // Spigot start
-+   private static final com.google.gson.Gson gson = new com.google.gson.Gson();
-+   static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
-+   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
-+   // Spigot end
-+
-+   public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
-+      this.server = p_9969_;
-+      this.connection = p_9970_;
-+   }
-+
-+   public void handleIntention(ClientIntentionPacket p_9975_) {
-+      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
-+      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
-+      switch (p_9975_.intention()) {
-+         case LOGIN:
-+            this.beginLogin(p_9975_, false);
-+            break;
-+         case STATUS:
-+            ServerStatus serverping = this.server.getStatus();
-+
-+            this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
-+            if (this.server.repliesToStatus() && serverping != null) {
-+               this.connection.setupInboundProtocol(StatusProtocols.SERVERBOUND, new ServerStatusPacketListenerImpl(serverping, this.connection));
-+            } else {
-+               this.connection.disconnect(ServerHandshakePacketListenerImpl.IGNORE_STATUS_REASON);
-+            }
-+            break;
-+         case TRANSFER:
-+            if (!this.server.acceptsTransfers()) {
-+               this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
-+               MutableComponent ichatmutablecomponent = Component.translatable("multiplayer.disconnect.transfers_disabled");
-+
-+               this.connection.send(new ClientboundLoginDisconnectPacket(ichatmutablecomponent));
-+               this.connection.disconnect(ichatmutablecomponent);
-+            } else {
-+               this.beginLogin(p_9975_, true);
-+            }
-+            break;
-+         default:
-+            throw new UnsupportedOperationException("Invalid intention " + String.valueOf(p_9975_.intention()));
-+      }
-+
-+   }
-+
 +   private void beginLogin(ClientIntentionPacket packet, boolean transfer) {
 +      this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
 +      // CraftBukkit start - Connection throttle

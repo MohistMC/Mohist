@@ -9,3 +9,12 @@
      public static final MapCodec<SeagrassBlock> CODEC = simpleCodec(SeagrassBlock::new);
      protected static final float AABB_OFFSET = 6.0F;
      protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);
+@@ -54,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected BlockState updateShape(
++    public BlockState updateShape(
+         BlockState p_154530_, Direction p_154531_, BlockState p_154532_, LevelAccessor p_154533_, BlockPos p_154534_, BlockPos p_154535_
+     ) {
+         BlockState blockstate = super.updateShape(p_154530_, p_154531_, p_154532_, p_154533_, p_154534_, p_154535_);

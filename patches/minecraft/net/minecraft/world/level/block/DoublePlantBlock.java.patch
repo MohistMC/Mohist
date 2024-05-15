@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/DoublePlantBlock.java
 +++ b/net/minecraft/world/level/block/DoublePlantBlock.java
+@@ -36,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected BlockState updateShape(BlockState p_52894_, Direction p_52895_, BlockState p_52896_, LevelAccessor p_52897_, BlockPos p_52898_, BlockPos p_52899_) {
++    public BlockState updateShape(BlockState p_52894_, Direction p_52895_, BlockState p_52896_, LevelAccessor p_52897_, BlockPos p_52898_, BlockPos p_52899_) {
+         DoubleBlockHalf doubleblockhalf = p_52894_.getValue(HALF);
+         if (p_52895_.getAxis() != Direction.Axis.Y
+             || doubleblockhalf == DoubleBlockHalf.LOWER != (p_52895_ == Direction.UP)
 @@ -69,6 +_,7 @@
              return super.canSurvive(p_52887_, p_52888_, p_52889_);
          } else {

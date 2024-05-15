@@ -71,10 +71,10 @@ public class CraftAttributeInstance implements AttributeInstance {
     }
 
     public static AttributeModifier convert(net.minecraft.world.entity.ai.attributes.AttributeModifier nms) {
-        return new AttributeModifier(nms.id(), nms.name, nms.amount(), AttributeModifier.Operation.values()[nms.operation().ordinal()]);
+        return new AttributeModifier(nms.id(), nms.name(), nms.amount(), AttributeModifier.Operation.values()[nms.operation().ordinal()]);
     }
 
     public static AttributeModifier convert(net.minecraft.world.entity.ai.attributes.AttributeModifier nms, EquipmentSlot slot) {
-        return new AttributeModifier(nms.id(), nms.name, nms.amount(), AttributeModifier.Operation.values()[nms.operation().ordinal()], slot);
+        return new AttributeModifier(nms.id(), nms.name(), nms.amount(), AttributeModifier.Operation.values()[nms.operation().ordinal()], slot);
     }
 }

@@ -9,15 +9,7 @@
      Stream<Holder<T>> stream();
  
      int size();
-@@ -167,13 +_,14 @@
-         private final TagKey<T> key;
-         private List<Holder<T>> contents = List.of();
- 
--        Named(HolderOwner<T> p_256118_, TagKey<T> p_256597_) {
-+        public Named(HolderOwner<T> p_256118_, TagKey<T> p_256597_) {
-             this.owner = p_256118_;
-             this.key = p_256597_;
-         }
+@@ -174,6 +_,7 @@
  
          public void bind(List<Holder<T>> p_205836_) {
              this.contents = List.copyOf(p_205836_);

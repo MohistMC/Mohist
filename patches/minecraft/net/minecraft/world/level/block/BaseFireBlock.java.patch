@@ -42,7 +42,7 @@
 +            p_49261_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
-+               p_49263_.setSecondsOnFire(event.getDuration(), false);
++               p_49263_.igniteForSeconds(event.getDuration(), false);
 +            }
 +            // CraftBukkit end
 +         }

@@ -17,29 +17,6 @@
  
  public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable {
      private static final int MAX_LEVELS = 4;
-@@ -65,15 +_,15 @@
-     private static final String TAG_SECONDARY = "secondary_effect";
-     List<BeaconBlockEntity.BeaconBeamSection> beamSections = Lists.newArrayList();
-     private List<BeaconBlockEntity.BeaconBeamSection> checkingBeamSections = Lists.newArrayList();
--    public int levels;
-+    int levels;
-     private int lastCheckY;
-     @Nullable
--    public Holder<MobEffect> primaryPower;
--    @Nullable
--    public Holder<MobEffect> secondaryPower;
--    @Nullable
--    public Component name;
--    public LockCode lockKey = LockCode.NO_LOCK;
-+    Holder<MobEffect> primaryPower;
-+    @Nullable
-+    Holder<MobEffect> secondaryPower;
-+    @Nullable
-+    private Component name;
-+    private LockCode lockKey = LockCode.NO_LOCK;
-     private final ContainerData dataAccess = new ContainerData() {
-         @Override
-         public int get(int p_58711_) {
 @@ -139,8 +_,8 @@
          for (int i1 = 0; i1 < 10 && blockpos.getY() <= l; i1++) {
              BlockState blockstate = p_155108_.getBlockState(blockpos);

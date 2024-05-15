@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/MangrovePropaguleBlock.java
++++ b/net/minecraft/world/level/block/MangrovePropaguleBlock.java
+@@ -97,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected BlockState updateShape(
++    public BlockState updateShape(
+         BlockState p_221477_, Direction p_221478_, BlockState p_221479_, LevelAccessor p_221480_, BlockPos p_221481_, BlockPos p_221482_
+     ) {
+         if (p_221477_.getValue(WATERLOGGED)) {

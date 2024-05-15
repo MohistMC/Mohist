@@ -25,7 +25,7 @@ public abstract class CraftMinecartContainer extends CraftMinecart implements Lo
 
     @Override
     public LootTable getLootTable() {
-        return CraftLootTable.minecraftToBukkit(this.getHandle().lootTable);
+        return CraftLootTable.minecraftToBukkit(this.getHandle().getLootTable());
     }
 
     @Override

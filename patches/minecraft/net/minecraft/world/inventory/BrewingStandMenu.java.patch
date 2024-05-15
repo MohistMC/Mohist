@@ -61,7 +61,6 @@
          }
      }
  
--    static class PotionSlot extends Slot {
 +   // CraftBukkit start
 +   @Override
 +   public CraftInventoryView getBukkitView() {
@@ -75,7 +74,7 @@
 +   }
 +   // CraftBukkit end
 +
-+    public static class PotionSlot extends Slot {
+     public static class PotionSlot extends Slot {
 +        private final PotionBrewing potionBrewing;
 +
 +        /** @deprecated Use the one that specifes a PotionBrewing */

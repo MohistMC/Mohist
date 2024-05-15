@@ -8,7 +8,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.HolderLookup;
  import net.minecraft.core.NonNullList;
-@@ -19,10 +_,12 @@
+@@ -19,6 +_,8 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BarrelBlock;
  import net.minecraft.world.level.block.state.BlockState;
@@ -17,12 +17,20 @@
  
  public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
      private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
--    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-+    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-         @Override
-         protected void onOpen(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
-             BarrelBlockEntity.this.playSound(p_155064_, SoundEvents.BARREL_OPEN);
-@@ -127,4 +_,40 @@
+@@ -116,15 +_,51 @@
+         }
+     }
+ 
+-    void updateBlockState(BlockState p_58607_, boolean p_58608_) {
++    public void updateBlockState(BlockState p_58607_, boolean p_58608_) {
+         this.level.setBlock(this.getBlockPos(), p_58607_.setValue(BarrelBlock.OPEN, Boolean.valueOf(p_58608_)), 3);
+     }
+ 
+-    void playSound(BlockState p_58601_, SoundEvent p_58602_) {
++    public void playSound(BlockState p_58601_, SoundEvent p_58602_) {
+         Vec3i vec3i = p_58601_.getValue(BarrelBlock.FACING).getNormal();
+         double d0 = (double)this.worldPosition.getX() + 0.5 + (double)vec3i.getX() / 2.0;
+         double d1 = (double)this.worldPosition.getY() + 0.5 + (double)vec3i.getY() / 2.0;
          double d2 = (double)this.worldPosition.getZ() + 0.5 + (double)vec3i.getZ() / 2.0;
          this.level.playSound(null, d0, d1, d2, p_58602_, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
      }

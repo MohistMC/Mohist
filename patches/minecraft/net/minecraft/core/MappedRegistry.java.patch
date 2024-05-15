@@ -17,15 +17,6 @@
          }
  
          this.byKey.put(p_256252_, reference);
-@@ -198,7 +_,7 @@
-         return (Holder<T>)(reference != null ? reference : Holder.direct(p_263356_));
-     }
- 
--    Holder.Reference<T> getOrCreateHolderOrThrow(ResourceKey<T> p_248831_) {
-+    protected Holder.Reference<T> getOrCreateHolderOrThrow(ResourceKey<T> p_248831_) {
-         return this.byKey.computeIfAbsent(p_248831_, p_258169_ -> {
-             if (this.unregisteredIntrusiveHolders != null) {
-                 throw new IllegalStateException("This registry can't create new holders without value");
 @@ -322,7 +_,6 @@
              return this;
          } else {

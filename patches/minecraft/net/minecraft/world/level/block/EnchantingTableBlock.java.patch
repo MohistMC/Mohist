@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/level/block/EnchantingTableBlock.java
 +++ b/net/minecraft/world/level/block/EnchantingTableBlock.java
-@@ -42,12 +_,12 @@
-         return CODEC;
-     }
- 
--    protected EnchantingTableBlock(BlockBehaviour.Properties p_333403_) {
-+    public EnchantingTableBlock(BlockBehaviour.Properties p_333403_) {
-         super(p_333403_);
+@@ -47,7 +_,7 @@
      }
  
      public static boolean isValidBookShelf(Level p_328191_, BlockPos p_328702_, BlockPos p_336071_) {

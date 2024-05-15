@@ -1,11 +1,24 @@
 --- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
-@@ -24,7 +_,7 @@
-     private static final String TAG_PATTERNS = "patterns";
-     @Nullable
-     private Component name;
--    public DyeColor baseColor;
-+    private DyeColor baseColor;
-     private BannerPatternLayers patterns = BannerPatternLayers.EMPTY;
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block.entity;
  
-     public BannerBlockEntity(BlockPos p_155035_, BlockState p_155036_) {
+ import com.mojang.logging.LogUtils;
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.HolderLookup;
+@@ -122,4 +_,13 @@
+         p_336055_.remove("patterns");
+         p_336055_.remove("CustomName");
+     }
++
++    // CraftBukkit start
++    public void setPatterns(BannerPatternLayers bannerpatternlayers) {
++        if (bannerpatternlayers.layers().size() > 20) {
++            bannerpatternlayers = new BannerPatternLayers(List.copyOf(bannerpatternlayers.layers().subList(0, 20)));
++        }
++        this.patterns = bannerpatternlayers;
++    }
++    // CraftBukkit end
+ }

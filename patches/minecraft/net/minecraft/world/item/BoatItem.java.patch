@@ -11,6 +11,15 @@
  
  public class BoatItem extends Item {
      private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
+@@ -33,7 +_,7 @@
+     @Override
+     public InteractionResultHolder<ItemStack> use(Level p_40622_, Player p_40623_, InteractionHand p_40624_) {
+         ItemStack itemstack = p_40623_.getItemInHand(p_40624_);
+-        HitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
++        BlockHitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
+         if (hitresult.getType() == HitResult.Type.MISS) {
+             return InteractionResultHolder.pass(itemstack);
+         } else {
 @@ -51,18 +_,35 @@
                  }
              }

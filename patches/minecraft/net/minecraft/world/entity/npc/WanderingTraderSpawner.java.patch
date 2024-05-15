@@ -14,7 +14,7 @@
                  }
 -
 -                WanderingTrader wanderingtrader = EntityType.WANDERING_TRADER.spawn(p_35916_, blockpos2, MobSpawnType.EVENT);
-+            	EntityType.WANDERING_TRADER.spawnReasonAtomicReference.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit // Mohist
++            	EntityType.WANDERING_TRADER.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit // Mohist
 +            	WanderingTrader wanderingtrader = EntityType.WANDERING_TRADER.spawn(p_35916_, blockpos2, MobSpawnType.EVENT);
                  if (wanderingtrader != null) {
                      for (int j = 0; j < 2; j++) {
@@ -23,7 +23,7 @@
      private void tryToSpawnLlamaFor(ServerLevel p_35918_, WanderingTrader p_35919_, int p_35920_) {
          BlockPos blockpos = this.findSpawnPositionNear(p_35918_, p_35919_.blockPosition(), p_35920_);
          if (blockpos != null) {
-+         	EntityType.TRADER_LLAMA.spawnReasonAtomicReference.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit // Mohist
++         	EntityType.TRADER_LLAMA.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit // Mohist
              TraderLlama traderllama = EntityType.TRADER_LLAMA.spawn(p_35918_, blockpos, MobSpawnType.EVENT);
              if (traderllama != null) {
                  traderllama.setLeashedTo(p_35919_, true);
