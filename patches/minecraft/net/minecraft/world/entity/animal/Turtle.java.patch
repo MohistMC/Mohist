@@ -1,21 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Turtle.java
 +++ b/net/minecraft/world/entity/animal/Turtle.java
-@@ -15,14 +_,12 @@
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.stats.Stats;
- import net.minecraft.tags.FluidTags;
--import net.minecraft.tags.ItemTags;
- import net.minecraft.util.Mth;
- import net.minecraft.util.RandomSource;
+@@ -21,6 +_,7 @@
  import net.minecraft.world.DifficultyInstance;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.AgeableMob;
--import net.minecraft.world.entity.EntityAttachment;
--import net.minecraft.world.entity.EntityAttachments;
 +import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityAttachment;
+ import net.minecraft.world.entity.EntityAttachments;
  import net.minecraft.world.entity.EntityDimensions;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.ExperienceOrb;
 @@ -49,6 +_,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
@@ -24,11 +16,9 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
-@@ -59,8 +_,9 @@
- import net.minecraft.world.level.block.TurtleEggBlock;
- import net.minecraft.world.level.block.state.BlockState;
+@@ -61,6 +_,8 @@
  import net.minecraft.world.level.gameevent.GameEvent;
--import net.minecraft.world.level.pathfinder.PathType;
+ import net.minecraft.world.level.pathfinder.PathType;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.joml.Vector3f;
@@ -41,7 +31,7 @@
          if (!this.isBaby() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
 -            this.spawnAtLocation(Items.TURTLE_SCUTE, 1);
 +         this.forceDrops = true; // CraftBukkit
-+         this.spawnAtLocation(Items.SCUTE, 1);
++         this.spawnAtLocation(Items.TURTLE_SCUTE, 1);
 +         this.forceDrops = false; // CraftBukkit
          }
      }

@@ -1,13 +1,26 @@
 --- a/net/minecraft/server/network/LegacyQueryHandler.java
 +++ b/net/minecraft/server/network/LegacyQueryHandler.java
-@@ -33,6 +_,7 @@
+@@ -33,9 +_,10 @@
  
                  SocketAddress socketaddress = p_9686_.channel().remoteAddress();
                  int i = bytebuf.readableBytes();
 +            	org.bukkit.event.server.ServerListPingEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(socketaddress, server.getMotd(), server.getPlayerCount(), server.getMaxPlayers()); // CraftBukkit
                  if (i == 0) {
                      LOGGER.debug("Ping: (<1.3.x) from {}", socketaddress);
-                     String s = createVersion0Response(this.server);
+-                    String s = createVersion0Response(this.server);
++                    String s = createVersion0Response(this.server, event);
+                     sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s));
+                 } else {
+                     if (bytebuf.readUnsignedByte() != 1) {
+@@ -52,7 +_,7 @@
+                         LOGGER.debug("Ping: (1.4-1.5.x) from {}", socketaddress);
+                     }
+ 
+-                    String s1 = createVersion1Response(this.server);
++                    String s1 = createVersion1Response(this.server, event);
+                     sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s1));
+                 }
+ 
 @@ -95,21 +_,13 @@
          }
      }

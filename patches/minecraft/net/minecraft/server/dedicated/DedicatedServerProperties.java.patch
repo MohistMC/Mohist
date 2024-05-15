@@ -27,3 +27,12 @@
  
      public DedicatedServerProperties(Properties p_180926_) {
          super(p_180926_);
+@@ -203,7 +_,7 @@
+         return this.worldDimensionData.create(p_250466_);
+     }
+ 
+-    static record WorldDimensionData(JsonObject generatorSettings, String levelType) {
++    public static record WorldDimensionData(JsonObject generatorSettings, String levelType) {
+         private static final Map<String, ResourceKey<WorldPreset>> LEGACY_PRESET_NAMES = Map.of("default", WorldPresets.NORMAL, "largebiomes", WorldPresets.LARGE_BIOMES);
+ 
+         public WorldDimensions create(RegistryAccess p_248812_) {

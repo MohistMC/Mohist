@@ -59,7 +59,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.portal.PortalInfo;
  import net.minecraft.world.level.storage.LevelData;
-@@ -157,1762 +_,2441 @@
+@@ -157,1762 +_,2443 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreAccess;
  import net.minecraft.world.scores.ScoreHolder;
@@ -406,7 +406,9 @@
 +   public boolean wonGame;
 +
 +   // CraftBukkit start
++   public CraftPlayer.TransferCookieConnection transferCookieConnection;
 +   public String displayName;
++   public Component listName;
 +   public org.bukkit.Location compassTarget;
 +   public int newExp = 0;
 +   public int newLevel = 0;

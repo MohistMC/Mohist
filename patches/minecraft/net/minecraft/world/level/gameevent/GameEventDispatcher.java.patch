@@ -15,14 +15,14 @@
      public void post(Holder<GameEvent> p_335078_, Vec3 p_250613_, GameEvent.Context p_251777_) {
          int i = p_335078_.value().notificationRadius();
          BlockPos blockpos = BlockPos.containing(p_250613_);
-+      // CraftBukkit start
-+      GenericGameEvent event = new GenericGameEvent(CraftGameEvent.minecraftToBukkit(p_251754_), CraftLocation.toBukkit(blockpos, level.getWorld()), (p_251777_.sourceEntity() == null) ? null : p_251777_.sourceEntity().getBukkitEntity(), i, !Bukkit.isPrimaryThread());
-+      level.getCraftServer().getPluginManager().callEvent(event);
-+      if (event.isCancelled()) {
-+         return;
-+      }
-+      i = event.getRadius();
-+      // CraftBukkit end
++        // CraftBukkit start
++        GenericGameEvent event = new GenericGameEvent(CraftGameEvent.minecraftToBukkit(p_335078_.value()), CraftLocation.toBukkit(blockpos, level.getWorld()), (p_251777_.sourceEntity() == null) ? null : p_251777_.sourceEntity().getBukkitEntity(), i, !Bukkit.isPrimaryThread());
++        level.getCraftServer().getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return;
++        }
++        i = event.getRadius();
++        // CraftBukkit end
          int j = SectionPos.blockToSectionCoord(blockpos.getX() - i);
          int k = SectionPos.blockToSectionCoord(blockpos.getY() - i);
          int l = SectionPos.blockToSectionCoord(blockpos.getZ() - i);

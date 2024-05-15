@@ -69,3 +69,14 @@
      }
  
      public void clearRemoved() {
+@@ -310,4 +_,10 @@
+ 
+         <T> T getOrDefault(DataComponentType<? extends T> p_330702_, T p_330858_);
+     }
++
++    // CraftBukkit start - add method
++    public InventoryHolder getOwner() {
++        return InventoryOwner.get(this);
++    }
++    // CraftBukkit end
+ }

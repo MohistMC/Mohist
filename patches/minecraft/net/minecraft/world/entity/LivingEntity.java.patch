@@ -77,15 +77,6 @@
      public static final int HAND_SLOTS = 2;
      public static final int ARMOR_SLOTS = 4;
      public static final int EQUIPMENT_SLOT_OFFSET = 98;
-@@ -154,7 +_,7 @@
-     protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
-     protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
-     protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
--    public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-+    private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-     private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.PARTICLES);
-     private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
-     public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
 @@ -215,17 +_,17 @@
      protected double lerpXRot;
      protected double lerpYHeadRot;
@@ -162,26 +153,39 @@
      }
  
      @Override
-@@ -327,9 +_,17 @@
-                 float f = (float)Mth.ceil((double)this.fallDistance - d0);
-                 double d5 = Math.min((double)(0.2F + f / 15.0F), 2.5);
-                 int i = (int)(150.0 * d5);
--                ((ServerLevel)this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_), d1, d2, d3, i, 0.0, 0.0, 0.0, 0.15F);
-+            if (!p_20992_.addLandingEffects((ServerLevel)this.level(), p_20993_, p_20992_, this, i)) {
-+                // CraftBukkit start - visiblity api
-+                if (this instanceof ServerPlayer) {
-+                    ((ServerLevel) this.level).sendParticles((ServerPlayer) this, new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F, false);
-+                } else {
-+                    ((ServerLevel) this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F);
-+                }
-+                // CraftBukkit end
-             }
--        }
-+         }
-+      }
+@@ -311,23 +_,23 @@
+             this.removeSoulSpeed();
+             this.tryAddSoulSpeed();
+             double d0 = this.getAttributeValue(Attributes.SAFE_FALL_DISTANCE);
+-            if ((double)this.fallDistance > d0 && !p_20992_.isAir()) {
++            if ((double) this.fallDistance > d0 && !p_20992_.isAir()) {
+                 double d1 = this.getX();
+                 double d2 = this.getY();
+                 double d3 = this.getZ();
+                 BlockPos blockpos = this.blockPosition();
+                 if (p_20993_.getX() != blockpos.getX() || p_20993_.getZ() != blockpos.getZ()) {
+-                    double d4 = d1 - (double)p_20993_.getX() - 0.5;
+-                    double d6 = d3 - (double)p_20993_.getZ() - 0.5;
++                    double d4 = d1 - (double) p_20993_.getX() - 0.5;
++                    double d6 = d3 - (double) p_20993_.getZ() - 0.5;
+                     double d7 = Math.max(Math.abs(d4), Math.abs(d6));
+-                    d1 = (double)p_20993_.getX() + 0.5 + d4 / d7 * 0.5;
+-                    d3 = (double)p_20993_.getZ() + 0.5 + d6 / d7 * 0.5;
++                    d1 = (double) p_20993_.getX() + 0.5 + d4 / d7 * 0.5;
++                    d3 = (double) p_20993_.getZ() + 0.5 + d6 / d7 * 0.5;
+                 }
  
-         super.checkFallDamage(p_20990_, p_20991_, p_20992_, p_20993_);
-         if (p_20991_) {
+-                float f = (float)Mth.ceil((double)this.fallDistance - d0);
+-                double d5 = Math.min((double)(0.2F + f / 15.0F), 2.5);
+-                int i = (int)(150.0 * d5);
+-                ((ServerLevel)this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_), d1, d2, d3, i, 0.0, 0.0, 0.0, 0.15F);
++                float f = (float) Mth.ceil((double) this.fallDistance - d0);
++                double d5 = Math.min((double) (0.2F + f / 15.0F), 2.5);
++                int i = (int) (150.0 * d5);
++                ((ServerLevel) this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), d1, d2, d3, i, 0.0, 0.0, 0.0, 0.15F);
+             }
+         }
+ 
 @@ -337,6 +_,7 @@
          }
      }
@@ -210,7 +214,7 @@
              this.extinguishFire();
          }
  
-@@ -691,46 +_,49 @@
+@@ -691,46 +_,60 @@
          return true;
      }
  
@@ -221,7 +225,16 @@
 -            if (!this.level().isClientSide() && !this.isSpectator()) {
 -                if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_) {
 -                    this.level()
--                        .playSeededSound(
++   // Mohist start
++   public AtomicBoolean silent0 = new AtomicBoolean(false);
++   public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_) {
++      boolean flag = p_238395_.isEmpty() && p_238394_.isEmpty();
++      if (!flag && !ItemStack.isSameItemSameComponents(p_238394_, p_238395_) && !this.firstTick) {
++         Equipable equipable = Equipable.get(p_238395_);
++         if (!this.level().isClientSide() && !this.isSpectator()) {
++            if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_ && !silent0.getAndSet(false)) {
++                this.level()
+                         .playSeededSound(
 -                            null,
 -                            this.getX(),
 -                            this.getY(),
@@ -231,7 +244,16 @@
 -                            1.0F,
 -                            1.0F,
 -                            this.random.nextLong()
--                        );
++                                null,
++                                this.getX(),
++                                this.getY(),
++                                this.getZ(),
++                                equipable.getEquipSound(),
++                                this.getSoundSource(),
++                                1.0F,
++                                1.0F,
++                                this.random.nextLong()
+                         );
 -                }
 -
 -                if (this.doesEmitEquipEvent(p_238393_)) {
@@ -254,15 +276,6 @@
 -    }
 -
 -    @Override
-+   // Mohist start
-+   public AtomicBoolean silent0 = new AtomicBoolean(false);
-+   public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_) {
-+      boolean flag = p_238395_.isEmpty() && p_238394_.isEmpty();
-+      if (!flag && !ItemStack.isSameItemSameTags(p_238394_, p_238395_) && !this.firstTick) {
-+         Equipable equipable = Equipable.get(p_238395_);
-+         if (!this.level().isClientSide() && !this.isSpectator()) {
-+            if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_ && !silent0.getAndSet(false)) {
-+               this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), equipable.getEquipSound(), this.getSoundSource(), 1.0F, 1.0F);
 +            }
 +
 +            if (this.doesEmitEquipEvent(p_238393_)) {
@@ -319,56 +332,15 @@
          if (p_21096_.contains("Health", 99)) {
              this.setHealth(p_21096_.getFloat("Health"));
          }
-@@ -808,48 +_,99 @@
+@@ -808,9 +_,32 @@
          }
  
          if (p_21096_.contains("Brain", 10)) {
 -            this.brain = this.makeBrain(new Dynamic<>(NbtOps.INSTANCE, p_21096_.get("Brain")));
--        }
--    }
--
--    protected void tickEffects() {
--        Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
--
--        try {
--            while (iterator.hasNext()) {
--                Holder<MobEffect> holder = iterator.next();
--                MobEffectInstance mobeffectinstance = this.activeEffects.get(holder);
--                if (!mobeffectinstance.tick(this, () -> this.onEffectUpdated(mobeffectinstance, true, null))) {
--                    if (!this.level().isClientSide) {
--                        iterator.remove();
--                        this.onEffectRemoved(mobeffectinstance);
--                    }
--                } else if (mobeffectinstance.getDuration() % 600 == 0) {
--                    this.onEffectUpdated(mobeffectinstance, false, null);
--                }
--            }
--        } catch (ConcurrentModificationException concurrentmodificationexception) {
--        }
--
--        if (this.effectsDirty) {
--            if (!this.level().isClientSide) {
--                this.updateInvisibilityStatus();
--                this.updateGlowingStatus();
--            }
--
--            this.effectsDirty = false;
--        }
--
--        List<ParticleOptions> list = this.entityData.get(DATA_EFFECT_PARTICLES);
--        if (!list.isEmpty()) {
--            boolean flag = this.entityData.get(DATA_EFFECT_AMBIENCE_ID);
--            int i = this.isInvisible() ? 15 : 4;
--            int j = flag ? 5 : 1;
--            if (this.random.nextInt(i * j) == 0) {
--                this.level().addParticle(Util.getRandom(list, this.random), this.getRandomX(0.5), this.getRandomY(), this.getRandomZ(0.5), 1.0, 1.0, 1.0);
--            }
--        }
--    }
 +            var dyn = new Dynamic<>(NbtOps.INSTANCE, p_21096_.get("Brain"));
 +            this.brain = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.makeBrain(dyn), dyn);
-+        }
-+    }
+         }
+     }
 +
 +   // CraftBukkit start
 +   private boolean isTickingEffects = false;
@@ -376,7 +348,7 @@
 +
 +   private static class ProcessableEffect {
 +
-+      private MobEffect type;
++      private Holder<MobEffect> type;
 +      private MobEffectInstance effect;
 +      private final EntityPotionEffectEvent.Cause cause;
 +
@@ -385,82 +357,24 @@
 +         this.cause = cause;
 +      }
 +
-+      private ProcessableEffect(MobEffect type, EntityPotionEffectEvent.Cause cause) {
++      private ProcessableEffect(Holder<MobEffect> type, EntityPotionEffectEvent.Cause cause) {
 +         this.type = type;
 +         this.cause = cause;
 +      }
 +   }
 +    // CraftBukkit end
-+
-+   protected void tickEffects() {
-+      Iterator<MobEffect> iterator = this.activeEffects.keySet().iterator();
-+      isTickingEffects = true; // CraftBukkit
-+      try {
-+         while(iterator.hasNext()) {
-+            MobEffect mobeffect = iterator.next();
-+            MobEffectInstance mobeffectinstance = this.activeEffects.get(mobeffect);
-+            if (!mobeffectinstance.tick(this, () -> {
-+               this.onEffectUpdated(mobeffectinstance, true, (Entity)null);
-+            })) {
-+               EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, null, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.EXPIRATION);
-+               if (!this.level().isClientSide && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Expired(this, mobeffectinstance)) && !event.isCancelled()) {
-+                  iterator.remove();
-+                  this.onEffectRemoved(mobeffectinstance);
-+               }
-+            } else if (mobeffectinstance.getDuration() % 600 == 0) {
-+               this.onEffectUpdated(mobeffectinstance, false, (Entity)null);
-+            }
-+         }
-+      } catch (ConcurrentModificationException concurrentmodificationexception) {
-+      }
-+
-+      // CraftBukkit start
-+      isTickingEffects = false;
-+      for (ProcessableEffect e : effectsToProcess) {
-+         if (e.effect != null) {
-+            addEffect(e.effect, e.cause);
-+         } else {
-+            removeEffect(e.type, e.cause);
-+         }
-+      }
-+      effectsToProcess.clear();
-+      // CraftBukkit end
-+
-+      if (this.effectsDirty) {
-+         if (!this.level().isClientSide) {
-+            this.updateInvisibilityStatus();
-+            this.updateGlowingStatus();
-+         }
-+
-+         this.effectsDirty = false;
-+      }
-+
-+      int i = this.entityData.get(DATA_EFFECT_COLOR_ID);
-+      boolean flag1 = this.entityData.get(DATA_EFFECT_AMBIENCE_ID);
-+      if (i > 0) {
-+         boolean flag;
-+         if (this.isInvisible()) {
-+            flag = this.random.nextInt(15) == 0;
-+         } else {
-+            flag = this.random.nextBoolean();
-+         }
-+
-+         if (flag1) {
-+            flag &= this.random.nextInt(5) == 0;
-+         }
-+
-+         if (flag && i > 0) {
-+            double d0 = (double)(i >> 16 & 255) / 255.0D;
-+            double d1 = (double)(i >> 8 & 255) / 255.0D;
-+            double d2 = (double)(i >> 0 & 255) / 255.0D;
-+            this.level().addParticle(flag1 ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT, this.getRandomX(0.5D), this.getRandomY(), this.getRandomZ(0.5D), d0, d1, d2);
-+         }
-+      }
-+
-+   }
  
-     protected void updateInvisibilityStatus() {
-         if (this.activeEffects.isEmpty()) {
+     protected void tickEffects() {
+         Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
+@@ -820,7 +_,7 @@
+                 Holder<MobEffect> holder = iterator.next();
+                 MobEffectInstance mobeffectinstance = this.activeEffects.get(holder);
+                 if (!mobeffectinstance.tick(this, () -> this.onEffectUpdated(mobeffectinstance, true, null))) {
+-                    if (!this.level().isClientSide) {
++                    if (!this.level().isClientSide && !net.minecraftforge.event.ForgeEventFactory.onLivingEffectExpire(this, mobeffectinstance)) {
+                         iterator.remove();
+                         this.onEffectRemoved(mobeffectinstance);
+                     }
 @@ -901,6 +_,7 @@
              }
          }
@@ -611,7 +525,7 @@
          if (this.getType().is(EntityTypeTags.IMMUNE_TO_INFESTED)) {
              return !p_21197_.is(MobEffects.INFESTED);
          } else if (this.getType().is(EntityTypeTags.IMMUNE_TO_OOZING)) {
-@@ -1020,20 +_,49 @@
+@@ -1020,20 +_,51 @@
          return this.getType().is(EntityTypeTags.INVERTED_HEALING_AND_HARM);
      }
  
@@ -657,14 +571,16 @@
 +   }
 +
 +   public boolean removeEffect(Holder<MobEffect> p_21196_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
-+      MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_);
-+      if (mobeffectinstance != null) {
-+         this.onEffectRemoved(mobeffectinstance);
-+         return true;
-+      } else {
-+         return false;
-+      }
++       if (net.minecraftforge.event.ForgeEventFactory.onLivingEffectRemove(this, p_21196_.get())) {
++           return false;
++       }
++       MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_);
++       if (mobeffectinstance != null) {
++           this.onEffectRemoved(mobeffectinstance);
++           return true;
++       } else {
++           return false;
++       }
 +   }
 +
 +   public boolean removeEffect(Holder<MobEffect> pEffect, EntityPotionEffectEvent.Cause cause) {
@@ -1258,55 +1174,49 @@
          }
      }
  
-@@ -1471,19 +_,35 @@
+@@ -1471,17 +_,33 @@
          loottable.getRandomItems(lootparams, this.getLootTableSeed(), this::spawnAtLocation);
      }
  
--    public void knockback(double p_147241_, double p_147242_, double p_147243_) {
++    // Mohist start
++    public Entity attacker;
++    public EntityKnockbackEvent.KnockbackCause knockbackcause = EntityKnockbackEvent.KnockbackCause.UNKNOWN;
++    public void knockbackcause(EntityKnockbackEvent.KnockbackCause knockbackcause) {
++       this.knockbackcause = knockbackcause;
++    }
++
+     public void knockback(double p_147241_, double p_147242_, double p_147243_) {
 -        p_147241_ *= 1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
 -        if (!(p_147241_ <= 0.0)) {
 -            this.hasImpulse = true;
--            Vec3 vec3 = this.getDeltaMovement();
++        var event = net.minecraftforge.event.ForgeEventFactory.onLivingKnockBack(this, (float) p_147241_, p_147242_, p_147243_);
++        if (event.isCanceled()) return;
++        p_147241_ = event.getStrength();
++        p_147242_ = event.getRatioX();
++        p_147243_ = event.getRatioZ();
++        p_147241_ *= 1.0D - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
++        if (true || !(p_147241_ <= 0.0D)) { // CraftBukkit - Call event even when force is 0
++            // this.hasImpulse = true; // CraftBukkit - Move down
+             Vec3 vec3 = this.getDeltaMovement();
 -            Vec3 vec31 = new Vec3(p_147242_, 0.0, p_147243_).normalize().scale(p_147241_);
 -            this.setDeltaMovement(
 -                vec3.x / 2.0 - vec31.x,
 -                this.onGround() ? Math.min(0.4, vec3.y / 2.0 + p_147241_) : vec3.y,
 -                vec3.z / 2.0 - vec31.z
 -            );
--        }
--    }
-+   // Mohist start
-+   public Entity attacker;
-+   public EntityKnockbackEvent.KnockbackCause knockbackcause = EntityKnockbackEvent.KnockbackCause.UNKNOWN;
-+   public void knockbackcause(EntityKnockbackEvent.KnockbackCause knockbackcause) {
-+      this.knockbackcause = knockbackcause;
-+   }
++            Vec3 vec31 = (new Vec3(p_147242_, 0.0D, p_147243_)).normalize().scale(p_147241_);
++            // this.setDeltaMovement(vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
++            EntityKnockbackEvent bukkit_event = CraftEventFactory.callEntityKnockbackEvent((org.bukkit.craftbukkit.entity.CraftLivingEntity) this.getBukkitEntity(), attacker, knockbackcause, p_147241_, vec31, vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
++            if (bukkit_event.isCancelled()) {
++                return;
++            }
 +
-+   public void knockback(double p_147241_, double p_147242_, double p_147243_) {
-+      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(this, (float) p_147241_, p_147242_, p_147243_);
-+      if(event.isCanceled()) return;
-+      p_147241_ = event.getStrength();
-+      p_147242_ = event.getRatioX();
-+      p_147243_ = event.getRatioZ();
-+      p_147241_ *= 1.0D - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-+      if (true || !(p_147241_ <= 0.0D)) { // CraftBukkit - Call event even when force is 0
-+         // this.hasImpulse = true; // CraftBukkit - Move down
-+         Vec3 vec3 = this.getDeltaMovement();
-+         Vec3 vec31 = (new Vec3(p_147242_, 0.0D, p_147243_)).normalize().scale(p_147241_);
-+         // this.setDeltaMovement(vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
-+         EntityKnockbackEvent bukkit_event = CraftEventFactory.callEntityKnockbackEvent((org.bukkit.craftbukkit.entity.CraftLivingEntity) this.getBukkitEntity(), attacker, knockbackcause, p_147241_, vec31, vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
-+         if (bukkit_event.isCancelled()) {
-+            return;
-+         }
-+
-+         this.hasImpulse = true;
-+         this.setDeltaMovement(bukkit_event.getFinalKnockback().getX(), bukkit_event.getFinalKnockback().getY(), bukkit_event.getFinalKnockback().getZ());
-+         // CraftBukkit end
-+      }
-+   }
- 
-     public void indicateDamage(double p_270514_, double p_270826_) {
++            this.hasImpulse = true;
++            this.setDeltaMovement(bukkit_event.getFinalKnockback().getX(), bukkit_event.getFinalKnockback().getY(), bukkit_event.getFinalKnockback().getZ());
++            // CraftBukkit end
+         }
      }
+ 
 @@ -1537,6 +_,28 @@
          return p_21202_.getEatingSound();
      }
@@ -1410,7 +1320,7 @@
 +   protected float getDamageAfterArmorAbsorb(DamageSource p_21162_, float p_21163_) {
 +      if (!p_21162_.is(DamageTypeTags.BYPASSES_ARMOR)) {
 +         // this.hurtArmor(pDamageSource, pDamageAmount); // CraftBukkit - Moved into damageEntity0(DamageSource, float)
-+         p_21163_ = CombatRules.getDamageAfterAbsorb(p_21163_, (float)this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
++          p_21163_ = CombatRules.getDamageAfterAbsorb(p_21163_, p_21162_, (float)this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
 +      }
  
          return p_21163_;
@@ -1743,6 +1653,19 @@
      }
  
      @Override
+@@ -1972,6 +_,12 @@
+ 
+     public abstract void setItemSlot(EquipmentSlot p_21036_, ItemStack p_21037_);
+ 
++    // CraftBukkit start
++    public void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
++        this.setItemSlot(enumitemslot, itemstack);
++    }
++    // CraftBukkit end
++
+     public Iterable<ItemStack> getHandSlots() {
+         return List.of();
+     }
 @@ -2077,15 +_,18 @@
              }
  
@@ -1913,16 +1836,8 @@
      public float getYHeadRot() {
          return this.yHeadRot;
      }
-@@ -2980,10 +_,19 @@
-         return (this.entityData.get(DATA_LIVING_ENTITY_FLAGS) & 2) > 0 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-     }
+@@ -2982,8 +_,11 @@
  
-+   // Paper start
-+   public void resyncUsingItem(ServerPlayer serverPlayer) {
-+      this.getEntityData().resendPossiblyDesyncedDataValues(java.util.List.of(DATA_LIVING_ENTITY_FLAGS), serverPlayer);
-+   }
-+   // Paper end
-+
      private void updatingUsingItem() {
          if (this.isUsingItem()) {
 -            if (ItemStack.isSameItem(this.getItemInHand(this.getUsedItemHand()), this.useItem)) {

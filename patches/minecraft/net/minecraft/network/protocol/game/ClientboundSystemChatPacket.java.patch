@@ -1,61 +1,19 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -1,30 +_,39 @@
- package net.minecraft.network.protocol.game;
+@@ -10,11 +_,11 @@
  
--import net.minecraft.network.RegistryFriendlyByteBuf;
-+import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.ComponentSerialization;
--import net.minecraft.network.codec.ByteBufCodecs;
--import net.minecraft.network.codec.StreamCodec;
- import net.minecraft.network.protocol.Packet;
--import net.minecraft.network.protocol.PacketType;
--
--public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
--    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSystemChatPacket> STREAM_CODEC = StreamCodec.composite(
+ public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
+     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSystemChatPacket> STREAM_CODEC = StreamCodec.composite(
 -        ComponentSerialization.TRUSTED_STREAM_CODEC,
 -        ClientboundSystemChatPacket::content,
 -        ByteBufCodecs.BOOL,
 -        ClientboundSystemChatPacket::overlay,
 -        ClientboundSystemChatPacket::new
--    );
--
--    @Override
--    public PacketType<ClientboundSystemChatPacket> type() {
--        return GamePacketTypes.CLIENTBOUND_SYSTEM_CHAT;
--    }
-+
-+public record ClientboundSystemChatPacket(String a, boolean overlay) implements Packet<ClientGamePacketListener> {
-+
-+   public ClientboundSystemChatPacket(Component content, boolean overlay) {
-+      this(Component.Serializer.toJson(content), overlay);
-+   }
-+
-+   public ClientboundSystemChatPacket(net.md_5.bungee.api.chat.BaseComponent[] content, boolean overlay) {
-+      this(content.length == 1 ? net.md_5.bungee.chat.ComponentSerializer.toString(content[0]) : net.md_5.bungee.chat.ComponentSerializer.toString(content), overlay);
-+   }
-+   // Spigot end
-+   public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
-+      this(p_237852_.readComponentTrusted(), p_237852_.readBoolean());
-+   }
-+
-+   public void write(FriendlyByteBuf p_237860_) {
-+      p_237860_.writeUtf(this.a, 262144); // Spigot
-+      p_237860_.writeBoolean(this.overlay);
-+   }
- 
-     public void handle(ClientGamePacketListener p_237864_) {
-         p_237864_.handleSystemChat(this);
-     }
-+
-+   public Component content() {
-+      return Component.Serializer.fromJson(a);
-+   }
-+
-+   public String content0() {
-+      return a;
-+   }
++            ComponentSerialization.TRUSTED_STREAM_CODEC,
++            ClientboundSystemChatPacket::content,
++            ByteBufCodecs.BOOL,
++            ClientboundSystemChatPacket::overlay,
++            ClientboundSystemChatPacket::new
+     );
  
      @Override
-     public boolean isSkippable() {

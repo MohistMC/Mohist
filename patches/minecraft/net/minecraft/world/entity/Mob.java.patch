@@ -33,15 +33,7 @@
  
  public abstract class Mob extends LivingEntity implements EquipmentUser, Targeting {
      private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
-@@ -115,17 +_,17 @@
-     private LivingEntity target;
-     private final Sensing sensing;
-     private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
--    public final float[] handDropChances = new float[2];
-+    protected final float[] handDropChances = new float[2];
-     private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
--    public final float[] armorDropChances = new float[4];
-+    protected final float[] armorDropChances = new float[4];
+@@ -121,11 +_,11 @@
      private ItemStack bodyArmorItem = ItemStack.EMPTY;
      protected float bodyArmorDropChance;
      private boolean canPickUpLoot;

@@ -1,20 +1,16 @@
 --- a/net/minecraft/world/entity/animal/Bucketable.java
 +++ b/net/minecraft/world/entity/animal/Bucketable.java
-@@ -2,8 +_,8 @@
- 
- import java.util.Optional;
+@@ -4,6 +_,7 @@
  import net.minecraft.advancements.CriteriaTriggers;
--import net.minecraft.core.component.DataComponents;
+ import net.minecraft.core.component.DataComponents;
  import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.world.InteractionHand;
-@@ -14,8 +_,10 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.ItemUtils;
+@@ -16,6 +_,9 @@
  import net.minecraft.world.item.Items;
--import net.minecraft.world.item.component.CustomData;
+ import net.minecraft.world.item.component.CustomData;
  import net.minecraft.world.level.Level;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -44,7 +40,7 @@
 +         if (playerBucketFishEvent.isCancelled()) {
 +            ((ServerPlayer) p_148829_).containerMenu.sendAllDataToRemote(); // We need to update inventory to resync client's bucket
 +            ((ServerPlayer) p_148829_).connection.send(new ClientboundAddEntityPacket(p_148831_)); // We need to play out these packets as the client assumes the fish is gone
-+            p_148831_.getEntityData().refresh((ServerPlayer) p_148829_); // Need to send data such as the display name to client
++            p_148831_.refreshEntityData((ServerPlayer) p_148829_); // Need to send data such as the display name to client
 +            return Optional.of(InteractionResult.FAIL);
 +         }
 +         p_148831_.playSound(p_148831_.getPickupSound(), 1.0F, 1.0F);

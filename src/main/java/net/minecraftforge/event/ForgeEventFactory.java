@@ -13,6 +13,9 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1052,5 +1055,9 @@ public final class ForgeEventFactory {
 
     public static AnvilRepairEvent onAnvilRepair(Player player, @NotNull ItemStack output, @NotNull ItemStack left, @NotNull ItemStack right) {
         return fire(new AnvilRepairEvent(player, left, right, output));
+    }
+
+    public static void onPlayerTradeWithVillager(Player player, MerchantOffer offer, AbstractVillager villager) {
+        post(new TradeWithVillagerEvent(player, offer, villager));
     }
 }

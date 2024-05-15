@@ -26,7 +26,7 @@
  import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.VariantHolder;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-@@ -56,15 +_,17 @@
+@@ -56,7 +_,9 @@
  import net.minecraft.world.entity.ai.navigation.PathNavigation;
  import net.minecraft.world.entity.ai.util.LandRandomPos;
  import net.minecraft.world.entity.player.Player;
@@ -36,10 +36,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.ServerLevelAccessor;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.LeavesBlock;
+@@ -65,6 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
--import net.minecraft.world.level.pathfinder.PathType;
+ import net.minecraft.world.level.pathfinder.PathType;
  import net.minecraft.world.phys.Vec3;
 +import org.joml.Vector3f;
  

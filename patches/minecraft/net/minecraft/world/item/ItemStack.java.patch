@@ -53,6 +53,19 @@
                  p_41624_.broadcastBreakEvent(p_335324_);
                  Item item = this.getItem();
                  this.shrink(1);
+@@ -635,6 +_,12 @@
+         return this.getItem().useOnRelease(this);
+     }
+ 
++    // CraftBukkit start
++    public void restorePatch(DataComponentPatch datacomponentpatch) {
++        this.components.restorePatch(datacomponentpatch);
++    }
++    // CraftBukkit end
++
+     @Nullable
+     public <T> T set(DataComponentType<? super T> p_332666_, @Nullable T p_335655_) {
+         return this.components.set(p_332666_, p_335655_);
 @@ -757,6 +_,8 @@
                  list.add(DISABLED_ITEM_TOOLTIP);
              }

@@ -402,7 +402,7 @@
              int i = p_9264_.getCount();
              int j = p_9264_.getDamageValue();
              InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
-@@ -290,13 +_,63 @@
+@@ -290,60 +_,116 @@
          }
      }
  
@@ -413,88 +413,32 @@
 -            return InteractionResult.FAIL;
 -        } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
 -            MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
-+
-+   // CraftBukkit start - whole method
-+   public boolean interactResult = false;
-+   public boolean firedInteract = false;
-+   public BlockPos interactPosition;
-+   public InteractionHand interactHand;
-+   public ItemStack interactItemStack;
-+   public InteractionResult useItemOn(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
-+      if (BanItem.check(p_9266_, p_9268_)) return InteractionResult.FAIL;
-+      BlockPos blockpos = p_9270_.getBlockPos();
-+      BlockState blockstate = p_9267_.getBlockState(blockpos);
-+      if (BanItem.check(p_9266_, ItemAPI.toNMSItem(CraftBlock.at(p_9267_, blockpos).getType()))) return InteractionResult.FAIL; // Block
-+      InteractionResult enuminteractionresult = InteractionResult.PASS;
-+      boolean cancelledBlock = false;
-+      boolean cancelledItem = false; // Paper - correctly handle items on cooldown
-+
-+      if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
-+         return InteractionResult.FAIL;
-+      }
-+        var event = net.minecraftforge.event.ForgeEventFactory.onRightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
-+        if (event.isCanceled()) return event.getCancellationResult();
-+      if (this.gameModeForPlayer == GameType.SPECTATOR) {
-+         MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
-+         cancelledBlock = !(menuprovider instanceof MenuProvider);
-+      }
-+
-+      if (p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
-+         cancelledItem = true; // Paper - correctly handle items on cooldown
-+      }
-+
-+      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.getDirection(), p_9268_, cancelledBlock, p_9269_, p_9270_.getLocation());
-+      firedInteract = true;
-+      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
-+      interactPosition = blockpos.immutable();
-+      interactHand = p_9269_;
-+      interactItemStack = p_9268_.copy();
-+
-+      if (eventCB.useInteractedBlock() == Event.Result.DENY) {
-+         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
-+         if (blockstate.getBlock() instanceof DoorBlock) {
-+            boolean bottom = blockstate.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
-+            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.above() : blockpos.below()));
-+         } else if (blockstate.getBlock() instanceof CakeBlock) {
-+            p_9266_.getBukkitEntity().sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
-+         } else if (interactItemStack.getItem() instanceof DoubleHighBlockItem) {
-+            // send a correcting update to the client, as it already placed the upper half of the bisected item
-+            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.relative(p_9270_.getDirection()).above()));
-+
-+            // send a correcting update to the client for the block above as well, this because of replaceable blocks (such as grass, sea grass etc)
-+            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.above()));
-+         }
-+         p_9266_.getBukkitEntity().updateInventory(); // SPIGOT-2867
-+         this.player.resyncUsingItem(this.player); // Paper - Resend player's using item status
-+         enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
-+      } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
-+         MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
-+
-             if (menuprovider != null) {
-                 p_9266_.openMenu(menuprovider);
-                 return InteractionResult.SUCCESS;
-@@ -304,10 +_,16 @@
-                 return InteractionResult.PASS;
-             }
-         } else {
-+            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+            if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+                InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
-+                if (result != InteractionResult.PASS) return result;
-+            }
-             boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
-             boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
-+            flag1 &= !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
-             ItemStack itemstack = p_9268_.copy();
+-            if (menuprovider != null) {
+-                p_9266_.openMenu(menuprovider);
+-                return InteractionResult.SUCCESS;
+-            } else {
+-                return InteractionResult.PASS;
+-            }
+-        } else {
+-            boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
+-            boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
+-            ItemStack itemstack = p_9268_.copy();
 -            if (!flag1) {
-+            if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
-                 ItemInteractionResult iteminteractionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
-                 if (iteminteractionresult.consumesAction()) {
-                     CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
-@@ -323,27 +_,31 @@
-                 }
-             }
- 
+-                ItemInteractionResult iteminteractionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
+-                if (iteminteractionresult.consumesAction()) {
+-                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
+-                    return iteminteractionresult.result();
+-                }
+-
+-                if (iteminteractionresult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && p_9269_ == InteractionHand.MAIN_HAND) {
+-                    InteractionResult interactionresult = blockstate.useWithoutItem(p_9267_, p_9266_, p_9270_);
+-                    if (interactionresult.consumesAction()) {
+-                        CriteriaTriggers.DEFAULT_BLOCK_USE.trigger(p_9266_, blockpos);
+-                        return interactionresult;
+-                    }
+-                }
+-            }
+-
 -            if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
 -                UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
 -                InteractionResult interactionresult1;
@@ -511,34 +455,120 @@
 -                }
 -
 -                return interactionresult1;
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
-+            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
-+            InteractionResult interactionresult1;
-+            if (this.isCreative()) {
-+               int i = p_9268_.getCount();
-+               interactionresult1 = p_9268_.useOn(useoncontext);
-+               p_9268_.setCount(i);
-             } else {
+-            } else {
 -                return InteractionResult.PASS;
 -            }
 -        }
 -    }
-+               interactionresult1 = p_9268_.useOn(useoncontext);
-+            }
 +
-+            if (interactionresult1.consumesAction()) {
-+               CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
-+            }
++   // CraftBukkit start - whole method
++   public boolean interactResult = false;
++   public boolean firedInteract = false;
++   public BlockPos interactPosition;
++   public InteractionHand interactHand;
++   public ItemStack interactItemStack;
++   public InteractionResult useItemOn(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
++       if (BanItem.check(p_9266_, p_9268_)) return InteractionResult.FAIL;
++       BlockPos blockpos = p_9270_.getBlockPos();
++       BlockState blockstate = p_9267_.getBlockState(blockpos);
++       if (BanItem.check(p_9266_, ItemAPI.toNMSItem(CraftBlock.at(p_9267_, blockpos).getType())))
++           return InteractionResult.FAIL; // Block
++       InteractionResult enuminteractionresult = InteractionResult.PASS;
++       boolean cancelledBlock = false;
++       boolean cancelledItem = false; // Paper - correctly handle items on cooldown
 +
-+            return interactionresult1;
-+         }
-+         // Paper start - Cancel only if cancelled + if the interact result is different from default response
-+         else if (this.interactResult && this.interactResult != cancelledItem) {
-+            this.player.resyncUsingItem(this.player);
-+         }
-+         // Paper end
-+      }
-+      return enuminteractionresult;
++       if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
++           return InteractionResult.FAIL;
++       }
++       var event = net.minecraftforge.event.ForgeEventFactory.onRightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
++       if (event.isCanceled()) return event.getCancellationResult();
++       if (this.gameModeForPlayer == GameType.SPECTATOR) {
++           MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
++           cancelledBlock = !(menuprovider instanceof MenuProvider);
++       }
++
++       if (p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
++           cancelledItem = true; // Paper - correctly handle items on cooldown
++       }
++
++       PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.getDirection(), p_9268_, cancelledBlock, p_9269_, p_9270_.getLocation());
++       firedInteract = true;
++       interactResult = eventCB.useItemInHand() == Event.Result.DENY;
++       interactPosition = blockpos.immutable();
++       interactHand = p_9269_;
++       interactItemStack = p_9268_.copy();
++
++       if (eventCB.useInteractedBlock() == Event.Result.DENY) {
++           // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
++           if (blockstate.getBlock() instanceof DoorBlock) {
++               boolean bottom = blockstate.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
++               p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.above() : blockpos.below()));
++           } else if (blockstate.getBlock() instanceof CakeBlock) {
++               p_9266_.getBukkitEntity().sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
++           } else if (interactItemStack.getItem() instanceof DoubleHighBlockItem) {
++               // send a correcting update to the client, as it already placed the upper half of the bisected item
++               p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.relative(p_9270_.getDirection()).above()));
++
++               // send a correcting update to the client for the block above as well, this because of replaceable blocks (such as grass, sea grass etc)
++               p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.above()));
++           }
++           p_9266_.getBukkitEntity().updateInventory(); // SPIGOT-2867
++           enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
++       } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
++           MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
++
++           if (menuprovider != null) {
++               p_9266_.openMenu(menuprovider);
++               return InteractionResult.SUCCESS;
++           } else {
++               return InteractionResult.PASS;
++           }
++       } else {
++           UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
++           if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++               InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
++               if (result != InteractionResult.PASS) return result;
++           }
++           boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
++           boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
++           flag1 &= !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
++           ItemStack itemstack = p_9268_.copy();
++           if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
++               ItemInteractionResult iteminteractionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
++               if (iteminteractionresult.consumesAction()) {
++                   CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
++                   return iteminteractionresult.result();
++               }
++
++               if (iteminteractionresult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && p_9269_ == InteractionHand.MAIN_HAND) {
++                   InteractionResult interactionresult = blockstate.useWithoutItem(p_9267_, p_9266_, p_9270_);
++                   if (interactionresult.consumesAction()) {
++                       CriteriaTriggers.DEFAULT_BLOCK_USE.trigger(p_9266_, blockpos);
++                       return interactionresult;
++                   }
++               }
++           }
++
++           if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
++               if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)
++                   return InteractionResult.PASS;
++               InteractionResult interactionresult1;
++               if (this.isCreative()) {
++                   int i = p_9268_.getCount();
++                   interactionresult1 = p_9268_.useOn(useoncontext);
++                   p_9268_.setCount(i);
++               } else {
++                   interactionresult1 = p_9268_.useOn(useoncontext);
++               }
++
++               if (interactionresult1.consumesAction()) {
++                   CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
++               }
++
++               return interactionresult1;
++           }
++       }
++       return enuminteractionresult;
 +   }
  
      public void setLevel(ServerLevel p_9261_) {

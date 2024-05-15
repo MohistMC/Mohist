@@ -8,47 +8,31 @@
  
  public class MerchantOffer {
      public static final Codec<MerchantOffer> CODEC = RecordCodecBuilder.create(
-@@ -28,16 +_,33 @@
-     public static final StreamCodec<RegistryFriendlyByteBuf, MerchantOffer> STREAM_CODEC = StreamCodec.of(
-         MerchantOffer::writeToStream, MerchantOffer::createFromStream
-     );
--    public ItemCost baseCostA;
--    public Optional<ItemCost> costB;
--    public final ItemStack result;
--    public int uses;
--    public int maxUses;
+@@ -33,11 +_,24 @@
+     public final ItemStack result;
+     public int uses;
+     public int maxUses;
 -    public final boolean rewardExp;
--    public int specialPriceDiff;
--    public int demand;
++    public boolean rewardExp;
+     public int specialPriceDiff;
+     public int demand;
 -    public final float priceMultiplier;
 -    public final int xp;
-+   public ItemCost baseCostA;
-+   public Optional<ItemCost> costB;
-+   public final ItemStack result;
-+   public int uses;
-+   public int maxUses;
-+   public boolean rewardExp;
-+   public int specialPriceDiff;
-+   public int demand;
-+   public float priceMultiplier;
-+   public int xp;
++    public float priceMultiplier;
++    public int xp;
 +
-+   // CraftBukkit start
-+   private CraftMerchantRecipe bukkitHandle; // CraftBukkit
++    // CraftBukkit start
++    private CraftMerchantRecipe bukkitHandle; // CraftBukkit
 +
-+   public CraftMerchantRecipe asBukkit() {
-+      return (this.bukkitHandle == null) ? (this.bukkitHandle = new CraftMerchantRecipe(this)) : this.bukkitHandle;
-+   }
++    public CraftMerchantRecipe asBukkit() {
++        return (this.bukkitHandle == null) ? (this.bukkitHandle = new CraftMerchantRecipe(this)) : this.bukkitHandle;
++    }
 +
-+   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, CraftMerchantRecipe bukkit) {
-+      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, 0, bukkit);
-+   }
-+
-+   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, int demand, CraftMerchantRecipe bukkit) {
-+      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, demand);
-+      this.bukkitHandle = bukkit;
-+   }
-+   // CraftBukkit end
++    public MerchantOffer(ItemCost baseCostA, Optional<ItemCost> costB, ItemStack result, int uses, int maxUses, int experience, float priceMultiplier, int demand, CraftMerchantRecipe bukkit) {
++       this(baseCostA, costB, result, uses, maxUses, experience, priceMultiplier, demand);
++       this.bukkitHandle = bukkit;
++    }
++    // CraftBukkit end
  
      private MerchantOffer(
          ItemCost p_329205_,

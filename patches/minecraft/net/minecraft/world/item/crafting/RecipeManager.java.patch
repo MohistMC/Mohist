@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -3,6 +_,8 @@
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.ImmutableMultimap;
++import com.google.common.collect.LinkedHashMultimap;
++import com.google.common.collect.Maps;
+ import com.google.common.collect.Multimap;
+ import com.google.common.collect.ImmutableMultimap.Builder;
+ import com.google.gson.Gson;
+@@ -14,6 +_,7 @@
+ import com.mojang.serialization.JsonOps;
+ import java.util.Collection;
+ import java.util.Comparator;
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
 @@ -40,22 +_,35 @@
      private Multimap<RecipeType<?>, RecipeHolder<?>> byType = ImmutableMultimap.of();
      private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
@@ -37,3 +54,29 @@
                  Recipe<?> recipe = Recipe.CODEC.parse(registryops, entry.getValue()).getOrThrow(JsonParseException::new);
                  RecipeHolder<?> recipeholder = new RecipeHolder<>(resourcelocation, recipe);
                  builder.put(recipe.getType(), recipeholder);
+@@ -164,6 +_,25 @@
+         this.byType = builder.build();
+         this.byName = builder1.build();
+     }
++
++    // CraftBukkit start
++    public boolean removeRecipe(ResourceLocation mcKey) {
++        Iterator<RecipeHolder<?>> iter = byType.values().iterator();
++        while (iter.hasNext()) {
++            RecipeHolder<?> recipe = iter.next();
++            if (recipe.id().equals(mcKey)) {
++                iter.remove();
++            }
++        }
++
++        return byName.remove(mcKey) != null;
++    }
++
++    public void clearRecipes() {
++        this.byType = LinkedHashMultimap.create();
++        this.byName = Maps.newHashMap();
++    }
++    // CraftBukkit end
+ 
+     public static <C extends Container, T extends Recipe<C>> RecipeManager.CachedCheck<C, T> createCheck(final RecipeType<T> p_220268_) {
+         return new RecipeManager.CachedCheck<C, T>() {

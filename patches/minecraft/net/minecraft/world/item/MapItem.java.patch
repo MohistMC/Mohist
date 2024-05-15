@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/MapItem.java
++++ b/net/minecraft/world/item/MapItem.java
+@@ -61,8 +_,8 @@
+         return getSavedData(mapid, p_42855_);
+     }
+ 
+-    private static MapId createNewSavedData(
+-        Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_
++    public static MapId createNewSavedData(
++            Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_
+     ) {
+         MapItemSavedData mapitemsaveddata = MapItemSavedData.createFresh((double)p_151122_, (double)p_151123_, (byte)p_151124_, p_151125_, p_151126_, p_151127_);
+         MapId mapid = p_151121_.getFreeMapId();

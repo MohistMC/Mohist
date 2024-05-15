@@ -1,10 +1,6 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -6,20 +_,21 @@
- import java.util.function.Predicate;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
--import net.minecraft.core.particles.ColorParticleOption;
+@@ -10,10 +_,13 @@
  import net.minecraft.core.particles.ParticleTypes;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
@@ -18,19 +14,9 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.tags.DamageTypeTags;
--import net.minecraft.tags.EntityTypeTags;
- import net.minecraft.util.Mth;
- import net.minecraft.world.BossEvent;
- import net.minecraft.world.Difficulty;
-@@ -49,12 +_,15 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.AbstractArrow;
- import net.minecraft.world.entity.projectile.WitherSkull;
--import net.minecraft.world.entity.projectile.windcharge.WindCharge;
+@@ -53,8 +_,13 @@
  import net.minecraft.world.item.Items;
--import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
 +import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
@@ -106,7 +92,7 @@
 +
 +         this.setInvulnerableTicks(k1);
 +         if (this.tickCount % 10 == 0) {
-+            this.regainReason0(EntityRegainHealthEvent.RegainReason.WITHER_SPAWN);
++            this.heal$regainReason(EntityRegainHealthEvent.RegainReason.WITHER_SPAWN);
 +            this.heal(10.0F);
 +         }
 +
@@ -117,7 +103,7 @@
                          List<LivingEntity> list = this.level().getNearbyEntities(LivingEntity.class, TARGETING_CONDITIONS, this, this.getBoundingBox().inflate(20.0, 8.0, 20.0));
                          if (!list.isEmpty()) {
                              LivingEntity livingentity1 = list.get(this.random.nextInt(list.size()));
-+                     if (CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
++                     	if (CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
                              this.setAlternativeTarget(i, livingentity1.getId());
                          }
                      }
@@ -148,7 +134,7 @@
              }
  
              if (this.tickCount % 20 == 0) {
-+            this.regainReason0(EntityRegainHealthEvent.RegainReason.REGEN); // CraftBukkit
++                this.heal$regainReason(EntityRegainHealthEvent.RegainReason.REGEN); // CraftBukkit
                  this.heal(1.0F);
              }
  

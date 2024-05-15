@@ -19,7 +19,7 @@
  import org.slf4j.Logger;
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
-@@ -260,10 +_,24 @@
+@@ -260,46 +_,56 @@
          return this.assignProfessionWhenSpawned;
      }
  
@@ -27,6 +27,42 @@
 -    protected void customServerAiStep() {
 -        this.level().getProfiler().push("villagerBrain");
 -        this.getBrain().tick((ServerLevel)this.level(), this);
+-        this.level().getProfiler().pop();
+-        if (this.assignProfessionWhenSpawned) {
+-            this.assignProfessionWhenSpawned = false;
+-        }
+-
+-        if (!this.isTrading() && this.updateMerchantTimer > 0) {
+-            this.updateMerchantTimer--;
+-            if (this.updateMerchantTimer <= 0) {
+-                if (this.increaseProfessionLevelOnUpdate) {
+-                    this.increaseMerchantCareer();
+-                    this.increaseProfessionLevelOnUpdate = false;
+-                }
+-
+-                this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
+-            }
+-        }
+-
+-        if (this.lastTradedPlayer != null && this.level() instanceof ServerLevel) {
+-            ((ServerLevel)this.level()).onReputationEvent(ReputationEventType.TRADE, this.lastTradedPlayer, this);
+-            this.level().broadcastEntityEvent(this, (byte)14);
+-            this.lastTradedPlayer = null;
+-        }
+-
+-        if (!this.isNoAi() && this.random.nextInt(100) == 0) {
+-            Raid raid = ((ServerLevel)this.level()).getRaidAt(this.blockPosition());
+-            if (raid != null && raid.isActive() && !raid.isOver()) {
+-                this.level().broadcastEntityEvent(this, (byte)42);
+-            }
+-        }
+-
+-        if (this.getVillagerData().getProfession() == VillagerProfession.NONE && this.isTrading()) {
+-            this.stopTrading();
+-        }
+-
+-        super.customServerAiStep();
+-    }
 +   // Spigot Start
 +   @Override
 +   public void inactiveTick() {
@@ -39,15 +75,47 @@
 +   // Spigot End
 +
 +   protected void customServerAiStep() {
-+      this.level().getProfiler().push("villagerBrain");
-+      // Mohist start
-+      if (OptVillager.getInstance().isLobotomized(this)) {
-+         this.getBrain().tick((ServerLevel)this.level(), this);
-+      }
-+      // Mohist end
-         this.level().getProfiler().pop();
-         if (this.assignProfessionWhenSpawned) {
-             this.assignProfessionWhenSpawned = false;
++       this.level().getProfiler().push("villagerBrain");
++       this.getBrain().tick((ServerLevel) this.level(), this);
++       this.level().getProfiler().pop();
++       if (this.assignProfessionWhenSpawned) {
++           this.assignProfessionWhenSpawned = false;
++       }
++
++       if (!this.isTrading() && this.updateMerchantTimer > 0) {
++           this.updateMerchantTimer--;
++           if (this.updateMerchantTimer <= 0) {
++               if (this.increaseProfessionLevelOnUpdate) {
++                   this.increaseMerchantCareer();
++                   this.increaseProfessionLevelOnUpdate = false;
++               }
++
++               this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
++           }
++       }
++
++       if (this.lastTradedPlayer != null && this.level() instanceof ServerLevel) {
++           ((ServerLevel) this.level()).onReputationEvent(ReputationEventType.TRADE, this.lastTradedPlayer, this);
++           this.level().broadcastEntityEvent(this, (byte) 14);
++           this.lastTradedPlayer = null;
++       }
++
++       if (!this.isNoAi() && this.random.nextInt(100) == 0) {
++           Raid raid = ((ServerLevel) this.level()).getRaidAt(this.blockPosition());
++           if (raid != null && raid.isActive() && !raid.isOver()) {
++               this.level().broadcastEntityEvent(this, (byte) 42);
++           }
++       }
++
++       if (this.getVillagerData().getProfession() == VillagerProfession.NONE && this.isTrading()) {
++           this.stopTrading();
++       }
++
++       super.customServerAiStep();
++   }
+ 
+     @Override
+     public void tick() {
 @@ -314,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {

@@ -8,7 +8,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -59,54 +_,63 @@
+@@ -59,16 +_,23 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
@@ -24,97 +24,34 @@
 +import org.joml.Vector3f;
  
  public class Zombie extends Monster {
--    private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
--    private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
--    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
--    private static final EntityDataAccessor<Integer> DATA_SPECIAL_TYPE_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.INT);
+     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
+     private static final EntityDataAccessor<Integer> DATA_SPECIAL_TYPE_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.INT);
 -    public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
--    public static final float ZOMBIE_LEADER_CHANCE = 0.05F;
--    public static final int REINFORCEMENT_ATTEMPTS = 50;
--    public static final int REINFORCEMENT_RANGE_MAX = 40;
--    public static final int REINFORCEMENT_RANGE_MIN = 7;
--    private static final EntityDimensions BABY_DIMENSIONS = EntityType.ZOMBIE.getDimensions().scale(0.5F).withEyeHeight(0.93F);
--    private static final float BREAK_DOOR_CHANCE = 0.1F;
--    private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = p_34284_ -> p_34284_ == Difficulty.HARD;
--    private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
--    private boolean canBreakDoors;
--    private int inWaterTime;
++   	public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
+     public static final float ZOMBIE_LEADER_CHANCE = 0.05F;
+     public static final int REINFORCEMENT_ATTEMPTS = 50;
+     public static final int REINFORCEMENT_RANGE_MAX = 40;
+@@ -79,7 +_,8 @@
+     private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
+     private boolean canBreakDoors;
+     private int inWaterTime;
 -    public int conversionTime;
--
--    public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
--        super(p_34271_, p_34272_);
--    }
--
--    public Zombie(Level p_34274_) {
--        this(EntityType.ZOMBIE, p_34274_);
--    }
--
--    @Override
--    protected void registerGoals() {
--        this.goalSelector.addGoal(4, new Zombie.ZombieAttackTurtleEggGoal(this, 1.0, 3));
--        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
--        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
--        this.addBehaviourGoals();
--    }
--
--    protected void addBehaviourGoals() {
--        this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0, false));
--        this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors));
--        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
--        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(ZombifiedPiglin.class));
--        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
--        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
--        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
--        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
--    }
-+   private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-+   private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
-+   private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
-+   private static final EntityDataAccessor<Integer> DATA_SPECIAL_TYPE_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.INT);
-+   public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
-+   public static final float ZOMBIE_LEADER_CHANCE = 0.05F;
-+   public static final int REINFORCEMENT_ATTEMPTS = 50;
-+   public static final int REINFORCEMENT_RANGE_MAX = 40;
-+   public static final int REINFORCEMENT_RANGE_MIN = 7;
-+   protected static final float BABY_EYE_HEIGHT_ADJUSTMENT = 0.81F;
-+   private static final float BREAK_DOOR_CHANCE = 0.1F;
-+   private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = (p_34284_) -> {
-+      return p_34284_ == Difficulty.HARD;
-+   };
-+   private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
-+   private boolean canBreakDoors;
-+   private int inWaterTime;
-+   public int conversionTime;
-+   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
-+
-+   public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
-+      super(p_34271_, p_34272_);
-+   }
-+
-+   public Zombie(Level p_34274_) {
-+      this(EntityType.ZOMBIE, p_34274_);
-+   }
-+
-+   protected void registerGoals() {
-+      this.goalSelector.addGoal(4, new Zombie.ZombieAttackTurtleEggGoal(this, 1.0D, 3));
-+      this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-+      this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-+      this.addBehaviourGoals();
-+   }
-+
-+   protected void addBehaviourGoals() {
-+      this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
-+      this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors));
-+      this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-+      this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers(ZombifiedPiglin.class));
-+      this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-+      if ( level.spigotConfig.zombieAggressiveTowardsVillager ) this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
-+      this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-+      this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
-+   }
++   	public int conversionTime;
++   	private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
-     public static AttributeSupplier.Builder createAttributes() {
-         return Monster.createMonsterAttributes()
+     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
+         super(p_34271_, p_34272_);
+@@ -103,7 +_,7 @@
+         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
+         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(ZombifiedPiglin.class));
+         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
++      	if ( level.spigotConfig.zombieAggressiveTowardsVillager ) this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
+         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
+     }
 @@ -197,7 +_,10 @@
      public void tick() {
          if (!this.level().isClientSide && this.isAlive() && !this.isNoAi()) {
@@ -222,7 +159,7 @@
 +            this.level.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
-+               p_34276_.setSecondsOnFire(event.getDuration(), false);
++               p_34276_.igniteForSeconds(event.getDuration(), false);
              }
 -        }
 +            // CraftBukkit end
@@ -236,64 +173,40 @@
  
      @Override
      protected SoundEvent getAmbientSound() {
-@@ -396,31 +_,48 @@
+@@ -396,16 +_,21 @@
              if (p_219160_.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
                  return flag;
              }
--
--            ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
--            if (zombievillager != null) {
--                zombievillager.finalizeSpawn(
++            if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {
++            }))
++                return flag;
+ 
++            villager.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION); // Mohist
+             ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
+             if (zombievillager != null) {
+                 zombievillager.finalizeSpawn(
 -                    p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true)
--                );
--                zombievillager.setVillagerData(villager.getVillagerData());
--                zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
--                zombievillager.setTradeOffers(villager.getOffers().copy());
--                zombievillager.setVillagerXp(villager.getVillagerXp());
--                if (!this.isSilent()) {
--                    p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
--                }
--
--                flag = false;
-+         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {}))
-+            return flag;
-+
-+         villager.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION); // Mohist
-+         ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
-+         if (zombievillager != null) {
-+            zombievillager.finalizeSpawn(p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
-+            zombievillager.setVillagerData(villager.getVillagerData());
-+            zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
-+            zombievillager.setTradeOffers(villager.getOffers().createTag());
-+            zombievillager.setVillagerXp(villager.getVillagerXp());
-+            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
-+            if (!this.isSilent()) {
-+               p_219160_.levelEvent((Player)null, 1026, this.blockPosition(), 0);
-             }
--        }
--
--        return flag;
--    }
--
--    @Override
--    public EntityDimensions getDefaultDimensions(Pose p_328975_) {
--        return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(p_328975_);
--    }
-+
-+            flag = false;
-+         }
-+      }
-+
-+      return flag;
-+   }
-+
++                        p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true)
+                 );
+                 zombievillager.setVillagerData(villager.getVillagerData());
+                 zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
+                 zombievillager.setTradeOffers(villager.getOffers().copy());
+                 zombievillager.setVillagerXp(villager.getVillagerXp());
++                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
+                 if (!this.isSilent()) {
+                     p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
+                 }
+@@ -417,6 +_,22 @@
+         return flag;
+     }
+ 
 +   public static ZombieVillager zombifyVillager(ServerLevel worldserver, Villager entityvillager, BlockPos blockPosition, boolean silent, SpawnReason spawnReason) {
 +      ZombieVillager zombievillager = entityvillager.convertTo(EntityType.ZOMBIE_VILLAGER, false, EntityTransformEvent.TransformReason.INFECTION, spawnReason);
 +      if (zombievillager != null) {
-+         zombievillager.finalizeSpawn(worldserver, worldserver.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag) null);
++         zombievillager.finalizeSpawn(worldserver, worldserver.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true));
 +         zombievillager.setVillagerData(entityvillager.getVillagerData());
 +         zombievillager.setGossips(entityvillager.getGossips().store(NbtOps.INSTANCE));
-+         zombievillager.setTradeOffers(entityvillager.getOffers().createTag());
++         zombievillager.setTradeOffers(entityvillager.getOffers().copy());
 +         zombievillager.setVillagerXp(entityvillager.getVillagerXp());
 +         // CraftBukkit start
 +         if (!silent) {
@@ -303,12 +216,9 @@
 +      return zombievillager;
 +   }
 +
-+   protected float getStandingEyeHeight(Pose p_34313_, EntityDimensions p_34314_) {
-+      return this.isBaby() ? 0.93F : 1.74F;
-+   }
- 
      @Override
-     public boolean canHoldItem(ItemStack p_34332_) {
+     public EntityDimensions getDefaultDimensions(Pose p_328975_) {
+         return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(p_328975_);
 @@ -461,6 +_,7 @@
                              chicken1.finalizeSpawn(p_34297_, p_34298_, MobSpawnType.JOCKEY, null);
                              chicken1.setChickenJockey(true);

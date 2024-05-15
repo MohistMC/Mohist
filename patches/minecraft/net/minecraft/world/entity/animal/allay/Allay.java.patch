@@ -81,20 +81,19 @@
      }
  
      private boolean allayConsidersItemEqual(ItemStack p_252278_, ItemStack p_250405_) {
-@@ -414,10 +_,9 @@
+@@ -414,9 +_,10 @@
      }
  
      private boolean shouldStopDancing() {
--        return this.jukeboxPos == null
++      if (this.forceDancing) {return false;} // CraftBukkit
+         return this.jukeboxPos == null
 -            || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.value().notificationRadius())
 -            || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
--    }
-+      if (this.forceDancing) {return false;} // CraftBukkit
-+      return this.jukeboxPos == null || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.getNotificationRadius()) || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
-+   }
++                || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.value().notificationRadius())
++                || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
+     }
  
      public float getHoldingItemAnimationProgress(float p_218395_) {
-         return Mth.lerp(p_218395_, this.holdingItemAnimationTicks0, this.holdingItemAnimationTicks) / 5.0F;
 @@ -499,25 +_,35 @@
          return DUPLICATION_ITEM.test(p_239736_);
      }

@@ -232,3 +232,24 @@
                  }
              };
              thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
+@@ -307,13 +_,13 @@
+         return new WorldLoader.InitConfig(worldloader$packconfig, Commands.CommandSelection.DEDICATED, p_248563_.functionPermissionLevel);
+     }
+ 
+-    private static void forceUpgrade(
+-        LevelStorageSource.LevelStorageAccess p_195489_,
+-        DataFixer p_195490_,
+-        boolean p_195491_,
+-        BooleanSupplier p_195492_,
+-        RegistryAccess p_332212_,
+-        boolean p_331291_
++    public static void forceUpgrade(
++            LevelStorageSource.LevelStorageAccess p_195489_,
++            DataFixer p_195490_,
++            boolean p_195491_,
++            BooleanSupplier p_195492_,
++            RegistryAccess p_332212_,
++            boolean p_331291_
+     ) {
+         LOGGER.info("Forcing world upgrade!");
+         WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_332212_, p_195491_, p_331291_);

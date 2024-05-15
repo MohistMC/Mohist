@@ -1,11 +1,7 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -27,10 +_,10 @@
-     private static final Logger LOGGER = LogUtils.getLogger();
-     private static final String ENTITIES_TAG = "Entities";
-     private static final String POSITION_TAG = "Position";
--    public final ServerLevel level;
-+    private final ServerLevel level;
+@@ -30,7 +_,7 @@
+     public final ServerLevel level;
      private final SimpleRegionStorage simpleRegionStorage;
      private final LongSet emptyChunks = new LongOpenHashSet();
 -    public final ProcessorMailbox<Runnable> entityDeserializerQueue;

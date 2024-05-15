@@ -1132,8 +1132,9 @@ public final class CraftServer implements Server {
         if (!creator.keepSpawnInMemory()) {
             worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
+        net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider); // TODO MOHIST
         ServerLevel internal = (ServerLevel) new ServerLevel(this.console, this.console.executor, worldSession, worlddata, worldKey, worlddimension, this.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
-                worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, this.console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
+                worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, this.console.overworld().getRandomSequences());
 
         if (!(this.worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
             return null;
@@ -1238,10 +1239,6 @@ public final class CraftServer implements Server {
     @Override
     public Logger getLogger() {
         return this.logger;
-    }
-
-    public ConsoleReader getReader() {
-        return this.console.reader;
     }
 
     @Override

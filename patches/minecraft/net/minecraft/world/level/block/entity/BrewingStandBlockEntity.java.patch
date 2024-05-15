@@ -135,7 +135,7 @@
 +         setChanged(p_155286_, p_155287_, p_155288_);
 +      }
 +
-+      boolean flag = isBrewable(p_155289_.items);
++      boolean flag = isBrewable(p_155286_.potionBrewing(), p_155289_.items);
 +      boolean flag1 = p_155289_.brewTime > 0;
 +      ItemStack itemstack1 = p_155289_.items.get(3);
 +
@@ -187,13 +187,13 @@
 +   private static void doBrew(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
 +      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_)) return;
 +      ItemStack itemstack = p_155293_.get(3);
++       PotionBrewing potionbrewing = p_155291_.potionBrewing();
 +
 +      // CraftBukkit start
 +      List<org.bukkit.inventory.ItemStack> brewResults = new ArrayList<>(3);
 +      for (int i = 0; i < 3; ++i) {
-+         ItemStack input = p_155293_.get(i);
-+         ItemStack output = BrewingRecipeRegistry.getOutput(input, itemstack);
-+         brewResults.add(i, CraftItemStack.asCraftMirror(output.isEmpty() ? input : output));
++          p_155293_.set(i, potionbrewing.mix(itemstack, (ItemStack) p_155293_.get(i)));
++          brewResults.add(i, CraftItemStack.asCraftMirror(potionbrewing.mix(itemstack, (ItemStack) p_155293_.get(i))));
 +      }
 +      BrewingStandBlockEntity brewingStandBlockEntity = brewingStandBlock;
 +      InventoryHolder owner = brewingStandBlockEntity == null ? null : brewingStandBlockEntity.getOwner();

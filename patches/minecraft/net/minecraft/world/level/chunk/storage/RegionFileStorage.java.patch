@@ -73,7 +73,7 @@
 +         FileUtil.createDirectoriesSafe(this.folder);
 +         Path path = this.folder.resolve("r." + p_63712_.getRegionX() + "." + p_63712_.getRegionZ() + ".mca");
 +         if (mohist$existingOnly.get() && !java.nio.file.Files.exists(path)) return null; // CraftBukkit
-+         RegionFile regionfile1 = new RegionFile(path, this.folder, this.sync);
++         RegionFile regionfile1 = new RegionFile(this.info, path, this.folder, this.sync);
 +         this.regionCache.putAndMoveToFirst(i, regionfile1);
 +         return regionfile1;
 +      }

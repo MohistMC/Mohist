@@ -17,7 +17,7 @@
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.inventory.AbstractContainerMenu;
-@@ -27,8 +_,14 @@
+@@ -27,13 +_,21 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -33,6 +33,14 @@
      public static final int DATA_PAGE = 0;
      public static final int NUM_DATA = 1;
      public static final int SLOT_BOOK = 0;
+     public static final int NUM_SLOTS = 1;
+-    private final Container bookAccess = new Container() {
++    private final Container bookAccess = new LecternInventory();
++
++    public class LecternInventory implements Container {
+         @Override
+         public int getContainerSize() {
+             return 1;
 @@ -75,10 +_,16 @@
              }
          }
