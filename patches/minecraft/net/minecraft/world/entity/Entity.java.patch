@@ -1655,10 +1655,11 @@
          if (this.removalReason == null) {
              this.removalReason = p_146876_;
          }
-@@ -3411,6 +_,14 @@
+@@ -3411,7 +_,15 @@
          this.levelCallback.onRemove(p_146876_);
      }
  
+-    protected void unsetRemoved() {
 +   // CraftBukkit start
 +   @Override
 +   public final void setRemoved(Entity.RemovalReason p_146876_, EntityRemoveEvent.Cause cause) {
@@ -1667,9 +1668,10 @@
 +   }
 +   // CraftBukkit
 +
-     protected void unsetRemoved() {
++    public void unsetRemoved() {
          this.removalReason = null;
      }
+ 
 @@ -3463,6 +_,100 @@
          float f1 = (float)Mth.lerp(d0, (double)this.getXRot(), p_298926_);
          this.setPos(d1, d2, d3);

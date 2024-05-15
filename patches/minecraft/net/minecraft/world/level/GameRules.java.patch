@@ -1,0 +1,180 @@
+--- a/net/minecraft/world/level/GameRules.java
++++ b/net/minecraft/world/level/GameRules.java
+@@ -77,7 +_,7 @@
+         "reducedDebugInfo", GameRules.Category.MISC, GameRules.BooleanValue.create(false, (p_296932_, p_296933_) -> {
+             byte b0 = (byte)(p_296933_.get() ? 22 : 23);
+ 
+-            for (ServerPlayer serverplayer : p_296932_.getPlayerList().getPlayers()) {
++            for (ServerPlayer serverplayer : p_296932_.players()) {
+                 serverplayer.connection.send(new ClientboundEntityEventPacket(serverplayer, b0));
+             }
+         })
+@@ -97,7 +_,7 @@
+     );
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_LIMITED_CRAFTING = register(
+         "doLimitedCrafting", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false, (p_296930_, p_296931_) -> {
+-            for (ServerPlayer serverplayer : p_296930_.getPlayerList().getPlayers()) {
++            for (ServerPlayer serverplayer : p_296930_.players()) {
+                 serverplayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.LIMITED_CRAFTING, p_296931_.get() ? 1.0F : 0.0F));
+             }
+         })
+@@ -122,7 +_,7 @@
+     );
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_DO_IMMEDIATE_RESPAWN = register(
+         "doImmediateRespawn", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false, (p_296928_, p_296929_) -> {
+-            for (ServerPlayer serverplayer : p_296928_.getPlayerList().getPlayers()) {
++            for (ServerPlayer serverplayer : p_296928_.players()) {
+                 serverplayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.IMMEDIATE_RESPAWN, p_296929_.get() ? 1.0F : 0.0F));
+             }
+         })
+@@ -192,7 +_,7 @@
+     );
+     public static final GameRules.Key<GameRules.IntegerValue> RULE_SPAWN_CHUNK_RADIUS = register(
+         "spawnChunkRadius", GameRules.Category.MISC, GameRules.IntegerValue.create(2, 0, 32, (p_327229_, p_327230_) -> {
+-            ServerLevel serverlevel = p_327229_.overworld();
++            ServerLevel serverlevel = p_327229_;
+             serverlevel.setDefaultSpawnPos(serverlevel.getSharedSpawnPos(), serverlevel.getSharedSpawnAngle());
+         })
+     );
+@@ -248,11 +_,11 @@
+         p_46169_.callVisitor(p_46167_, (Key)p_46168_);
+     }
+ 
+-    public void assignFrom(GameRules p_46177_, @Nullable MinecraftServer p_46178_) {
++    public void assignFrom(GameRules p_46177_, @Nullable ServerLevel p_46178_) {
+         p_46177_.rules.keySet().forEach(p_46182_ -> this.assignCap((GameRules.Key<?>)p_46182_, p_46177_, p_46178_));
+     }
+ 
+-    private <T extends GameRules.Value<T>> void assignCap(GameRules.Key<T> p_46173_, GameRules p_46174_, @Nullable MinecraftServer p_46175_) {
++    private <T extends GameRules.Value<T>> void assignCap(GameRules.Key<T> p_46173_, GameRules p_46174_, @Nullable ServerLevel p_46175_) {
+         T t = p_46174_.getRule(p_46173_);
+         this.<T>getRule(p_46173_).setFrom(t, p_46175_);
+     }
+@@ -268,7 +_,7 @@
+     public static class BooleanValue extends GameRules.Value<GameRules.BooleanValue> {
+         private boolean value;
+ 
+-        public static GameRules.Type<GameRules.BooleanValue> create(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
++        public static GameRules.Type<GameRules.BooleanValue> create(boolean p_46253_, BiConsumer<ServerLevel, GameRules.BooleanValue> p_46254_) {
+             return new GameRules.Type<>(
+                 BoolArgumentType::bool, p_46242_ -> new GameRules.BooleanValue(p_46242_, p_46253_), p_46254_, GameRules.GameRuleTypeVisitor::visitBoolean
+             );
+@@ -293,7 +_,7 @@
+             return this.value;
+         }
+ 
+-        public void set(boolean p_46247_, @Nullable MinecraftServer p_46248_) {
++        public void set(boolean p_46247_, @Nullable ServerLevel p_46248_) {
+             this.value = p_46247_;
+             this.onChanged(p_46248_);
+         }
+@@ -304,7 +_,7 @@
+         }
+ 
+         @Override
+-        protected void deserialize(String p_46234_) {
++        public void deserialize(String p_46234_) {
+             this.value = Boolean.parseBoolean(p_46234_);
+         }
+ 
+@@ -321,7 +_,7 @@
+             return new GameRules.BooleanValue(this.type, this.value);
+         }
+ 
+-        public void setFrom(GameRules.BooleanValue p_46225_, @Nullable MinecraftServer p_46226_) {
++        public void setFrom(GameRules.BooleanValue p_46225_, @Nullable ServerLevel p_46226_) {
+             this.value = p_46225_.value;
+             this.onChanged(p_46226_);
+         }
+@@ -361,14 +_,14 @@
+     public static class IntegerValue extends GameRules.Value<GameRules.IntegerValue> {
+         private int value;
+ 
+-        public static GameRules.Type<GameRules.IntegerValue> create(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
++        public static GameRules.Type<GameRules.IntegerValue> create(int p_46295_, BiConsumer<ServerLevel, GameRules.IntegerValue> p_46296_) {
+             return new GameRules.Type<>(
+                 IntegerArgumentType::integer, p_46293_ -> new GameRules.IntegerValue(p_46293_, p_46295_), p_46296_, GameRules.GameRuleTypeVisitor::visitInteger
+             );
+         }
+ 
+         static GameRules.Type<GameRules.IntegerValue> create(
+-            int p_332409_, int p_333284_, int p_329881_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_334400_
++            int p_332409_, int p_333284_, int p_329881_, BiConsumer<ServerLevel, GameRules.IntegerValue> p_334400_
+         ) {
+             return new GameRules.Type<>(
+                 () -> IntegerArgumentType.integer(p_333284_, p_329881_),
+@@ -397,7 +_,7 @@
+             return this.value;
+         }
+ 
+-        public void set(int p_151490_, @Nullable MinecraftServer p_151491_) {
++        public void set(int p_151490_, @Nullable ServerLevel p_151491_) {
+             this.value = p_151490_;
+             this.onChanged(p_151491_);
+         }
+@@ -408,7 +_,7 @@
+         }
+ 
+         @Override
+-        protected void deserialize(String p_46307_) {
++        public void deserialize(String p_46307_) {
+             this.value = safeParse(p_46307_);
+         }
+ 
+@@ -447,7 +_,7 @@
+             return new GameRules.IntegerValue(this.type, this.value);
+         }
+ 
+-        public void setFrom(GameRules.IntegerValue p_46298_, @Nullable MinecraftServer p_46299_) {
++        public void setFrom(GameRules.IntegerValue p_46298_, @Nullable ServerLevel p_46299_) {
+             this.value = p_46298_.value;
+             this.onChanged(p_46299_);
+         }
+@@ -493,15 +_,15 @@
+     public static class Type<T extends GameRules.Value<T>> {
+         final Supplier<ArgumentType<?>> argument;
+         private final Function<GameRules.Type<T>, T> constructor;
+-        final BiConsumer<MinecraftServer, T> callback;
++        final BiConsumer<ServerLevel, T> callback; // CraftBukkit - per-world
+         private final GameRules.VisitorCaller<T> visitorCaller;
+ 
+         Type(
+             Supplier<ArgumentType<?>> p_46342_,
+             Function<GameRules.Type<T>, T> p_46343_,
+-            BiConsumer<MinecraftServer, T> p_46344_,
++            BiConsumer<ServerLevel, T> p_46344_,
+             GameRules.VisitorCaller<T> p_46345_
+-        ) {
++        ) { // CraftBukkit - per-world
+             this.argument = p_46342_;
+             this.constructor = p_46343_;
+             this.callback = p_46344_;
+@@ -532,16 +_,16 @@
+ 
+         public void setFromArgument(CommandContext<CommandSourceStack> p_46371_, String p_46372_) {
+             this.updateFromArgument(p_46371_, p_46372_);
+-            this.onChanged(p_46371_.getSource().getServer());
++            this.onChanged(p_46371_.getSource().getLevel());
+         }
+ 
+-        protected void onChanged(@Nullable MinecraftServer p_46369_) {
++        public void onChanged(@Nullable ServerLevel p_46369_) {
+             if (p_46369_ != null) {
+                 this.type.callback.accept(p_46369_, this.getSelf());
+             }
+         }
+ 
+-        protected abstract void deserialize(String p_46367_);
++        public abstract void deserialize(String p_46367_);
+ 
+         public abstract String serialize();
+ 
+@@ -556,7 +_,7 @@
+ 
+         protected abstract T copy();
+ 
+-        public abstract void setFrom(T p_46363_, @Nullable MinecraftServer p_46364_);
++        public abstract void setFrom(T p_46363_, @Nullable ServerLevel p_46364_);
+     }
+ 
+     interface VisitorCaller<T extends GameRules.Value<T>> {

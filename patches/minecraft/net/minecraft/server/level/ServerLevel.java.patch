@@ -626,6 +626,30 @@
          if (!explosion.interactsWithBlocks()) {
              explosion.clearToBlow();
          }
+@@ -1216,6 +_,23 @@
+         return this.sendParticles(p_8625_, p_8627_, p_8628_, p_8629_, p_8630_, packet);
+     }
+ 
++    public <T extends ParticleOptions> int sendParticles(ServerPlayer sender, T t0, double d0, double d1, double d2, int i, double d3, double d4, double d5, double d6, boolean force) {
++        ClientboundLevelParticlesPacket packetplayoutworldparticles = new ClientboundLevelParticlesPacket(t0, force, d0, d1, d2, (float) d3, (float) d4, (float) d5, (float) d6, i);
++        // CraftBukkit end
++        int j = 0;
++
++        for (int k = 0; k < this.players.size(); ++k) {
++            ServerPlayer entityplayer = (ServerPlayer) this.players.get(k);
++            if (sender != null && !entityplayer.getBukkitEntity().canSee(sender.getBukkitEntity())) continue; // CraftBukkit
++
++            if (this.sendParticles(entityplayer, force, d0, d1, d2, packetplayoutworldparticles)) { // CraftBukkit
++                ++j;
++            }
++        }
++
++        return j;
++    }
++
+     private boolean sendParticles(ServerPlayer p_8637_, boolean p_8638_, double p_8639_, double p_8640_, double p_8641_, Packet<?> p_8642_) {
+         if (p_8637_.level() != this) {
+             return false;
 @@ -1250,7 +_,7 @@
  
      @Nullable

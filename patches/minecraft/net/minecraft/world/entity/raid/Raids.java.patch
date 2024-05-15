@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/raid/Raids.java
 +++ b/net/minecraft/world/entity/raid/Raids.java
-@@ -25,7 +_,7 @@
- 
- public class Raids extends SavedData {
-     private static final String RAID_FILE_ID = "raids";
--    public final Map<Integer, Raid> raidMap = Maps.newHashMap();
-+    private final Map<Integer, Raid> raidMap = Maps.newHashMap();
-     private final ServerLevel level;
-     private int nextAvailableID;
-     private int tick;
 @@ -108,11 +_,18 @@
                  }
  

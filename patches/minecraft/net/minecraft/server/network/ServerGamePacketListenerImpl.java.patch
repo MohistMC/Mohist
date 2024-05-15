@@ -1586,7 +1586,7 @@
                      this.player = this.server.getPlayerList().respawn(this.player, true);
                      CriteriaTriggers.CHANGED_DIMENSION.trigger(this.player, Level.END, Level.OVERWORLD);
                  } else {
-@@ -1562,6 +_,7 @@
+@@ -1562,30 +_,33 @@
                          return;
                      }
  
@@ -1594,7 +1594,11 @@
                      this.player = this.server.getPlayerList().respawn(this.player, false);
                      if (this.server.isHardcore()) {
                          this.player.setGameMode(GameType.SPECTATOR);
-@@ -1572,20 +_,22 @@
+-                        this.player.level().getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(false, this.server);
++                        this.player.level().getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(false, this.player.serverLevel()); // CraftBukkit - per-world
+                     }
+                 }
+                 break;
              case REQUEST_STATS:
                  this.player.getStats().sendStats(this.player);
          }

@@ -441,7 +441,7 @@
          }
      }
  
-@@ -655,7 +_,7 @@
+@@ -655,9 +_,10 @@
          Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
@@ -449,7 +449,10 @@
 +            case MOB -> net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
              case BLOW -> Explosion.BlockInteraction.TRIGGER_BLOCK;
++            case STANDARD -> Explosion.BlockInteraction.DESTROY;
          };
+         Explosion explosion = new Explosion(
+             this,
 @@ -674,6 +_,9 @@
              p_311434_,
              p_328498_
@@ -560,7 +563,7 @@
  
      @Override
      public long nextSubTickCount() {
-@@ -1079,6 +_,20 @@
+@@ -1079,11 +_,75 @@
  
      public abstract PotionBrewing potionBrewing();
  
@@ -581,9 +584,11 @@
      public static enum ExplosionInteraction {
          NONE,
          BLOCK,
-@@ -1086,4 +_,53 @@
+         MOB,
          TNT,
-         BLOW;
+-        BLOW;
++        BLOW,
++        STANDARD; // CraftBukkit - Add STANDARD which will always use Explosion.Effect.DESTROY
      }
 +
 +   // CraftBukkit start - Split off from above in order to directly send client and physic updates
