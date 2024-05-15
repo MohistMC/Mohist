@@ -68,7 +68,7 @@ public final class JavaPluginLoader implements PluginLoader {
 
         LibraryLoader libraryLoader = null;
         try {
-            libraryLoader = new LibraryLoader(server.getLogger());
+            libraryLoader = new LibraryLoader();
         } catch (NoClassDefFoundError ex) {
             // Provided depends were not added back
             server.getLogger().warning("Could not initialize LibraryLoader (missing dependencies?)");

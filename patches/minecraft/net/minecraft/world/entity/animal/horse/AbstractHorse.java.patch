@@ -26,15 +26,6 @@
  
  public abstract class AbstractHorse extends Animal implements ContainerListener, HasCustomInventoryScreen, OwnableEntity, PlayerRideableJumping, Saddleable {
      public static final int EQUIPMENT_SLOT_OFFSET = 400;
-@@ -107,7 +_,7 @@
-     public int tailCounter;
-     public int sprintCounter;
-     protected boolean isJumping;
--    public SimpleContainer inventory;
-+    protected SimpleContainer inventory;
-     protected int temper;
-     protected float playerJumpPendingScale;
-     protected boolean allowStandSliding;
 @@ -141,6 +_,7 @@
              return p_335622_.getVehicle() == AbstractHorse.this || p_335622_.canInteractWithEntity(AbstractHorse.this, 4.0);
          }

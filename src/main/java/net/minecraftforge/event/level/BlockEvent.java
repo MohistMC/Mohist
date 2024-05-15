@@ -8,6 +8,7 @@ package net.minecraftforge.event.level;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.portal.PortalShape;
@@ -113,6 +114,8 @@ public class BlockEvent extends Event {
         private final BlockSnapshot blockSnapshot;
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
+        private Direction placeEventDirection = null;
+        private InteractionHand placeEventHand = InteractionHand.MAIN_HAND;
 
         public EntityPlaceEvent(@NotNull BlockSnapshot blockSnapshot, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshot.getLevel(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
@@ -131,6 +134,20 @@ public class BlockEvent extends Event {
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public BlockState getPlacedBlock() { return placedBlock; }
         public BlockState getPlacedAgainst() { return placedAgainst; }
+        // Mohist start
+        public void setPlaceEventDirection(Direction placeEventDirection) {
+            this.placeEventDirection = placeEventDirection;
+        }
+        public Direction getPlaceEventDirection() {
+            return placeEventDirection;
+        }
+        public void setPlaceEventHand(InteractionHand placeEventHand) {
+            this.placeEventHand = placeEventHand;
+        }
+        public InteractionHand getPlaceEventHand() {
+            return placeEventHand;
+        }
+        // Mohist end
     }
 
     /**

@@ -55,37 +55,12 @@
  
      @Override
      public InteractionResult interact(Player p_273507_, InteractionHand p_273048_) {
-@@ -169,27 +_,27 @@
-         return this.interaction != null ? this.level().getPlayerByUUID(this.interaction.player()) : null;
+@@ -207,7 +_,7 @@
+         return this.getDimensions().makeBoundingBox(this.position());
      }
  
--    public void setWidth(float p_273385_) {
-+    private void setWidth(float p_273385_) {
-         this.entityData.set(DATA_WIDTH_ID, p_273385_);
-     }
- 
--    public float getWidth() {
-+    private float getWidth() {
-         return this.entityData.get(DATA_WIDTH_ID);
-     }
- 
--    public void setHeight(float p_273733_) {
-+    private void setHeight(float p_273733_) {
-         this.entityData.set(DATA_HEIGHT_ID, p_273733_);
-     }
- 
--    public float getHeight() {
-+    private float getHeight() {
-         return this.entityData.get(DATA_HEIGHT_ID);
-     }
- 
--    public void setResponse(boolean p_273657_) {
-+    private void setResponse(boolean p_273657_) {
-         this.entityData.set(DATA_RESPONSE_ID, p_273657_);
-     }
- 
--    public boolean getResponse() {
-+    private boolean getResponse() {
-         return this.entityData.get(DATA_RESPONSE_ID);
-     }
- 
+-    static record PlayerAction(UUID player, long timestamp) {
++    public static record PlayerAction(UUID player, long timestamp) {
+         public static final Codec<Interaction.PlayerAction> CODEC = RecordCodecBuilder.create(
+             p_273237_ -> p_273237_.group(
+                         UUIDUtil.CODEC.fieldOf("player").forGetter(Interaction.PlayerAction::player),

@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/net/minecraft/world/entity/animal/horse/Llama.java
+@@ -84,6 +_,12 @@
+         return false;
+     }
+ 
++    // CraftBukkit start
++    public void setStrengthPublic(int i) {
++        this.setStrength(i);
++    }
++    // CraftBukkit end
++
+     private void setStrength(int p_30841_) {
+         this.entityData.set(DATA_STRENGTH_ID, Math.max(1, Math.min(5, p_30841_)));
+     }
 @@ -376,6 +_,10 @@
  
      @Override

@@ -53,3 +53,12 @@
  
          @Override
          public PositionSource getListenerSource() {
+@@ -107,7 +_,7 @@
+             return this.sculkSpreader;
+         }
+ 
+-        private void bloom(ServerLevel p_281501_, BlockPos p_281448_, BlockState p_281966_, RandomSource p_283606_) {
++        public void bloom(ServerLevel p_281501_, BlockPos p_281448_, BlockState p_281966_, RandomSource p_283606_) {
+             p_281501_.setBlock(p_281448_, p_281966_.setValue(SculkCatalystBlock.PULSE, Boolean.valueOf(true)), 3);
+             p_281501_.scheduleTick(p_281448_, p_281966_.getBlock(), 8);
+             p_281501_.sendParticles(

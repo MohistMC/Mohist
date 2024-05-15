@@ -8,32 +8,17 @@
  
  public class Raid {
      private static final int SECTION_RADIUS_FOR_FINDING_NEW_VILLAGE_CENTER = 2;
-@@ -89,13 +_,13 @@
-     public static final int RAID_REMOVAL_THRESHOLD_SQR = 12544;
-     private final Map<Integer, Raider> groupToLeaderMap = Maps.newHashMap();
-     private final Map<Integer, Set<Raider>> groupRaiderMap = Maps.newHashMap();
--    public final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
--    public long ticksActive;
-+    private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
-+    private long ticksActive;
-     private BlockPos center;
+@@ -95,8 +_,8 @@
      private final ServerLevel level;
      private boolean started;
      private final int id;
 -    public float totalHealth;
+-    private int raidOmenLevel;
 +    private float totalHealth;
-     private int raidOmenLevel;
++    public int raidOmenLevel;
      private boolean active;
      private int groupsSpawned;
-@@ -103,7 +_,7 @@
-     private int postRaidTicks;
-     private int raidCooldownTicks;
-     private final RandomSource random = RandomSource.create();
--    public final int numGroups;
-+    private final int numGroups;
-     private Raid.RaidStatus status;
-     private int celebrationTicks;
-     private Optional<BlockPos> waveSpawnPos = Optional.empty();
+     private final ServerBossEvent raidEvent = new ServerBossEvent(RAID_NAME_COMPONENT, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 @@ -165,6 +_,12 @@
          return this.status == Raid.RaidStatus.LOSS;
      }

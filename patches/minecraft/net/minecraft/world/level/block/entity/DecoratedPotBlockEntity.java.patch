@@ -19,7 +19,13 @@
  
  public class DecoratedPotBlockEntity extends BlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
      public static final String TAG_SHERDS = "sherds";
-@@ -31,6 +_,47 @@
+@@ -26,11 +_,52 @@
+     public long wobbleStartedAtTick;
+     @Nullable
+     public DecoratedPotBlockEntity.WobbleStyle lastWobbleStyle;
+-    private PotDecorations decorations;
++    public PotDecorations decorations;
+     private ItemStack item = ItemStack.EMPTY;
      @Nullable
      protected ResourceKey<LootTable> lootTable;
      protected long lootTableSeed;

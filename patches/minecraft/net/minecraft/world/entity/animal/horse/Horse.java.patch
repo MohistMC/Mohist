@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/horse/Horse.java
++++ b/net/minecraft/world/entity/animal/horse/Horse.java
+@@ -77,7 +_,7 @@
+         return this.entityData.get(DATA_ID_TYPE_VARIANT);
+     }
+ 
+-    private void setVariantAndMarkings(Variant p_30700_, Markings p_30701_) {
++    public void setVariantAndMarkings(Variant p_30700_, Markings p_30701_) {
+         this.setTypeVariant(p_30700_.getId() & 0xFF | p_30701_.getId() << 8 & 0xFF00);
+     }
+ 

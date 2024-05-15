@@ -163,6 +163,7 @@ public enum InventoryType {
     private final int size;
     private final String title;
     private final boolean isCreatable;
+    private boolean isMods;
 
     private InventoryType(int defaultSize, /*@NotNull*/ String defaultTitle) {
         this(defaultSize, defaultTitle, true);
@@ -172,6 +173,7 @@ public enum InventoryType {
         size = defaultSize;
         title = defaultTitle;
         this.isCreatable = isCreatable;
+        this.isMods = false;
     }
 
     public int getDefaultSize() {
@@ -191,6 +193,14 @@ public enum InventoryType {
      */
     public boolean isCreatable() {
         return isCreatable;
+    }
+
+    public boolean isMods() {
+        return isMods;
+    }
+
+    public void setMods(boolean isMods) {
+        this.isMods = isMods;
     }
 
     public enum SlotType {

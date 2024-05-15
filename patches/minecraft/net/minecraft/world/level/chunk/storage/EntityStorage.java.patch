@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -30,7 +_,7 @@
-     public final ServerLevel level;
-     private final SimpleRegionStorage simpleRegionStorage;
-     private final LongSet emptyChunks = new LongOpenHashSet();
--    public final ProcessorMailbox<Runnable> entityDeserializerQueue;
-+    private final ProcessorMailbox<Runnable> entityDeserializerQueue;
- 
-     public EntityStorage(SimpleRegionStorage p_329511_, ServerLevel p_196924_, Executor p_196928_) {
-         this.simpleRegionStorage = p_329511_;
 @@ -88,8 +_,12 @@
              ListTag listtag = new ListTag();
              p_156559_.getEntities().forEach(p_156567_ -> {

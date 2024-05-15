@@ -176,8 +176,10 @@ public class ItemsCommand extends Command {
         player.sendMessage(ChatColor.GRAY + "Name - %s".formatted(nmsItem.getHoverName().getString()));
         player.sendMessage(ChatColor.GRAY + "ForgeItem - %s".formatted(itemStack.getType().isForgeItem));
         player.sendMessage(ChatColor.GRAY + "ForgeBlock - %s".formatted(itemStack.getType().isForgeBlock));
+        /*
         ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "NBT(CraftBukkit) - ", ItemAPI.getNBTAsString(itemStack));
         ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "NBT(Vanilla) - ", ItemAPI.getNbtAsString(PlayerAPI.getNMSPlayer(player).getMainHandItem().getTag()));
         ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "NBT(Forge) - ", ItemAPI.getNbtAsString(nmsItem.getForgeCaps()));
+         */
     }
 }

@@ -17,24 +17,15 @@
      private final DataFixer fixerUpper;
      private ResourceManager resourceManager;
      private final Path generatedDir;
-@@ -133,7 +_,7 @@
-         return this.listFolderContents(Paths.get(StructureUtils.testStructuresDir), "minecraft", ".snbt");
+@@ -114,7 +_,7 @@
+         this.structureRepository.clear();
      }
  
--    public Optional<StructureTemplate> loadFromGenerated(ResourceLocation p_230432_) {
-+    private Optional<StructureTemplate> loadFromGenerated(ResourceLocation p_230432_) {
-         if (!Files.isDirectory(this.generatedDir)) {
-             return Optional.empty();
-         } else {
-@@ -227,7 +_,7 @@
-         }
-     }
- 
--    public StructureTemplate readStructure(InputStream p_230378_) throws IOException {
-+    private StructureTemplate readStructure(InputStream p_230378_) throws IOException {
-         CompoundTag compoundtag = NbtIo.readCompressed(p_230378_, NbtAccounter.unlimitedHeap());
-         return this.readStructure(compoundtag);
-     }
+-    private Optional<StructureTemplate> loadFromResource(ResourceLocation p_230428_) {
++    public Optional<StructureTemplate> loadFromResource(ResourceLocation p_230428_) {
+         ResourceLocation resourcelocation = LISTER.idToFile(p_230428_);
+         return this.load(
+             () -> this.resourceManager.open(resourcelocation), p_230366_ -> LOGGER.error("Couldn't load structure {}", p_230428_, p_230366_)
 @@ -286,7 +_,7 @@
          }
      }

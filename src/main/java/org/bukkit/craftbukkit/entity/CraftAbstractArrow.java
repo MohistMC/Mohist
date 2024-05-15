@@ -24,7 +24,7 @@ public class CraftAbstractArrow extends AbstractProjectile implements AbstractAr
 
     @Override
     public int getKnockbackStrength() {
-        return this.getHandle().knockback;
+        return this.getHandle().getKnockback();
     }
 
     @Override

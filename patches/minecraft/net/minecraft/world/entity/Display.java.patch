@@ -1,148 +1,96 @@
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -43,7 +_,7 @@
-     public static final int NO_BRIGHTNESS_OVERRIDE = -1;
-     private static final EntityDataAccessor<Integer> DATA_TRANSFORMATION_INTERPOLATION_START_DELTA_TICKS_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Integer> DATA_TRANSFORMATION_INTERPOLATION_DURATION_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.INT);
--    public static final EntityDataAccessor<Integer> DATA_POS_ROT_INTERPOLATION_DURATION_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.INT);
-+    private static final EntityDataAccessor<Integer> DATA_POS_ROT_INTERPOLATION_DURATION_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Vector3f> DATA_TRANSLATION_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.VECTOR3);
-     private static final EntityDataAccessor<Vector3f> DATA_SCALE_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.VECTOR3);
-     private static final EntityDataAccessor<Quaternionf> DATA_LEFT_ROTATION_ID = SynchedEntityData.defineId(Display.class, EntityDataSerializers.QUATERNION);
-@@ -120,7 +_,7 @@
-         }
+@@ -341,19 +_,19 @@
+         return this.renderState;
      }
  
--    public static Transformation createTransformation(SynchedEntityData p_270278_) {
-+    private static Transformation createTransformation(SynchedEntityData p_270278_) {
-         Vector3f vector3f = p_270278_.get(DATA_TRANSLATION_ID);
-         Quaternionf quaternionf = p_270278_.get(DATA_LEFT_ROTATION_ID);
-         Vector3f vector3f1 = p_270278_.get(DATA_SCALE_ID);
-@@ -261,7 +_,7 @@
-         }
+-    private void setTransformationInterpolationDuration(int p_297488_) {
++    public void setTransformationInterpolationDuration(int p_297488_) {
+         this.entityData.set(DATA_TRANSFORMATION_INTERPOLATION_DURATION_ID, p_297488_);
      }
  
--    public void setTransformation(Transformation p_270186_) {
-+    private void setTransformation(Transformation p_270186_) {
-         this.entityData.set(DATA_TRANSLATION_ID, p_270186_.getTranslation());
-         this.entityData.set(DATA_LEFT_ROTATION_ID, p_270186_.getLeftRotation());
-         this.entityData.set(DATA_SCALE_ID, p_270186_.getScale());
-@@ -365,7 +_,7 @@
-         return this.entityData.get(DATA_POS_ROT_INTERPOLATION_DURATION_ID);
+-    private int getTransformationInterpolationDuration() {
++    public int getTransformationInterpolationDuration() {
+         return this.entityData.get(DATA_TRANSFORMATION_INTERPOLATION_DURATION_ID);
      }
  
--    public void setBillboardConstraints(Display.BillboardConstraints p_270345_) {
-+    private void setBillboardConstraints(Display.BillboardConstraints p_270345_) {
+-    private void setTransformationInterpolationDelay(int p_300640_) {
++    public void setTransformationInterpolationDelay(int p_300640_) {
+         this.entityData.set(DATA_TRANSFORMATION_INTERPOLATION_START_DELTA_TICKS_ID, p_300640_, true);
+     }
+ 
+-    private int getTransformationInterpolationDelay() {
++    public int getTransformationInterpolationDelay() {
+         return this.entityData.get(DATA_TRANSFORMATION_INTERPOLATION_START_DELTA_TICKS_ID);
+     }
+ 
+@@ -369,7 +_,7 @@
          this.entityData.set(DATA_BILLBOARD_RENDER_CONSTRAINTS_ID, p_270345_.getId());
      }
  
-@@ -373,12 +_,12 @@
+-    private Display.BillboardConstraints getBillboardConstraints() {
++    public Display.BillboardConstraints getBillboardConstraints() {
          return Display.BillboardConstraints.BY_ID.apply(this.entityData.get(DATA_BILLBOARD_RENDER_CONSTRAINTS_ID));
      }
  
--    public void setBrightnessOverride(@Nullable Brightness p_270461_) {
-+    private void setBrightnessOverride(@Nullable Brightness p_270461_) {
-         this.entityData.set(DATA_BRIGHTNESS_OVERRIDE_ID, p_270461_ != null ? p_270461_.pack() : -1);
-     }
- 
-     @Nullable
--    public Brightness getBrightnessOverride() {
-+    private Brightness getBrightnessOverride() {
-         int i = this.entityData.get(DATA_BRIGHTNESS_OVERRIDE_ID);
-         return i != -1 ? Brightness.unpack(i) : null;
-     }
-@@ -387,47 +_,47 @@
-         return this.entityData.get(DATA_BRIGHTNESS_OVERRIDE_ID);
-     }
- 
--    public void setViewRange(float p_270907_) {
-+    private void setViewRange(float p_270907_) {
-         this.entityData.set(DATA_VIEW_RANGE_ID, p_270907_);
-     }
- 
--    public float getViewRange() {
-+    private float getViewRange() {
-         return this.entityData.get(DATA_VIEW_RANGE_ID);
-     }
- 
--    public void setShadowRadius(float p_270122_) {
-+    private void setShadowRadius(float p_270122_) {
-         this.entityData.set(DATA_SHADOW_RADIUS_ID, p_270122_);
-     }
- 
--    public float getShadowRadius() {
-+    private float getShadowRadius() {
-         return this.entityData.get(DATA_SHADOW_RADIUS_ID);
-     }
- 
--    public void setShadowStrength(float p_270866_) {
-+    private void setShadowStrength(float p_270866_) {
-         this.entityData.set(DATA_SHADOW_STRENGTH_ID, p_270866_);
-     }
- 
--    public float getShadowStrength() {
-+    private float getShadowStrength() {
-         return this.entityData.get(DATA_SHADOW_STRENGTH_ID);
-     }
- 
--    public void setWidth(float p_270741_) {
-+    private void setWidth(float p_270741_) {
-         this.entityData.set(DATA_WIDTH_ID, p_270741_);
-     }
- 
--    public float getWidth() {
-+    private float getWidth() {
-         return this.entityData.get(DATA_WIDTH_ID);
-     }
- 
--    public void setHeight(float p_270716_) {
-+    private void setHeight(float p_270716_) {
-         this.entityData.set(DATA_HEIGHT_ID, p_270716_);
-     }
- 
--    public int getGlowColorOverride() {
-+    private int getGlowColorOverride() {
-         return this.entityData.get(DATA_GLOW_COLOR_OVERRIDE_ID);
-     }
- 
--    public void setGlowColorOverride(int p_270784_) {
-+    private void setGlowColorOverride(int p_270784_) {
-         this.entityData.set(DATA_GLOW_COLOR_OVERRIDE_ID, p_270784_);
-     }
- 
-@@ -444,7 +_,7 @@
+@@ -557,11 +_,11 @@
+             }
          }
-     }
  
--    public float getHeight() {
-+    private float getHeight() {
-         return this.entityData.get(DATA_HEIGHT_ID);
-     }
+-        private BlockState getBlockState() {
++        public BlockState getBlockState() {
+             return this.entityData.get(DATA_BLOCK_STATE_ID);
+         }
  
-@@ -657,11 +_,11 @@
+-        private void setBlockState(BlockState p_270267_) {
++        public void setBlockState(BlockState p_270267_) {
+             this.entityData.set(DATA_BLOCK_STATE_ID, p_270267_);
+         }
+ 
+@@ -653,7 +_,7 @@
+             }
+         }
+ 
+-        private ItemStack getItemStack() {
++        public ItemStack getItemStack() {
              return this.entityData.get(DATA_ITEM_STACK_ID);
          }
  
--        public void setItemStack(ItemStack p_270310_) {
-+        private void setItemStack(ItemStack p_270310_) {
-             this.entityData.set(DATA_ITEM_STACK_ID, p_270310_);
-         }
- 
--        public void setItemTransform(ItemDisplayContext p_270370_) {
-+        private void setItemTransform(ItemDisplayContext p_270370_) {
+@@ -665,7 +_,7 @@
              this.entityData.set(DATA_ITEM_DISPLAY_ID, p_270370_.getId());
          }
  
-@@ -823,7 +_,7 @@
+-        private ItemDisplayContext getItemTransform() {
++        public ItemDisplayContext getItemTransform() {
+             return ItemDisplayContext.BY_ID.apply(this.entityData.get(DATA_ITEM_DISPLAY_ID));
+         }
+ 
+@@ -785,8 +_,8 @@
+         private static final byte INITIAL_TEXT_OPACITY = -1;
+         public static final int INITIAL_BACKGROUND = 1073741824;
+         private static final EntityDataAccessor<Component> DATA_TEXT_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.COMPONENT);
+-        private static final EntityDataAccessor<Integer> DATA_LINE_WIDTH_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
+-        private static final EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
++        public static final EntityDataAccessor<Integer> DATA_LINE_WIDTH_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
++        public static final EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
+         private static final EntityDataAccessor<Byte> DATA_TEXT_OPACITY_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
+         private static final EntityDataAccessor<Byte> DATA_STYLE_FLAGS_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
+         private static final IntSet TEXT_RENDER_STATE_IDS = IntSet.of(
+@@ -819,7 +_,7 @@
+             }
+         }
+ 
+-        private Component getText() {
++        public Component getText() {
              return this.entityData.get(DATA_TEXT_ID);
          }
  
--        public void setText(Component p_270902_) {
-+        private void setText(Component p_270902_) {
+@@ -827,11 +_,11 @@
              this.entityData.set(DATA_TEXT_ID, p_270902_);
          }
  
-@@ -831,23 +_,23 @@
+-        private int getLineWidth() {
++        public int getLineWidth() {
              return this.entityData.get(DATA_LINE_WIDTH_ID);
          }
  
@@ -151,18 +99,7 @@
              this.entityData.set(DATA_LINE_WIDTH_ID, p_270545_);
          }
  
--        public byte getTextOpacity() {
-+        private byte getTextOpacity() {
-             return this.entityData.get(DATA_TEXT_OPACITY_ID);
-         }
- 
--        public void setTextOpacity(byte p_270583_) {
-+        private void setTextOpacity(byte p_270583_) {
-             this.entityData.set(DATA_TEXT_OPACITY_ID, p_270583_);
-         }
- 
--        public int getBackgroundColor() {
-+        private int getBackgroundColor() {
+@@ -847,11 +_,11 @@
              return this.entityData.get(DATA_BACKGROUND_COLOR_ID);
          }
  
@@ -171,12 +108,8 @@
              this.entityData.set(DATA_BACKGROUND_COLOR_ID, p_270241_);
          }
  
-@@ -855,7 +_,7 @@
+-        private byte getFlags() {
++        public byte getFlags() {
              return this.entityData.get(DATA_STYLE_FLAGS_ID);
-         }
- 
--        public void setFlags(byte p_270855_) {
-+        private void setFlags(byte p_270855_) {
-             this.entityData.set(DATA_STYLE_FLAGS_ID, p_270855_);
          }
  

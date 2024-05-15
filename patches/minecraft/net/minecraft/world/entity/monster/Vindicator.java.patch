@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Vindicator.java
++++ b/net/minecraft/world/entity/monster/Vindicator.java
+@@ -44,7 +_,7 @@
+ public class Vindicator extends AbstractIllager {
+     private static final String TAG_JOHNNY = "Johnny";
+     static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = p_34082_ -> p_34082_ == Difficulty.NORMAL || p_34082_ == Difficulty.HARD;
+-    boolean isJohnny;
++    public boolean isJohnny;
+ 
+     public Vindicator(EntityType<? extends Vindicator> p_34074_, Level p_34075_) {
+         super(p_34074_, p_34075_);

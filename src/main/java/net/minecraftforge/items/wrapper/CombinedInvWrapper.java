@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class CombinedInvWrapper implements IItemHandlerModifiable
 {
 
-    protected final IItemHandlerModifiable[] itemHandler; // the handlers
+    public final IItemHandlerModifiable[] itemHandler; // the handlers
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
 

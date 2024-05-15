@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/EvokerFangs.java
 +++ b/net/minecraft/world/entity/projectile/EvokerFangs.java
-@@ -12,6 +_,7 @@
+@@ -12,12 +_,13 @@
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.TraceableEntity;
  import net.minecraft.world.level.Level;
@@ -8,6 +8,13 @@
  
  public class EvokerFangs extends Entity implements TraceableEntity {
      public static final int ATTACK_DURATION = 20;
+     public static final int LIFE_OFFSET = 2;
+     public static final int ATTACK_TRIGGER_TICKS = 14;
+-    private int warmupDelayTicks;
++    public int warmupDelayTicks;
+     private boolean sentSpikeEvent;
+     private int lifeTicks = 22;
+     private boolean clientSideAttackStarted;
 @@ -106,6 +_,7 @@
              }
  

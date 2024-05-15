@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -77,6 +_,9 @@
+@@ -77,12 +_,15 @@
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
  import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -10,6 +10,13 @@
  
  public abstract class ChunkGenerator {
      public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchStable(ChunkGenerator::codec, Function.identity());
+     protected final BiomeSource biomeSource;
+     private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
+-    private final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
++    public final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
+ 
+     public ChunkGenerator(BiomeSource p_256133_) {
+         this(p_256133_, p_223234_ -> p_223234_.value().getGenerationSettings());
 @@ -314,6 +_,31 @@
          }
      }

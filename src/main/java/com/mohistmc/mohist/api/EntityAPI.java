@@ -8,7 +8,7 @@ import org.bukkit.entity.EntityType;
 public class EntityAPI {
 
     public static String entityName(Entity entity) {
-        String entityName = com.mohistmc.api.ServerAPI.entityTypeMap.get(entity.getType());
+        String entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
             entityName = entity.getName().getString();
         }

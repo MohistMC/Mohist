@@ -155,3 +155,21 @@
  
      @Override
      public boolean ignoreExplosion(Explosion p_310221_) {
+@@ -616,7 +_,7 @@
+         return this.isMarker();
+     }
+ 
+-    private void setSmall(boolean p_31604_) {
++    public void setSmall(boolean p_31604_) {
+         this.entityData.set(DATA_CLIENT_FLAGS, this.setBit(this.entityData.get(DATA_CLIENT_FLAGS), 1, p_31604_));
+     }
+ 
+@@ -640,7 +_,7 @@
+         return (this.entityData.get(DATA_CLIENT_FLAGS) & 8) != 0;
+     }
+ 
+-    private void setMarker(boolean p_31682_) {
++    public void setMarker(boolean p_31682_) {
+         this.entityData.set(DATA_CLIENT_FLAGS, this.setBit(this.entityData.get(DATA_CLIENT_FLAGS), 16, p_31682_));
+     }
+ 

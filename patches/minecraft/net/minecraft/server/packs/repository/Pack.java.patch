@@ -1,11 +1,7 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
-@@ -20,9 +_,10 @@
- public class Pack {
-     private static final Logger LOGGER = LogUtils.getLogger();
-     private final PackLocationInfo location;
--    public final Pack.ResourcesSupplier resources;
-+    private final Pack.ResourcesSupplier resources;
+@@ -23,6 +_,7 @@
+     public final Pack.ResourcesSupplier resources;
      private final Pack.Metadata metadata;
      private final PackSelectionConfig selectionConfig;
 +    private final boolean hidden; // Forge: Allow packs to be hidden from the UI entirely

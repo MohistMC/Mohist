@@ -170,3 +170,12 @@
  
      private static void updateClientTarget(Level p_155400_, BlockPos p_155401_, ConduitBlockEntity p_155402_) {
          if (p_155402_.destroyTargetUUID == null) {
+@@ -233,7 +_,7 @@
+         }
+     }
+ 
+-    private static AABB getDestroyRangeAABB(BlockPos p_155432_) {
++    public static AABB getDestroyRangeAABB(BlockPos p_155432_) {
+         int i = p_155432_.getX();
+         int j = p_155432_.getY();
+         int k = p_155432_.getZ();

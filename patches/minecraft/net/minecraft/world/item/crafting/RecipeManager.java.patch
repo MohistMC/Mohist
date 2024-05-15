@@ -17,8 +17,12 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
-@@ -40,22 +_,35 @@
-     private Multimap<RecipeType<?>, RecipeHolder<?>> byType = ImmutableMultimap.of();
+@@ -37,25 +_,38 @@
+     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final HolderLookup.Provider registries;
+-    private Multimap<RecipeType<?>, RecipeHolder<?>> byType = ImmutableMultimap.of();
++    public Multimap<RecipeType<?>, RecipeHolder<?>> byType = ImmutableMultimap.of();
      private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
      private boolean hasErrors;
 +    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
@@ -54,6 +58,27 @@
                  Recipe<?> recipe = Recipe.CODEC.parse(registryops, entry.getValue()).getOrThrow(JsonParseException::new);
                  RecipeHolder<?> recipeholder = new RecipeHolder<>(resourcelocation, recipe);
                  builder.put(recipe.getType(), recipeholder);
+@@ -70,6 +_,20 @@
+         LOGGER.info("Loaded {} recipes", this.byType.size());
+     }
+ 
++    // CraftBukkit start
++    public void addRecipe(RecipeHolder<?> irecipe) {
++        org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
++        Collection<RecipeHolder<?>> map = this.byType.get(irecipe.value().getType()); // CraftBukkit
++
++        if (this.byName.containsKey(irecipe.id())) {
++            throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.id());
++        } else {
++            map.add(irecipe);
++            this.byName.put(irecipe.id(), irecipe);
++        }
++    }
++    // CraftBukkit end
++
+     public boolean hadErrorsLoading() {
+         return this.hasErrors;
+     }
 @@ -164,6 +_,25 @@
          this.byType = builder.build();
          this.byName = builder1.build();

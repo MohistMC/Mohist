@@ -53,14 +53,6 @@ public class ItemAPI {
         return new ItemStack(material);
     }
 
-    public static CompoundTag getNbt(ItemStack itemStack) {
-        return toNMSItem(itemStack).getTag() == null ? null : toNMSItem(itemStack).getTag();
-    }
-
-    public static String getNBTAsString(ItemStack itemStack) {
-        return toNMSItem(itemStack).getTag() == null ? "null" : toNMSItem(itemStack).getTag().getAsString();
-    }
-
     public static String getNbtAsString(CompoundTag compoundTag) {
         return compoundTag == null ? "null" : compoundTag.getAsString();
     }
@@ -103,17 +95,6 @@ public class ItemAPI {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public static String serializeNBT(ItemStack itemStack) {
-        return getNbt(itemStack) == null ? null : serializeNbt(getNbt(itemStack));
-    }
-
-    public static ItemStack deserializeNBT(String serializeNBT) {
-        if (serializeNBT != null && !serializeNBT.isEmpty()) {
-            return CraftItemStack.asBukkitCopy(new net.minecraft.world.item.ItemStack(ItemAPI.deserializeNbt(serializeNBT)));
-        }
-        return new ItemStack(Material.AIR);
     }
 
     public static String serializeNbt(CompoundTag nbtTagCompound) {
@@ -177,20 +158,6 @@ public class ItemAPI {
         ItemMeta im = itemStack.getItemMeta();
         im.setLore(lore);
         itemStack.setItemMeta(im);
-    }
-
-    @Deprecated
-    public static TextComponent show(ItemStack itemStack) {
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        CompoundTag compound = new CompoundTag();
-        nmsItemStack.save(compound);
-        String json = compound.toString();
-        BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                new TextComponent(json)
-        };
-        TextComponent component = new TextComponent(itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? itemStack.getItemMeta().getDisplayName() : itemStack.getTranslationKey());
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
-        return component;
     }
 
     public static boolean isBan(ItemStack itemStack) {

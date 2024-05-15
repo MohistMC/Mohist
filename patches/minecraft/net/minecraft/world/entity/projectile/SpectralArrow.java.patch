@@ -1,17 +1,13 @@
 --- a/net/minecraft/world/entity/projectile/SpectralArrow.java
 +++ b/net/minecraft/world/entity/projectile/SpectralArrow.java
-@@ -9,9 +_,10 @@
+@@ -9,6 +_,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
  
  public class SpectralArrow extends AbstractArrow {
--    public int duration = 200;
-+    private int duration = 200;
- 
-     public SpectralArrow(EntityType<? extends SpectralArrow> p_37411_, Level p_37412_) {
-         super(p_37411_, p_37412_);
+     public int duration = 200;
 @@ -37,6 +_,7 @@
      protected void doPostHurtEffects(LivingEntity p_37422_) {
          super.doPostHurtEffects(p_37422_);

@@ -18,6 +18,17 @@
  
  public class Goat extends Animal {
      public static final EntityDimensions LONG_JUMPING_DIMENSIONS = EntityDimensions.scalable(0.9F, 1.3F).scale(0.7F);
+@@ -82,8 +_,8 @@
+     public static final double GOAT_SCREAMING_CHANCE = 0.02;
+     public static final double UNIHORN_CHANCE = 0.1F;
+     private static final EntityDataAccessor<Boolean> DATA_IS_SCREAMING_GOAT = SynchedEntityData.defineId(Goat.class, EntityDataSerializers.BOOLEAN);
+-    private static final EntityDataAccessor<Boolean> DATA_HAS_LEFT_HORN = SynchedEntityData.defineId(Goat.class, EntityDataSerializers.BOOLEAN);
+-    private static final EntityDataAccessor<Boolean> DATA_HAS_RIGHT_HORN = SynchedEntityData.defineId(Goat.class, EntityDataSerializers.BOOLEAN);
++    public static final EntityDataAccessor<Boolean> DATA_HAS_LEFT_HORN = SynchedEntityData.defineId(Goat.class, EntityDataSerializers.BOOLEAN);
++    public static final EntityDataAccessor<Boolean> DATA_HAS_RIGHT_HORN = SynchedEntityData.defineId(Goat.class, EntityDataSerializers.BOOLEAN);
+     private boolean isLoweringHead;
+     private int lowerHeadTick;
+ 
 @@ -211,8 +_,15 @@
      public InteractionResult mobInteract(Player p_149379_, InteractionHand p_149380_) {
          ItemStack itemstack = p_149379_.getItemInHand(p_149380_);

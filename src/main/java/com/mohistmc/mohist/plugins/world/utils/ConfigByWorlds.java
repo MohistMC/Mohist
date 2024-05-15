@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class ConfigByWorlds {
     public static File f = new File("mohist-config", "worlds.yml");
@@ -201,7 +202,7 @@ public class ConfigByWorlds {
                 double pitch = config.getDouble("worlds." + world.getName() + ".spawn.pitch");
                 player.teleport(new Location(world, x, y, z, (float) yaw, (float) pitch));
             } else {
-                player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
+                player.teleport(world.getSpawnLocation(), TeleportCause.COMMAND);
             }
         }
     }

@@ -37,7 +37,7 @@ public class BanListener {
                     if (itemStack != null && itemStack.getType() != Material.AIR) {
                         ItemStack nmsItem = ItemAPI.toNMSItem(itemStack);
                         if (nmsItem.getItem() instanceof SpawnEggItem spawnEggItem) {
-                            EntityType<?> entitytype = spawnEggItem.getType(nmsItem.getTag());
+                            EntityType<?> entitytype = spawnEggItem.getType(nmsItem);
                             ListUtils.isDuplicate(old, ServerAPI.entityTypeMap.get(entitytype));
                         }
                     }

@@ -14,16 +14,7 @@
  import net.minecraft.world.entity.ai.Brain;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
-@@ -107,13 +_,14 @@
-     private final DynamicGameEventListener<Allay.JukeboxListener> dynamicJukeboxListener;
-     private final SimpleContainer inventory = new SimpleContainer(1);
-     @Nullable
--    public BlockPos jukeboxPos;
--    public long duplicationCooldown;
-+    private BlockPos jukeboxPos;
-+    private long duplicationCooldown;
-     private float holdingItemAnimationTicks;
-     private float holdingItemAnimationTicks0;
+@@ -114,6 +_,7 @@
      private float dancingAnimationTicks;
      private float spinningAnimationTicks;
      private float spinningAnimationTicks0;

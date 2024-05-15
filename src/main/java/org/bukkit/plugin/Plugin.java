@@ -3,6 +3,7 @@ package org.bukkit.plugin;
 import java.io.File;
 import java.io.InputStream;
 import java.util.logging.Logger;
+import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.Server;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -189,4 +190,14 @@ public interface Plugin extends TabExecutor {
      */
     @NotNull
     public String getName();
+
+    // Mohist start
+    public boolean callForge();
+    public void initCallForge();
+    public void registerForgeEvent(IEventBus bus, Object target);
+    public void registerForgeEvent(Object target);
+    public void unregisterForgeEvents(IEventBus bus, Object target);
+    public void unregisterForgeEvents(IEventBus bus);
+    public void unregisterAllForgeEvents();
+    // Mohist end
 }

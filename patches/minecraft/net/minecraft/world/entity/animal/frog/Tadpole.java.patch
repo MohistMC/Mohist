@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/animal/frog/Tadpole.java
 +++ b/net/minecraft/world/entity/animal/frog/Tadpole.java
-@@ -42,7 +_,7 @@
-     public static int ticksToBeFrog = Math.abs(-24000);
-     public static float HITBOX_WIDTH = 0.4F;
-     public static float HITBOX_HEIGHT = 0.3F;
--    public int age;
-+    private int age;
-     protected static final ImmutableList<SensorType<? extends Sensor<? super Tadpole>>> SENSOR_TYPES = ImmutableList.of(
-         SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY, SensorType.FROG_TEMPTATIONS
-     );
 @@ -225,6 +_,7 @@
  
      private void ageUp() {

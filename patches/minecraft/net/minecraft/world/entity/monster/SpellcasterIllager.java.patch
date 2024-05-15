@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/monster/SpellcasterIllager.java
 +++ b/net/minecraft/world/entity/monster/SpellcasterIllager.java
+@@ -62,7 +_,7 @@
+         this.entityData.set(DATA_SPELL_CASTING_ID, (byte)p_33728_.id);
+     }
+ 
+-    protected SpellcasterIllager.IllagerSpell getCurrentSpell() {
++    public SpellcasterIllager.IllagerSpell getCurrentSpell() {
+         return !this.level().isClientSide ? this.currentSpell : SpellcasterIllager.IllagerSpell.byId(this.entityData.get(DATA_SPELL_CASTING_ID));
+     }
+ 
 @@ -116,7 +_,7 @@
  
      protected abstract SoundEvent getCastingSoundEvent();

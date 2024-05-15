@@ -5,6 +5,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftChestedHorse;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Horse.Variant;
 
 public class MohistModsChestHorse extends CraftChestedHorse {
 
@@ -24,7 +25,7 @@ public class MohistModsChestHorse extends CraftChestedHorse {
 
     @Override
     public Horse.Variant getVariant() {
-        return Horse.Variant.FORGE_MOD_CHEST_HORSE;
+        return Variant.HORSE;
     }
 
     @Override

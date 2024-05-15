@@ -14,7 +14,6 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 
 public class ColouredConsoleSender extends CraftConsoleCommandSender {
-    private final Terminal terminal;
     private final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);
     private final ChatColor[] colors = ChatColor.values();
     private final boolean jansiPassthrough;
@@ -24,7 +23,6 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
 
     protected ColouredConsoleSender() {
         super();
-        this.terminal = ((CraftServer) this.getServer()).getReader().getTerminal();
         this.jansiPassthrough = Boolean.getBoolean("jansi.passthrough");
 
         this.replacements.put(ChatColor.BLACK, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
@@ -54,7 +52,7 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
     @Override
     public void sendMessage(String message) {
         // support jansi passthrough VM option when jansi doesn't detect an ANSI supported terminal
-        if (this.jansiPassthrough || this.terminal.isAnsiSupported()) {
+        if (this.jansiPassthrough) {
             if (!this.conversationTracker.isConversingModaly()) {
                 String result = ColouredConsoleSender.convertRGBColors(message);
                 for (ChatColor color : this.colors) {

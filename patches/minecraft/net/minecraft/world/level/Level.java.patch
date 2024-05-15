@@ -69,29 +69,18 @@
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -91,7 +_,7 @@
-     protected final NeighborUpdater neighborUpdater;
-     private final List<TickingBlockEntity> pendingBlockEntityTickers = Lists.newArrayList();
-     private boolean tickingBlockEntities;
--    public final Thread thread;
-+   	public final Thread thread;
-     private final boolean isDebug;
-     private int skyDarken;
-     protected int randValue = RandomSource.create().nextInt();
-@@ -103,64 +_,136 @@
-     public final RandomSource random = RandomSource.create();
+@@ -104,43 +_,80 @@
      @Deprecated
      private final RandomSource threadSafeRandom = RandomSource.createThreadSafe();
--    private final Holder<DimensionType> dimensionTypeRegistration;
+     private final Holder<DimensionType> dimensionTypeRegistration;
 -    protected final WritableLevelData levelData;
-+   	private final Holder<DimensionType> dimensionTypeRegistration;
-+   	public final WritableLevelData levelData;
++    public final WritableLevelData levelData;
      private final Supplier<ProfilerFiller> profiler;
      public final boolean isClientSide;
      private final WorldBorder worldBorder;
      private final BiomeManager biomeManager;
 -    private final ResourceKey<Level> dimension;
-+   	protected final ResourceKey<Level> dimension;
++    protected final ResourceKey<Level> dimension;
      private final RegistryAccess registryAccess;
      private final DamageSources damageSources;
      private long subTickCount;
@@ -107,240 +96,206 @@
 -        long p_270248_,
 -        int p_270466_
 -    ) {
--        this.profiler = p_270692_;
--        this.levelData = p_270739_;
 +    public boolean restoringBlockSnapshots = false;
 +    public boolean captureBlockSnapshots = false;
 +    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
 +    private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
 +    private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
-+   // CraftBukkit start Added the following
-+   public CraftWorld world;
-+   public boolean pvpMode;
-+   public boolean keepSpawnInMemory = true;
-+   public static org.bukkit.generator.ChunkGenerator generator;
-+   public static org.bukkit.World.Environment environment;
-+   public static org.bukkit.generator.BiomeProvider biomeProvider;
++    // CraftBukkit start Added the following
++    public CraftWorld world;
++    public boolean pvpMode;
++    public boolean keepSpawnInMemory = true;
++    public static org.bukkit.generator.ChunkGenerator generator;
++    public static org.bukkit.World.Environment environment;
++    public static org.bukkit.generator.BiomeProvider biomeProvider;
 +
-+   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
-+   public boolean captureBlockStates = false;
-+   public boolean captureTreeGeneration = false;
-+   public Map<BlockPos, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
-+   public Map<BlockPos, BlockEntity> capturedTileEntities = new HashMap<>();
-+   public List<ItemEntity> captureDrops;
-+   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
-+   public boolean populating;
-+   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++    public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
++    public boolean captureBlockStates = false;
++    public boolean captureTreeGeneration = false;
++    public Map<BlockPos, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
++    public Map<BlockPos, BlockEntity> capturedTileEntities = new HashMap<>();
++    public List<ItemEntity> captureDrops;
++    public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
++    public boolean populating;
++    public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++    public static BlockPos lastPhysicsProblem; // Spigot
 +
-+   public CraftWorld getWorld() {
-+      return this.world;
-+   }
-+   public CraftServer getCraftServer() {
-+      return (CraftServer) Bukkit.getServer();
-+   }
-+   public ResourceKey<LevelStem> getTypeKey() {
-+      return Registries.levelToLevelStem(dimension);
-+   }
-+   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
-+      generator = gen;
-+      environment = env;
-+      biomeProvider = bp;
-+   }
++    public CraftWorld getWorld() {
++        return this.world;
++    }
 +
-+   protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
-+      super(Level.class);
-+      this.profiler = p_270692_;
-+      this.levelData = p_270739_;
-+      // CraftBukkit Ticks things
-+      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
-+         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
-+            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
-+         }
-+      }
++    public CraftServer getCraftServer() {
++        return (CraftServer) Bukkit.getServer();
++    }
++
++    public ResourceKey<LevelStem> getTypeKey() {
++        return Registries.levelToLevelStem(dimension);
++    }
++
++    public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
++        generator = gen;
++        environment = env;
++        biomeProvider = bp;
++    }
++
++    protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
++        super(Level.class);
+         this.profiler = p_270692_;
+         this.levelData = p_270739_;
++        // CraftBukkit Ticks things
++        for (SpawnCategory spawnCategory : SpawnCategory.values()) {
++            if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
++                this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
++            }
++        }
          this.dimensionTypeRegistration = p_270240_;
          final DimensionType dimensiontype = p_270240_.value();
          this.dimension = p_270683_;
          this.isClientSide = p_270904_;
          if (dimensiontype.coordinateScale() != 1.0) {
--            this.worldBorder = new WorldBorder() {
+             this.worldBorder = new WorldBorder() {
 -                @Override
--                public double getCenterX() {
+                 public double getCenterX() {
 -                    return super.getCenterX() / dimensiontype.coordinateScale();
--                }
--
++                    return super.getCenterX(); // CraftBukkit
+                 }
+ 
 -                @Override
--                public double getCenterZ() {
+                 public double getCenterZ() {
 -                    return super.getCenterZ() / dimensiontype.coordinateScale();
--                }
--            };
--        } else {
--            this.worldBorder = new WorldBorder();
--        }
--
--        this.thread = Thread.currentThread();
--        this.biomeManager = new BiomeManager(this, p_270248_);
--        this.isDebug = p_270470_;
--        this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
--        this.registryAccess = p_270200_;
--        this.damageSources = new DamageSources(p_270200_);
--    }
--
++                    return super.getCenterZ(); // CraftBukkit
+                 }
+             };
+         } else {
+@@ -153,9 +_,50 @@
+         this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
+         this.registryAccess = p_270200_;
+         this.damageSources = new DamageSources(p_270200_);
++        // CraftBukkit start
++        if (environment == null) {
++            environment = ForgeInjectBukkit.environment.get(getTypeKey());
++        }
++        getWorldBorder().world = this;
++        // From PlayerList.setPlayerFileData
++        getWorldBorder().addListener(new BorderChangeListener() {
++
++            @Override
++            public void onBorderSizeSet(WorldBorder pBorder, double pSize) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderSizePacket(pBorder), pBorder.world.dimension());
++            }
++
++            @Override
++            public void onBorderSizeLerping(WorldBorder pBorder, double pOldSize, double pNewSize, long pTime) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderLerpSizePacket(pBorder), pBorder.world.dimension());
++            }
++
++            @Override
++            public void onBorderCenterSet(WorldBorder pBorder, double pX, double pZ) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderCenterPacket(pBorder), pBorder.world.dimension());
++            }
++
++            @Override
++            public void onBorderSetWarningTime(WorldBorder pBorder, int pWarningTime) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDelayPacket(pBorder), pBorder.world.dimension());
++            }
++
++            @Override
++            public void onBorderSetWarningBlocks(WorldBorder pBorder, int pWarningBlocks) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDistancePacket(pBorder), pBorder.world.dimension());
++            }
++
++            @Override
++            public void onBorderSetDamagePerBlock(WorldBorder pBorder, double pDamagePerBlock) {
++            }
++
++            @Override
++            public void onBorderSetDamageSafeZOne(WorldBorder pBorder, double pDamageSafeZone) {
++            }
++        });
++        // CraftBukkit end
+     }
+ 
 -    @Override
--    public boolean isClientSide() {
--        return this.isClientSide;
--    }
--
--    @Nullable
-+         this.worldBorder = new WorldBorder() {
-+            public double getCenterX() {
-+               return super.getCenterX(); // CraftBukkit
-+            }
-+
-+            public double getCenterZ() {
-+               return super.getCenterZ(); // CraftBukkit
-+            }
-+         };
-+      } else {
-+         this.worldBorder = new WorldBorder();
-+      }
-+
-+      this.thread = Thread.currentThread();
-+      this.biomeManager = new BiomeManager(this, p_270248_);
-+      this.isDebug = p_270470_;
-+      this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
-+      this.registryAccess = p_270200_;
-+      this.damageSources = new DamageSources(p_270200_);
-+      // CraftBukkit start
-+      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment.get(getTypeKey());
-+      }
-+      getWorldBorder().world = this;
-+      // From PlayerList.setPlayerFileData
-+      getWorldBorder().addListener(new BorderChangeListener() {
-+
-+         @Override
-+         public void onBorderSizeSet(WorldBorder pBorder, double pSize) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderSizePacket(pBorder), pBorder.world.dimension());
-+         }
-+
-+         @Override
-+         public void onBorderSizeLerping(WorldBorder pBorder, double pOldSize, double pNewSize, long pTime) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderLerpSizePacket(pBorder), pBorder.world.dimension());
-+         }
-+
-+         @Override
-+         public void onBorderCenterSet(WorldBorder pBorder, double pX, double pZ) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderCenterPacket(pBorder), pBorder.world.dimension());
-+         }
-+
-+         @Override
-+         public void onBorderSetWarningTime(WorldBorder pBorder, int pWarningTime) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDelayPacket(pBorder), pBorder.world.dimension());
-+         }
-+
-+         @Override
-+         public void onBorderSetWarningBlocks(WorldBorder pBorder, int pWarningBlocks) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDistancePacket(pBorder), pBorder.world.dimension());
-+         }
-+
-+         @Override
-+         public void onBorderSetDamagePerBlock(WorldBorder pBorder, double pDamagePerBlock) { }
-+
-+         @Override
-+         public void onBorderSetDamageSafeZOne(WorldBorder pBorder, double pDamageSafeZone) { }
-+      });
-+      // CraftBukkit end
-+   }
-+
-+   public boolean isClientSide() {
-+      return this.isClientSide;
-+   }
-+
-+   @Nullable
-     @Override
-     public MinecraftServer getServer() {
-         return null;
-@@ -206,20 +_,75 @@
+     public boolean isClientSide() {
+         return this.isClientSide;
+     }
+@@ -187,7 +_,7 @@
+     }
+ 
+     public LevelChunk getChunk(int p_46727_, int p_46728_) {
+-        return (LevelChunk)this.getChunk(p_46727_, p_46728_, ChunkStatus.FULL);
++        return (LevelChunk) this.getChunk(p_46727_, p_46728_, ChunkStatus.FULL);
+     }
+ 
+     @Nullable
+@@ -206,8 +_,19 @@
          return this.setBlock(p_46601_, p_46602_, p_46603_, 512);
      }
  
 -    @Override
--    public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
--        if (this.isOutsideBuildHeight(p_46605_)) {
--            return false;
--        } else if (!this.isClientSide && this.isDebug()) {
--            return false;
--        } else {
--            LevelChunk levelchunk = this.getChunkAt(p_46605_);
--            Block block = p_46606_.getBlock();
--            BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
--            if (blockstate == null) {
--                return false;
--            } else {
--                BlockState blockstate1 = this.getBlockState(p_46605_);
-+   public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
-+      // CraftBukkit start - tree generation
-+      if (this.captureTreeGeneration) {
-+         CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
-+         if (blockstate == null) {
-+            blockstate = CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
-+            this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
-+         }
-+         blockstate.setData(p_46606_);
-+         blockstate.setFlag(p_46607_);
-+         return true;
-+      }
-+      // CraftBukkit end
-+      if (this.isOutsideBuildHeight(p_46605_)) {
-+         return false;
-+      } else if (!this.isClientSide && this.isDebug()) {
-+         return false;
-+      } else {
-+         LevelChunk levelchunk = this.getChunkAt(p_46605_);
-+         Block block = p_46606_.getBlock();
+     public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
++        // CraftBukkit start - tree generation
++        if (this.captureTreeGeneration) {
++            CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
++            if (blockstate == null) {
++                blockstate = CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
++                this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
++            }
++            blockstate.setData(p_46606_);
++            blockstate.setFlag(p_46607_);
++            return true;
++        }
++        // CraftBukkit end
+         if (this.isOutsideBuildHeight(p_46605_)) {
+             return false;
+         } else if (!this.isClientSide && this.isDebug()) {
+@@ -215,19 +_,63 @@
+         } else {
+             LevelChunk levelchunk = this.getChunkAt(p_46605_);
+             Block block = p_46606_.getBlock();
 +
-+         // CraftBukkit start - capture blockstates
-+         boolean captured = false;
-+         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
-+            CapturedBlockState blockstate = CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
-+            this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
-+            captured = true;
-+         }
-+         // CraftBukkit end
-+
-+         p_46605_ = p_46605_.immutable(); // Forge - prevent mutable BlockPos leaks
-+         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
-+         if (this.captureBlockSnapshots && !this.isClientSide) {
-+             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.dimension, this, p_46605_, p_46607_);
-+             this.capturedBlockSnapshots.add(blockSnapshot);
-+         }
-+
-+         BlockState old = getBlockState(p_46605_);
-+         int oldLight = old.getLightEmission(this, p_46605_);
-+         int oldOpacity = old.getLightBlock(this, p_46605_);
-+         levelchunk.mohist$doPlace.set((p_46607_ & 1024) == 0);
-+         BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
-+
-+         if (blockstate == null) {
-+            // CraftBukkit start - remove blockstate if failed (or the same)
-+            if (this.captureBlockStates && captured) {
-+               this.capturedBlockStates.remove(p_46605_);
++            // CraftBukkit start - capture blockstates
++            boolean captured = false;
++            if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
++                CapturedBlockState blockstate = CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
++                this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
++                captured = true;
 +            }
 +            // CraftBukkit end
-+            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
-+            return false;
-+         } else {
-+            BlockState blockstate1 = this.getBlockState(p_46605_);
 +
-+            if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
-+               this.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, p_46608_);
++            p_46605_ = p_46605_.immutable(); // Forge - prevent mutable BlockPos leaks
++            net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
++            if (this.captureBlockSnapshots && !this.isClientSide) {
++                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.dimension, this, p_46605_, p_46607_);
++                this.capturedBlockSnapshots.add(blockSnapshot);
 +            }
 +
-+            return true;
-+         }
-+      }
-+   }
++            BlockState old = getBlockState(p_46605_);
++            int oldLight = old.getLightEmission(this, p_46605_);
++            int oldOpacity = old.getLightBlock(this, p_46605_);
++            levelchunk.mohist$doPlace.set((p_46607_ & 1024) == 0);
+             BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
++
+             if (blockstate == null) {
++                // CraftBukkit start - remove blockstate if failed (or the same)
++                if (this.captureBlockStates && captured) {
++                    this.capturedBlockStates.remove(p_46605_);
++                }
++                // CraftBukkit end
++                if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
+                 return false;
+             } else {
+                 BlockState blockstate1 = this.getBlockState(p_46605_);
++
++                if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
++                    this.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, p_46608_);
++                }
++
++                return true;
++            }
++        }
++    }
 +
 +    // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +    public void markAndNotifyBlock(BlockPos p_46605_, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -351,6 +306,16 @@
                  if (blockstate1 == p_46606_) {
                      if (blockstate != blockstate1) {
                          this.setBlocksDirty(p_46605_, blockstate, blockstate1);
+                     }
+ 
+                     if ((p_46607_ & 2) != 0
+-                        && (!this.isClientSide || (p_46607_ & 4) == 0)
+-                        && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
++                            && (!this.isClientSide || (p_46607_ & 4) == 0)
++                            && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
+                         this.sendBlockUpdated(p_46605_, blockstate, p_46606_, p_46607_);
+                     }
+ 
 @@ -246,9 +_,8 @@
                      }
  
@@ -374,17 +339,149 @@
  
      @Override
      public BlockState getBlockState(BlockPos p_46732_) {
-+      // CraftBukkit start - tree generation
-+      if (captureTreeGeneration) {
-+         CapturedBlockState previous = capturedBlockStates.get(p_46732_);
-+         if (previous != null) {
-+            return previous.getHandle();
-+         }
-+      }
-+      // CraftBukkit end
++        // CraftBukkit start - tree generation
++        if (captureTreeGeneration) {
++            CapturedBlockState previous = capturedBlockStates.get(p_46732_);
++            if (previous != null) {
++                return previous.getHandle();
++            }
++        }
++        // CraftBukkit end
          if (this.isOutsideBuildHeight(p_46732_)) {
              return Blocks.VOID_AIR.defaultBlockState();
          } else {
+@@ -372,45 +_,45 @@
+     @Override
+     public void playSound(@Nullable Player p_46560_, BlockPos p_46561_, SoundEvent p_46562_, SoundSource p_46563_, float p_46564_, float p_46565_) {
+         this.playSound(
+-            p_46560_,
+-            (double)p_46561_.getX() + 0.5,
+-            (double)p_46561_.getY() + 0.5,
+-            (double)p_46561_.getZ() + 0.5,
+-            p_46562_,
+-            p_46563_,
+-            p_46564_,
+-            p_46565_
++                p_46560_,
++                (double) p_46561_.getX() + 0.5,
++                (double) p_46561_.getY() + 0.5,
++                (double) p_46561_.getZ() + 0.5,
++                p_46562_,
++                p_46563_,
++                p_46564_,
++                p_46565_
+         );
+     }
+ 
+     public abstract void playSeededSound(
+-        @Nullable Player p_262953_,
+-        double p_263004_,
+-        double p_263398_,
+-        double p_263376_,
+-        Holder<SoundEvent> p_263359_,
+-        SoundSource p_263020_,
+-        float p_263055_,
+-        float p_262914_,
+-        long p_262991_
++            @Nullable Player p_262953_,
++            double p_263004_,
++            double p_263398_,
++            double p_263376_,
++            Holder<SoundEvent> p_263359_,
++            SoundSource p_263020_,
++            float p_263055_,
++            float p_262914_,
++            long p_262991_
+     );
+ 
+     public void playSeededSound(
+-        @Nullable Player p_220363_,
+-        double p_220364_,
+-        double p_220365_,
+-        double p_220366_,
+-        SoundEvent p_220367_,
+-        SoundSource p_220368_,
+-        float p_220369_,
+-        float p_220370_,
+-        long p_220371_
++            @Nullable Player p_220363_,
++            double p_220364_,
++            double p_220365_,
++            double p_220366_,
++            SoundEvent p_220367_,
++            SoundSource p_220368_,
++            float p_220369_,
++            float p_220370_,
++            long p_220371_
+     ) {
+         this.playSeededSound(p_220363_, p_220364_, p_220365_, p_220366_, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(p_220367_), p_220368_, p_220369_, p_220370_, p_220371_);
+     }
+ 
+     public abstract void playSeededSound(
+-        @Nullable Player p_220372_, Entity p_220373_, Holder<SoundEvent> p_263500_, SoundSource p_220375_, float p_220376_, float p_220377_, long p_220378_
++            @Nullable Player p_220372_, Entity p_220373_, Holder<SoundEvent> p_263500_, SoundSource p_220375_, float p_220376_, float p_220377_, long p_220378_
+     );
+ 
+     public void playSound(@Nullable Player p_312141_, double p_310370_, double p_311188_, double p_309961_, SoundEvent p_313224_, SoundSource p_312451_) {
+@@ -418,7 +_,7 @@
+     }
+ 
+     public void playSound(
+-        @Nullable Player p_46543_, double p_46544_, double p_46545_, double p_46546_, SoundEvent p_46547_, SoundSource p_46548_, float p_46549_, float p_46550_
++            @Nullable Player p_46543_, double p_46544_, double p_46545_, double p_46546_, SoundEvent p_46547_, SoundSource p_46548_, float p_46549_, float p_46550_
+     ) {
+         this.playSeededSound(p_46543_, p_46544_, p_46545_, p_46546_, p_46547_, p_46548_, p_46549_, p_46550_, this.threadSafeRandom.nextLong());
+     }
+@@ -429,14 +_,14 @@
+ 
+     public void playLocalSound(BlockPos p_250938_, SoundEvent p_252209_, SoundSource p_249161_, float p_249980_, float p_250277_, boolean p_250151_) {
+         this.playLocalSound(
+-            (double)p_250938_.getX() + 0.5,
+-            (double)p_250938_.getY() + 0.5,
+-            (double)p_250938_.getZ() + 0.5,
+-            p_252209_,
+-            p_249161_,
+-            p_249980_,
+-            p_250277_,
+-            p_250151_
++                (double) p_250938_.getX() + 0.5,
++                (double) p_250938_.getY() + 0.5,
++                (double) p_250938_.getZ() + 0.5,
++                p_252209_,
++                p_249161_,
++                p_249980_,
++                p_250277_,
++                p_250151_
+         );
+     }
+ 
+@@ -444,7 +_,7 @@
+     }
+ 
+     public void playLocalSound(
+-        double p_46482_, double p_46483_, double p_46484_, SoundEvent p_46485_, SoundSource p_46486_, float p_46487_, float p_46488_, boolean p_46489_
++            double p_46482_, double p_46483_, double p_46484_, SoundEvent p_46485_, SoundSource p_46486_, float p_46487_, float p_46488_, boolean p_46489_
+     ) {
+     }
+ 
+@@ -453,7 +_,7 @@
+     }
+ 
+     public void addParticle(
+-        ParticleOptions p_46638_, boolean p_46639_, double p_46640_, double p_46641_, double p_46642_, double p_46643_, double p_46644_, double p_46645_
++            ParticleOptions p_46638_, boolean p_46639_, double p_46640_, double p_46641_, double p_46642_, double p_46643_, double p_46644_, double p_46645_
+     ) {
+     }
+ 
+@@ -461,7 +_,7 @@
+     }
+ 
+     public void addAlwaysVisibleParticle(
+-        ParticleOptions p_46691_, boolean p_46692_, double p_46693_, double p_46694_, double p_46695_, double p_46696_, double p_46697_, double p_46698_
++            ParticleOptions p_46691_, boolean p_46692_, double p_46693_, double p_46694_, double p_46695_, double p_46696_, double p_46697_, double p_46698_
+     ) {
+     }
+ 
 @@ -474,10 +_,30 @@
          (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
      }
@@ -420,7 +517,7 @@
  
          this.tickingBlockEntities = false;
          profilerfiller.pop();
-+      	spigotConfig.currentPrimedTnt = 0; // Spigot
++        spigotConfig.currentPrimedTnt = 0; // Spigot
      }
  
      public <T extends Entity> void guardEntityTick(Consumer<T> p_46654_, T p_46655_) {
@@ -431,31 +528,315 @@
              CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking entity");
              CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being ticked");
              p_46655_.fillCrashReportCategory(crashreportcategory);
+-            throw new ReportedException(crashreport);
 +            if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
 +                com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.getFriendlyReport());
 +                p_46655_.discard();
 +            } else
-             throw new ReportedException(crashreport);
++                throw new ReportedException(crashreport);
 +        } finally {
 +            net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
          }
      }
  
-@@ -655,9 +_,10 @@
+@@ -523,157 +_,162 @@
+     }
+ 
+     public Explosion explode(
+-        @Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_
+-    ) {
+-        return this.explode(
+-            p_256599_,
+-            Explosion.getDefaultDamageSource(this, p_256599_),
+-            null,
+-            p_255914_,
+-            p_255684_,
+-            p_255843_,
+-            p_256310_,
+-            false,
+-            p_256178_,
+-            ParticleTypes.EXPLOSION,
+-            ParticleTypes.EXPLOSION_EMITTER,
+-            SoundEvents.GENERIC_EXPLODE
+-        );
+-    }
+-
+-    public Explosion explode(
+-        @Nullable Entity p_255682_,
+-        double p_255803_,
+-        double p_256403_,
+-        double p_256538_,
+-        float p_255674_,
+-        boolean p_256634_,
+-        Level.ExplosionInteraction p_256111_
+-    ) {
+-        return this.explode(
+-            p_255682_,
+-            Explosion.getDefaultDamageSource(this, p_255682_),
+-            null,
+-            p_255803_,
+-            p_256403_,
+-            p_256538_,
+-            p_255674_,
+-            p_256634_,
+-            p_256111_,
+-            ParticleTypes.EXPLOSION,
+-            ParticleTypes.EXPLOSION_EMITTER,
+-            SoundEvents.GENERIC_EXPLODE
+-        );
+-    }
+-
+-    public Explosion explode(
+-        @Nullable Entity p_255653_,
+-        @Nullable DamageSource p_256558_,
+-        @Nullable ExplosionDamageCalculator p_255929_,
+-        Vec3 p_256001_,
+-        float p_255963_,
+-        boolean p_256099_,
+-        Level.ExplosionInteraction p_256371_
+-    ) {
+-        return this.explode(
+-            p_255653_,
+-            p_256558_,
+-            p_255929_,
+-            p_256001_.x(),
+-            p_256001_.y(),
+-            p_256001_.z(),
+-            p_255963_,
+-            p_256099_,
+-            p_256371_,
+-            ParticleTypes.EXPLOSION,
+-            ParticleTypes.EXPLOSION_EMITTER,
+-            SoundEvents.GENERIC_EXPLODE
+-        );
+-    }
+-
+-    public Explosion explode(
+-        @Nullable Entity p_256145_,
+-        @Nullable DamageSource p_256004_,
+-        @Nullable ExplosionDamageCalculator p_255696_,
+-        double p_256208_,
+-        double p_256036_,
+-        double p_255746_,
+-        float p_256647_,
+-        boolean p_256098_,
+-        Level.ExplosionInteraction p_256104_
+-    ) {
+-        return this.explode(
+-            p_256145_,
+-            p_256004_,
+-            p_255696_,
+-            p_256208_,
+-            p_256036_,
+-            p_255746_,
+-            p_256647_,
+-            p_256098_,
+-            p_256104_,
+-            ParticleTypes.EXPLOSION,
+-            ParticleTypes.EXPLOSION_EMITTER,
+-            SoundEvents.GENERIC_EXPLODE
+-        );
+-    }
+-
+-    public Explosion explode(
+-        @Nullable Entity p_256233_,
+-        @Nullable DamageSource p_255861_,
+-        @Nullable ExplosionDamageCalculator p_255867_,
+-        double p_256447_,
+-        double p_255732_,
+-        double p_255717_,
+-        float p_256013_,
+-        boolean p_256228_,
+-        Level.ExplosionInteraction p_255784_,
+-        ParticleOptions p_312617_,
+-        ParticleOptions p_309714_,
+-        Holder<SoundEvent> p_328054_
+-    ) {
+-        return this.explode(
+-            p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, p_255784_, true, p_312617_, p_309714_, p_328054_
+-        );
+-    }
+-
+-    public Explosion explode(
+-        @Nullable Entity p_312521_,
+-        @Nullable DamageSource p_310678_,
+-        @Nullable ExplosionDamageCalculator p_312887_,
+-        double p_309783_,
+-        double p_312776_,
+-        double p_310505_,
+-        float p_310209_,
+-        boolean p_309445_,
+-        Level.ExplosionInteraction p_310628_,
+-        boolean p_309655_,
+-        ParticleOptions p_311889_,
+-        ParticleOptions p_311434_,
+-        Holder<SoundEvent> p_328498_
++            @Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_
++    ) {
++        return this.explode(
++                p_256599_,
++                Explosion.getDefaultDamageSource(this, p_256599_),
++                null,
++                p_255914_,
++                p_255684_,
++                p_255843_,
++                p_256310_,
++                false,
++                p_256178_,
++                ParticleTypes.EXPLOSION,
++                ParticleTypes.EXPLOSION_EMITTER,
++                SoundEvents.GENERIC_EXPLODE
++        );
++    }
++
++    public Explosion explode(
++            @Nullable Entity p_255682_,
++            double p_255803_,
++            double p_256403_,
++            double p_256538_,
++            float p_255674_,
++            boolean p_256634_,
++            Level.ExplosionInteraction p_256111_
++    ) {
++        return this.explode(
++                p_255682_,
++                Explosion.getDefaultDamageSource(this, p_255682_),
++                null,
++                p_255803_,
++                p_256403_,
++                p_256538_,
++                p_255674_,
++                p_256634_,
++                p_256111_,
++                ParticleTypes.EXPLOSION,
++                ParticleTypes.EXPLOSION_EMITTER,
++                SoundEvents.GENERIC_EXPLODE
++        );
++    }
++
++    public Explosion explode(
++            @Nullable Entity p_255653_,
++            @Nullable DamageSource p_256558_,
++            @Nullable ExplosionDamageCalculator p_255929_,
++            Vec3 p_256001_,
++            float p_255963_,
++            boolean p_256099_,
++            Level.ExplosionInteraction p_256371_
++    ) {
++        return this.explode(
++                p_255653_,
++                p_256558_,
++                p_255929_,
++                p_256001_.x(),
++                p_256001_.y(),
++                p_256001_.z(),
++                p_255963_,
++                p_256099_,
++                p_256371_,
++                ParticleTypes.EXPLOSION,
++                ParticleTypes.EXPLOSION_EMITTER,
++                SoundEvents.GENERIC_EXPLODE
++        );
++    }
++
++    public Explosion explode(
++            @Nullable Entity p_256145_,
++            @Nullable DamageSource p_256004_,
++            @Nullable ExplosionDamageCalculator p_255696_,
++            double p_256208_,
++            double p_256036_,
++            double p_255746_,
++            float p_256647_,
++            boolean p_256098_,
++            Level.ExplosionInteraction p_256104_
++    ) {
++        return this.explode(
++                p_256145_,
++                p_256004_,
++                p_255696_,
++                p_256208_,
++                p_256036_,
++                p_255746_,
++                p_256647_,
++                p_256098_,
++                p_256104_,
++                ParticleTypes.EXPLOSION,
++                ParticleTypes.EXPLOSION_EMITTER,
++                SoundEvents.GENERIC_EXPLODE
++        );
++    }
++
++    public Explosion explode(
++            @Nullable Entity p_256233_,
++            @Nullable DamageSource p_255861_,
++            @Nullable ExplosionDamageCalculator p_255867_,
++            double p_256447_,
++            double p_255732_,
++            double p_255717_,
++            float p_256013_,
++            boolean p_256228_,
++            Level.ExplosionInteraction p_255784_,
++            ParticleOptions p_312617_,
++            ParticleOptions p_309714_,
++            Holder<SoundEvent> p_328054_
++    ) {
++        return this.explode(
++                p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, p_255784_, true, p_312617_, p_309714_, p_328054_
++        );
++    }
++
++    public Explosion explode(
++            @Nullable Entity p_312521_,
++            @Nullable DamageSource p_310678_,
++            @Nullable ExplosionDamageCalculator p_312887_,
++            double p_309783_,
++            double p_312776_,
++            double p_310505_,
++            float p_310209_,
++            boolean p_309445_,
++            Level.ExplosionInteraction p_310628_,
++            boolean p_309655_,
++            ParticleOptions p_311889_,
++            ParticleOptions p_311434_,
++            Holder<SoundEvent> p_328498_
+     ) {
          Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
 -            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
-+            case MOB -> net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
++            case MOB ->
++                    net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
              case BLOW -> Explosion.BlockInteraction.TRIGGER_BLOCK;
 +            case STANDARD -> Explosion.BlockInteraction.DESTROY;
          };
          Explosion explosion = new Explosion(
-             this,
-@@ -674,6 +_,9 @@
-             p_311434_,
-             p_328498_
+-            this,
+-            p_312521_,
+-            p_310678_,
+-            p_312887_,
+-            p_309783_,
+-            p_312776_,
+-            p_310505_,
+-            p_310209_,
+-            p_309445_,
+-            explosion$blockinteraction,
+-            p_311889_,
+-            p_311434_,
+-            p_328498_
++                this,
++                p_312521_,
++                p_310678_,
++                p_312887_,
++                p_309783_,
++                p_312776_,
++                p_310505_,
++                p_310209_,
++                p_309445_,
++                explosion$blockinteraction,
++                p_311889_,
++                p_311434_,
++                p_328498_
          );
 +        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) {
 +            return explosion;
@@ -463,47 +844,44 @@
          explosion.explode();
          explosion.finalizeExplosion(p_309655_);
          return explosion;
-@@ -688,6 +_,16 @@
+@@ -688,18 +_,34 @@
      @Nullable
      @Override
      public BlockEntity getBlockEntity(BlockPos p_46716_) {
-+      // CraftBukkit start
-+      return getBlockEntity(p_46716_, true);
-+   }
++        // CraftBukkit start
++        return getBlockEntity(p_46716_, true);
++    }
 +
-+   @Nullable
-+   public BlockEntity getBlockEntity(BlockPos p_46716_, boolean validate) {
-+      if (capturedTileEntities.containsKey(p_46716_)) {
-+         return capturedTileEntities.get(p_46716_);
-+      }
-+      // CraftBukkit end
++    @Nullable
++    public BlockEntity getBlockEntity(BlockPos p_46716_, boolean validate) {
++        if (capturedTileEntities.containsKey(p_46716_)) {
++            return capturedTileEntities.get(p_46716_);
++        }
++        // CraftBukkit end
          if (this.isOutsideBuildHeight(p_46716_)) {
              return null;
          } else {
-@@ -697,17 +_,24 @@
+             return !this.isClientSide && Thread.currentThread() != this.thread
+-                ? null
+-                : this.getChunkAt(p_46716_).getBlockEntity(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
++                    ? null
++                    : this.getChunkAt(p_46716_).getBlockEntity(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
          }
      }
  
--    public void setBlockEntity(BlockEntity p_151524_) {
--        BlockPos blockpos = p_151524_.getBlockPos();
--        if (!this.isOutsideBuildHeight(blockpos)) {
--            this.getChunkAt(blockpos).addAndRegisterBlockEntity(p_151524_);
--        }
--    }
-+   public void setBlockEntity(BlockEntity p_151524_) {
-+      BlockPos blockpos = p_151524_.getBlockPos();
-+      if (!this.isOutsideBuildHeight(blockpos)) {
-+         // CraftBukkit start
-+         if (captureBlockStates) {
-+            capturedTileEntities.put(blockpos.immutable(), p_151524_);
-+            return;
-+         }
-+         // CraftBukkit end
-+         this.getChunkAt(blockpos).addAndRegisterBlockEntity(p_151524_);
-+      }
-+   }
- 
-     public void removeBlockEntity(BlockPos p_46748_) {
+     public void setBlockEntity(BlockEntity p_151524_) {
+         BlockPos blockpos = p_151524_.getBlockPos();
+         if (!this.isOutsideBuildHeight(blockpos)) {
++            // CraftBukkit start
++            if (captureBlockStates) {
++                capturedTileEntities.put(blockpos.immutable(), p_151524_);
++                return;
++            }
++            // CraftBukkit end
+             this.getChunkAt(blockpos).addAndRegisterBlockEntity(p_151524_);
+         }
+     }
+@@ -708,12 +_,13 @@
          if (!this.isOutsideBuildHeight(p_46748_)) {
              this.getChunkAt(p_46748_).removeBlockEntity(p_46748_);
          }
@@ -511,6 +889,38 @@
      }
  
      public boolean isLoaded(BlockPos p_46750_) {
+         return this.isOutsideBuildHeight(p_46750_)
+-            ? false
+-            : this.getChunkSource().hasChunk(SectionPos.blockToSectionCoord(p_46750_.getX()), SectionPos.blockToSectionCoord(p_46750_.getZ()));
++                ? false
++                : this.getChunkSource().hasChunk(SectionPos.blockToSectionCoord(p_46750_.getX()), SectionPos.blockToSectionCoord(p_46750_.getZ()));
+     }
+ 
+     public boolean loadedAndEntityCanStandOnFace(BlockPos p_46579_, Entity p_46580_, Direction p_46581_) {
+@@ -721,7 +_,7 @@
+             return false;
+         } else {
+             ChunkAccess chunkaccess = this.getChunk(
+-                SectionPos.blockToSectionCoord(p_46579_.getX()), SectionPos.blockToSectionCoord(p_46579_.getZ()), ChunkStatus.FULL, false
++                    SectionPos.blockToSectionCoord(p_46579_.getX()), SectionPos.blockToSectionCoord(p_46579_.getZ()), ChunkStatus.FULL, false
+             );
+             return chunkaccess == null ? false : chunkaccess.getBlockState(p_46579_).entityCanStandOnFace(this, p_46579_, p_46580_, p_46581_);
+         }
+@@ -732,10 +_,10 @@
+     }
+ 
+     public void updateSkyBrightness() {
+-        double d0 = 1.0 - (double)(this.getRainLevel(1.0F) * 5.0F) / 16.0;
+-        double d1 = 1.0 - (double)(this.getThunderLevel(1.0F) * 5.0F) / 16.0;
+-        double d2 = 0.5 + 2.0 * Mth.clamp((double)Mth.cos(this.getTimeOfDay(1.0F) * (float) (Math.PI * 2)), -0.25, 0.25);
+-        this.skyDarken = (int)((1.0 - d2 * d0 * d1) * 11.0);
++        double d0 = 1.0 - (double) (this.getRainLevel(1.0F) * 5.0F) / 16.0;
++        double d1 = 1.0 - (double) (this.getThunderLevel(1.0F) * 5.0F) / 16.0;
++        double d2 = 0.5 + 2.0 * Mth.clamp((double) Mth.cos(this.getTimeOfDay(1.0F) * (float) (Math.PI * 2)), -0.25, 0.25);
++        this.skyDarken = (int) ((1.0 - d2 * d0 * d1) * 11.0);
+     }
+ 
+     public void setSpawnSettings(boolean p_46704_, boolean p_46705_) {
 @@ -784,8 +_,8 @@
                  list.add(p_151522_);
              }
@@ -522,17 +932,40 @@
                      if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
                          list.add(enderdragonpart);
                      }
+@@ -807,7 +_,7 @@
+     }
+ 
+     public <T extends Entity> void getEntities(
+-        EntityTypeTest<Entity, T> p_261885_, AABB p_262086_, Predicate<? super T> p_261688_, List<? super T> p_262071_, int p_261858_
++            EntityTypeTest<Entity, T> p_261885_, AABB p_262086_, Predicate<? super T> p_261688_, List<? super T> p_262071_, int p_261858_
+     ) {
+         this.getProfiler().incrementCounter("getEntities");
+         this.getEntities().get(p_261885_, p_262086_, p_261454_ -> {
 @@ -818,8 +_,8 @@
                  }
              }
  
 -            if (p_261454_ instanceof EnderDragon enderdragon) {
 -                for (EnderDragonPart enderdragonpart : enderdragon.getSubEntities()) {
-+            if (p_261454_ .isMultipartEntity()) {
++            if (p_261454_.isMultipartEntity()) {
 +                for (var enderdragonpart : p_261454_.getParts()) {
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
+@@ -905,11 +_,11 @@
+     }
+ 
+     public boolean isThundering() {
+-        return this.dimensionType().hasSkyLight() && !this.dimensionType().hasCeiling() ? (double)this.getThunderLevel(1.0F) > 0.9 : false;
++        return this.dimensionType().hasSkyLight() && !this.dimensionType().hasCeiling() ? (double) this.getThunderLevel(1.0F) > 0.9 : false;
+     }
+ 
+     public boolean isRaining() {
+-        return (double)this.getRainLevel(1.0F) > 0.2;
++        return (double) this.getRainLevel(1.0F) > 0.2;
+     }
+ 
+     public boolean isRainingAt(BlockPos p_46759_) {
 @@ -958,16 +_,15 @@
      public abstract Scoreboard getScoreboard();
  
@@ -571,14 +1004,14 @@
 +
 +    @Override
 +    public double getMaxEntityRadius() {
-+       return maxEntityRadius;
++        return maxEntityRadius;
 +    }
 +
 +    @Override
 +    public double increaseMaxEntityRadius(double value) {
-+       if (value > maxEntityRadius)
-+          maxEntityRadius = value;
-+       return maxEntityRadius;
++        if (value > maxEntityRadius)
++            maxEntityRadius = value;
++        return maxEntityRadius;
 +    }
 +
      public static enum ExplosionInteraction {
@@ -587,56 +1020,57 @@
          MOB,
          TNT,
 -        BLOW;
+-    }
 +        BLOW,
 +        STANDARD; // CraftBukkit - Add STANDARD which will always use Explosion.Effect.DESTROY
-     }
++    }
 +
-+   // CraftBukkit start - Split off from above in order to directly send client and physic updates
-+   public void notifyAndUpdatePhysics(BlockPos blockposition, LevelChunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
-+      BlockState iblockdata = newBlock;
-+      BlockState iblockdata1 = oldBlock;
-+      BlockState iblockdata2 = actualBlock;
-+      if (iblockdata2 == iblockdata) {
-+         if (iblockdata1 != iblockdata2) {
-+            this.setBlocksDirty(blockposition, iblockdata1, iblockdata2);
-+         }
-+
-+         if ((i & 2) != 0 && (!this.isClientSide || (i & 4) == 0) && (this.isClientSide || chunk == null || (chunk.getFullStatus() != null && chunk.getFullStatus().isOrAfter(FullChunkStatus.FULL)))) { // allow chunk to be null here as chunk.isReady() is false when we send our notification during block placement
-+            this.sendBlockUpdated(blockposition, iblockdata1, iblockdata, i);
-+         }
-+
-+         if ((i & 1) != 0) {
-+            this.blockUpdated(blockposition, iblockdata1.getBlock());
-+            if (!this.isClientSide && iblockdata.hasAnalogOutputSignal()) {
-+               this.updateNeighbourForOutputSignal(blockposition, newBlock.getBlock());
-+            }
-+         }
-+
-+         if ((i & 16) == 0 && j > 0) {
-+            int k = i & -34;
-+
-+            // CraftBukkit start
-+            iblockdata1.updateIndirectNeighbourShapes(this, blockposition, k, j - 1); // Don't call an event for the old block to limit event spam
-+            if (world != null) {
-+               BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(this, blockposition), CraftBlockData.fromData(iblockdata));
-+               this.getCraftServer().getPluginManager().callEvent(event);
-+
-+               if (event.isCancelled()) {
-+                  return;
-+               }
++    // CraftBukkit start - Split off from above in order to directly send client and physic updates
++    public void notifyAndUpdatePhysics(BlockPos blockposition, LevelChunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
++        BlockState iblockdata = newBlock;
++        BlockState iblockdata1 = oldBlock;
++        BlockState iblockdata2 = actualBlock;
++        if (iblockdata2 == iblockdata) {
++            if (iblockdata1 != iblockdata2) {
++                this.setBlocksDirty(blockposition, iblockdata1, iblockdata2);
 +            }
 +
++            if ((i & 2) != 0 && (!this.isClientSide || (i & 4) == 0) && (this.isClientSide || chunk == null || (chunk.getFullStatus() != null && chunk.getFullStatus().isOrAfter(FullChunkStatus.FULL)))) { // allow chunk to be null here as chunk.isReady() is false when we send our notification during block placement
++                this.sendBlockUpdated(blockposition, iblockdata1, iblockdata, i);
++            }
++
++            if ((i & 1) != 0) {
++                this.blockUpdated(blockposition, iblockdata1.getBlock());
++                if (!this.isClientSide && iblockdata.hasAnalogOutputSignal()) {
++                    this.updateNeighbourForOutputSignal(blockposition, newBlock.getBlock());
++                }
++            }
++
++            if ((i & 16) == 0 && j > 0) {
++                int k = i & -34;
++
++                // CraftBukkit start
++                iblockdata1.updateIndirectNeighbourShapes(this, blockposition, k, j - 1); // Don't call an event for the old block to limit event spam
++                if (world != null) {
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(this, blockposition), CraftBlockData.fromData(iblockdata));
++                    this.getCraftServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return;
++                    }
++                }
++
++                // CraftBukkit end
++                iblockdata.updateNeighbourShapes(this, blockposition, k, j - 1);
++                iblockdata.updateIndirectNeighbourShapes(this, blockposition, k, j - 1);
++            }
++
++            // CraftBukkit start - SPIGOT-5710
++            if (!preventPoiUpdated) {
++                this.onBlockStateChange(blockposition, iblockdata1, iblockdata2);
++            }
 +            // CraftBukkit end
-+            iblockdata.updateNeighbourShapes(this, blockposition, k, j - 1);
-+            iblockdata.updateIndirectNeighbourShapes(this, blockposition, k, j - 1);
-+         }
-+
-+         // CraftBukkit start - SPIGOT-5710
-+         if (!preventPoiUpdated) {
-+            this.onBlockStateChange(blockposition, iblockdata1, iblockdata2);
-+         }
-+         // CraftBukkit end
-+      }
-+   }
-+   // CraftBukkit end
++        }
++    }
++    // CraftBukkit end
  }

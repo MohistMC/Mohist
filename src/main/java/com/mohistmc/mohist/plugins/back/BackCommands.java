@@ -37,6 +37,6 @@ public class BackCommands extends Command {
     }
 
     public static void hooktDeath(PlayerDeathEvent event) {
-        BackConfig.INSTANCE.saveLocation(event.getPlayer(), event.getPlayer().getLocation(), BackType.DEATH);
+        BackConfig.INSTANCE.saveLocation(event.getEntity(), event.getEntity().getLocation(), BackType.DEATH);
     }
 }

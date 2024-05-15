@@ -41,19 +41,6 @@
  
  public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
      private static final int INGREDIENT_SLOT = 3;
-@@ -34,10 +_,10 @@
-     public static final int DATA_FUEL_USES = 1;
-     public static final int NUM_DATA_VALUES = 2;
-     private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
--    public int brewTime;
-+    int brewTime;
-     private boolean[] lastPotionCount;
-     private Item ingredient;
--    public int fuel;
-+    int fuel;
-     protected final ContainerData dataAccess = new ContainerData() {
-         @Override
-         public int get(int p_59038_) {
 @@ -65,6 +_,37 @@
          }
      };

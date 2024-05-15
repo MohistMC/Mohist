@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
-    protected NonNullList<ItemStack> stacks;
+    public NonNullList<ItemStack> stacks;
 
     public ItemStackHandler() {
         this(1);

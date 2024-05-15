@@ -72,15 +72,7 @@
              return true;
          }
      }
-@@ -164,38 +_,48 @@
-         });
-     }
- 
--    public void ensureChunkQueuedForLoad(long p_157556_) {
-+    private void ensureChunkQueuedForLoad(long p_157556_) {
-         PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157556_);
-         if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.FRESH) {
-             this.requestChunkLoad(p_157556_);
+@@ -171,31 +_,41 @@
          }
      }
  

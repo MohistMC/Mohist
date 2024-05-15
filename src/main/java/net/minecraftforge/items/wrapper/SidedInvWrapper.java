@@ -21,7 +21,7 @@ import java.util.function.IntUnaryOperator;
 
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
-    protected final WorldlyContainer inv;
+    public final WorldlyContainer inv;
     @Nullable
     protected final Direction side;
 

@@ -39,7 +39,12 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.Tag;
-@@ -124,16 +_,36 @@
+@@ -120,20 +_,41 @@
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+ import net.minecraft.world.phys.AABB;
++import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
@@ -1152,7 +1157,7 @@
          boolean flag = this.lastHurtByPlayerTime > 0;
          if (this.shouldDropLoot() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
              this.dropFromLootTable(p_21192_, flag);
-@@ -1430,6 +_,11 @@
+@@ -1430,16 +_,33 @@
  
          this.dropEquipment();
          this.dropExperience();
@@ -1164,7 +1169,20 @@
      }
  
      protected void dropEquipment() {
-@@ -1439,7 +_,8 @@
+     }
+ 
++    // CraftBukkit start
++    public int getExpReward() {
++        if (this.level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
++            int i = this.getExperienceReward();
++            return i;
++        } else {
++            return 0;
++        }
++    }
++    // CraftBukkit end
++
+     protected void dropExperience() {
          if (this.level() instanceof ServerLevel
              && !this.wasExperienceConsumed()
              && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
@@ -1978,7 +1996,7 @@
          if (!this.level().isClientSide) {
              boolean flag = this.isUsingItem();
              this.setLivingEntityFlag(1, false);
-@@ -3168,7 +_,8 @@
+@@ -3168,10 +_,56 @@
      public boolean isBlocking() {
          if (this.isUsingItem() && !this.useItem.isEmpty()) {
              Item item = this.useItem.getItem();
@@ -1988,6 +2006,54 @@
          } else {
              return false;
          }
++    }
++
++    public HitResult getRayTrace(int maxDistance, ClipContext.Fluid fluidCollisionOption) {
++        if (maxDistance < 1 || maxDistance > 120) {
++            throw new IllegalArgumentException("maxDistance must be between 1-120");
++        }
++
++        Vec3 start = new Vec3(getX(), getY() + getEyeHeight(), getZ());
++        org.bukkit.util.Vector dir = getBukkitEntity().getLocation().getDirection().multiply(maxDistance);
++        Vec3 end = new Vec3(start.x + dir.getX(), start.y + dir.getY(), start.z + dir.getZ());
++        ClipContext raytrace = new ClipContext(start, end, ClipContext.Block.OUTLINE, fluidCollisionOption, this);
++
++        return this.level().clip(raytrace);
++    }
++
++    public @Nullable EntityHitResult getTargetEntity(int maxDistance) {
++        if (maxDistance < 1 || maxDistance > 120) {
++            throw new IllegalArgumentException("maxDistance must be between 1-120");
++        }
++
++        Vec3 start = this.getEyePosition(1.0F);
++        Vec3 direction = this.getLookAngle();
++        Vec3 end = start.add(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance);
++
++        List<Entity> entityList = this.level().getEntities(this, getBoundingBox().expandTowards(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance).inflate(1.0D, 1.0D, 1.0D), EntitySelector.NO_SPECTATORS.and(Entity::isPickable));
++
++        double distance = 0.0D;
++        EntityHitResult result = null;
++
++        for (Entity entity : entityList) {
++            final double inflationAmount = (double) entity.getPickRadius();
++            AABB aabb = entity.getBoundingBox().inflate(inflationAmount, inflationAmount, inflationAmount);
++            Optional<Vec3> rayTraceResult = aabb.clip(start, end);
++
++            if (rayTraceResult.isPresent()) {
++                Vec3 rayTrace = rayTraceResult.get();
++                double distanceTo = start.distanceToSqr(rayTrace);
++                if (distanceTo < distance || distance == 0.0D) {
++                    result = new EntityHitResult(entity, rayTrace);
++                    distance = distanceTo;
++                }
++            }
++        }
++
++        return result;
+     }
+ 
+     public boolean isSuppressingSlidingDownLadder() {
 @@ -3191,51 +_,77 @@
          return this.fallFlyTicks;
      }

@@ -1,25 +1,24 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -51,7 +_,7 @@
-     private boolean biting;
-     private int outOfWaterTime;
-     private static final int MAX_OUT_OF_WATER_TIME = 10;
--    public static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.INT);
-+    private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Boolean> DATA_BITING = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.BOOLEAN);
-     private int life;
-     private int nibble;
-@@ -60,8 +_,8 @@
-     private float fishAngle;
-     private boolean openWater = true;
-     @Nullable
--    public Entity hookedIn;
--    public FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
-+    private Entity hookedIn;
-+    private FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
+@@ -65,6 +_,18 @@
      private final int luck;
      private final int lureSpeed;
  
++    // CraftBukkit start - Extra variables to enable modification of fishing wait time, values are minecraft defaults
++    public int minWaitTime = 100;
++    public int maxWaitTime = 600;
++    public int minLureTime = 20;
++    public int maxLureTime = 80;
++    public float minLureAngle = 0.0F;
++    public float maxLureAngle = 360.0F;
++    public boolean applyLure = true;
++    public boolean rainInfluenced = true;
++    public boolean skyInfluenced = true;
++    // CraftBukkit end
++
+     private FishingHook(EntityType<? extends FishingHook> p_150141_, Level p_150142_, int p_150143_, int p_150144_) {
+         super(p_150141_, p_150142_);
+         this.noCulling = true;
 @@ -238,8 +_,8 @@
      private boolean shouldStopFishing(Player p_37137_) {
          ItemStack itemstack = p_37137_.getMainHandItem();
@@ -74,3 +73,21 @@
          } else {
              return 0;
          }
+@@ -497,7 +_,7 @@
+         super.handleEntityEvent(p_37123_);
+     }
+ 
+-    protected void pullEntity(Entity p_150156_) {
++    public void pullEntity(Entity p_150156_) {
+         Entity entity = this.getOwner();
+         if (entity != null) {
+             Vec3 vec3 = new Vec3(entity.getX() - this.getX(), entity.getY() - this.getY(), entity.getZ() - this.getZ()).scale(0.1);
+@@ -566,7 +_,7 @@
+         }
+     }
+ 
+-    static enum FishHookState {
++    public static enum FishHookState {
+         FLYING,
+         HOOKED_IN_ENTITY,
+         BOBBING;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/armortrim/ArmorTrim.java
++++ b/net/minecraft/world/item/armortrim/ArmorTrim.java
+@@ -42,7 +_,7 @@
+         .withStyle(ChatFormatting.GRAY);
+     private final Holder<TrimMaterial> material;
+     private final Holder<TrimPattern> pattern;
+-    private final boolean showInTooltip;
++    public final boolean showInTooltip;
+     private final Function<Holder<ArmorMaterial>, ResourceLocation> innerTexture;
+     private final Function<Holder<ArmorMaterial>, ResourceLocation> outerTexture;
+ 

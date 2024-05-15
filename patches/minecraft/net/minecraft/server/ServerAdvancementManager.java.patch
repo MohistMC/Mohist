@@ -23,11 +23,9 @@
  
  public class ServerAdvancementManager extends SimpleJsonResourceReloadListener {
 -    private static final Logger LOGGER = LogUtils.getLogger();
--    public static final Gson GSON = new GsonBuilder().create();
--    public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
 +   private static final Logger LOGGER = LogUtils.getLogger();
-+    private static final Gson GSON = new GsonBuilder().create();
-+    private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
+     public static final Gson GSON = new GsonBuilder().create();
+     public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
      private AdvancementTree tree = new AdvancementTree();
      private final HolderLookup.Provider registries;
 +    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context

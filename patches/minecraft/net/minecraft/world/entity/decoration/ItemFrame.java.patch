@@ -58,6 +58,15 @@
  
      public ItemFrame(EntityType<? extends ItemFrame> p_149621_, Level p_149622_, BlockPos p_149623_, Direction p_149624_) {
          super(p_149621_, p_149622_, p_149623_);
+@@ -68,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void setDirection(Direction p_31793_) {
++    public void setDirection(Direction p_31793_) {
+         Validate.notNull(p_31793_);
+         this.direction = p_31793_;
+         if (p_31793_.getAxis().isHorizontal()) {
 @@ -114,6 +_,37 @@
          }
      }

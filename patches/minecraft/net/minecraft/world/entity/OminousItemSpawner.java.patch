@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/OminousItemSpawner.java
++++ b/net/minecraft/world/entity/OminousItemSpawner.java
+@@ -24,7 +_,7 @@
+     private static final String TAG_ITEM = "item";
+     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(OminousItemSpawner.class, EntityDataSerializers.ITEM_STACK);
+     public static final int TICKS_BEFORE_ABOUT_TO_SPAWN_SOUND = 36;
+-    private long spawnItemAfterTicks;
++    public long spawnItemAfterTicks;
+ 
+     public OminousItemSpawner(EntityType<? extends OminousItemSpawner> p_330436_, Level p_334777_) {
+         super(p_330436_, p_334777_);
+@@ -163,7 +_,7 @@
+         return this.getEntityData().get(DATA_ITEM);
+     }
+ 
+-    private void setItem(ItemStack p_328604_) {
++    public void setItem(ItemStack p_328604_) {
+         this.getEntityData().set(DATA_ITEM, p_328604_);
+     }
+ }

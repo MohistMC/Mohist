@@ -19,15 +19,6 @@
  
  public class BellBlockEntity extends BlockEntity {
      private static final int DURATION = 50;
-@@ -32,7 +_,7 @@
-     public boolean shaking;
-     public Direction clickDirection;
-     private List<LivingEntity> nearbyEntities;
--    public boolean resonating;
-+    private boolean resonating;
-     private int resonationTicks;
- 
-     public BellBlockEntity(BlockPos p_155173_, BlockState p_155174_) {
 @@ -130,9 +_,14 @@
          return false;
      }

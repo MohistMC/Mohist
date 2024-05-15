@@ -25,6 +25,15 @@
  
  public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVariant>> {
      public static final double TEMPT_SPEED_MOD = 0.6;
+@@ -152,7 +_,7 @@
+         return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
+     }
+ 
+-    private void setCollarColor(DyeColor p_28132_) {
++    public void setCollarColor(DyeColor p_28132_) {
+         this.entityData.set(DATA_COLLAR_COLOR, p_28132_.getId());
+     }
+ 
 @@ -379,9 +_,9 @@
                      }
                  } else if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {

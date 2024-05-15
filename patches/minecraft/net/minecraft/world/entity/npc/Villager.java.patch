@@ -125,6 +125,15 @@
              return super.mobInteract(p_35472_, p_35473_);
          } else if (this.isBaby()) {
              this.setUnhappy();
+@@ -341,7 +_,7 @@
+         }
+     }
+ 
+-    private void setUnhappy() {
++    public void setUnhappy() {
+         this.setUnhappyCounter(40);
+         if (!this.level().isClientSide()) {
+             this.makeSound(SoundEvents.VILLAGER_NO);
 @@ -389,8 +_,14 @@
          this.updateDemand();
  
@@ -168,6 +177,15 @@
          Entity entity = p_35419_.getEntity();
          if (entity != null) {
              this.tellWitnessesThatIWasMurdered(entity);
+@@ -629,7 +_,7 @@
+         super.die(p_35419_);
+     }
+ 
+-    private void releaseAllPois() {
++    public void releaseAllPois() {
+         this.releasePoi(MemoryModuleType.HOME);
+         this.releasePoi(MemoryModuleType.JOB_SITE);
+         this.releasePoi(MemoryModuleType.POTENTIAL_JOB_SITE);
 @@ -725,7 +_,8 @@
  
      @Override

@@ -26,6 +26,15 @@
      protected Direction direction = Direction.SOUTH;
  
      protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
+@@ -47,7 +_,7 @@
+     protected void defineSynchedData(SynchedEntityData.Builder p_330814_) {
+     }
+ 
+-    protected void setDirection(Direction p_31728_) {
++    public void setDirection(Direction p_31728_) {
+         Validate.notNull(p_31728_);
+         Validate.isTrue(p_31728_.getAxis().isHorizontal());
+         this.direction = p_31728_;
 @@ -87,23 +_,76 @@
          }
      }

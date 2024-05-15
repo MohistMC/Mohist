@@ -8,6 +8,15 @@
  
      @Override
      public MapCodec<? extends DispenserBlock> codec() {
+@@ -87,7 +_,7 @@
+         }
+     }
+ 
+-    protected void dispenseFrom(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
++    public void dispenseFrom(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
+         DispenserBlockEntity dispenserblockentity = p_52665_.getBlockEntity(p_52666_, BlockEntityType.DISPENSER).orElse(null);
+         if (dispenserblockentity == null) {
+             LOGGER.warn("Ignoring dispensing attempt for Dispenser without matching block entity at {}", p_52666_);
 @@ -101,6 +_,7 @@
                  ItemStack itemstack = dispenserblockentity.getItem(i);
                  DispenseItemBehavior dispenseitembehavior = this.getDispenseMethod(p_52665_, itemstack);

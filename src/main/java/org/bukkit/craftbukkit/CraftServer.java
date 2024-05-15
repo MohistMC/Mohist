@@ -8,6 +8,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.mohist.Mohist;
+import com.mohistmc.mohist.util.Level2LevelStem;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -852,6 +853,10 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(this.worlds.values());
     }
 
+    public Set<String> getWorldsByName() {
+        return new HashSet<>(worlds.keySet());
+    }
+
     public DedicatedPlayerList getHandle() {
         return this.playerList;
     }
@@ -1199,6 +1204,15 @@ public final class CraftServer implements Server {
         this.worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
         this.console.removeLevel(handle);
         return true;
+    }
+
+    public void removeWorld(ServerLevel world) {
+        if (world == null) {
+            return;
+        }
+        String worldname = world.getWorld().getName().contains("DIM") ? world.getWorld().getName() :world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH);
+        this.worlds.remove(worldname);
+        Level2LevelStem.plugin_worlds.remove(worldname);
     }
 
     public DedicatedServer getServer() {

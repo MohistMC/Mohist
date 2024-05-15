@@ -9,7 +9,7 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.EquipmentSlot;
  import net.minecraft.world.entity.ItemBasedSteering;
-@@ -41,15 +_,18 @@
+@@ -41,10 +_,13 @@
  import net.minecraft.world.entity.vehicle.DismountHelper;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
@@ -23,12 +23,6 @@
  
  public class Pig extends Animal implements ItemSteerable, Saddleable {
      private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(Pig.class, EntityDataSerializers.BOOLEAN);
-     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(Pig.class, EntityDataSerializers.INT);
--    public final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
-+    private final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
- 
-     public Pig(EntityType<? extends Pig> p_29462_, Level p_29463_) {
-         super(p_29462_, p_29463_);
 @@ -204,7 +_,7 @@
  
      @Override

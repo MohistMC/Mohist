@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings.java
++++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings.java
+@@ -21,7 +_,7 @@
+     private boolean keepLiquids = true;
+     @Nullable
+     private RandomSource random;
+-    private int palette;
++    public int palette;
+     private final List<StructureProcessor> processors = Lists.newArrayList();
+     private boolean knownShape;
+     private boolean finalizeEntities;

@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -72,12 +_,12 @@
-     private static final int GATEWAY_DISTANCE = 96;
-     public static final int DRAGON_SPAWN_Y = 128;
-     private final Predicate<Entity> validPlayer;
--    public final ServerBossEvent dragonEvent = (ServerBossEvent)new ServerBossEvent(
-+    private final ServerBossEvent dragonEvent = (ServerBossEvent)new ServerBossEvent(
-             Component.translatable("entity.minecraft.ender_dragon"), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS
+@@ -77,7 +_,7 @@
          )
          .setPlayBossMusic(true)
          .setCreateWorldFog(true);
@@ -15,7 +9,7 @@
      private final BlockPos origin;
      private final ObjectArrayList<Integer> gateways = new ObjectArrayList<>();
      private final BlockPattern exitPortalPattern;
-@@ -86,13 +_,13 @@
+@@ -86,10 +_,10 @@
      private int ticksSinceCrystalsScanned;
      private int ticksSinceLastPlayerScan = 21;
      private boolean dragonKilled;
@@ -27,38 +21,25 @@
 +   	public UUID dragonUUID;
      private boolean needsStateScanning = true;
      @Nullable
--    public BlockPos portalLocation;
-+    private BlockPos portalLocation;
-     @Nullable
-     public DragonRespawnAnimation respawnStage;
-     private int respawnTime;
-@@ -235,7 +_,7 @@
+     public BlockPos portalLocation;
+@@ -511,7 +_,8 @@
          }
      }
  
--    public void setRespawnStage(DragonRespawnAnimation p_64088_) {
-+    protected void setRespawnStage(DragonRespawnAnimation p_64088_) {
-         if (this.respawnStage == null) {
-             throw new IllegalStateException("Dragon respawn isn't in progress, can't skip ahead in the animation.");
-         } else {
-@@ -272,7 +_,7 @@
+-    private void respawnDragon(List<EndCrystal> p_64092_) {
++    public boolean respawnDragon = false;
++    public void respawnDragon(List<EndCrystal> p_64092_) {
+         if (this.dragonKilled && this.respawnStage == null) {
+             for (BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.findExitPortal();
+                 blockpattern$blockpatternmatch != null;
+@@ -533,6 +_,7 @@
+             this.respawnTime = 0;
+             this.spawnExitPortal(false);
+             this.respawnCrystals = p_64092_;
++            respawnDragon = true;
+         }
      }
  
-     @Nullable
--    public BlockPattern.BlockPatternMatch findExitPortal() {
-+    private BlockPattern.BlockPatternMatch findExitPortal() {
-         ChunkPos chunkpos = new ChunkPos(this.origin);
- 
-         for (int i = -8 + chunkpos.x; i <= 8 + chunkpos.x; i++) {
-@@ -404,7 +_,7 @@
-             .ifPresent(p_256486_ -> p_256486_.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), p_64090_));
-     }
- 
--    public void spawnExitPortal(boolean p_64094_) {
-+    private void spawnExitPortal(boolean p_64094_) {
-         EndPodiumFeature endpodiumfeature = new EndPodiumFeature(p_64094_);
-         if (this.portalLocation == null) {
-             this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.getLocation(this.origin)).below();
 @@ -543,6 +_,14 @@
                  endcrystal.setBeamTarget(null);
              }

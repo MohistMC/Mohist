@@ -17,6 +17,22 @@
  import org.slf4j.Logger;
  
  public class BrushableBlockEntity extends BlockEntity {
+@@ -43,12 +_,12 @@
+     private int brushCount;
+     private long brushCountResetsAtTick;
+     private long coolDownEndsAtTick;
+-    private ItemStack item = ItemStack.EMPTY;
++    public ItemStack item = ItemStack.EMPTY;
+     @Nullable
+     private Direction hitDirection;
+     @Nullable
+-    private ResourceKey<LootTable> lootTable;
+-    private long lootTableSeed;
++    public ResourceKey<LootTable> lootTable;
++    public long lootTableSeed;
+ 
+     public BrushableBlockEntity(BlockPos p_277558_, BlockState p_278093_) {
+         super(BlockEntityType.BRUSHABLE_BLOCK, p_277558_, p_278093_);
 @@ -140,7 +_,10 @@
                  double d5 = (double)blockpos.getZ() + 0.5 * d1 + d2;
                  ItemEntity itementity = new ItemEntity(this.level, d3, d4, d5, this.item.split(this.level.random.nextInt(21) + 10));

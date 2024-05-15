@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/animal/TropicalFish.java
++++ b/net/minecraft/world/entity/animal/TropicalFish.java
+@@ -105,7 +_,7 @@
+         this.setPackedVariant(p_30029_.getInt("Variant"));
+     }
+ 
+-    private void setPackedVariant(int p_30057_) {
++    public void setPackedVariant(int p_30057_) {
+         this.entityData.set(DATA_ID_TYPE_VARIANT, p_30057_);
+     }
+ 
+@@ -114,7 +_,7 @@
+         return !this.isSchool;
+     }
+ 
+-    private int getPackedVariant() {
++    public int getPackedVariant() {
+         return this.entityData.get(DATA_ID_TYPE_VARIANT);
+     }
+ 

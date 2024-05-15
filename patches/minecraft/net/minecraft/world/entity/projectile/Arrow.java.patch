@@ -8,6 +8,29 @@
  
  public class Arrow extends AbstractArrow {
      private static final int EXPOSED_POTION_DECAY_TIME = 600;
+@@ -35,11 +_,11 @@
+         this.updateColor();
+     }
+ 
+-    private PotionContents getPotionContents() {
++    public PotionContents getPotionContents() {
+         return this.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+     }
+ 
+-    private void setPotionContents(PotionContents p_328713_) {
++    public void setPotionContents(PotionContents p_328713_) {
+         this.getPickupItemStackOrigin().set(DataComponents.POTION_CONTENTS, p_328713_);
+         this.updateColor();
+     }
+@@ -50,7 +_,7 @@
+         this.updateColor();
+     }
+ 
+-    private void updateColor() {
++    public void updateColor() {
+         PotionContents potioncontents = this.getPotionContents();
+         this.entityData.set(ID_EFFECT_COLOR, potioncontents.equals(PotionContents.EMPTY) ? -1 : potioncontents.getColor());
+     }
 @@ -103,6 +_,7 @@
          PotionContents potioncontents = this.getPotionContents();
          if (potioncontents.potion().isPresent()) {

@@ -42,7 +42,8 @@
 +    public static final StreamCodec<RegistryFriendlyByteBuf, Ingredient> CONTENTS_STREAM_CODEC = net.minecraftforge.common.ForgeHooks.ingredientStreamCodec();
      private final Ingredient.Value[] values;
      @Nullable
-     private ItemStack[] itemStacks;
+-    private ItemStack[] itemStacks;
++    public ItemStack[] itemStacks;
      @Nullable
      private IntList stackingIds;
 -    public static final Codec<Ingredient> CODEC = codec(true);

@@ -1,11 +1,62 @@
 --- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
-@@ -83,7 +_,7 @@
-     public static final int MIN_OCCUPATION_TICKS_NECTARLESS = 600;
+@@ -84,6 +_,7 @@
      private final List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
      @Nullable
--    public BlockPos savedFlowerPos;
-+    private BlockPos savedFlowerPos;
+     public BlockPos savedFlowerPos;
++    public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
  
      public BeehiveBlockEntity(BlockPos p_155134_, BlockState p_155135_) {
          super(BlockEntityType.BEEHIVE, p_155134_, p_155135_);
+@@ -117,7 +_,7 @@
+     }
+ 
+     public boolean isFull() {
+-        return this.stored.size() == 3;
++        return this.stored.size() == this.maxBees; // CraftBukkit
+     }
+ 
+     public void emptyAllLivingFromHive(@Nullable Player p_58749_, BlockState p_58750_, BeehiveBlockEntity.BeeReleaseStatus p_58751_) {
+@@ -196,6 +_,13 @@
+         this.stored.add(new BeehiveBlockEntity.BeeData(p_329282_));
+     }
+ 
++    private static boolean releaseOccupant$force = false;
++
++    private static boolean releaseOccupant(Level pLevel, BlockPos pPos, BlockState pState, BeehiveBlockEntity.Occupant pData, @Nullable List<Entity> pStoredInHives, BeehiveBlockEntity.BeeReleaseStatus pReleaseStatus, @Nullable BlockPos pSavedFlowerPos, boolean force) {
++        releaseOccupant$force = force;
++        return releaseOccupant(pLevel, pPos, pState, pData, pStoredInHives, pReleaseStatus, pSavedFlowerPos);
++    }
++
+     private static boolean releaseOccupant(
+         Level p_155137_,
+         BlockPos p_155138_,
+@@ -205,7 +_,7 @@
+         BeehiveBlockEntity.BeeReleaseStatus p_155142_,
+         @Nullable BlockPos p_155143_
+     ) {
+-        if ((p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++        if (!releaseOccupant$force && (p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
+             return false;
+         } else {
+             Direction direction = p_155139_.getValue(BeehiveBlock.FACING);
+@@ -435,5 +_,19 @@
+ 
+             p_331091_.setInLoveTime(Math.max(0, p_331091_.getInLoveTime() - p_330253_));
+         }
++    }
++
++    public List<Entity> releaseBees(BlockState iblockdata, BeehiveBlockEntity.BeeReleaseStatus tileentitybeehive_releasestatus, boolean force) {
++        List<Entity> list = Lists.newArrayList();
++
++        this.stored.removeIf((tileentitybeehive_hivebee) -> {
++            return BeehiveBlockEntity.releaseOccupant(this.level, this.worldPosition, iblockdata, tileentitybeehive_hivebee.toOccupant(), list, tileentitybeehive_releasestatus, this.savedFlowerPos, force);
++            // CraftBukkit end
++        });
++        if (!list.isEmpty()) {
++            super.setChanged();
++        }
++
++        return list;
+     }
+ }

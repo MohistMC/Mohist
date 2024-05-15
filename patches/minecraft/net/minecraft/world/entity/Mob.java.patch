@@ -33,7 +33,7 @@
  
  public abstract class Mob extends LivingEntity implements EquipmentUser, Targeting {
      private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
-@@ -121,11 +_,11 @@
+@@ -121,7 +_,7 @@
      private ItemStack bodyArmorItem = ItemStack.EMPTY;
      protected float bodyArmorDropChance;
      private boolean canPickUpLoot;
@@ -41,13 +41,7 @@
 +    private boolean persistenceRequired;
      private final Map<PathType, Float> pathfindingMalus = Maps.newEnumMap(PathType.class);
      @Nullable
--    public ResourceKey<LootTable> lootTable;
--    public long lootTableSeed;
-+    private ResourceKey<LootTable> lootTable;
-+    private long lootTableSeed;
-     @Nullable
-     private Entity leashHolder;
-     private int delayedLeashHolderId;
+     public ResourceKey<LootTable> lootTable;
 @@ -133,6 +_,10 @@
      private Either<UUID, BlockPos> delayedLeashInfo;
      private BlockPos restrictCenter = BlockPos.ZERO;

@@ -19,7 +19,14 @@
  
      public Skeleton(EntityType<? extends Skeleton> p_33570_, Level p_33571_) {
          super(p_33570_, p_33571_);
-@@ -85,10 +_,12 @@
+@@ -79,16 +_,18 @@
+         }
+     }
+ 
+-    private void startFreezeConversion(int p_149831_) {
++    public void startFreezeConversion(int p_149831_) {
+         this.conversionTime = p_149831_;
+         this.setFreezeConverting(true);
      }
  
      protected void doFreezeConversion() {

@@ -28,15 +28,6 @@
  
  public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob {
      private static final EntityDataAccessor<Integer> DATA_TARGET_A = SynchedEntityData.defineId(WitherBoss.class, EntityDataSerializers.INT);
-@@ -70,7 +_,7 @@
-     private final int[] nextHeadUpdate = new int[2];
-     private final int[] idleHeadUpdates = new int[2];
-     private int destroyBlocksTick;
--    public final ServerBossEvent bossEvent = (ServerBossEvent)new ServerBossEvent(
-+    private final ServerBossEvent bossEvent = (ServerBossEvent)new ServerBossEvent(
-             this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS
-         )
-         .setDarkenScreen(true);
 @@ -255,22 +_,45 @@
          }
      }

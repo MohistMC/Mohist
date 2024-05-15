@@ -9,3 +9,12 @@
              this.tame(p_336244_);
              this.navigation.stop();
              this.setTarget(null);
+@@ -578,7 +_,7 @@
+         return !this.getBodyArmorItem().isEmpty();
+     }
+ 
+-    private void setCollarColor(DyeColor p_30398_) {
++    public void setCollarColor(DyeColor p_30398_) {
+         this.entityData.set(DATA_COLLAR_COLOR, p_30398_.getId());
+     }
+ 

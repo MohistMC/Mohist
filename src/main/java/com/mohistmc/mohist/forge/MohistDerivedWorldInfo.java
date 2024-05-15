@@ -55,43 +55,8 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public int getXSpawn() {
-        return derivedWorldInfo.getXSpawn();
-    }
-
-    @Override
-    public void setXSpawn(int x) {
-        derivedWorldInfo.setXSpawn(x);
-    }
-
-    @Override
-    public int getYSpawn() {
-        return derivedWorldInfo.getYSpawn();
-    }
-
-    @Override
-    public void setYSpawn(int y) {
-        derivedWorldInfo.setYSpawn(y);
-    }
-
-    @Override
-    public int getZSpawn() {
-        return derivedWorldInfo.getZSpawn();
-    }
-
-    @Override
-    public void setZSpawn(int z) {
-        derivedWorldInfo.setZSpawn(z);
-    }
-
-    @Override
     public float getSpawnAngle() {
         return derivedWorldInfo.getSpawnAngle();
-    }
-
-    @Override
-    public void setSpawnAngle(float angle) {
-        derivedWorldInfo.setSpawnAngle(angle);
     }
 
     @Override
@@ -187,11 +152,6 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     @Override
     public boolean isHardcore() {
         return derivedWorldInfo.isHardcore();
-    }
-
-    @Override
-    public boolean getAllowCommands() {
-        return derivedWorldInfo.getAllowCommands();
     }
 
     @Override

@@ -20,7 +20,7 @@ public class CraftWorldInfo implements WorldInfo {
 
     public CraftWorldInfo(ServerLevelData worldDataServer, LevelStorageSource.LevelStorageAccess session, World.Environment environment, DimensionType dimensionManager) {
         this.name = worldDataServer.getLevelName();
-        this.uuid = WorldUUID.getUUID(session.levelDirectory.path().toFile());
+        this.uuid = WorldUUID.getUUID(session.getLevelDirectory().path().toFile());
         this.environment = environment;
         this.seed = ((PrimaryLevelData) worldDataServer).worldGenOptions().seed();
         this.minHeight = dimensionManager.minY();

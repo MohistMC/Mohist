@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
-@@ -22,7 +_,7 @@
- public abstract class AbstractPiglin extends Monster {
-     protected static final EntityDataAccessor<Boolean> DATA_IMMUNE_TO_ZOMBIFICATION = SynchedEntityData.defineId(AbstractPiglin.class, EntityDataSerializers.BOOLEAN);
-     protected static final int CONVERSION_TIME = 300;
--    public int timeInOverworld;
-+    protected int timeInOverworld;
+@@ -44,7 +_,7 @@
+         this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, p_34671_);
+     }
  
-     public AbstractPiglin(EntityType<? extends AbstractPiglin> p_34652_, Level p_34653_) {
-         super(p_34652_, p_34653_);
+-    protected boolean isImmuneToZombification() {
++    public boolean isImmuneToZombification() {
+         return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
+     }
+ 
 @@ -80,7 +_,7 @@
              this.timeInOverworld = 0;
          }

@@ -99,7 +99,7 @@ public class ForgeInjectBukkit {
             if (isMods(resourceLocation)) {
                 // inject item materials into Bukkit for FML
                 int id = Item.getId(item);
-                Material material = Material.addMaterial(resourceLocation.toString(), id, item.getMaxStackSize(new ItemStack(item)), false, true, resourceLocation);
+                Material material = Material.addMaterial(resourceLocation.toString(), id, item.getDefaultMaxStackSize(), false, true, resourceLocation);
 
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
@@ -117,7 +117,7 @@ public class ForgeInjectBukkit {
                 String materialName = resourceLocation.toString();
                 int id = Item.getId(block.asItem());
                 Item item = Item.byId(id);
-                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(new ItemStack(item)), true, false, resourceLocation);
+                Material material = Material.addMaterial(materialName, id, item.getDefaultMaxStackSize(), true, false, resourceLocation);
 
                 if (material != null) {
                     CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);

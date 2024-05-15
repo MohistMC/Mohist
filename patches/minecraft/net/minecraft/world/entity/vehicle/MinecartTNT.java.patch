@@ -27,7 +27,12 @@
  
      public MinecartTNT(EntityType<? extends MinecartTNT> p_38649_, Level p_38650_) {
          super(p_38649_, p_38650_);
-@@ -92,28 +_,26 @@
+@@ -88,32 +_,30 @@
+         return Items.TNT_MINECART;
+     }
+ 
+-    protected void explode(double p_38689_) {
++    public void explode(double p_38689_) {
          this.explode(null, p_38689_);
      }
  

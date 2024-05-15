@@ -7,7 +7,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.core.HolderLookup;
-@@ -23,6 +_,8 @@
+@@ -23,11 +_,13 @@
  import net.minecraft.world.level.block.ChestBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.ChestType;
@@ -16,6 +16,12 @@
  
  public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
      private static final int EVENT_SET_OPEN_COUNT = 1;
+     private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+-    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
++    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+         @Override
+         protected void onOpen(Level p_155357_, BlockPos p_155358_, BlockState p_155359_) {
+             ChestBlockEntity.playSound(p_155357_, p_155358_, p_155359_, SoundEvents.CHEST_OPEN);
 @@ -56,6 +_,35 @@
      };
      private final ChestLidController chestLidController = new ChestLidController();

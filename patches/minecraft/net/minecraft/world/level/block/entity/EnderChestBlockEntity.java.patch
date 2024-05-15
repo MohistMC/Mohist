@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/EnderChestBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/EnderChestBlockEntity.java
+@@ -11,7 +_,7 @@
+ 
+ public class EnderChestBlockEntity extends BlockEntity implements LidBlockEntity {
+     private final ChestLidController chestLidController = new ChestLidController();
+-    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
++    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+         @Override
+         protected void onOpen(Level p_155531_, BlockPos p_155532_, BlockState p_155533_) {
+             p_155531_.playSound(

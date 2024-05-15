@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/ChiseledBookShelfBlock.java
++++ b/net/minecraft/world/level/block/ChiseledBookShelfBlock.java
+@@ -137,7 +_,7 @@
+         }
+     }
+ 
+-    private static int getSection(float p_261599_) {
++    public static int getSection(float p_261599_) {
+         float f = 0.0625F;
+         float f1 = 0.375F;
+         if (p_261599_ < 0.375F) {

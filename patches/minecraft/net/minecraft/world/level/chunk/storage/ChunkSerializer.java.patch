@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+@@ -67,7 +_,7 @@
+ import org.slf4j.Logger;
+ 
+ public class ChunkSerializer {
+-    private static final Codec<PalettedContainer<BlockState>> BLOCK_STATE_CODEC = PalettedContainer.codecRW(
++    public static final Codec<PalettedContainer<BlockState>> BLOCK_STATE_CODEC = PalettedContainer.codecRW(
+         Block.BLOCK_STATE_REGISTRY, BlockState.CODEC, PalettedContainer.Strategy.SECTION_STATES, Blocks.AIR.defaultBlockState()
+     );
+     private static final Logger LOGGER = LogUtils.getLogger();
 @@ -182,6 +_,9 @@
                  postLoadChunk(p_188231_, p_188234_),
                  blendingdata

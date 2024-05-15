@@ -9,7 +9,7 @@
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
-@@ -25,19 +_,21 @@
+@@ -25,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -17,16 +17,7 @@
  
  public class LightningBolt extends Entity {
      private static final int START_LIFE = 2;
-     private static final double DAMAGE_RADIUS = 3.0;
-     private static final double DETECTION_RADIUS = 15.0;
--    public int life;
-+    private int life;
-     public long seed;
--    public int flashes;
--    public boolean visualOnly;
-+    private int flashes;
-+    private boolean visualOnly;
-     @Nullable
+@@ -38,6 +_,7 @@
      private ServerPlayer cause;
      private final Set<Entity> hitEntities = Sets.newHashSet();
      private int blocksSetOnFire;
