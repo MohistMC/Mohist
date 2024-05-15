@@ -321,7 +321,7 @@
      }
  
      public void resetEmptyTime() {
-@@ -733,17 +_,28 @@
+@@ -733,17 +_,29 @@
      }
  
      public void tickNonPassenger(Entity p_8648_) {
@@ -341,6 +341,7 @@
 +            return BuiltInRegistries.ENTITY_TYPE.getKey(p_8648_.getType()).toString();
 +        });
          profilerfiller.incrementCounter("tickNonPassenger");
++        if (p_8648_.canUpdate())
          p_8648_.tick();
 +        p_8648_.postTick(); // CraftBukkit
          this.getProfiler().pop();

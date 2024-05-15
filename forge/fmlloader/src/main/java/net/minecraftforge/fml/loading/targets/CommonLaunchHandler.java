@@ -9,7 +9,6 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import cpw.mods.modlauncher.api.ServiceRunner;
-import java.nio.file.Paths;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -20,6 +19,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**

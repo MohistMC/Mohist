@@ -857,105 +857,6 @@
 -
 -    @Override
 -    public void die(DamageSource p_9035_) {
--        this.gameEvent(GameEvent.ENTITY_DIE);
--        boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
--        if (flag) {
--            Component component = this.getCombatTracker().getDeathMessage();
--            this.connection
--                .send(
--                    new ClientboundPlayerCombatKillPacket(this.getId(), component),
--                    PacketSendListener.exceptionallySend(
--                        () -> {
--                            int i = 256;
--                            String s = component.getString(256);
--                            Component component1 = Component.translatable("death.attack.message_too_long", Component.literal(s).withStyle(ChatFormatting.YELLOW));
--                            Component component2 = Component.translatable("death.attack.even_more_magic", this.getDisplayName())
--                                .withStyle(p_143420_ -> p_143420_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component1)));
--                            return new ClientboundPlayerCombatKillPacket(this.getId(), component2);
--                        }
--                    )
--                );
--            Team team = this.getTeam();
--            if (team == null || team.getDeathMessageVisibility() == Team.Visibility.ALWAYS) {
--                this.server.getPlayerList().broadcastSystemMessage(component, false);
--            } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
--                this.server.getPlayerList().broadcastSystemToTeam(this, component);
--            } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
--                this.server.getPlayerList().broadcastSystemToAllExceptTeam(this, component);
--            }
--        } else {
--            this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), CommonComponents.EMPTY));
--        }
--
--        this.removeEntitiesOnShoulder();
--        if (this.level().getGameRules().getBoolean(GameRules.RULE_FORGIVE_DEAD_PLAYERS)) {
--            this.tellNeutralMobsThatIDied();
--        }
--
--        if (!this.isSpectator()) {
--            this.dropAllDeathLoot(p_9035_);
--        }
--
--        this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
--        LivingEntity livingentity = this.getKillCredit();
--        if (livingentity != null) {
--            this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
--            livingentity.awardKillScore(this, this.deathScore, p_9035_);
--            this.createWitherRose(livingentity);
--        }
--
--        this.level().broadcastEntityEvent(this, (byte)3);
--        this.awardStat(Stats.DEATHS);
--        this.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_DEATH));
--        this.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
--        this.clearFire();
--        this.setTicksFrozen(0);
--        this.setSharedFlagOnFire(false);
--        this.getCombatTracker().recheckStatus();
--        this.setLastDeathLocation(Optional.of(GlobalPos.of(this.level().dimension(), this.blockPosition())));
--    }
--
--    private void tellNeutralMobsThatIDied() {
--        AABB aabb = new AABB(this.blockPosition()).inflate(32.0, 10.0, 32.0);
--        this.level()
--            .getEntitiesOfClass(Mob.class, aabb, EntitySelector.NO_SPECTATORS)
--            .stream()
--            .filter(p_9188_ -> p_9188_ instanceof NeutralMob)
--            .forEach(p_9057_ -> ((NeutralMob)p_9057_).playerDied(this));
--    }
--
--    @Override
--    public void awardKillScore(Entity p_9050_, int p_9051_, DamageSource p_9052_) {
--        if (p_9050_ != this) {
--            super.awardKillScore(p_9050_, p_9051_, p_9052_);
--            this.increaseScore(p_9051_);
--            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
--            if (p_9050_ instanceof Player) {
--                this.awardStat(Stats.PLAYER_KILLS);
--                this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
--            } else {
--                this.awardStat(Stats.MOB_KILLS);
--            }
--
--            this.handleTeamKill(this, p_9050_, ObjectiveCriteria.TEAM_KILL);
--            this.handleTeamKill(p_9050_, this, ObjectiveCriteria.KILLED_BY_TEAM);
--            CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(this, p_9050_, p_9052_);
--        }
--    }
--
--    private void handleTeamKill(ScoreHolder p_312242_, ScoreHolder p_312349_, ObjectiveCriteria[] p_9127_) {
--        PlayerTeam playerteam = this.getScoreboard().getPlayersTeam(p_312349_.getScoreboardName());
--        if (playerteam != null) {
--            int i = playerteam.getColor().getId();
--            if (i >= 0 && i < p_9127_.length) {
--                this.getScoreboard().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
--            }
--        }
--    }
--
--    @Override
--    public boolean hurt(DamageSource p_9037_, float p_9038_) {
--        if (this.isInvulnerableTo(p_9037_)) {
 +         }
 +      }
 +
@@ -1303,8 +1204,106 @@
 +
 +   @Override
 +   public void die(DamageSource p_9035_) {
-+      this.gameEvent(GameEvent.ENTITY_DIE);
-+      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_9035_)) return;
+         this.gameEvent(GameEvent.ENTITY_DIE);
+-        boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
+-        if (flag) {
+-            Component component = this.getCombatTracker().getDeathMessage();
+-            this.connection
+-                .send(
+-                    new ClientboundPlayerCombatKillPacket(this.getId(), component),
+-                    PacketSendListener.exceptionallySend(
+-                        () -> {
+-                            int i = 256;
+-                            String s = component.getString(256);
+-                            Component component1 = Component.translatable("death.attack.message_too_long", Component.literal(s).withStyle(ChatFormatting.YELLOW));
+-                            Component component2 = Component.translatable("death.attack.even_more_magic", this.getDisplayName())
+-                                .withStyle(p_143420_ -> p_143420_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component1)));
+-                            return new ClientboundPlayerCombatKillPacket(this.getId(), component2);
+-                        }
+-                    )
+-                );
+-            Team team = this.getTeam();
+-            if (team == null || team.getDeathMessageVisibility() == Team.Visibility.ALWAYS) {
+-                this.server.getPlayerList().broadcastSystemMessage(component, false);
+-            } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
+-                this.server.getPlayerList().broadcastSystemToTeam(this, component);
+-            } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
+-                this.server.getPlayerList().broadcastSystemToAllExceptTeam(this, component);
+-            }
+-        } else {
+-            this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), CommonComponents.EMPTY));
+-        }
+-
+-        this.removeEntitiesOnShoulder();
+-        if (this.level().getGameRules().getBoolean(GameRules.RULE_FORGIVE_DEAD_PLAYERS)) {
+-            this.tellNeutralMobsThatIDied();
+-        }
+-
+-        if (!this.isSpectator()) {
+-            this.dropAllDeathLoot(p_9035_);
+-        }
+-
+-        this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
+-        LivingEntity livingentity = this.getKillCredit();
+-        if (livingentity != null) {
+-            this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
+-            livingentity.awardKillScore(this, this.deathScore, p_9035_);
+-            this.createWitherRose(livingentity);
+-        }
+-
+-        this.level().broadcastEntityEvent(this, (byte)3);
+-        this.awardStat(Stats.DEATHS);
+-        this.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_DEATH));
+-        this.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+-        this.clearFire();
+-        this.setTicksFrozen(0);
+-        this.setSharedFlagOnFire(false);
+-        this.getCombatTracker().recheckStatus();
+-        this.setLastDeathLocation(Optional.of(GlobalPos.of(this.level().dimension(), this.blockPosition())));
+-    }
+-
+-    private void tellNeutralMobsThatIDied() {
+-        AABB aabb = new AABB(this.blockPosition()).inflate(32.0, 10.0, 32.0);
+-        this.level()
+-            .getEntitiesOfClass(Mob.class, aabb, EntitySelector.NO_SPECTATORS)
+-            .stream()
+-            .filter(p_9188_ -> p_9188_ instanceof NeutralMob)
+-            .forEach(p_9057_ -> ((NeutralMob)p_9057_).playerDied(this));
+-    }
+-
+-    @Override
+-    public void awardKillScore(Entity p_9050_, int p_9051_, DamageSource p_9052_) {
+-        if (p_9050_ != this) {
+-            super.awardKillScore(p_9050_, p_9051_, p_9052_);
+-            this.increaseScore(p_9051_);
+-            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
+-            if (p_9050_ instanceof Player) {
+-                this.awardStat(Stats.PLAYER_KILLS);
+-                this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
+-            } else {
+-                this.awardStat(Stats.MOB_KILLS);
+-            }
+-
+-            this.handleTeamKill(this, p_9050_, ObjectiveCriteria.TEAM_KILL);
+-            this.handleTeamKill(p_9050_, this, ObjectiveCriteria.KILLED_BY_TEAM);
+-            CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(this, p_9050_, p_9052_);
+-        }
+-    }
+-
+-    private void handleTeamKill(ScoreHolder p_312242_, ScoreHolder p_312349_, ObjectiveCriteria[] p_9127_) {
+-        PlayerTeam playerteam = this.getScoreboard().getPlayersTeam(p_312349_.getScoreboardName());
+-        if (playerteam != null) {
+-            int i = playerteam.getColor().getId();
+-            if (i >= 0 && i < p_9127_.length) {
+-                this.getScoreboard().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
+-            }
+-        }
+-    }
+-
+-    @Override
+-    public boolean hurt(DamageSource p_9037_, float p_9038_) {
+-        if (this.isInvulnerableTo(p_9037_)) {
 +      boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
 +      // CraftBukkit start - fire PlayerDeathEvent
 +      if (this.isRemoved()) {

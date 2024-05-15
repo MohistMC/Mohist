@@ -18,6 +18,7 @@ import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -36,6 +37,11 @@ public abstract class AbstractModProvider implements IModProvider {
     protected static final String MODS_TOML = "META-INF/mods.toml";
 
     protected IModLocator.ModFileOrException createMod(Path path) {
+        return createMod(path, false);
+    }
+
+    @Nullable
+    protected IModLocator.ModFileOrException createMod(Path path, boolean ignoreUnknown) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
             jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
@@ -50,9 +56,15 @@ public abstract class AbstractModProvider implements IModProvider {
         if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
+            if (mod.getModFileInfo().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+                LOGGER.error(LogMarkers.SCAN, "Unable to load file \"{}\" because its mods.toml is requesting an invalid javafml loaderVersion (use \"*\" if you want to allow all versions) and is missing a forge modId dependency declaration (see the sample mods.toml in the MDK).", path);
+                return new IModLocator.ModFileOrException(null, new ModFileLoadingException("File \"%s\" is not a Forge mod and cannot be loaded. Look for a Forge version of this mod or consider alternative mods.".formatted(mod.getFileName())));
+            }
         } else if (type != null) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", JarFile.MANIFEST_NAME, type, path);
             mod = new ModFile(sj, this, this::manifestParser, type);
+        } else if (ignoreUnknown) {
+            return null;
         } else
             return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found " + path));
 
@@ -109,20 +121,20 @@ public abstract class AbstractModProvider implements IModProvider {
             };
         }
 
-        try {
-            Files.walk(root)
+        try (var files = Files.walk(root)) {
+            files
                 .filter(p -> p.toString().endsWith(".class"))
                 .forEach(consumer);
 
             file.setSecurityStatus(holder.value);
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         LOGGER.debug(LogMarkers.SCAN, "Scan finished: {}", file);
     }
 
-    private static class Holder<T> {
+    private static final class Holder<T> {
         T value;
     }
 

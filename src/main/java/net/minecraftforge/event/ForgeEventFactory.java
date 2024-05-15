@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -13,9 +14,13 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +82,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -90,6 +96,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.alchemy.PotionBrewing.Builder;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -139,10 +146,13 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingDrownEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -181,6 +191,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.level.AlterGroundEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -209,19 +220,32 @@ import net.minecraftforge.fml.event.IModBusEvent;
 
 @ApiStatus.Internal
 public final class ForgeEventFactory {
+    private static final ModLoader ML = ModLoader.get();
+
     private ForgeEventFactory() {}
 
+    /**
+     * Post an event to the {@link MinecraftForge#EVENT_BUS}
+     * @return true if the event is {@link Cancelable} and has been canceled
+     */
     private static boolean post(Event e) {
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
+    /**
+     * Post an event to the {@link MinecraftForge#EVENT_BUS}, then return the event object
+     * @return the event object passed in and possibly modified by listeners
+     */
     private static <E extends Event> E fire(E e) {
         post(e);
         return e;
     }
 
+    /**
+     * Post an event to the {@link ModLoader#get()} event bus
+     */
     private static <T extends Event & IModBusEvent> void postModBus(T e) {
-        ModLoader.get().postEvent(e);
+        ML.postEvent(e);
     }
 
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction) {
@@ -330,9 +354,9 @@ public final class ForgeEventFactory {
         boolean cancel = post(event);
 
         if (!cancel)
-            mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData());
+            return mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData());
 
-        return cancel ? null : event.getSpawnData();
+        return null;
     }
 
     /**
@@ -343,9 +367,7 @@ public final class ForgeEventFactory {
      */
     @Nullable
     public static MobSpawnEvent.FinalizeSpawn onFinalizeSpawnSpawner(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag spawnTag, BaseSpawner spawner) {
-        var event = new MobSpawnEvent.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, MobSpawnType.SPAWNER, spawnData, spawnTag, spawner);
-        boolean cancel = post(event);
-        return cancel ? null : event;
+        return fire(new MobSpawnEvent.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, MobSpawnType.SPAWNER, spawnData, spawnTag, spawner));
     }
 
     public static Result canEntityDespawn(Mob entity, ServerLevelAccessor level) {
@@ -825,6 +847,7 @@ public final class ForgeEventFactory {
         LevelEvent.PotentialSpawns event = new LevelEvent.PotentialSpawns(level, category, pos, oldList);
         if (post(event))
             return WeightedRandomList.create();
+        //System.out.println("List: " + oldList.unwrap() + " " + event.getSpawnerDataList());
         return WeightedRandomList.create(event.getSpawnerDataList());
     }
 
@@ -912,6 +935,10 @@ public final class ForgeEventFactory {
         post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    public static boolean onLivingTick(LivingEntity entity) {
+        return post(new LivingEvent.LivingTickEvent(entity));
+    }
+
     public static LivingFallEvent onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
         return fire(new LivingFallEvent(entity, distance, damageMultiplier));
     }
@@ -926,6 +953,14 @@ public final class ForgeEventFactory {
 
     public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ) {
         return fire(new LivingKnockBackEvent(target, strength, ratioX, ratioZ));
+    }
+
+    public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
+        return post(new LivingDeathEvent(entity, src));
+    }
+
+    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
+        return post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
 
     public static void onLeftClickEmpty(Player player) {
@@ -1059,5 +1094,9 @@ public final class ForgeEventFactory {
 
     public static void onPlayerTradeWithVillager(Player player, MerchantOffer offer, AbstractVillager villager) {
         post(new TradeWithVillagerEvent(player, offer, villager));
+    }
+
+    public static GatherComponentsEvent.Item gatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
+        return fire(new GatherComponentsEvent.Item(item, dataComponents));
     }
 }

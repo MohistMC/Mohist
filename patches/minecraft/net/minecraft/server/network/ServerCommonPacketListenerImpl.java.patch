@@ -84,7 +84,7 @@
          if (this.keepAlivePending && p_299975_.getId() == this.keepAliveChallenge) {
              int i = (int)(Util.getMillis() - this.keepAliveTime);
              this.latency = (this.latency * 3 + i) / 4;
-@@ -80,17 +_,71 @@
+@@ -80,17 +_,72 @@
      public void handlePong(ServerboundPongPacket p_299461_) {
      }
  
@@ -98,6 +98,7 @@
 +   	private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
 +   	@Override
 +   	public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
++           /*
 +      if (p_300164_.payload() instanceof DiscardedPayload payload && payload.data() != null) {
 +         var readerIndex = payload.data().readerIndex();
 +         var buf = new byte[payload.data().readableBytes()];
@@ -142,8 +143,8 @@
 +               }
 +            }
 +         });
-+      }
-+      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.connection);
++      }*/
++      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_.payload(), this.connection);
 +   }
 +
 +   public final boolean isDisconnected() {
