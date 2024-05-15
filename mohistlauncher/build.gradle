@@ -42,4 +42,5 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Vendor' : 'MohistMC'
         ] as LinkedHashMap, 'com/mohistmc/mohistlauncher/')
     }
+    jarSigner.sign(it)
 }
