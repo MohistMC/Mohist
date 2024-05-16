@@ -254,7 +254,7 @@
 +                int y = blockpos.getY();
 +                int z = blockpos.getZ();
 +                BlockState iblockdata = level.getBlockState(blockpos);
-+                if (iblockdata.isAir() || iblockdata.canBeReplaced() || (dispensiblecontaineritem instanceof BucketItem && iblockdata.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) iblockdata.getBlock()).canPlaceLiquid((Player) null, level, blockpos, iblockdata, ((BucketItem) dispensiblecontaineritem).content))) {
++                if (iblockdata.isAir() || iblockdata.canBeReplaced() || (dispensiblecontaineritem instanceof BucketItem && iblockdata.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) iblockdata.getBlock()).canPlaceLiquid((Player) null, level, blockpos, iblockdata, ((BucketItem) dispensiblecontaineritem).getFluid()))) {
 +                    org.bukkit.block.Block block = CraftBlock.at(level, p_333645_.pos());
 +                    CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_333855_);
 +

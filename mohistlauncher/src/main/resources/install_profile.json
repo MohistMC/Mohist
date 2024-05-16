@@ -1,0 +1,534 @@
+{
+    "_comment": [
+        "Please do not automate the download and installation of Forge.",
+        "Our efforts are supported by ads from the download page.",
+        "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
+    ],
+    "hideExtract": true,
+    "spec": 1,
+    "profile": "forge",
+    "version": "1.20.6-forge-50.0.22",
+    "path": "net.minecraftforge:forge:1.20.6-50.0.22:shim",
+    "minecraft": "1.20.6",
+    "serverJarPath": "{LIBRARY_DIR}/net/minecraft/server/{MINECRAFT_VERSION}/server-{MINECRAFT_VERSION}-bundled.jar",
+    "data": {
+        "MAPPINGS": {
+            "client": "[de.oceanlabs.mcp:mcp_config:1.20.6-20240429.135109:mappings@tsrg]",
+            "server": "[de.oceanlabs.mcp:mcp_config:1.20.6-20240429.135109:mappings@tsrg]"
+        },
+        "MAPPINGS_SHA": {
+            "client": "'6f1298ce9eabba35559aab5378a7a9ffb693ba95'",
+            "server": "'6f1298ce9eabba35559aab5378a7a9ffb693ba95'"
+        },
+        "MOJMAPS": {
+            "client": "[net.minecraft:client:1.20.6:mappings@tsrg]",
+            "server": "[net.minecraft:server:1.20.6:mappings@tsrg]"
+        },
+        "MOJMAPS_SHA": {
+            "client": "'269c6b975e8731ae55c12caddecb257c6fe25a22'",
+            "server": "'95e69f71484eb41c48d18cd42d2478de4cb78510'"
+        },
+        "MC_UNPACKED": {
+            "client": "[net.minecraft:client:1.20.6]",
+            "server": "[net.minecraft:server:1.20.6:unpacked]"
+        },
+        "MC_UNPACKED_SHA": {
+            "client": "'05b6f1c6b46a29d6ea82b4e0d42190e42402030f'",
+            "server": "'04b1dd8b5704b0e0baa452f7b411a4b69af44b51'"
+        },
+        "MC_OFF": {
+            "client": "[net.minecraft:client:1.20.6:official]",
+            "server": "[net.minecraft:server:1.20.6:official]"
+        },
+        "MC_OFF_SHA": {
+            "client": "'547664b3b3906f53801eeb78b234431f56512409'",
+            "server": "'806cda7c01ab8e8d0e90050d7e4a4e7a16945711'"
+        },
+        "BINPATCH": {
+            "client": "/data/client.lzma",
+            "server": "/data/server.lzma"
+        },
+        "PATCHED": {
+            "client": "[net.minecraftforge:forge:1.20.6-50.0.22:client]",
+            "server": "[net.minecraftforge:forge:1.20.6-50.0.22:server]"
+        },
+        "PATCHED_SHA": {
+            "client": "'f05a4c7b14503413c7daf4e87810aafb14c3d13f'",
+            "server": "'d326a52266447ca50be86a3857472ce801dbb8bb'"
+        }
+    },
+    "processors": [
+        {
+            "sides": [
+                "server"
+            ],
+            "jar": "net.minecraftforge:installertools:1.4.3",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "com.google.code.gson:gson:2.10.1",
+                "de.siegmar:fastcsv:2.2.2",
+                "net.minecraftforge:srgutils:0.5.10",
+                "org.ow2.asm:asm-commons:9.7",
+                "org.ow2.asm:asm-tree:9.7",
+                "org.ow2.asm:asm:9.7"
+            ],
+            "args": [
+                "--task",
+                "EXTRACT_FILES",
+                "--archive",
+                "{INSTALLER}",
+                "--from",
+                "data/README.txt",
+                "--to",
+                "{ROOT}/README.txt",
+                "--from",
+                "data/run.sh",
+                "--to",
+                "{ROOT}/run.sh",
+                "--exec",
+                "{ROOT}/run.sh",
+                "--from",
+                "data/run.bat",
+                "--to",
+                "{ROOT}/run.bat",
+                "--from",
+                "data/user_jvm_args.txt",
+                "--to",
+                "{ROOT}/user_jvm_args.txt",
+                "--optional",
+                "{ROOT}/user_jvm_args.txt",
+                "--from",
+                "data/unix_args.txt",
+                "--to",
+                "{ROOT}/libraries/net/minecraftforge/forge/1.20.6-50.0.22/unix_args.txt",
+                "--from",
+                "data/win_args.txt",
+                "--to",
+                "{ROOT}/libraries/net/minecraftforge/forge/1.20.6-50.0.22/win_args.txt"
+            ]
+        },
+        {
+            "sides": [
+                "server"
+            ],
+            "jar": "net.minecraftforge:installertools:1.4.3",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "com.google.code.gson:gson:2.10.1",
+                "de.siegmar:fastcsv:2.2.2",
+                "net.minecraftforge:srgutils:0.5.10",
+                "org.ow2.asm:asm-commons:9.7",
+                "org.ow2.asm:asm-tree:9.7",
+                "org.ow2.asm:asm:9.7"
+            ],
+            "args": [
+                "--task",
+                "BUNDLER_EXTRACT",
+                "--input",
+                "{MINECRAFT_JAR}",
+                "--output",
+                "{ROOT}/libraries/",
+                "--libraries"
+            ]
+        },
+        {
+            "sides": [
+                "server"
+            ],
+            "jar": "net.minecraftforge:installertools:1.4.3",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "com.google.code.gson:gson:2.10.1",
+                "de.siegmar:fastcsv:2.2.2",
+                "net.minecraftforge:srgutils:0.5.10",
+                "org.ow2.asm:asm-commons:9.7",
+                "org.ow2.asm:asm-tree:9.7",
+                "org.ow2.asm:asm:9.7"
+            ],
+            "args": [
+                "--task",
+                "BUNDLER_EXTRACT",
+                "--input",
+                "{MINECRAFT_JAR}",
+                "--output",
+                "{MC_UNPACKED}",
+                "--jar-only"
+            ],
+            "outputs": {
+                "{MC_UNPACKED}": "{MC_UNPACKED_SHA}"
+            }
+        },
+        {
+            "jar": "net.minecraftforge:installertools:1.4.3",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "com.google.code.gson:gson:2.10.1",
+                "de.siegmar:fastcsv:2.2.2",
+                "net.minecraftforge:srgutils:0.5.10",
+                "org.ow2.asm:asm-commons:9.7",
+                "org.ow2.asm:asm-tree:9.7",
+                "org.ow2.asm:asm:9.7"
+            ],
+            "args": [
+                "--task",
+                "MCP_DATA",
+                "--input",
+                "[de.oceanlabs.mcp:mcp_config:1.20.6-20240429.135109@zip]",
+                "--output",
+                "{MAPPINGS}",
+                "--key",
+                "mappings"
+            ],
+            "outputs": {
+                "{MAPPINGS}": "{MAPPINGS_SHA}"
+            }
+        },
+        {
+            "jar": "net.minecraftforge:installertools:1.4.3",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "com.google.code.gson:gson:2.10.1",
+                "de.siegmar:fastcsv:2.2.2",
+                "net.minecraftforge:srgutils:0.5.10",
+                "org.ow2.asm:asm-commons:9.7",
+                "org.ow2.asm:asm-tree:9.7",
+                "org.ow2.asm:asm:9.7"
+            ],
+            "args": [
+                "--task",
+                "DOWNLOAD_MOJMAPS",
+                "--sanitize",
+                "--version",
+                "1.20.6",
+                "--side",
+                "{SIDE}",
+                "--output",
+                "{MOJMAPS}"
+            ],
+            "outputs": {
+                "{MOJMAPS}": "{MOJMAPS_SHA}"
+            }
+        },
+        {
+            "sides": [
+                "server"
+            ],
+            "jar": "net.minecraftforge:ForgeAutoRenamingTool:1.0.6",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "org.ow2.asm:asm-commons:9.5",
+                "org.ow2.asm:asm-tree:9.5",
+                "org.ow2.asm:asm:9.5",
+                "net.minecraftforge:srgutils:0.5.1"
+            ],
+            "args": [
+                "--input",
+                "{MC_UNPACKED}",
+                "--output",
+                "{MC_OFF}",
+                "--names",
+                "{MOJMAPS}",
+                "--ann-fix",
+                "--ids-fix",
+                "--src-fix",
+                "--record-fix",
+                "--strip-sigs",
+                "--reverse"
+            ],
+            "outputs": {
+                "{MC_OFF}": "{MC_OFF_SHA}"
+            }
+        },
+        {
+            "sides": [
+                "client"
+            ],
+            "jar": "net.minecraftforge:ForgeAutoRenamingTool:1.0.6",
+            "classpath": [
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "org.ow2.asm:asm-commons:9.5",
+                "org.ow2.asm:asm-tree:9.5",
+                "org.ow2.asm:asm:9.5",
+                "net.minecraftforge:srgutils:0.5.1"
+            ],
+            "args": [
+                "--input",
+                "{MINECRAFT_JAR}",
+                "--output",
+                "{MC_OFF}",
+                "--names",
+                "{MOJMAPS}",
+                "--ann-fix",
+                "--ids-fix",
+                "--src-fix",
+                "--record-fix",
+                "--strip-sigs",
+                "--reverse"
+            ],
+            "outputs": {
+                "{MC_OFF}": "{MC_OFF_SHA}"
+            }
+        },
+        {
+            "jar": "net.minecraftforge:binarypatcher:1.2.0",
+            "classpath": [
+                "net.minecraftforge:srgutils:0.5.6",
+                "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+                "com.github.jponge:lzma-java:1.3",
+                "com.nothome:javaxdelta:2.0.1",
+                "trove:trove:1.0.2"
+            ],
+            "args": [
+                "--clean",
+                "{MC_OFF}",
+                "--output",
+                "{PATCHED}",
+                "--apply",
+                "{BINPATCH}",
+                "--data",
+                "--unpatched"
+            ],
+            "outputs": {
+                "{PATCHED}": "{PATCHED_SHA}"
+            }
+        }
+    ],
+    "libraries": [
+        {
+            "name": "com.github.jponge:lzma-java:1.3",
+            "downloads": {
+                "artifact": {
+                    "path": "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
+                    "url": "https://maven.minecraftforge.net/com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
+                    "sha1": "a25db9d4d385ccda4825ae1b47a7a61d86e595af",
+                    "size": 51041
+                }
+            }
+        },
+        {
+            "name": "com.google.code.gson:gson:2.10.1",
+            "downloads": {
+                "artifact": {
+                    "path": "com/google/code/gson/gson/2.10.1/gson-2.10.1.jar",
+                    "url": "https://libraries.minecraft.net/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar",
+                    "sha1": "b3add478d4382b78ea20b1671390a858002feb6c",
+                    "size": 283367
+                }
+            }
+        },
+        {
+            "name": "com.nothome:javaxdelta:2.0.1",
+            "downloads": {
+                "artifact": {
+                    "path": "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",
+                    "url": "https://maven.minecraftforge.net/com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",
+                    "sha1": "d4f5d077f1b15c6f67595015d69572303ad3f66d",
+                    "size": 38995
+                }
+            }
+        },
+        {
+            "name": "de.oceanlabs.mcp:mcp_config:1.20.6-20240429.135109@zip",
+            "downloads": {
+                "artifact": {
+                    "path": "de/oceanlabs/mcp/mcp_config/1.20.6-20240429.135109/mcp_config-1.20.6-20240429.135109.zip",
+                    "url": "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.20.6-20240429.135109/mcp_config-1.20.6-20240429.135109.zip",
+                    "sha1": "db14042761483405ac981a8af6b8b09e49f3dfad",
+                    "size": 1846544
+                }
+            }
+        },
+        {
+            "name": "de.siegmar:fastcsv:2.2.2",
+            "downloads": {
+                "artifact": {
+                    "path": "de/siegmar/fastcsv/2.2.2/fastcsv-2.2.2.jar",
+                    "url": "https://maven.minecraftforge.net/de/siegmar/fastcsv/2.2.2/fastcsv-2.2.2.jar",
+                    "sha1": "40562843510397296de200889d9ed5f3af155e52",
+                    "size": 32060
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:ForgeAutoRenamingTool:1.0.6",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/ForgeAutoRenamingTool/1.0.6/ForgeAutoRenamingTool-1.0.6.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/ForgeAutoRenamingTool/1.0.6/ForgeAutoRenamingTool-1.0.6.jar",
+                    "sha1": "f0cb8d14326a36d7b2b6654d53974844619c8bec",
+                    "size": 95836
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:binarypatcher:1.2.0",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/binarypatcher/1.2.0/binarypatcher-1.2.0.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/binarypatcher/1.2.0/binarypatcher-1.2.0.jar",
+                    "sha1": "e5fea8a667a3ebff4e94fb74467c99c02914e4bc",
+                    "size": 27514
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:forge:1.20.6-50.0.22:shim",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/forge/1.20.6-50.0.22/forge-1.20.6-50.0.22-shim.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.6-50.0.22/forge-1.20.6-50.0.22-shim.jar",
+                    "sha1": "8ddb632fc37c8b899e6d66d6ec6817144da214e7",
+                    "size": 10542
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:forge:1.20.6-50.0.22:universal",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/forge/1.20.6-50.0.22/forge-1.20.6-50.0.22-universal.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.6-50.0.22/forge-1.20.6-50.0.22-universal.jar",
+                    "sha1": "5865279c15a196839a4d4dba7f8dd306201cf6bc",
+                    "size": 2441365
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:installertools:1.4.3",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/installertools/1.4.3/installertools-1.4.3.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/installertools/1.4.3/installertools-1.4.3.jar",
+                    "sha1": "e37ea5710e86aee9df90cb60f918b5d35280428d",
+                    "size": 93167
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:srgutils:0.5.1",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/srgutils/0.5.1/srgutils-0.5.1.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/srgutils/0.5.1/srgutils-0.5.1.jar",
+                    "sha1": "2268068226f4fc241be0b4592758dc0fc8371837",
+                    "size": 69815
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:srgutils:0.5.10",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/srgutils/0.5.10/srgutils-0.5.10.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/srgutils/0.5.10/srgutils-0.5.10.jar",
+                    "sha1": "e17c35076be020c539ea4c83735f2b40f46a7848",
+                    "size": 72377
+                }
+            }
+        },
+        {
+            "name": "net.minecraftforge:srgutils:0.5.6",
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraftforge/srgutils/0.5.6/srgutils-0.5.6.jar",
+                    "url": "https://maven.minecraftforge.net/net/minecraftforge/srgutils/0.5.6/srgutils-0.5.6.jar",
+                    "sha1": "4844e46a377eebd8bb4da594e6b487126790b18e",
+                    "size": 72082
+                }
+            }
+        },
+        {
+            "name": "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+            "downloads": {
+                "artifact": {
+                    "path": "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar",
+                    "url": "https://maven.minecraftforge.net/net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar",
+                    "sha1": "02ab1a73e1e22d2b73469362a0908a98644b681d",
+                    "size": 79368
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm-commons:9.5",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar",
+                    "url": "https://maven.minecraftforge.net/org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar",
+                    "sha1": "19ab5b5800a3910d30d3a3e64fdb00fd0cb42de0",
+                    "size": 72209
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm-commons:9.7",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-commons/9.7/asm-commons-9.7.jar",
+                    "url": "https://maven.minecraftforge.net/org/ow2/asm/asm-commons/9.7/asm-commons-9.7.jar",
+                    "sha1": "e86dda4696d3c185fcc95d8d311904e7ce38a53f",
+                    "size": 73426
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm-tree:9.5",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar",
+                    "url": "https://maven.minecraftforge.net/org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar",
+                    "sha1": "fd33c8b6373abaa675be407082fdfda35021254a",
+                    "size": 51944
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm-tree:9.7",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-tree/9.7/asm-tree-9.7.jar",
+                    "url": "https://maven.minecraftforge.net/org/ow2/asm/asm-tree/9.7/asm-tree-9.7.jar",
+                    "sha1": "e446a17b175bfb733b87c5c2560ccb4e57d69f1a",
+                    "size": 51934
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm:9.5",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm/9.5/asm-9.5.jar",
+                    "url": "https://maven.minecraftforge.net/org/ow2/asm/asm/9.5/asm-9.5.jar",
+                    "sha1": "dc6ea1875f4d64fbc85e1691c95b96a3d8569c90",
+                    "size": 121863
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm:9.7",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm/9.7/asm-9.7.jar",
+                    "url": "https://maven.minecraftforge.net/org/ow2/asm/asm/9.7/asm-9.7.jar",
+                    "sha1": "073d7b3086e14beb604ced229c302feff6449723",
+                    "size": 125428
+                }
+            }
+        },
+        {
+            "name": "trove:trove:1.0.2",
+            "downloads": {
+                "artifact": {
+                    "path": "trove/trove/1.0.2/trove-1.0.2.jar",
+                    "url": "https://maven.minecraftforge.net/trove/trove/1.0.2/trove-1.0.2.jar",
+                    "sha1": "112b40581ab9a4d3de4636d49985a7f686d181c8",
+                    "size": 361155
+                }
+            }
+        }
+    ],
+    "icon": "data:image/png;base64,AAABAAMAMDAAAAEACACoDgAANgAAACAgAAABAAgAqAgAAN4OAAAQEAAAAQAIAGgFAACGFwAAKAAAADAAAABgAAAAAQAIAAAAAAAACQAAAAAAAAAAAAAAAQAAAAAAAPX08wBMOSoAvbaxANPOywD6+fkAPioZAK+noADW0s4AnpSMAP39/ADFv7oAtKymAGpaTQDa19QA29fUAEs4KACEd20A9fT0AOPg3QCropsATz0uAPn49wCJfHMA5+XjAD4qGgDo5eMAPyoaAGVVSACMgHYA/f39AMW/uwD+/f0As6ukAEMvIADa1tIAopiQAJCFfADv7uwAt7CqALiwqgBtXlEAzsjEAPTz8gBLOCkAcmNXAOPg3gBhUEMA5uThAD0pGACdk4sAxL65AEEuHgDr6ecAQi4eAGlZTADa1tMAj4R6AO/u7QDw7u0ApZyUAG5eUgDf29kAu7SuAIN2bACqoZoAX09BANDMyADRzMgA9/f2AE88LQD49/YAwLm0AD0pGQA+KRkAnJKJAGRURwCLf3UA/Pz8AEEtHACyqqMAemxhAOvp6ADZ1dEAoZePAEUyIgC3r6kA3drXAIJ1agBxYlYAYE9CAId6cAD49/cAnJKKAJ2SigD7+/oAQS0dAOro5gDZ1dIAV0U3AH5wZQBGMiMAbV1RAMvGwQDe2tgAXEo9AEk2JgC6s60A4d7bAKmgmQD39vUA5ePhAObj4QBkU0YA1dDNAPv7+wD8+/sAsamiANjU0ACglo4AaFhMAP///gCPg3oARDEhALauqADc2dYA3dnWAPLx8ABJNicAqJ+XALuzrgCXjIMA9/b2AK2knQDUz8sAm5GJAJyRiQD6+vkAUT8wAOnn5QBALBwAQSwcANjU0QDZ1NEAVkQ2AP///wDu7OsAo5qSAMrFwADd2dcA8fDuAEg1JQC5sqwAb2BTAODd2gCpn5gA5eLgAIl9cwA/KxoA+/r6AOrn5gBVQzQAjoJ5AO3r6QC1racAa1tOANvY1QDc2NUAy8XBAM7JxACWi4IATTosAFA+LwDBu7YA+vn4AMK7tgA/KxsA6ObkAEArGwBmVkkA/v7+AFVDNQD//v4Ae25jAHxuYwDt6+oARDAhANrX0wBrW08AycS/AEc0JAC5sasA39zZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX1+MjIyMX19fX19fX19fX19fX4uMjIxfX19fX19fX19fX19fX19fX19fX19fX19frwyje3smtjUYi19fX19fi52vcCB7ewsbr19fX19fX19fX19fX19fX19fX19fX19fBT8dkJCQE0wsqjWvGq9ff0uhOIiQkHO3BV9fX19fX19fX19fX19fX19fX19fX19fBT8dkJCQQBA5jT6aUzt7QzqAEB2QkHK3BV9fX19fX19fX19fX19fX19fX19fX19fnaSikJCQN1hVkJCQkJCQkAc8ApCQkBlLr19fX19fX19fX19fX19fX19fX19fX19fX195RpCQkLBsv5CQkJCQJRMHkJCQAFqLX19fX19fX19fX19fX19fX19fX19fX19fX4tUklFekJBbm16QkJC1ipWQswAvhyFOX19fX19fX19fX19fX19fX19fX19fX19fX1+LVGhXZh2QeJCQkJCQs5CwdiiPeotfX19fX19fX19fX19fX19fX19fX19fX19fX19fX69Jq7yQkJCQkJCQkCpQGBixX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fMJyQkJCQkJCQkKe9i19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fSBaQkJCQkJCQkISxX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fTouxr69JKwqQkJCQkJCQkE+LX19fX19fX19fX19fX19fX19fX19fX19fX19fXxqLloliaEEsvnOQkJCQkJCQkIUBi19fX19fX19fX19fX19fX19fX19fX19fX1+dZFhAqL8XNJFEkJCQkJCQkJCQkIO3BV9fX19fX19fX19fX19fX19fX19fX19fi4uyaiqQkJCQkJCQkJCQkJCQkJCQkJADoK9fX19fX19fX19fX19fX19fX19fX1+vK6mfkJCQkJBbBJAJs5CQkJCQkJCQkJCQPhQaX19fX19fX19fX19fX19fX19fX68urnKQkJCQkJAtJZCKiJCQkJCQkJCQkJCQHzJZnYtfX19fX19fX19fX19fX1+LNWNrkJCQkJCQkJCTYLMpW5CQkJCQkJCQkJCQkJASJImvGotfX19fX19fX19fX69phn6QkJCQkJCQkLUGGa0LRpCQkJCQkJCQkJCQkJCQTQ4xdw+Li4uLX19fX19fi7Qnc5CQkJCQkJCQkASCsDoIFZCQs15tlVFvv3VCvKyXdBMjHDarRRQBNV9fX19fX2VdXUpKSkpKSkpKXIK7HkdMBJCQs54RlbiKbi1rPVZ8pg4OpZRnZ5mBlk5fX19fX4saGBgYGBgYGBgYGBg1D72YcY6NjVJhYSI3Nzc3ug0NDQ0NDQ0NDX0nll9fX19fX19fX19fX19fX19fX19fi4u5KwEBAQEBAQEBAQEBAQEBAQEBAQEBAQF/M19fX19fX19fX19fX19fX19fX19fX19fi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAIAAAAEAAAAABAAgAAAAAAAAEAAAAAAAAAAAAAAABAAAAAAAAzsnFAPX08wBMOSoAc2RYAGJRRACJfHIA+vn5AD4qGQDs6ugA29fUAFhHOQBZRzkAbl9TAODc2gDNyMMAlYqBALy1rwDj4N0A+Pj3AE89LgD5+PcAUD0uAD4qGgA/KhoA1tLPANfSzwCMgHYAVEI0AP79/QDa1tIAkYV8AO/u7AC4sKoAXEs9AHJjVwBhUEMA0s3KAFA9LwCvpp8A1dHNAPz8+wDEvrkAQi4eANrW0wBYRjgAycO/AH5xZgBHMyQAlImAAPj39gDAubQA5uTiAD0pGQDn5OIAPikZAGRURwBlVEcA1tHOAPz8/ADFvroAemxhAOvp6ABWRTYARTIiALevqQB/cWcAbF1QAN3a1wDz8vEASjcoALu0rwCYjYQAh3pwAJ2SigBSQDEAw724AEEtHQDZ1dIAV0U3AEYyIwCkm5MAy8bBAN7a2ADh3tsA9vb1APf29QB0ZloA5uPhAEAsGwD8+/sA6+jnAMfBvABFMSEA7uzqAGtcTwDd2dYAWkk7APLx8ABJNicAcGFVAL63sQBOOy0AraSdAPr6+QBRPzAAQCwcAEEsHADY1NEA////AMfBvQB8b2QA3dnXAEg1JQCCdGoA4N3aAPb19AC+t7IAdGVZADwnFwCakIcAY1JFAPr6+gCwqKEA19PPAMbAuwBEMCAA29jVANzY1QDKxcEAWkg6AIBzaADy8O8A4N3bAJaLggBLOSkAvbawAKyjnAD5+fgAPysbAOjm5ABAKxsA19PQANjT0AD+/v4AVUM1AEQwIQCShn0AubGrAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMKj8/XGlqTExMTExpkT8/KkxMTExMTExMTExMTExMTIo4O4CTeC8WNjYHkYGIUUsEikxMTExMTExMTExMTExMFgMUbFoeh0kFSEdGME1sVQwWTExMTExMTExMTExMTEyMgX9seSZbbGyPbBhQRGyOPlhMTExMTExMTExMTExMTEyKVg1nWVMBbGwGhBJzfmOKTExMTExMTExMTExMTExMTExMkEEJbI9sbGw6QEJKTExMTExMTExMTExMTExMTExMTExYdnEobGxsbENKNGlMTExMTExMTExMTExMTExMTExpjIp2gihsbGxsKX1MTExMTExMTExMTExMTExMTGkXT2gsIXUnbGxsbGw5AmlMTExMTExMTExMTExMTEwXZRptcosIVGxsbGxsbDEuNkxMTExMTExMTExMTExpTCIAKGxsZ48cbGxsbGxsbF83B0xMTExMTExMTExMikV3H2xsbI8RiT2PbGxsbGxsbG88XBZpTExMTExMTGlgdDpsbGxsBi1hJGxsbGxsbGyPbIMgVoYWB4pMTExYLBCLNTMzMzUJZhFkbGw6c11XQycOfDJ6km5uI2lMTExFCk5OTk5OThsLXoUNUl8JHWuOjXt7GY1NK18PikxMTGmMjIyMjIyMaYwWcBUTExMVFRUVFRUVFRUVJWJMTExMTExMTExMTExMTExqaWlpaWlpaWlpaWlpaWlpaUxMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAADUz8sA5+TiAPr5+QDDvLcAVEIzAEczJADy8e8A0s3JAEMvHwDl4uAAVkQ2APj39wDQy8cAmY6FAEEtHQBUQjQA9vX1AFA+LwBDLyAAl4yDAD8rGwBAKxsA3drXAN7a1wCZjoYAQS0eAO3r6QCkm5MATDorAE06KwCTiH8AXEs9AP7+/gCnnZYA6eflAFZFNgD4+PcAoZePAOvp6ABKNicAfW9kAOfl4wDj4d4Av7mzAJ+VjQBINCUAQzAgAHdpXQBALBsAV0U3APn4+ACLfnQAnpOLAEYyIwBCLh4AraSdAFVDNQCIfHIAQCwcAHhpXgBzZVkAU0EzAN7b2ADOyMQAPioaAD8qGgBOOywAXUw+AP///wDb19QATDkqAFtKPADGwLsAbl9TAPn5+ADZ1dIASjcoAJGFfACNgXcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODjoODg4ODjoODg4ODg4ODi4cBUBAQDVGEg4ODg4ODhRDBxs7SS80DEcUDg4ODg46QgMJASQiPisdOg4ODg4ODhQnTTJEGihMOg4ODg4OFQ4RMU4CRBYdFA4ODg4OQSMhFykQREQLOTAVDg4ONjxLREoBBkREICYTOAgZDkYzJSwNHkgqRQA/SDcYHxQOFEBAQDpCBD0EBA8KIy0ODg4ODg4OOjo6Ojo6OjoODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "json": "/version.json",
+    "logo": "/big_logo.png",
+    "mirrorList": "https://files.minecraftforge.net/mirrors-2.0.json",
+    "welcome": "Welcome to the Forge installer."
+}

@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,5 +_,6 @@
+@@ -1,5 +_,7 @@
  package net.minecraft.server;
  
 +import com.google.common.base.Charsets;
++import com.mohistmc.mohist.Mohist;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
@@ -26,7 +27,7 @@
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
  import joptsimple.OptionSpec;
-@@ -58,10 +_,12 @@
+@@ -58,14 +_,17 @@
  import net.minecraft.world.level.storage.LevelSummary;
  import net.minecraft.world.level.storage.PrimaryLevelData;
  import net.minecraft.world.level.storage.WorldData;
@@ -40,6 +41,11 @@
  
      @DontObfuscate
      public static void main(String[] p_129699_) {
+         SharedConstants.tryDetectVersion();
++        Mohist.initVersion();
+         OptionParser optionparser = new OptionParser();
+         OptionSpec<Void> optionspec = optionparser.accepts("nogui");
+         OptionSpec<Void> optionspec1 = optionparser.accepts("initSettings", "Initializes 'server.properties' and 'eula.txt', then quits");
 @@ -83,6 +_,48 @@
          OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
          OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());

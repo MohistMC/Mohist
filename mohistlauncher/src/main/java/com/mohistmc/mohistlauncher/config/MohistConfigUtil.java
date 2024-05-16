@@ -64,10 +64,10 @@ public class MohistConfigUtil {
     public static String LIBRARIES_DOWNLOADSOURCE() {
         String key = "mohist.libraries.downloadsource";
         if (yml.get(key) == null) {
-            yml.set(key, "AUTO");
+            yml.set(key, "MOHISTMC"); // Dev use MOHISTMC
             save();
         }
-        return yml.getString(key, "AUTO");
+        return yml.getString(key, "MOHISTMC"); // Dev use MOHISTMC
     }
 
     public static boolean CHECK_UPDATE() {

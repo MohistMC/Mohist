@@ -23,9 +23,8 @@
      )
      public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
      private static final int TEMPERATURE_CACHE_SIZE = 1024;
--    private final Biome.ClimateSettings climateSettings;
 +    /** @deprecated Redirected to {@link #getModifiedClimateSettings()} by field_to_method.js */
-+    public final Biome.ClimateSettings climateSettings;
+     private final Biome.ClimateSettings climateSettings;
      private final BiomeGenerationSettings generationSettings;
 +    /** @deprecated Redirected to {@link #getModifiedSpecialEffects()} by field_to_method.js */
      private final MobSpawnSettings mobSettings;

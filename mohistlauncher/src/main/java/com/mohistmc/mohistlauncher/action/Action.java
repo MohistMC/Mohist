@@ -137,12 +137,14 @@ public abstract class Action {
     }
 
     public boolean needsInstall() throws IOException {
+        /*
         if (installInfo.exists()) {
             String lzmaMD5 = MD5Util.get(lzma);
             List<String> lines = Files.readAllLines(installInfo.toPath());
 
             return lines.size() < 3 || !lzmaMD5.equals(lines.get(1))|| !MD5Util.get(universalJar).equals(lines.get(2));
         }
+         */
         return true;
     }
 
