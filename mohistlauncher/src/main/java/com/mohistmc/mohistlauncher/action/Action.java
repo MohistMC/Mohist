@@ -109,6 +109,7 @@ public abstract class Action {
     }
 
     protected void copyFileFromJar(File file, String pathInJar, boolean clearOld) {
+        if (file == lzma) file.delete();
         InputStream is = Main.class.getClassLoader().getResourceAsStream(pathInJar);
         if (!file.exists() || !MD5Util.get(file).equals(MD5Util.get(is)) || file.length() <= 1) {
             // Clear old version

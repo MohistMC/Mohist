@@ -38,7 +38,7 @@ tasks.named('jar', Jar).configure {
                 'Specification-Title'   : 'MohistMC',
                 'Specification-Vendor'  : 'MohistMC',
                 'Implementation-Title'  : 'Mohist',
-                'Implementation-Version': MOHIST_VERSION,
+                'Implementation-Version': version,
                 'Implementation-Vendor' : 'MohistMC'
         ] as LinkedHashMap, 'com/mohistmc/mohistlauncher/')
     }

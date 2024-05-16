@@ -9,8 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraftforge.fml.loading.FMLLoader;
-
 @ApiStatus.Internal
 abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
     protected ForgeProdLaunchHandler(LaunchType type) {

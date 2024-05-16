@@ -38,12 +38,12 @@ public class AutomaticEventSubscriber {
         LOGGER.debug(Logging.LOADING, "Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
 
         var targets = scanData.getAnnotations().stream()
-                .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
-                .toList();
+            .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
+            .toList();
 
         var modids = scanData.getAnnotations().stream()
-                .filter(data -> MOD_TYPE.equals(data.annotationType()))
-                .collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
+            .filter(data -> MOD_TYPE.equals(data.annotationType()))
+            .collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
 
         var defaultSides = List.of(new EnumData(null, "CLIENT"), new EnumData(null, "DEDICATED_SERVER"));
         var defaultBus = new EnumData(null, "FORGE");
@@ -54,9 +54,9 @@ public class AutomaticEventSubscriber {
 
             var sidesValue = value(data, "value", defaultSides);
             var sides = sidesValue.stream()
-                    .map(EnumData::value)
-                    .map(Dist::valueOf)
-                    .collect(Collectors.toSet());
+                .map(EnumData::value)
+                .map(Dist::valueOf)
+                .collect(Collectors.toSet());
 
             var busName = value(data, "bus", defaultBus).value();
             var busTarget = Bus.valueOf(busName);

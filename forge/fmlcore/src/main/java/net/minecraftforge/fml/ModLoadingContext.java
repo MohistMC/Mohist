@@ -6,13 +6,13 @@
 package net.minecraftforge.fml;
 
 import com.mojang.logging.LogUtils;
-import java.util.function.BiPredicate;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 public class ModLoadingContext
