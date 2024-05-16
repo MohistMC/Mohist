@@ -22,20 +22,16 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -65,10 +_,10 @@
+@@ -65,7 +_,7 @@
      public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
      @Nullable
      private QueryThreadGs4 queryThreadGs4;
 -    public final RconConsoleSource rconConsoleSource;
-+   	// public final RconConsoleSource rconConsoleSource; // CraftBukkit - remove field // Mohist TODO
++    // public final RconConsoleSource rconConsoleSource; // CraftBukkit - remove field // Mohist TODO
      @Nullable
      private RconThread rconThread;
--    public DedicatedServerSettings settings;
-+   	public DedicatedServerSettings settings;
-     @Nullable
-     private MinecraftServerGui gui;
-     @Nullable
-@@ -77,6 +_,8 @@
+     public DedicatedServerSettings settings;
+@@ -77,40 +_,76 @@
      private RemoteSampleLogger tickTimeLogger;
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
@@ -43,314 +39,168 @@
 +    private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
      public DedicatedServer(
-         Thread p_214789_,
-@@ -90,130 +_,182 @@
+-        Thread p_214789_,
+-        LevelStorageSource.LevelStorageAccess p_214790_,
+-        PackRepository p_214791_,
+-        WorldStem p_214792_,
+-        DedicatedServerSettings p_214793_,
+-        DataFixer p_214794_,
+-        Services p_214795_,
+-        ChunkProgressListenerFactory p_214796_
++            Thread p_214789_,
++            LevelStorageSource.LevelStorageAccess p_214790_,
++            PackRepository p_214791_,
++            WorldStem p_214792_,
++            DedicatedServerSettings p_214793_,
++            DataFixer p_214794_,
++            Services p_214795_,
++            ChunkProgressListenerFactory p_214796_
      ) {
          super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
          this.settings = p_214793_;
 -        this.rconConsoleSource = new RconConsoleSource(this);
--        this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
--    }
--
+         this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
+     }
+ 
 -    @Override
--    public boolean initServer() throws IOException {
--        Thread thread = new Thread("Server console handler") {
+     public boolean initServer() throws IOException {
+         Thread thread = new Thread("Server console handler") {
 -            @Override
--            public void run() {
--                BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
--
+             public void run() {
++                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
++                // CraftBukkit start
+                 BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+ 
 -                String s1;
 -                try {
 -                    while (!DedicatedServer.this.isStopped() && DedicatedServer.this.isRunning() && (s1 = bufferedreader.readLine()) != null) {
 -                        DedicatedServer.this.handleConsoleInput(s1, DedicatedServer.this.createCommandSourceStack());
--                    }
--                } catch (IOException ioexception1) {
++                // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
++                try {
++                    System.in.available();
++                } catch (IOException ex) {
++                    return;
++                }
++                // CraftBukkit end
++                String s;
++                try {
++                    // CraftBukkit start - JLine disabling compatibility
++                    while (!DedicatedServer.this.isStopped() && DedicatedServer.this.isRunning()) {
++                        s = bufferedreader.readLine();
++
++                        // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
++                        if (s == null) {
++                            try {
++                                Thread.sleep(50L);
++                            } catch (InterruptedException ex) {
++                                Thread.currentThread().interrupt();
++                            }
++                            continue;
++                        }
++                        if (s.trim().length() > 0) { // Trim to filter lines which are just spaces
++                            DedicatedServer.this.handleConsoleInput(s, DedicatedServer.this.createCommandSourceStack());
++                        }
++                        // CraftBukkit end
+                     }
+                 } catch (IOException ioexception1) {
 -                    DedicatedServer.LOGGER.error("Exception handling console input", (Throwable)ioexception1);
--                }
--            }
--        };
--        thread.setDaemon(true);
--        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
--        thread.start();
--        LOGGER.info("Starting minecraft server version {}", SharedConstants.getCurrentVersion().getName());
--        if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
--            LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
--        }
--
--        LOGGER.info("Loading properties");
--        DedicatedServerProperties dedicatedserverproperties = this.settings.getProperties();
--        if (this.isSingleplayer()) {
--            this.setLocalIp("127.0.0.1");
--        } else {
--            this.setUsesAuthentication(dedicatedserverproperties.onlineMode);
--            this.setPreventProxyConnections(dedicatedserverproperties.preventProxyConnections);
--            this.setLocalIp(dedicatedserverproperties.serverIp);
--        }
--
--        this.setPvpAllowed(dedicatedserverproperties.pvp);
--        this.setFlightAllowed(dedicatedserverproperties.allowFlight);
--        this.setMotd(dedicatedserverproperties.motd);
--        super.setPlayerIdleTimeout(dedicatedserverproperties.playerIdleTimeout.get());
--        this.setEnforceWhitelist(dedicatedserverproperties.enforceWhitelist);
++                    DedicatedServer.LOGGER.error("Exception handling console input", (Throwable) ioexception1);
+                 }
+             }
+         };
++
++        // CraftBukkit start - TODO: handle command-line logging arguments
++        java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++        global.setUseParentHandlers(false);
++        for (java.util.logging.Handler handler : global.getHandlers()) {
++            global.removeHandler(handler);
++        }
++        global.addHandler(new ForwardLogHandler());
++        final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
++
++        System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
++        System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
++        // CraftBukkit end
+         thread.setDaemon(true);
+         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
+         thread.start();
+@@ -134,8 +_,8 @@
+         this.setMotd(dedicatedserverproperties.motd);
+         super.setPlayerIdleTimeout(dedicatedserverproperties.playerIdleTimeout.get());
+         this.setEnforceWhitelist(dedicatedserverproperties.enforceWhitelist);
 -        this.worldData.setGameType(dedicatedserverproperties.gamemode);
 -        LOGGER.info("Default game type: {}", dedicatedserverproperties.gamemode);
--        InetAddress inetaddress = null;
--        if (!this.getLocalIp().isEmpty()) {
--            inetaddress = InetAddress.getByName(this.getLocalIp());
--        }
--
--        if (this.getPort() < 0) {
--            this.setPort(dedicatedserverproperties.serverPort);
--        }
--
--        this.initializeKeyPair();
--        LOGGER.info("Starting Minecraft server on {}:{}", this.getLocalIp().isEmpty() ? "*" : this.getLocalIp(), this.getPort());
--
--        try {
--            this.getConnection().startTcpServerListener(inetaddress, this.getPort());
--        } catch (IOException ioexception) {
--            LOGGER.warn("**** FAILED TO BIND TO PORT!");
--            LOGGER.warn("The exception was: {}", ioexception.toString());
--            LOGGER.warn("Perhaps a server is already running on that port?");
--            return false;
--        }
--
--        if (!this.usesAuthentication()) {
--            LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
--            LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
--            LOGGER.warn(
++        // this.worldData.setGameType(dedicatedserverproperties.gamemode); // CraftBukkit - moved to world loading
++        LOGGER.info("Default game type: {}", (Object) dedicatedserverproperties.gamemode);
+         InetAddress inetaddress = null;
+         if (!this.getLocalIp().isEmpty()) {
+             inetaddress = InetAddress.getByName(this.getLocalIp());
+@@ -161,7 +_,7 @@
+             LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+             LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+             LOGGER.warn(
 -                "While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose."
--            );
--            LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
--        }
--
--        if (this.convertOldUsers()) {
--            this.getProfileCache().save();
--        }
--
--        if (!OldUsersConverter.serverReadyAfterUserconversion(this)) {
--            return false;
--        } else {
--            this.setPlayerList(new DedicatedPlayerList(this, this.registries(), this.playerDataStorage));
--            this.debugSampleSubscriptionTracker = new DebugSampleSubscriptionTracker(this.getPlayerList());
--            this.tickTimeLogger = new RemoteSampleLogger(TpsDebugDimensions.values().length, this.debugSampleSubscriptionTracker, RemoteDebugSampleType.TICK_TIME);
--            long i = Util.getNanos();
--            SkullBlockEntity.setup(this.services, this);
--            GameProfileCache.setUsesAuthentication(this.usesAuthentication());
--            LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
--            this.loadLevel();
--            long j = Util.getNanos() - i;
++                    "While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose."
+             );
+             LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+         }
+@@ -176,16 +_,31 @@
+             this.setPlayerList(new DedicatedPlayerList(this, this.registries(), this.playerDataStorage));
+             this.debugSampleSubscriptionTracker = new DebugSampleSubscriptionTracker(this.getPlayerList());
+             this.tickTimeLogger = new RemoteSampleLogger(TpsDebugDimensions.values().length, this.debugSampleSubscriptionTracker, RemoteDebugSampleType.TICK_TIME);
++            // Spigot start
++            org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++            org.spigotmc.SpigotConfig.registerCommands();
++            // Spigot end
++            // Mohsit start
++            MohistConfig.init((java.io.File) options.valueOf("mohist-settings"));
++            MohistConfig.registerCommands();
++            // Mohist end
++            // CraftBukkit start
++            server.loadPlugins();
++            server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++            // CraftBukkit end
+             long i = Util.getNanos();
+             SkullBlockEntity.setup(this.services, this);
+             GameProfileCache.setUsesAuthentication(this.usesAuthentication());
++            if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+             LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
+             this.loadLevel();
+             long j = Util.getNanos() - i;
 -            String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9);
--            LOGGER.info("Done ({})! For help, type \"help\"", s);
--            if (dedicatedserverproperties.announcePlayerAchievements != null) {
++            String s = String.format(Locale.ROOT, "%.3fs", (double) j / 1.0E9);
+             LOGGER.info("Done ({})! For help, type \"help\"", s);
++            Metrics.MohistMetrics.startMetrics();
++            this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
+             if (dedicatedserverproperties.announcePlayerAchievements != null) {
 -                this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
--            }
--
--            if (dedicatedserverproperties.enableQuery) {
--                LOGGER.info("Starting GS4 status listener");
--                this.queryThreadGs4 = QueryThreadGs4.create(this);
--            }
--
--            if (dedicatedserverproperties.enableRcon) {
--                LOGGER.info("Starting remote control listener");
--                this.rconThread = RconThread.create(this);
--            }
--
--            if (this.getMaxTickLength() > 0L) {
--                Thread thread1 = new Thread(new ServerWatchdog(this));
--                thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
--                thread1.setName("Server Watchdog");
--                thread1.setDaemon(true);
--                thread1.start();
--            }
--
--            if (dedicatedserverproperties.enableJmxMonitoring) {
--                MinecraftServerStatistics.registerJmxMonitoring(this);
--                LOGGER.info("JMX monitoring enabled");
--            }
--
--            return true;
--        }
--    }
-+      this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
-+   }
-+
-+   public boolean initServer() throws IOException {
-+       Thread thread = new Thread("Server console handler") {
-+           public void run() {
-+               if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-+               // CraftBukkit start
-+               BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-+
-+               // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
-+               try {
-+                   System.in.available();
-+               } catch (IOException ex) {
-+                   return;
-+               }
-+               // CraftBukkit end
-+               String s;
-+               try {
-+                   // CraftBukkit start - JLine disabling compatibility
-+                   while (!DedicatedServer.this.isStopped() && DedicatedServer.this.isRunning()) {
-+                       s = bufferedreader.readLine();
-+
-+                       // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
-+                       if (s == null) {
-+                           try {
-+                               Thread.sleep(50L);
-+                           } catch (InterruptedException ex) {
-+                               Thread.currentThread().interrupt();
-+                           }
-+                           continue;
-+                       }
-+                       if (s.trim().length() > 0) { // Trim to filter lines which are just spaces
-+                           DedicatedServer.this.handleConsoleInput(s, DedicatedServer.this.createCommandSourceStack());
-+                       }
-+                       // CraftBukkit end
-+                   }
-+               } catch (IOException ioexception1) {
-+                   DedicatedServer.LOGGER.error("Exception handling console input", (Throwable) ioexception1);
-+               }
-+           }
-+       };
-+
-+       // CraftBukkit start - TODO: handle command-line logging arguments
-+       java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
-+       global.setUseParentHandlers(false);
-+       for (java.util.logging.Handler handler : global.getHandlers()) {
-+           global.removeHandler(handler);
-+       }
-+       global.addHandler(new ForwardLogHandler());
-+       final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
-+
-+       System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
-+       System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
-+       // CraftBukkit end
-+       thread.setDaemon(true);
-+       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
-+       thread.start();
-+       LOGGER.info("Starting minecraft server version {}", SharedConstants.getCurrentVersion().getName());
-+       if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
-+           LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
-+       }
-+
-+       LOGGER.info("Loading properties");
-+       DedicatedServerProperties dedicatedserverproperties = this.settings.getProperties();
-+       if (this.isSingleplayer()) {
-+           this.setLocalIp("127.0.0.1");
-+       } else {
-+           this.setUsesAuthentication(dedicatedserverproperties.onlineMode);
-+           this.setPreventProxyConnections(dedicatedserverproperties.preventProxyConnections);
-+           this.setLocalIp(dedicatedserverproperties.serverIp);
-+       }
-+
-+       this.setPvpAllowed(dedicatedserverproperties.pvp);
-+       this.setFlightAllowed(dedicatedserverproperties.allowFlight);
-+       this.setMotd(dedicatedserverproperties.motd);
-+       super.setPlayerIdleTimeout(dedicatedserverproperties.playerIdleTimeout.get());
-+       this.setEnforceWhitelist(dedicatedserverproperties.enforceWhitelist);
-+       // this.worldData.setGameType(dedicatedserverproperties.gamemode); // CraftBukkit - moved to world loading
-+       LOGGER.info("Default game type: {}", (Object) dedicatedserverproperties.gamemode);
-+       InetAddress inetaddress = null;
-+       if (!this.getLocalIp().isEmpty()) {
-+           inetaddress = InetAddress.getByName(this.getLocalIp());
-+       }
-+
-+       if (this.getPort() < 0) {
-+           this.setPort(dedicatedserverproperties.serverPort);
-+       }
-+
-+       this.initializeKeyPair();
-+       LOGGER.info("Starting Minecraft server on {}:{}", this.getLocalIp().isEmpty() ? "*" : this.getLocalIp(), this.getPort());
-+
-+       try {
-+           this.getConnection().startTcpServerListener(inetaddress, this.getPort());
-+       } catch (IOException ioexception) {
-+           LOGGER.warn("**** FAILED TO BIND TO PORT!");
-+           LOGGER.warn("The exception was: {}", ioexception.toString());
-+           LOGGER.warn("Perhaps a server is already running on that port?");
-+           return false;
-+       }
-+
-+       if (!this.usesAuthentication()) {
-+           LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-+           LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
-+           LOGGER.warn(
-+                   "While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose."
-+           );
-+           LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
-+       }
-+
-+       if (this.convertOldUsers()) {
-+           this.getProfileCache().save();
-+       }
-+
-+       if (!OldUsersConverter.serverReadyAfterUserconversion(this)) {
-+           return false;
-+       } else {
-+           this.setPlayerList(new DedicatedPlayerList(this, this.registries(), this.playerDataStorage));
-+           // Spigot start
-+           org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
-+           org.spigotmc.SpigotConfig.registerCommands();
-+           // Spigot end
-+           // Mohsit start
-+           MohistConfig.init((java.io.File) options.valueOf("mohist-settings"));
-+           MohistConfig.registerCommands();
-+           // Mohist end
-+           // CraftBukkit start
-+           server.loadPlugins();
-+           server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-+           // CraftBukkit end
-+           long i = Util.getNanos();
-+           SkullBlockEntity.setup(this.services, this);
-+           GameProfileCache.setUsesAuthentication(this.usesAuthentication());
-+           if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-+           LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
-+           this.loadLevel();
-+           long j = Util.getNanos() - i;
-+           String s = String.format(Locale.ROOT, "%.3fs", (double) j / 1.0E9);
-+           LOGGER.info("Done ({})! For help, type \"help\"", s);
-+           Metrics.MohistMetrics.startMetrics();
-+           this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
-+           if (dedicatedserverproperties.announcePlayerAchievements != null) {
-+               this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this.overworld()); // CraftBukkit - per-world
-+           }
-+
-+           if (dedicatedserverproperties.enableQuery) {
-+               LOGGER.info("Starting GS4 status listener");
-+               this.queryThreadGs4 = QueryThreadGs4.create(this);
-+           }
-+
-+           if (dedicatedserverproperties.enableRcon) {
-+               LOGGER.info("Starting remote control listener");
-+               this.rconThread = RconThread.create(this);
-+           }
-+
-+           if (false && this.getMaxTickLength() > 0L) { // Spigot - disable
-+               Thread thread1 = new Thread(new ServerWatchdog(this));
-+               thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
-+               thread1.setName("Server Watchdog");
-+               thread1.setDaemon(true);
-+               thread1.start();
-+           }
-+
-+           if (dedicatedserverproperties.enableJmxMonitoring) {
-+               MinecraftServerStatistics.registerJmxMonitoring(this);
-+               LOGGER.info("JMX monitoring enabled");
-+           }
-+
-+           if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
-+               this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
-+               this.dediLanPinger.start();
-+           }
-+
-+           return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
-+       }
-+   }
++                this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this.overworld()); // CraftBukkit - per-world
+             }
  
-     @Override
-     public boolean isSpawningAnimals() {
+             if (dedicatedserverproperties.enableQuery) {
+@@ -198,7 +_,7 @@
+                 this.rconThread = RconThread.create(this);
+             }
+ 
+-            if (this.getMaxTickLength() > 0L) {
++            if (false && this.getMaxTickLength() > 0L) { // Spigot - disable
+                 Thread thread1 = new Thread(new ServerWatchdog(this));
+                 thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
+                 thread1.setName("Server Watchdog");
+@@ -211,7 +_,12 @@
+                 LOGGER.info("JMX monitoring enabled");
+             }
+ 
+-            return true;
++            if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
++                this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
++                this.dediLanPinger.start();
++            }
++
++            return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
+         }
+     }
+ 
 @@ -289,6 +_,13 @@
          if (this.queryThreadGs4 != null) {
              this.queryThreadGs4.stop();
@@ -361,117 +211,108 @@
 +            this.dediLanPinger = null;
 +        }
 +
-+      	Runtime.getRuntime().halt(0);
++        Runtime.getRuntime().halt(0);
      }
  
      @Override
-@@ -306,12 +_,22 @@
-         this.consoleInput.add(new ConsoleInput(p_139646_, p_139647_));
-     }
- 
--    public void handleConsoleInputs() {
--        while (!this.consoleInput.isEmpty()) {
--            ConsoleInput consoleinput = this.consoleInput.remove(0);
+@@ -309,8 +_,18 @@
+     public void handleConsoleInputs() {
+         while (!this.consoleInput.isEmpty()) {
+             ConsoleInput consoleinput = this.consoleInput.remove(0);
 -            this.getCommands().performPrefixedCommand(consoleinput.source, consoleinput.msg);
--        }
--    }
-+   public void handleConsoleInputs() {
-+      while(!this.consoleInput.isEmpty()) {
-+         ConsoleInput consoleinput = this.consoleInput.remove(0);
 +
-+         // CraftBukkit start - ServerCommand for preprocessing
-+         ServerCommandEvent event = new ServerCommandEvent(console, consoleinput.msg);
-+         server.getPluginManager().callEvent(event);
-+         if (event.isCancelled()) continue;
-+         consoleinput = new ConsoleInput(event.getCommand(), consoleinput.source);
++            // CraftBukkit start - ServerCommand for preprocessing
++            ServerCommandEvent event = new ServerCommandEvent(console, consoleinput.msg);
++            server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) continue;
++            consoleinput = new ConsoleInput(event.getCommand(), consoleinput.source);
 +
-+         // this.getCommands().performCommand(servercommand.source, servercommand.msg); // Called in dispatchServerCommand
-+         server.dispatchServerCommand(console, consoleinput);
-+         // CraftBukkit end
-+      }
++            // this.getCommands().performCommand(servercommand.source, servercommand.msg); // Called in dispatchServerCommand
++            server.dispatchServerCommand(console, consoleinput);
++            // CraftBukkit end
+         }
 +
-+   }
+     }
  
      @Override
-     public boolean isDedicatedServer() {
-@@ -438,11 +_,9 @@
+@@ -329,7 +_,7 @@
+     }
+ 
+     public DedicatedPlayerList getPlayerList() {
+-        return (DedicatedPlayerList)super.getPlayerList();
++        return (DedicatedPlayerList) super.getPlayerList();
+     }
+ 
+     @Override
+@@ -438,10 +_,8 @@
          return this.getProperties().networkCompressionThreshold;
      }
  
 -    @Override
--    public boolean enforceSecureProfile() {
+     public boolean enforceSecureProfile() {
 -        DedicatedServerProperties dedicatedserverproperties = this.getProperties();
 -        return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.canValidateProfileKeys();
--    }
-+   public boolean enforceSecureProfile() {
-+      return false; // Mohist chat verify
-+   }
++        return false; // Mohist chat verify
+     }
  
      @Override
-     public boolean logIPs() {
-@@ -524,17 +_,51 @@
+@@ -524,16 +_,50 @@
          return this.getProperties().maxChainedNeighborUpdates;
      }
  
 -    @Override
--    public String getPluginNames() {
+     public String getPluginNames() {
 -        return "";
--    }
--
++        // CraftBukkit start - Whole method
++        StringBuilder result = new StringBuilder();
++        org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
++        result.append(server.getName());
++        result.append(" on Bukkit ");
++        result.append(server.getBukkitVersion());
++
++        if (plugins.length > 0 && server.getQueryPlugins()) {
++            result.append(": ");
++
++            for (int i = 0; i < plugins.length; i++) {
++                if (i > 0) {
++                    result.append("; ");
++                }
++
++                result.append(plugins[i].getDescription().getName());
++                result.append(" ");
++                result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++            }
++        }
++
++        return result.toString();
++        // CraftBukkit end
+     }
+ 
 -    @Override
--    public String runCommand(String p_139644_) {
+     public String runCommand(String p_139644_) {
 -        this.rconConsoleSource.prepareForCommand();
 -        this.executeBlocking(() -> this.getCommands().performPrefixedCommand(this.rconConsoleSource.createCommandSourceStack(), p_139644_));
 -        return this.rconConsoleSource.getCommandResponse();
--    }
-+   public String getPluginNames() {
-+      // CraftBukkit start - Whole method
-+      StringBuilder result = new StringBuilder();
-+      org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
-+      result.append(server.getName());
-+      result.append(" on Bukkit ");
-+      result.append(server.getBukkitVersion());
++        // CraftBukkit start - fire RemoteServerCommandEvent
++        throw new UnsupportedOperationException("Not supported - remote source required.");
++    }
 +
-+      if (plugins.length > 0 && server.getQueryPlugins()) {
-+         result.append(": ");
-+
-+         for (int i = 0; i < plugins.length; i++) {
-+            if (i > 0) {
-+               result.append("; ");
++    public String runCommand(RconConsoleSource rconConsoleSource, String pCommand) {
++        rconConsoleSource.prepareForCommand();
++        this.executeBlocking(() -> {
++            CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
++            RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), pCommand);
++            server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                return;
 +            }
-+
-+            result.append(plugins[i].getDescription().getName());
-+            result.append(" ");
-+            result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
-+         }
-+      }
-+
-+      return result.toString();
-+      // CraftBukkit end
-+   }
-+
-+   public String runCommand(String p_139644_) {
-+      // CraftBukkit start - fire RemoteServerCommandEvent
-+      throw new UnsupportedOperationException("Not supported - remote source required.");
-+   }
-+
-+   public String runCommand(RconConsoleSource rconConsoleSource, String pCommand) {
-+      rconConsoleSource.prepareForCommand();
-+      this.executeBlocking(() -> {
-+         CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
-+         RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), pCommand);
-+         server.getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            return;
-+         }
-+         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), wrapper);
-+         server.dispatchServerCommand(event.getSender(), serverCommand);
-+      });
-+      return rconConsoleSource.getCommandResponse();
-+   }
++            ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), wrapper);
++            server.dispatchServerCommand(event.getSender(), serverCommand);
++        });
++        return rconConsoleSource.getCommandResponse();
+     }
  
      public void storeUsingWhiteList(boolean p_139689_) {
-         this.settings.update(p_326364_ -> p_326364_.whiteList.update(this.registryAccess(), p_139689_));
 @@ -542,7 +_,12 @@
  
      @Override
@@ -485,19 +326,20 @@
          Util.shutdownExecutors();
          SkullBlockEntity.clear();
      }
-@@ -608,4 +_,15 @@
+@@ -607,5 +_,16 @@
+     @Override
      public boolean acceptsTransfers() {
          return this.settings.getProperties().acceptsTransfers;
++    }
++
++
++    // CraftBukkit start
++    public boolean isDebugging() {
++        return this.getProperties().debug;
++    }
++
++    @Override
++    public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++        return console;
      }
-+
-+
-+   // CraftBukkit start
-+   public boolean isDebugging() {
-+      return this.getProperties().debug;
-+   }
-+
-+   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return console;
-+   }
  }

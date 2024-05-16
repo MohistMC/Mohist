@@ -243,14 +243,6 @@
              }
          });
      }
-@@ -384,7 +_,6 @@
-         return Mth.clamp(p_143654_, -2.0E7, 2.0E7);
-     }
- 
--    @Override
-     public void handleMoveVehicle(ServerboundMoveVehiclePacket p_9876_) {
-         PacketUtils.ensureRunningOnSameThread(p_9876_, this, this.player.serverLevel());
-         if (containsInvalidValues(p_9876_.getX(), p_9876_.getY(), p_9876_.getZ(), p_9876_.getYRot(), p_9876_.getXRot())) {
 @@ -393,6 +_,13 @@
              Entity entity = this.player.getRootVehicle();
              if (entity != this.player && entity.getControllingPassenger() == this.player && entity == this.lastVehicle) {
@@ -265,7 +257,7 @@
                  double d0 = entity.getX();
                  double d1 = entity.getY();
                  double d2 = entity.getZ();
-@@ -406,51 +_,146 @@
+@@ -406,7 +_,33 @@
                  double d8 = d5 - this.vehicleFirstGoodZ;
                  double d9 = entity.getDeltaMovement().lengthSqr();
                  double d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -300,33 +292,7 @@
                      LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
                      this.send(new ClientboundMoveVehiclePacket(entity));
                      return;
-                 }
- 
--                boolean flag = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
-+                boolean flag = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
-                 d6 = d3 - this.vehicleLastGoodX;
--                d7 = d4 - this.vehicleLastGoodY - 1.0E-6;
-+                d7 = d4 - this.vehicleLastGoodY - 1.0E-6D;
-                 d8 = d5 - this.vehicleLastGoodZ;
-                 boolean flag1 = entity.verticalCollisionBelow;
--                if (entity instanceof LivingEntity livingentity && livingentity.onClimbable()) {
--                    livingentity.resetFallDistance();
-+                if (entity instanceof LivingEntity) {
-+                    LivingEntity livingentity = (LivingEntity) entity;
-+                    if (livingentity.onClimbable()) {
-+                        livingentity.resetFallDistance();
-+                    }
-                 }
- 
-                 entity.move(MoverType.PLAYER, new Vec3(d6, d7, d8));
-                 d6 = d3 - entity.getX();
-                 d7 = d4 - entity.getY();
--                if (d7 > -0.5 || d7 < 0.5) {
--                    d7 = 0.0;
-+                if (d7 > -0.5D || d7 < 0.5D) {
-+                    d7 = 0.0D;
-                 }
- 
+@@ -431,26 +_,92 @@
                  d8 = d5 - entity.getZ();
                  d10 = d6 * d6 + d7 * d7 + d8 * d8;
                  boolean flag2 = false;
@@ -338,9 +304,8 @@
 +                Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
                  entity.absMoveTo(d3, d4, d5, f, f1);
--                boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
 +                this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-+                boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
+                 boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
                  if (flag && (flag2 || !flag3)) {
                      entity.absMoveTo(d0, d1, d2, f, f1);
 +                    this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving

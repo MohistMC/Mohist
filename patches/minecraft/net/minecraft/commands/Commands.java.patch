@@ -37,7 +37,7 @@
              TestCommand.register(this.dispatcher);
              ResetChunksCommand.register(this.dispatcher);
              RaidCommand.register(this.dispatcher, p_230944_);
-@@ -250,27 +_,93 @@
+@@ -250,27 +_,91 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
@@ -96,9 +96,6 @@
      }
 -
 -    public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
--        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
--        commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
--        ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
 +   // CraftBukkit end
 +
 +   public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
@@ -120,10 +117,9 @@
 +      label = label == null ? "/" + p_242841_ : label;
 +      String finalLabel = label;
 +      // Mohist end
-+      CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
-+      commandsourcestack.getServer().getProfiler().push(() -> {
-+         return "/" + p_242841_;
-+      });
+         CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
+         commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
+-        ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
  
          try {
 +            var event = new net.minecraftforge.event.CommandEvent(p_242844_);

@@ -91,8 +91,6 @@
 -    @Override
 -    public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
 -    }
--
--    @Override
 +   	// CraftBukkit start
 +   	private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
 +   	private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
@@ -146,12 +144,13 @@
 +      }*/
 +      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_.payload(), this.connection);
 +   }
-+
+ 
+-    @Override
 +   public final boolean isDisconnected() {
 +      return !this.player.joining && !this.connection.isConnected();
 +   }
 +   // CraftBukkit end
-+
++	@Override
      public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
          PacketUtils.ensureRunningOnSameThread(p_300656_, this, this.server);
          if (p_300656_.action() == ServerboundResourcePackPacket.Action.DECLINED && this.server.isResourcePackRequired()) {
@@ -171,20 +170,6 @@
              if (this.keepAlivePending) {
                  this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
              } else if (this.checkIfClosed(i)) {
-@@ -141,6 +_,13 @@
-     }
- 
-     public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
-+      	// CraftBukkit start
-+      	if (p_300325_ == null) {
-+         return;
-+      	} else if (p_300325_ instanceof ClientboundSetDefaultSpawnPositionPacket packet6) {
-+         	this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
-+      	}
-+      	// CraftBukkit end
-         if (p_300325_.isTerminal()) {
-             this.close();
-         }
 @@ -157,11 +_,63 @@
          }
      }

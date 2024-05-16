@@ -13,21 +13,13 @@
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
  import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-@@ -12,17 +_,27 @@
+@@ -12,17 +_,28 @@
  import net.minecraft.server.MinecraftServer;
  
  public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
 -    private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
 -    private final MinecraftServer server;
 -    private final Connection connection;
--
--    public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
--        this.server = p_9969_;
--        this.connection = p_9970_;
--    }
--
--    @Override
--    public void handleIntention(ClientIntentionPacket p_9975_) {
 +   private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
 +   private final MinecraftServer server;
 +   private final Connection connection;
@@ -40,15 +32,20 @@
 +   static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
 +   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
 +   // Spigot end
-+
+ 
+-    public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
+-        this.server = p_9969_;
+-        this.connection = p_9970_;
+-    }
 +   public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
 +      this.server = p_9969_;
 +      this.connection = p_9970_;
 +   }
-+
-+   public void handleIntention(ClientIntentionPacket p_9975_) {
-+      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
-+      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
+ 
+     @Override
+     public void handleIntention(ClientIntentionPacket p_9975_) {
++        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
++      	this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
          switch (p_9975_.intention()) {
              case LOGIN:
                  this.beginLogin(p_9975_, false);

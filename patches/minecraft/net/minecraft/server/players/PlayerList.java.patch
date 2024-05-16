@@ -344,7 +344,7 @@
          ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
          if (serverstatscounter != null) {
              serverstatscounter.save();
-@@ -352,169 +_,304 @@
+@@ -352,169 +_,303 @@
          }
      }
  
@@ -469,7 +469,6 @@
 +      if (p_11287_.containerMenu != p_11287_.inventoryMenu) {
 +         p_11287_.closeContainer();
 +      }
-+      System.out.println("DEBUG");
 +      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), p_11287_.kickLeaveMessage != null ? p_11287_.kickLeaveMessage : "\u00A7e" + p_11287_.getScoreboardName() + " left the game");
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      p_11287_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());

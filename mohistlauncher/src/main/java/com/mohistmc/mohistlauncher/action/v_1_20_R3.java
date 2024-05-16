@@ -126,14 +126,14 @@ public class v_1_20_R3 {
                 }
             }
 
-            if (!official.exists() || storedServerMD5 == null || storedLzmaMD5 == null || !storedServerMD5.equals(serverMD5) || !storedLzmaMD5.equals(lzmaMD5)) {
+            if (!PATCHED.exists() || storedServerMD5 == null || storedLzmaMD5 == null || !storedServerMD5.equals(serverMD5) || !storedLzmaMD5.equals(lzmaMD5)) {
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         "--clean", official.getAbsolutePath(),
                         "--output", PATCHED.getAbsolutePath(),
                         "--apply", lzma.getAbsolutePath(),
                         "--data",
                         "--unpatched");
-                serverMD5 = MD5Util.get(official);
+                serverMD5 = MD5Util.get(PATCHED);
             }
 
             FileWriter fw = new FileWriter(installInfo);
