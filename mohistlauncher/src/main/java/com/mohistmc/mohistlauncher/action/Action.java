@@ -75,7 +75,7 @@ public abstract class Action {
         this.lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
         this.installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
 
-        this.otherStart = libPath + "net/minecraft/server/" + mcVer + "-" + mcpVer + "/server-" + mcVer + "-" + mcpVer;
+        this.otherStart = libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer;
 
         this.unpacked = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-unpacked.jar");
         this.srg = new File(otherStart + "-srg.jar");
