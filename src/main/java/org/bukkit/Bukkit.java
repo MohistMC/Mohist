@@ -1005,6 +1005,7 @@ public final class Bukkit {
     public static ItemCraftResult craftItemResult(@NotNull ItemStack[] craftingMatrix, @NotNull World world, @NotNull Player player) {
         return server.craftItemResult(craftingMatrix, world, player);
     }
+
     /**
      * Get the crafted item using the list of {@link ItemStack} provided.
      *
@@ -1026,6 +1027,7 @@ public final class Bukkit {
     public static ItemCraftResult craftItemResult(@NotNull ItemStack[] craftingMatrix, @NotNull World world) {
         return server.craftItemResult(craftingMatrix, world);
     }
+
 
     /**
      * Get the crafted item using the list of {@link ItemStack} provided.

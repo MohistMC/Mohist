@@ -1,8 +1,5 @@
 package org.bukkit.entity;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 /**
  * Represents an Experience Orb.
  */
