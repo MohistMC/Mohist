@@ -57,7 +57,7 @@
 -                    entity.hurt(this.damageSources().fall(), 5.0F);
 +                        entityplayer.connection.teleport(teleEvent.getTo());
 +                        entity.resetFallDistance();
-+                        entity.hurt(this.damageSources().fall().customCausingEntity(this), 5.0F); // CraftBukkit
++                        entity.hurt(this.damageSources().fall().customEntityDamager(this), 5.0F); // CraftBukkit
 +                    }
 +                    // CraftBukkit end
                      this.level().playSound((EntityHuman) null, this.getX(), this.getY(), this.getZ(), SoundEffects.PLAYER_TELEPORT, SoundCategory.PLAYERS);

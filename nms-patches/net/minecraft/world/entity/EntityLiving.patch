@@ -443,18 +443,12 @@
 +                if (!this.actuallyHurt(damagesource, f - this.lastHurt)) {
 +                    return false;
 +                }
-+                if (this instanceof EntityPlayer && f == 0) { // CraftBukkit - Player entities can't be hurt by 0 damage
-+                    return false;
-+                }
 +                // CraftBukkit end
                  this.lastHurt = f;
                  flag1 = false;
              } else {
 +                // CraftBukkit start
 +                if (!this.actuallyHurt(damagesource, f)) {
-+                    return false;
-+                }
-+                if (this instanceof EntityPlayer && f == 0) { // CraftBukkit - Player entities can't be hurt by 0 damage
 +                    return false;
 +                }
                  this.lastHurt = f;
@@ -596,7 +590,7 @@
              this.dropCustomDeathLoot(damagesource, i, flag);
          }
 +        // CraftBukkit start - Call death event
-+        CraftEventFactory.callEntityDeathEvent(this, this.drops);
++        CraftEventFactory.callEntityDeathEvent(this, damagesource, this.drops);
 +        this.drops = new ArrayList<>();
 +        // CraftBukkit end
  

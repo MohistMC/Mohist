@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.mojang.serialization.DynamicOps;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,19 +33,24 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.SnbtPrinterTagVisitor;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -67,6 +73,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.Overridden;
 import org.bukkit.craftbukkit.attribute.CraftAttribute;
 import org.bukkit.craftbukkit.attribute.CraftAttributeInstance;
@@ -164,10 +171,17 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     static final class Applicator {
 
-        final DataComponentPatch.Builder builder = DataComponentPatch.builder();
+        private final DataComponentPatch.Builder builder = DataComponentPatch.builder();
 
         <T> Applicator put(ItemMetaKeyType<T> key, T value) {
             this.builder.set(key.TYPE, value);
+            return this;
+        }
+
+        <T> Applicator putIfAbsent(TypedDataComponent<?> component) {
+            if (!builder.isSet(component.type())) {
+                builder.set(component);
+            }
             return this;
         }
 
@@ -370,6 +384,11 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 for (String key : keys) {
                     this.persistentDataContainer.put(key, compound.get(key).copy());
                 }
+                customTag.remove(BUKKIT_CUSTOM_TAG.NBT);
+            }
+
+            if (customTag.isEmpty()) {
+                customTag = null;
             }
         });
 
@@ -485,7 +504,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             for (Object hideFlagObject : hideFlags) {
                 String hideFlagString = (String) hideFlagObject;
                 try {
-                    ItemFlag hideFlatEnum = ItemFlag.valueOf(hideFlagString);
+                    ItemFlag hideFlatEnum = CraftItemFlag.stringToBukkit(hideFlagString);
                     this.addItemFlags(hideFlatEnum);
                 } catch (IllegalArgumentException ex) {
                     // Ignore when we got a old String which does not map to a Enum value anymore
@@ -648,13 +667,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         Map<Enchantment, Integer> enchantments = new LinkedHashMap<Enchantment, Integer>(ench.size());
         for (Map.Entry<?, ?> entry : ench.entrySet()) {
-            // Doctor older enchants
-            String enchantKey = entry.getKey().toString();
-            if (enchantKey.equals("SWEEPING")) {
-                enchantKey = "SWEEPING_EDGE";
-            }
-
-            Enchantment enchantment = Enchantment.getByName(enchantKey);
+            Enchantment enchantment = CraftEnchantment.stringToBukkit(entry.getKey().toString());
             if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
                 enchantments.put(enchantment, (Integer) entry.getValue());
             }
@@ -688,7 +701,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                     continue;
                 }
                 AttributeModifier modifier = (AttributeModifier) o;
-                Attribute attribute = EnumUtils.getEnum(Attribute.class, attributeName.toUpperCase(Locale.ROOT));
+                Attribute attribute = CraftAttribute.stringToBukkit(attributeName);
                 if (attribute == null) {
                     continue;
                 }
@@ -812,6 +825,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     void applyModifiers(Multimap<Attribute, AttributeModifier> modifiers, CraftMetaItem.Applicator tag) {
         if (modifiers == null || modifiers.isEmpty()) {
+            if (hasItemFlag(ItemFlag.HIDE_ATTRIBUTES)) {
+                tag.put(ATTRIBUTES, new ItemAttributeModifiers(Collections.emptyList(), false));
+            }
             return;
         }
 
@@ -1279,6 +1295,34 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     @Override
+    public String getAsComponentString() {
+        CraftMetaItem.Applicator tag = new CraftMetaItem.Applicator();
+        applyToItem(tag);
+        DataComponentPatch patch = tag.build();
+
+        RegistryAccess registryAccess = CraftRegistry.getMinecraftRegistry();
+        DynamicOps<Tag> ops = registryAccess.createSerializationContext(NbtOps.INSTANCE);
+        net.minecraft.core.Registry<DataComponentType<?>> componentTypeRegistry = registryAccess.registryOrThrow(Registries.DATA_COMPONENT_TYPE);
+
+        StringJoiner componentString = new StringJoiner(",", "[", "]");
+        for (Map.Entry<DataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
+            DataComponentType<?> componentType = entry.getKey();
+            Optional<?> componentValue = entry.getValue();
+            String componentKey = componentTypeRegistry.getResourceKey(componentType).orElseThrow().location().toString();
+
+            if (componentValue.isPresent()) {
+                Tag componentValueAsNBT = (Tag) ((DataComponentType) componentType).codecOrThrow().encodeStart(ops, componentValue.get()).getOrThrow();
+                String componentValueAsNBTString = new SnbtPrinterTagVisitor("", 0, new ArrayList<>()).visit(componentValueAsNBT);
+                componentString.add(componentKey + "=" + componentValueAsNBTString);
+            } else {
+                // TODO: 1.21, remove component (!) format
+            }
+        }
+
+        return componentString.toString();
+    }
+
+    @Override
     public CustomItemTagContainer getCustomTagContainer() {
         return new DeprecatedCustomTagContainer(this.getPersistentDataContainer());
     }
@@ -1508,7 +1552,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         List<String> hideFlags = new ArrayList<String>();
         for (ItemFlag hideFlagEnum : this.getItemFlags()) {
-            hideFlags.add(hideFlagEnum.name());
+            hideFlags.add(CraftItemFlag.bukkitToString(hideFlagEnum));
         }
         if (!hideFlags.isEmpty()) {
             builder.put(CraftMetaItem.HIDEFLAGS.BUKKIT, hideFlags);
@@ -1608,7 +1652,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         ImmutableMap.Builder<String, Integer> enchants = ImmutableMap.builder();
         for (Map.Entry<? extends Enchantment, Integer> enchant : enchantments.entrySet()) {
-            enchants.put(enchant.getKey().getName(), enchant.getValue());
+            enchants.put(CraftEnchantment.bukkitToString(enchant.getKey()), enchant.getValue());
         }
 
         builder.put(key.BUKKIT, enchants.build());
@@ -1628,7 +1672,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (modCollection == null || modCollection.isEmpty()) {
                 continue;
             }
-            mods.put(entry.getKey().name(), new ArrayList<>(modCollection));
+            mods.put(CraftAttribute.bukkitToString(entry.getKey()), new ArrayList<>(modCollection));
         }
         builder.put(key.BUKKIT, mods);
     }
@@ -1732,7 +1776,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                         CraftMetaBlockState.BLOCK_ENTITY_TAG.TYPE,
                         CraftMetaKnowledgeBook.BOOK_RECIPES.TYPE,
                         CraftMetaTropicalFishBucket.ENTITY_TAG.TYPE,
+                        CraftMetaTropicalFishBucket.BUCKET_ENTITY_TAG.TYPE,
                         CraftMetaAxolotlBucket.ENTITY_TAG.TYPE,
+                        CraftMetaAxolotlBucket.BUCKET_ENTITY_TAG.TYPE,
                         CraftMetaCrossbow.CHARGED_PROJECTILES.TYPE,
                         CraftMetaSuspiciousStew.EFFECTS.TYPE,
                         CraftMetaCompass.LODESTONE_TARGET.TYPE,

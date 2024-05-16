@@ -1381,7 +1381,7 @@
  
      public void sendPlayerChatMessage(PlayerChatMessage p_250321_, ChatType.Bound p_250910_) {
 +        // CraftBukkit start - SPIGOT-7262: if hidden we have to send as disguised message. Query whether we should send at all (but changing this may not be expected).
-+        if (!getCraftPlayer().canSee(p_250321_.link().sender())) {
++        if (!getCraftPlayer().canSeePlayer(p_250321_.link().sender())) {
 +            sendDisguisedChatMessage(p_250321_.decoratedContent(), p_250910_);
 +            return;
 +        }

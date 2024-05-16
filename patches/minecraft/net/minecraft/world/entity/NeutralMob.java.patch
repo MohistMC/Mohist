@@ -8,6 +8,21 @@
  
  public interface NeutralMob {
      String TAG_ANGER_TIME = "AngerTime";
+@@ -42,12 +_,12 @@
+                 Entity entity = ((ServerLevel)p_147286_).getEntity(uuid);
+                 if (entity != null) {
+                     if (entity instanceof Mob mob) {
+-                        this.setTarget(mob);
++                        this.setTarget(mob, EntityTargetEvent.TargetReason.UNKNOWN, false); // CraftBukkit
+                         this.setLastHurtByMob(mob);
+                     }
+ 
+                     if (entity instanceof Player player) {
+-                        this.setTarget(player);
++                        this.setTarget(player, EntityTargetEvent.TargetReason.UNKNOWN, false); // CraftBukkit
+                         this.setLastHurtByPlayer(player);
+                     }
+                 }
 @@ -107,7 +_,7 @@
      default void stopBeingAngry() {
          this.setLastHurtByMob(null);

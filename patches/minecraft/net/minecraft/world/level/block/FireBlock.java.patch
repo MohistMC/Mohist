@@ -27,15 +27,6 @@
  
  public class FireBlock extends BaseFireBlock {
      public static final MapCodec<FireBlock> CODEC = simpleCodec(FireBlock::new);
-@@ -58,7 +_,7 @@
-     private static final int BURN_EASY = 60;
-     private static final int BURN_MEDIUM = 20;
-     private static final int BURN_HARD = 5;
--    public final Object2IntMap<Block> igniteOdds = new Object2IntOpenHashMap<>();
-+    private final Object2IntMap<Block> igniteOdds = new Object2IntOpenHashMap<>();
-     private final Object2IntMap<Block> burnOdds = new Object2IntOpenHashMap<>();
- 
-     @Override
 @@ -114,7 +_,24 @@
  
      @Override

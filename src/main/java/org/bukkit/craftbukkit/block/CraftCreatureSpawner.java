@@ -142,13 +142,13 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         }
 
         Optional<net.minecraft.world.entity.EntityType<?>> type = net.minecraft.world.entity.EntityType.by(spawnData.getEntityToSpawn());
-        return type.map(entityTypes -> net.minecraft.world.entity.EntityType.getKey(entityTypes).getPath()).orElse(null);
+        return type.map(CraftEntityType::minecraftToBukkit).map(CraftEntityType::bukkitToString).orElse(null);
     }
 
     @Override
     public void setCreatureTypeByName(String creatureType) {
         // Verify input
-        EntityType type = EntityType.fromName(creatureType);
+        EntityType type = CraftEntityType.stringToBukkit(creatureType);
         if (type == null) {
             this.setSpawnedType(null);
             return;

@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -1,7 +_,13 @@
+@@ -1,7 +_,14 @@
  package net.minecraft.world.entity.decoration;
  
 +import java.util.ArrayList;
 +import java.util.Collection;
 +import java.util.List;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -122,39 +123,43 @@
          if (!itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 8) != 0) {
              return false;
          } else if (itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 16) != 0) {
-@@ -595,11 +_,27 @@
+@@ -595,10 +_,33 @@
          return this.isSmall();
      }
  
--    @Override
++    // CraftBukkit start
+     @Override
 -    public void kill() {
 -        this.remove(Entity.RemovalReason.KILLED);
 -        this.gameEvent(GameEvent.ENTITY_DIE);
--    }
-+   // CraftBukkit start
-+   @Override
-+   public boolean shouldDropExperience() {
-+      return true; // MC-157395, SPIGOT-5193 even baby (small) armor stands should drop
-+   }
-+   // CraftBukkit end
++    public boolean shouldDropExperience() {
++        return true; // MC-157395, SPIGOT-5193 even baby (small) armor stands should drop
++    }
++    // CraftBukkit end
++
++    public AtomicReference<DamageSource> kill$damageSource = new AtomicReference<>(null);
 +
 +   public void kill() {
-+      Collection<ItemEntity> captureDrops = this.captureDrops(null);
-+      List<org.bukkit.inventory.ItemStack> drops;
-+      if (captureDrops == null) {
-+         drops = new ArrayList<>();
-+      } else if (captureDrops instanceof List) {
-+         drops = Lists.transform((List<ItemEntity>) captureDrops, e -> CraftItemStack.asCraftMirror(e.getItem()));
-+      } else {
-+         drops = captureDrops.stream().map(ItemEntity::getItem).map(CraftItemStack::asCraftMirror).collect(Collectors.toList());
-+      }
-+      CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
-+      this.remove(Entity.RemovalReason.KILLED);
-+      this.gameEvent(GameEvent.ENTITY_DIE);
++       Collection<ItemEntity> captureDrops = this.captureDrops(null);
++       List<org.bukkit.inventory.ItemStack> drops;
++       if (captureDrops == null) {
++           drops = new ArrayList<>();
++       } else if (captureDrops instanceof List) {
++           drops = Lists.transform((List<ItemEntity>) captureDrops, e -> CraftItemStack.asCraftMirror(e.getItem()));
++       } else {
++           drops = captureDrops.stream().map(ItemEntity::getItem).map(CraftItemStack::asCraftMirror).collect(Collectors.toList());
++       }
++       CraftEventFactory.callEntityDeathEvent(this, (kill$damageSource.get() == null ? this.damageSources().genericKill() : kill$damageSource.getAndSet(null)), drops); // CraftBukkit - call event
++       this.remove(Entity.RemovalReason.KILLED);
++       this.gameEvent(GameEvent.ENTITY_DIE);
 +   }
++
++    public void kill(DamageSource damageSource) {
++        kill$damageSource.set(damageSource);
++        kill();
+     }
  
      @Override
-     public boolean ignoreExplosion(Explosion p_310221_) {
 @@ -616,7 +_,7 @@
          return this.isMarker();
      }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class ServerAPI {
     public static Map<Integer, EnderDragon.Phase> phasetypeMap = new ConcurrentHashMap<>();
 
     static {
-        for (IModInfo modInfo : ModLoader.getModList().getMods()) {
+        for (IModInfo modInfo : ModList.get().getMods()) {
             modlists_All.add(modInfo.getModId());
             for (IModInfo.ModVersion modVersion : modInfo.getDependencies()) {
                 if (modVersion.getSide().name().equals("CLIENT")) {
@@ -51,7 +52,7 @@ public class ServerAPI {
 
     // Don't count the default number of mods
     public static int getModSize() {
-        return ModLoader.getModList().size();
+        return ModList.get().getMods().size();
     }
 
     public static Boolean hasMod(String modid) {

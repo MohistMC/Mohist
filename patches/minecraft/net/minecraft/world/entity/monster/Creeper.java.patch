@@ -86,7 +86,7 @@
 +         if (!event.isCancelled()) {
              this.dead = true;
 -            this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionRadius * f, Level.ExplosionInteraction.MOB);
-+            this.level().explode(this,  net.minecraft.world.level.Explosion.getDefaultDamageSource(this.level(), this).customCausingEntity(this.entityIgniter), null, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.level().explode(this,  net.minecraft.world.level.Explosion.getDefaultDamageSource(this.level(), this).customEntityDamager(this.entityIgniter), null, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +            this.putRemoveCause(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
              this.discard();
              this.spawnLingeringCloud();

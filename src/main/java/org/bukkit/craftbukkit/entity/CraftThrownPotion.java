@@ -22,7 +22,7 @@ public class CraftThrownPotion extends CraftThrowableProjectile implements Throw
     @Override
     public Collection<PotionEffect> getEffects() {
         ImmutableList.Builder<PotionEffect> builder = ImmutableList.builder();
-        for (MobEffectInstance effect : this.getHandle().getItem().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).customEffects()) {
+        for (MobEffectInstance effect : this.getHandle().getItem().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).getAllEffects()) {
             builder.add(CraftPotionUtil.toBukkit(effect));
         }
         return builder.build();

@@ -6,17 +6,21 @@ import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryHorse extends CraftInventoryAbstractHorse implements HorseInventory {
 
-    public CraftInventoryHorse(Container inventory) {
+    private final Container bodyArmorInventory;
+
+    public CraftInventoryHorse(Container inventory, Container bodyArmorInventory) {
         super(inventory);
+        this.bodyArmorInventory = bodyArmorInventory;
     }
 
     @Override
     public ItemStack getArmor() {
-       return this.getItem(1);
+        net.minecraft.world.item.ItemStack item = bodyArmorInventory.getItem(0);
+        return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
     }
 
     @Override
     public void setArmor(ItemStack stack) {
-        this.setItem(1, stack);
+        bodyArmorInventory.setItem(0, CraftItemStack.asNMSCopy(stack));
     }
 }

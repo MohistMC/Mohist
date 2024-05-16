@@ -23,8 +23,9 @@
      )
      public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
      private static final int TEMPERATURE_CACHE_SIZE = 1024;
+-    private final Biome.ClimateSettings climateSettings;
 +    /** @deprecated Redirected to {@link #getModifiedClimateSettings()} by field_to_method.js */
-     private final Biome.ClimateSettings climateSettings;
++    public final Biome.ClimateSettings climateSettings;
      private final BiomeGenerationSettings generationSettings;
 +    /** @deprecated Redirected to {@link #getModifiedSpecialEffects()} by field_to_method.js */
      private final MobSpawnSettings mobSettings;
@@ -63,6 +64,15 @@
      }
  
      public boolean hasPrecipitation() {
+@@ -110,7 +_,7 @@
+     }
+ 
+     @Deprecated
+-    private float getTemperature(BlockPos p_47506_) {
++    public float getTemperature(BlockPos p_47506_) {
+         long i = p_47506_.asLong();
+         Long2FloatLinkedOpenHashMap long2floatlinkedopenhashmap = this.temperatureCache.get();
+         float f = long2floatlinkedopenhashmap.get(i);
 @@ -189,7 +_,7 @@
      }
  

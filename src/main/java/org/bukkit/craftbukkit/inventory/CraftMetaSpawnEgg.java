@@ -14,6 +14,7 @@ import net.minecraft.world.item.component.CustomData;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.entity.CraftEntitySnapshot;
+import org.bukkit.craftbukkit.entity.CraftEntityType;
 import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.EntityType;
@@ -138,7 +139,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
 
         String entityType = SerializableMeta.getString(map, CraftMetaSpawnEgg.ENTITY_ID.BUKKIT, true);
         if (entityType != null) {
-            this.spawnedType = EntityType.fromName(entityType);
+            this.spawnedType = CraftEntityType.stringToBukkit(entityType);
         }
     }
 
@@ -155,7 +156,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
                 // Duplicated from constructor
                 String entityType = SerializableMeta.getString(map, CraftMetaSpawnEgg.ENTITY_ID.BUKKIT, true);
                 if (entityType != null) {
-                    this.spawnedType = EntityType.fromName(entityType);
+                    this.spawnedType = CraftEntityType.stringToBukkit(entityType);
                 }
             }
 
@@ -172,7 +173,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
 
             // See if we can read a converted ID tag
             if (this.entityTag.contains(CraftMetaSpawnEgg.ENTITY_ID.NBT)) {
-                this.spawnedType = EntityType.fromName(new ResourceLocation(this.entityTag.getString(CraftMetaSpawnEgg.ENTITY_ID.NBT)).getPath());
+                this.spawnedType = CraftEntityType.stringToBukkit(entityTag.getString(ENTITY_ID.NBT));
             }
         }
     }

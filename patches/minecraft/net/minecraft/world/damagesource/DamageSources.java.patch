@@ -35,19 +35,29 @@
      public DamageSource inFire() {
          return this.inFire;
      }
-@@ -250,6 +_,15 @@
+@@ -241,7 +_,13 @@
+     }
+ 
+     public DamageSource explosion(@Nullable Entity p_271016_, @Nullable Entity p_270814_) {
+-        return this.source(p_270814_ != null && p_271016_ != null ? DamageTypes.PLAYER_EXPLOSION : DamageTypes.EXPLOSION, p_271016_, p_270814_);
++        // CraftBukkit start
++        return this.explosion(p_271016_, p_270814_, p_270814_ != null && p_271016_ != null ? DamageTypes.PLAYER_EXPLOSION : DamageTypes.EXPLOSION);
++    }
++
++    public DamageSource explosion(@Nullable Entity entity, @Nullable Entity entity1, ResourceKey<DamageType> resourceKey) {
++        return this.source(resourceKey, entity, entity1);
++        // CraftBukkit end
+     }
+ 
+     public DamageSource sonicBoom(Entity p_270401_) {
+@@ -250,6 +_,10 @@
  
      public DamageSource badRespawnPointExplosion(Vec3 p_270175_) {
          return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), p_270175_);
 +    }
 +
-+    public DamageSource badRespawnPointExplosion(Vec3 vec3d, net.minecraft.world.level.Level world, net.minecraft.world.level.block.state.BlockState blockData, net.minecraft.core.BlockPos position) {
-+        DamageSource damageSource = new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), vec3d);
-+        if (world != null && blockData != null && position != null) {
-+            damageSource.blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(world, position, blockData, null);
-+        }
-+        return damageSource;
-+        // CraftBukkit end
++    public DamageSource badRespawnPointExplosion(Vec3 vec3d, org.bukkit.block.BlockState blockState) {
++        return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), vec3d).directBlockState(blockState);
      }
  
      public DamageSource outOfBorder() {

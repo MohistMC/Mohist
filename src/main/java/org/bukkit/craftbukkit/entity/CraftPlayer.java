@@ -1656,11 +1656,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return this.equals(entity) || entity.isVisibleByDefault() ^ this.invertedVisibilityEntities.containsKey(entity.getUniqueId()); // SPIGOT-7312: Can always see self
     }
 
-    public boolean canSee(UUID uuid) {
+    public boolean canSeePlayer(UUID uuid) {
         org.bukkit.entity.Entity entity = this.getServer().getPlayer(uuid);
-        if (entity == null) {
-            entity = this.getServer().getEntity(uuid); // Also includes players, but check players first for efficiency
-        }
 
         return (entity != null) ? this.canSee(entity) : false; // If we can't find it, we can't see it
     }
@@ -1795,7 +1792,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     private void sendCustomPayload(ResourceLocation id, byte[] message) {
-        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(new DiscardedPayload(id, new FriendlyByteBuf(Unpooled.wrappedBuffer(message).asByteBuf())));
+        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(new DiscardedPayload(id));
         this.getHandle().connection.send(packet);
     }
 

@@ -1087,7 +1087,7 @@
      }
  
      public void die(DamageSource p_21014_) {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_21014_)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_21014_)) return;
          if (!this.isRemoved() && !this.dead) {
              Entity entity = p_21014_.getEntity();
              LivingEntity livingentity = this.getKillCredit();

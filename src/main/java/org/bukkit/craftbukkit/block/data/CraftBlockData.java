@@ -29,6 +29,7 @@ import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.BlockSupport;
+import org.bukkit.block.BlockType;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.structure.Mirror;
@@ -538,11 +539,9 @@ public class CraftBlockData implements BlockData {
         Preconditions.checkState(CraftBlockData.MAP.put(nms, bukkit) == null, "Duplicate mapping %s->%s", nms, bukkit);
     }
 
-    public static CraftBlockData newData(Material material, String data) {
-        Preconditions.checkArgument(material == null || material.isBlock(), "Cannot get data for not block %s", material);
-
+    public static CraftBlockData newData(BlockType blockType, String data) {
         net.minecraft.world.level.block.state.BlockState blockData;
-        Block block = CraftBlockType.bukkitToMinecraft(material);
+        Block block = blockType == null ? null : ((CraftBlockType<?>) blockType).getHandle();
         Map<Property<?>, Comparable<?>> parsed = null;
 
         // Data provided, use it

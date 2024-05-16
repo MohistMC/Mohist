@@ -1218,7 +1218,7 @@
 +        if (this.fireImmune()) {
 +            return;
 +        }
-+        if (!this.hurt(this.damageSources().lightningBolt().customCausingEntity(p_19928_), 5.0F)) {
++        if (!this.hurt(this.damageSources().lightningBolt().customEntityDamager(p_19928_), 5.0F)) {
 +            return;
 +        }
 +        // CraftBukkit end

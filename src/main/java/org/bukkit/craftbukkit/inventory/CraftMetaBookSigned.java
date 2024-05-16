@@ -218,7 +218,7 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
         // assert: pages != null
 
         String newText = this.validatePage(text);
-        this.pages.set(page - 1, CraftChatMessage.fromStringOrNull(newText, true));
+        this.pages.set(page - 1, CraftChatMessage.fromStringOrEmpty(newText, true));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
     public void addPage(final String... pages) {
         for (String page : pages) {
             page = this.validatePage(page);
-            this.internalAddPage(CraftChatMessage.fromStringOrNull(page, true));
+            this.internalAddPage(CraftChatMessage.fromStringOrEmpty(page, true));
         }
     }
 

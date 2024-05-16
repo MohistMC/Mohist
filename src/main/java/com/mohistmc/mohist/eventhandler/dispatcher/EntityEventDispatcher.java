@@ -85,6 +85,7 @@ public class EntityEventDispatcher {
             return itemEntity;
         });
 
+        /*
         CraftLivingEntity craftLivingEntity = livingEntity.getBukkitLivingEntity();
         EntityDeathEvent eventCB = new EntityDeathEvent(craftLivingEntity, itemStackList, livingEntity.getExperienceReward());
         Bukkit.getPluginManager().callEvent(eventCB);
@@ -92,6 +93,8 @@ public class EntityEventDispatcher {
         if (drops.isEmpty()) {
             event.setCanceled(true);
         }
+
+         */
     }
 
     @SubscribeEvent

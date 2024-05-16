@@ -111,6 +111,15 @@
      public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
          private final int lightEmission;
          private final boolean useShapeForLightOcclusion;
+@@ -405,7 +_,7 @@
+         private boolean legacySolid;
+         private final PushReaction pushReaction;
+         private final MapColor mapColor;
+-        private final float destroySpeed;
++        public final float destroySpeed;
+         private final boolean requiresCorrectToolForDrops;
+         private final boolean canOcclude;
+         private final BlockBehaviour.StatePredicate isRedstoneConductor;
 @@ -523,12 +_,14 @@
              return this.useShapeForLightOcclusion;
          }

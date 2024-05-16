@@ -42,7 +42,7 @@ public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInst
 
         String instrumentString = SerializableMeta.getString(map, CraftMetaMusicInstrument.GOAT_HORN_INSTRUMENT.BUKKIT, true);
         if (instrumentString != null) {
-            this.instrument = Registry.INSTRUMENT.get(NamespacedKey.fromString(instrumentString));
+            this.instrument = CraftMusicInstrument.stringToBukkit(instrumentString);
         }
     }
 
@@ -110,7 +110,7 @@ public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInst
         super.serialize(builder);
 
         if (this.hasInstrument()) {
-            builder.put(CraftMetaMusicInstrument.GOAT_HORN_INSTRUMENT.BUKKIT, this.instrument.getKey().toString());
+            builder.put(CraftMetaMusicInstrument.GOAT_HORN_INSTRUMENT.BUKKIT, CraftMusicInstrument.bukkitToString(instrument));
         }
 
         return builder;
