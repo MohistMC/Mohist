@@ -62,63 +62,35 @@
      public LevelChunk(Level p_187945_, ChunkPos p_187946_) {
          this(p_187945_, p_187946_, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, null, null, null);
      }
-@@ -98,20 +_,25 @@
-         @Nullable LevelChunk.PostLoadProcessor p_196861_,
-         @Nullable BlendingData p_196862_
+@@ -100,6 +_,9 @@
      ) {
--        super(p_196855_, p_196856_, p_196854_, p_196854_.registryAccess().registryOrThrow(Registries.BIOME), p_196859_, p_196860_, p_196862_);
--        this.level = p_196854_;
--        this.gameEventListenerRegistrySections = new Int2ObjectOpenHashMap<>();
--
--        for (Heightmap.Types heightmap$types : Heightmap.Types.values()) {
--            if (ChunkStatus.FULL.heightmapsAfter().contains(heightmap$types)) {
--                this.heightmaps.put(heightmap$types, new Heightmap(this, heightmap$types));
--            }
--        }
--
--        this.postLoad = p_196861_;
--        this.blockTicks = p_196857_;
--        this.fluidTicks = p_196858_;
+         super(p_196855_, p_196856_, p_196854_, p_196854_.registryAccess().registryOrThrow(Registries.BIOME), p_196859_, p_196860_, p_196862_);
+         this.level = p_196854_;
++      	if (p_196854_ != null && p_196854_.getClass() == ServerLevel.class) {
++         	this.r = ((ServerLevel) p_196854_);
++      	}
+         this.gameEventListenerRegistrySections = new Int2ObjectOpenHashMap<>();
+ 
+         for (Heightmap.Types heightmap$types : Heightmap.Types.values()) {
+@@ -111,7 +_,9 @@
+         this.postLoad = p_196861_;
+         this.blockTicks = p_196857_;
+         this.fluidTicks = p_196858_;
 -    }
-+      super(p_196855_, p_196856_, p_196854_, p_196854_.registryAccess().registryOrThrow(Registries.BIOME), p_196859_, p_196860_, p_196862_);
-+      this.level = p_196854_;
-+      if (p_196854_ != null && p_196854_.getClass() == ServerLevel.class) {
-+         this.r = ((ServerLevel) p_196854_);
-+      }
-+      this.gameEventListenerRegistrySections = new Int2ObjectOpenHashMap<>();
-+
-+      for(Heightmap.Types heightmap$types : Heightmap.Types.values()) {
-+         if (ChunkStatus.FULL.heightmapsAfter().contains(heightmap$types)) {
-+            this.heightmaps.put(heightmap$types, new Heightmap(this, heightmap$types));
-+         }
-+      }
-+
-+      this.postLoad = p_196861_;
-+      this.blockTicks = p_196857_;
-+      this.fluidTicks = p_196858_;
-+      this.capProvider.initInternal();
-+      if (p_196855_ != null) this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk( this );
++        this.capProvider.initInternal();
++      	if (p_196855_ != null) this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk( this );
 +   }
  
      public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
          this(
-@@ -139,7 +_,7 @@
-         this.setAllStarts(p_196851_.getAllStarts());
-         this.setAllReferences(p_196851_.getAllReferences());
- 
--        for (Entry<Heightmap.Types, Heightmap> entry : p_196851_.getHeightmaps()) {
-+        for (Entry<Types, Heightmap> entry : p_196851_.getHeightmaps()) {
-             if (ChunkStatus.FULL.heightmapsAfter().contains(entry.getKey())) {
-                 this.setHeightmap(entry.getKey(), entry.getValue().getRawData());
-             }
 @@ -148,7 +_,10 @@
          this.skyLightSources = p_196851_.skyLightSources;
          this.setLightCorrect(p_196851_.isLightCorrect());
          this.unsaved = true;
 -    }
-+      this.needsDecoration = true; // CraftBukkit
-+      // CraftBukkit start
-+      this.persistentDataContainer = p_196851_.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1
++      	this.needsDecoration = true; // CraftBukkit
++      	// CraftBukkit start
++      	this.persistentDataContainer = p_196851_.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1
 +   }
  
      @Override

@@ -69,7 +69,7 @@
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -104,43 +_,80 @@
+@@ -104,29 +_,68 @@
      @Deprecated
      private final RandomSource threadSafeRandom = RandomSource.createThreadSafe();
      private final Holder<DimensionType> dimensionTypeRegistration;
@@ -152,16 +152,15 @@
          this.dimensionTypeRegistration = p_270240_;
          final DimensionType dimensiontype = p_270240_.value();
          this.dimension = p_270683_;
-         this.isClientSide = p_270904_;
-         if (dimensiontype.coordinateScale() != 1.0) {
+@@ -135,12 +_,12 @@
              this.worldBorder = new WorldBorder() {
--                @Override
+                 @Override
                  public double getCenterX() {
 -                    return super.getCenterX() / dimensiontype.coordinateScale();
 +                    return super.getCenterX(); // CraftBukkit
                  }
  
--                @Override
+                 @Override
                  public double getCenterZ() {
 -                    return super.getCenterZ() / dimensiontype.coordinateScale();
 +                    return super.getCenterZ(); // CraftBukkit
@@ -229,11 +228,9 @@
      }
  
      @Nullable
-@@ -206,8 +_,19 @@
-         return this.setBlock(p_46601_, p_46602_, p_46603_, 512);
-     }
+@@ -208,6 +_,18 @@
  
--    @Override
+     @Override
      public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
 +        // CraftBukkit start - tree generation
 +        if (this.captureTreeGeneration) {
@@ -350,138 +347,6 @@
          if (this.isOutsideBuildHeight(p_46732_)) {
              return Blocks.VOID_AIR.defaultBlockState();
          } else {
-@@ -372,45 +_,45 @@
-     @Override
-     public void playSound(@Nullable Player p_46560_, BlockPos p_46561_, SoundEvent p_46562_, SoundSource p_46563_, float p_46564_, float p_46565_) {
-         this.playSound(
--            p_46560_,
--            (double)p_46561_.getX() + 0.5,
--            (double)p_46561_.getY() + 0.5,
--            (double)p_46561_.getZ() + 0.5,
--            p_46562_,
--            p_46563_,
--            p_46564_,
--            p_46565_
-+                p_46560_,
-+                (double) p_46561_.getX() + 0.5,
-+                (double) p_46561_.getY() + 0.5,
-+                (double) p_46561_.getZ() + 0.5,
-+                p_46562_,
-+                p_46563_,
-+                p_46564_,
-+                p_46565_
-         );
-     }
- 
-     public abstract void playSeededSound(
--        @Nullable Player p_262953_,
--        double p_263004_,
--        double p_263398_,
--        double p_263376_,
--        Holder<SoundEvent> p_263359_,
--        SoundSource p_263020_,
--        float p_263055_,
--        float p_262914_,
--        long p_262991_
-+            @Nullable Player p_262953_,
-+            double p_263004_,
-+            double p_263398_,
-+            double p_263376_,
-+            Holder<SoundEvent> p_263359_,
-+            SoundSource p_263020_,
-+            float p_263055_,
-+            float p_262914_,
-+            long p_262991_
-     );
- 
-     public void playSeededSound(
--        @Nullable Player p_220363_,
--        double p_220364_,
--        double p_220365_,
--        double p_220366_,
--        SoundEvent p_220367_,
--        SoundSource p_220368_,
--        float p_220369_,
--        float p_220370_,
--        long p_220371_
-+            @Nullable Player p_220363_,
-+            double p_220364_,
-+            double p_220365_,
-+            double p_220366_,
-+            SoundEvent p_220367_,
-+            SoundSource p_220368_,
-+            float p_220369_,
-+            float p_220370_,
-+            long p_220371_
-     ) {
-         this.playSeededSound(p_220363_, p_220364_, p_220365_, p_220366_, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(p_220367_), p_220368_, p_220369_, p_220370_, p_220371_);
-     }
- 
-     public abstract void playSeededSound(
--        @Nullable Player p_220372_, Entity p_220373_, Holder<SoundEvent> p_263500_, SoundSource p_220375_, float p_220376_, float p_220377_, long p_220378_
-+            @Nullable Player p_220372_, Entity p_220373_, Holder<SoundEvent> p_263500_, SoundSource p_220375_, float p_220376_, float p_220377_, long p_220378_
-     );
- 
-     public void playSound(@Nullable Player p_312141_, double p_310370_, double p_311188_, double p_309961_, SoundEvent p_313224_, SoundSource p_312451_) {
-@@ -418,7 +_,7 @@
-     }
- 
-     public void playSound(
--        @Nullable Player p_46543_, double p_46544_, double p_46545_, double p_46546_, SoundEvent p_46547_, SoundSource p_46548_, float p_46549_, float p_46550_
-+            @Nullable Player p_46543_, double p_46544_, double p_46545_, double p_46546_, SoundEvent p_46547_, SoundSource p_46548_, float p_46549_, float p_46550_
-     ) {
-         this.playSeededSound(p_46543_, p_46544_, p_46545_, p_46546_, p_46547_, p_46548_, p_46549_, p_46550_, this.threadSafeRandom.nextLong());
-     }
-@@ -429,14 +_,14 @@
- 
-     public void playLocalSound(BlockPos p_250938_, SoundEvent p_252209_, SoundSource p_249161_, float p_249980_, float p_250277_, boolean p_250151_) {
-         this.playLocalSound(
--            (double)p_250938_.getX() + 0.5,
--            (double)p_250938_.getY() + 0.5,
--            (double)p_250938_.getZ() + 0.5,
--            p_252209_,
--            p_249161_,
--            p_249980_,
--            p_250277_,
--            p_250151_
-+                (double) p_250938_.getX() + 0.5,
-+                (double) p_250938_.getY() + 0.5,
-+                (double) p_250938_.getZ() + 0.5,
-+                p_252209_,
-+                p_249161_,
-+                p_249980_,
-+                p_250277_,
-+                p_250151_
-         );
-     }
- 
-@@ -444,7 +_,7 @@
-     }
- 
-     public void playLocalSound(
--        double p_46482_, double p_46483_, double p_46484_, SoundEvent p_46485_, SoundSource p_46486_, float p_46487_, float p_46488_, boolean p_46489_
-+            double p_46482_, double p_46483_, double p_46484_, SoundEvent p_46485_, SoundSource p_46486_, float p_46487_, float p_46488_, boolean p_46489_
-     ) {
-     }
- 
-@@ -453,7 +_,7 @@
-     }
- 
-     public void addParticle(
--        ParticleOptions p_46638_, boolean p_46639_, double p_46640_, double p_46641_, double p_46642_, double p_46643_, double p_46644_, double p_46645_
-+            ParticleOptions p_46638_, boolean p_46639_, double p_46640_, double p_46641_, double p_46642_, double p_46643_, double p_46644_, double p_46645_
-     ) {
-     }
- 
-@@ -461,7 +_,7 @@
-     }
- 
-     public void addAlwaysVisibleParticle(
--        ParticleOptions p_46691_, boolean p_46692_, double p_46693_, double p_46694_, double p_46695_, double p_46696_, double p_46697_, double p_46698_
-+            ParticleOptions p_46691_, boolean p_46692_, double p_46693_, double p_46694_, double p_46695_, double p_46696_, double p_46697_, double p_46698_
-     ) {
-     }
- 
 @@ -474,10 +_,30 @@
          (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
      }
@@ -528,284 +393,22 @@
              CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking entity");
              CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being ticked");
              p_46655_.fillCrashReportCategory(crashreportcategory);
--            throw new ReportedException(crashreport);
 +            if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
 +                com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.getFriendlyReport());
 +                p_46655_.discard();
 +            } else
-+                throw new ReportedException(crashreport);
+             throw new ReportedException(crashreport);
 +        } finally {
 +            net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
          }
      }
  
-@@ -523,157 +_,162 @@
-     }
- 
-     public Explosion explode(
--        @Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_
--    ) {
--        return this.explode(
--            p_256599_,
--            Explosion.getDefaultDamageSource(this, p_256599_),
--            null,
--            p_255914_,
--            p_255684_,
--            p_255843_,
--            p_256310_,
--            false,
--            p_256178_,
--            ParticleTypes.EXPLOSION,
--            ParticleTypes.EXPLOSION_EMITTER,
--            SoundEvents.GENERIC_EXPLODE
--        );
--    }
--
--    public Explosion explode(
--        @Nullable Entity p_255682_,
--        double p_255803_,
--        double p_256403_,
--        double p_256538_,
--        float p_255674_,
--        boolean p_256634_,
--        Level.ExplosionInteraction p_256111_
--    ) {
--        return this.explode(
--            p_255682_,
--            Explosion.getDefaultDamageSource(this, p_255682_),
--            null,
--            p_255803_,
--            p_256403_,
--            p_256538_,
--            p_255674_,
--            p_256634_,
--            p_256111_,
--            ParticleTypes.EXPLOSION,
--            ParticleTypes.EXPLOSION_EMITTER,
--            SoundEvents.GENERIC_EXPLODE
--        );
--    }
--
--    public Explosion explode(
--        @Nullable Entity p_255653_,
--        @Nullable DamageSource p_256558_,
--        @Nullable ExplosionDamageCalculator p_255929_,
--        Vec3 p_256001_,
--        float p_255963_,
--        boolean p_256099_,
--        Level.ExplosionInteraction p_256371_
--    ) {
--        return this.explode(
--            p_255653_,
--            p_256558_,
--            p_255929_,
--            p_256001_.x(),
--            p_256001_.y(),
--            p_256001_.z(),
--            p_255963_,
--            p_256099_,
--            p_256371_,
--            ParticleTypes.EXPLOSION,
--            ParticleTypes.EXPLOSION_EMITTER,
--            SoundEvents.GENERIC_EXPLODE
--        );
--    }
--
--    public Explosion explode(
--        @Nullable Entity p_256145_,
--        @Nullable DamageSource p_256004_,
--        @Nullable ExplosionDamageCalculator p_255696_,
--        double p_256208_,
--        double p_256036_,
--        double p_255746_,
--        float p_256647_,
--        boolean p_256098_,
--        Level.ExplosionInteraction p_256104_
--    ) {
--        return this.explode(
--            p_256145_,
--            p_256004_,
--            p_255696_,
--            p_256208_,
--            p_256036_,
--            p_255746_,
--            p_256647_,
--            p_256098_,
--            p_256104_,
--            ParticleTypes.EXPLOSION,
--            ParticleTypes.EXPLOSION_EMITTER,
--            SoundEvents.GENERIC_EXPLODE
--        );
--    }
--
--    public Explosion explode(
--        @Nullable Entity p_256233_,
--        @Nullable DamageSource p_255861_,
--        @Nullable ExplosionDamageCalculator p_255867_,
--        double p_256447_,
--        double p_255732_,
--        double p_255717_,
--        float p_256013_,
--        boolean p_256228_,
--        Level.ExplosionInteraction p_255784_,
--        ParticleOptions p_312617_,
--        ParticleOptions p_309714_,
--        Holder<SoundEvent> p_328054_
--    ) {
--        return this.explode(
--            p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, p_255784_, true, p_312617_, p_309714_, p_328054_
--        );
--    }
--
--    public Explosion explode(
--        @Nullable Entity p_312521_,
--        @Nullable DamageSource p_310678_,
--        @Nullable ExplosionDamageCalculator p_312887_,
--        double p_309783_,
--        double p_312776_,
--        double p_310505_,
--        float p_310209_,
--        boolean p_309445_,
--        Level.ExplosionInteraction p_310628_,
--        boolean p_309655_,
--        ParticleOptions p_311889_,
--        ParticleOptions p_311434_,
--        Holder<SoundEvent> p_328498_
-+            @Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_
-+    ) {
-+        return this.explode(
-+                p_256599_,
-+                Explosion.getDefaultDamageSource(this, p_256599_),
-+                null,
-+                p_255914_,
-+                p_255684_,
-+                p_255843_,
-+                p_256310_,
-+                false,
-+                p_256178_,
-+                ParticleTypes.EXPLOSION,
-+                ParticleTypes.EXPLOSION_EMITTER,
-+                SoundEvents.GENERIC_EXPLODE
-+        );
-+    }
-+
-+    public Explosion explode(
-+            @Nullable Entity p_255682_,
-+            double p_255803_,
-+            double p_256403_,
-+            double p_256538_,
-+            float p_255674_,
-+            boolean p_256634_,
-+            Level.ExplosionInteraction p_256111_
-+    ) {
-+        return this.explode(
-+                p_255682_,
-+                Explosion.getDefaultDamageSource(this, p_255682_),
-+                null,
-+                p_255803_,
-+                p_256403_,
-+                p_256538_,
-+                p_255674_,
-+                p_256634_,
-+                p_256111_,
-+                ParticleTypes.EXPLOSION,
-+                ParticleTypes.EXPLOSION_EMITTER,
-+                SoundEvents.GENERIC_EXPLODE
-+        );
-+    }
-+
-+    public Explosion explode(
-+            @Nullable Entity p_255653_,
-+            @Nullable DamageSource p_256558_,
-+            @Nullable ExplosionDamageCalculator p_255929_,
-+            Vec3 p_256001_,
-+            float p_255963_,
-+            boolean p_256099_,
-+            Level.ExplosionInteraction p_256371_
-+    ) {
-+        return this.explode(
-+                p_255653_,
-+                p_256558_,
-+                p_255929_,
-+                p_256001_.x(),
-+                p_256001_.y(),
-+                p_256001_.z(),
-+                p_255963_,
-+                p_256099_,
-+                p_256371_,
-+                ParticleTypes.EXPLOSION,
-+                ParticleTypes.EXPLOSION_EMITTER,
-+                SoundEvents.GENERIC_EXPLODE
-+        );
-+    }
-+
-+    public Explosion explode(
-+            @Nullable Entity p_256145_,
-+            @Nullable DamageSource p_256004_,
-+            @Nullable ExplosionDamageCalculator p_255696_,
-+            double p_256208_,
-+            double p_256036_,
-+            double p_255746_,
-+            float p_256647_,
-+            boolean p_256098_,
-+            Level.ExplosionInteraction p_256104_
-+    ) {
-+        return this.explode(
-+                p_256145_,
-+                p_256004_,
-+                p_255696_,
-+                p_256208_,
-+                p_256036_,
-+                p_255746_,
-+                p_256647_,
-+                p_256098_,
-+                p_256104_,
-+                ParticleTypes.EXPLOSION,
-+                ParticleTypes.EXPLOSION_EMITTER,
-+                SoundEvents.GENERIC_EXPLODE
-+        );
-+    }
-+
-+    public Explosion explode(
-+            @Nullable Entity p_256233_,
-+            @Nullable DamageSource p_255861_,
-+            @Nullable ExplosionDamageCalculator p_255867_,
-+            double p_256447_,
-+            double p_255732_,
-+            double p_255717_,
-+            float p_256013_,
-+            boolean p_256228_,
-+            Level.ExplosionInteraction p_255784_,
-+            ParticleOptions p_312617_,
-+            ParticleOptions p_309714_,
-+            Holder<SoundEvent> p_328054_
-+    ) {
-+        return this.explode(
-+                p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, p_255784_, true, p_312617_, p_309714_, p_328054_
-+        );
-+    }
-+
-+    public Explosion explode(
-+            @Nullable Entity p_312521_,
-+            @Nullable DamageSource p_310678_,
-+            @Nullable ExplosionDamageCalculator p_312887_,
-+            double p_309783_,
-+            double p_312776_,
-+            double p_310505_,
-+            float p_310209_,
-+            boolean p_309445_,
-+            Level.ExplosionInteraction p_310628_,
-+            boolean p_309655_,
-+            ParticleOptions p_311889_,
-+            ParticleOptions p_311434_,
-+            Holder<SoundEvent> p_328498_
-     ) {
+@@ -655,25 +_,29 @@
          Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
 -            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
-+            case MOB ->
-+                    net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
++            case MOB -> net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
              case BLOW -> Explosion.BlockInteraction.TRIGGER_BLOCK;
 +            case STANDARD -> Explosion.BlockInteraction.DESTROY;
@@ -844,7 +447,7 @@
          explosion.explode();
          explosion.finalizeExplosion(p_309655_);
          return explosion;
-@@ -688,18 +_,34 @@
+@@ -688,6 +_,16 @@
      @Nullable
      @Override
      public BlockEntity getBlockEntity(BlockPos p_46716_) {
@@ -861,14 +464,7 @@
          if (this.isOutsideBuildHeight(p_46716_)) {
              return null;
          } else {
-             return !this.isClientSide && Thread.currentThread() != this.thread
--                ? null
--                : this.getChunkAt(p_46716_).getBlockEntity(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
-+                    ? null
-+                    : this.getChunkAt(p_46716_).getBlockEntity(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
-         }
-     }
- 
+@@ -700,6 +_,12 @@
      public void setBlockEntity(BlockEntity p_151524_) {
          BlockPos blockpos = p_151524_.getBlockPos();
          if (!this.isOutsideBuildHeight(blockpos)) {
@@ -881,7 +477,7 @@
              this.getChunkAt(blockpos).addAndRegisterBlockEntity(p_151524_);
          }
      }
-@@ -708,12 +_,13 @@
+@@ -708,6 +_,7 @@
          if (!this.isOutsideBuildHeight(p_46748_)) {
              this.getChunkAt(p_46748_).removeBlockEntity(p_46748_);
          }
@@ -889,38 +485,6 @@
      }
  
      public boolean isLoaded(BlockPos p_46750_) {
-         return this.isOutsideBuildHeight(p_46750_)
--            ? false
--            : this.getChunkSource().hasChunk(SectionPos.blockToSectionCoord(p_46750_.getX()), SectionPos.blockToSectionCoord(p_46750_.getZ()));
-+                ? false
-+                : this.getChunkSource().hasChunk(SectionPos.blockToSectionCoord(p_46750_.getX()), SectionPos.blockToSectionCoord(p_46750_.getZ()));
-     }
- 
-     public boolean loadedAndEntityCanStandOnFace(BlockPos p_46579_, Entity p_46580_, Direction p_46581_) {
-@@ -721,7 +_,7 @@
-             return false;
-         } else {
-             ChunkAccess chunkaccess = this.getChunk(
--                SectionPos.blockToSectionCoord(p_46579_.getX()), SectionPos.blockToSectionCoord(p_46579_.getZ()), ChunkStatus.FULL, false
-+                    SectionPos.blockToSectionCoord(p_46579_.getX()), SectionPos.blockToSectionCoord(p_46579_.getZ()), ChunkStatus.FULL, false
-             );
-             return chunkaccess == null ? false : chunkaccess.getBlockState(p_46579_).entityCanStandOnFace(this, p_46579_, p_46580_, p_46581_);
-         }
-@@ -732,10 +_,10 @@
-     }
- 
-     public void updateSkyBrightness() {
--        double d0 = 1.0 - (double)(this.getRainLevel(1.0F) * 5.0F) / 16.0;
--        double d1 = 1.0 - (double)(this.getThunderLevel(1.0F) * 5.0F) / 16.0;
--        double d2 = 0.5 + 2.0 * Mth.clamp((double)Mth.cos(this.getTimeOfDay(1.0F) * (float) (Math.PI * 2)), -0.25, 0.25);
--        this.skyDarken = (int)((1.0 - d2 * d0 * d1) * 11.0);
-+        double d0 = 1.0 - (double) (this.getRainLevel(1.0F) * 5.0F) / 16.0;
-+        double d1 = 1.0 - (double) (this.getThunderLevel(1.0F) * 5.0F) / 16.0;
-+        double d2 = 0.5 + 2.0 * Mth.clamp((double) Mth.cos(this.getTimeOfDay(1.0F) * (float) (Math.PI * 2)), -0.25, 0.25);
-+        this.skyDarken = (int) ((1.0 - d2 * d0 * d1) * 11.0);
-     }
- 
-     public void setSpawnSettings(boolean p_46704_, boolean p_46705_) {
 @@ -784,8 +_,8 @@
                  list.add(p_151522_);
              }
@@ -932,40 +496,17 @@
                      if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
                          list.add(enderdragonpart);
                      }
-@@ -807,7 +_,7 @@
-     }
- 
-     public <T extends Entity> void getEntities(
--        EntityTypeTest<Entity, T> p_261885_, AABB p_262086_, Predicate<? super T> p_261688_, List<? super T> p_262071_, int p_261858_
-+            EntityTypeTest<Entity, T> p_261885_, AABB p_262086_, Predicate<? super T> p_261688_, List<? super T> p_262071_, int p_261858_
-     ) {
-         this.getProfiler().incrementCounter("getEntities");
-         this.getEntities().get(p_261885_, p_262086_, p_261454_ -> {
 @@ -818,8 +_,8 @@
                  }
              }
  
 -            if (p_261454_ instanceof EnderDragon enderdragon) {
 -                for (EnderDragonPart enderdragonpart : enderdragon.getSubEntities()) {
-+            if (p_261454_.isMultipartEntity()) {
++            if (p_261454_ .isMultipartEntity()) {
 +                for (var enderdragonpart : p_261454_.getParts()) {
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
-@@ -905,11 +_,11 @@
-     }
- 
-     public boolean isThundering() {
--        return this.dimensionType().hasSkyLight() && !this.dimensionType().hasCeiling() ? (double)this.getThunderLevel(1.0F) > 0.9 : false;
-+        return this.dimensionType().hasSkyLight() && !this.dimensionType().hasCeiling() ? (double) this.getThunderLevel(1.0F) > 0.9 : false;
-     }
- 
-     public boolean isRaining() {
--        return (double)this.getRainLevel(1.0F) > 0.2;
-+        return (double) this.getRainLevel(1.0F) > 0.2;
-     }
- 
-     public boolean isRainingAt(BlockPos p_46759_) {
 @@ -958,16 +_,15 @@
      public abstract Scoreboard getScoreboard();
  

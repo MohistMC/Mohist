@@ -1792,7 +1792,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     private void sendCustomPayload(ResourceLocation id, byte[] message) {
-        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(new DiscardedPayload(id));
+        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(new DiscardedPayload(id, Unpooled.wrappedBuffer(message)));
         this.getHandle().connection.send(packet);
     }
 

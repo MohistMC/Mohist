@@ -1,16 +1,13 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -6,9 +_,9 @@
+@@ -6,6 +_,7 @@
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
  import com.google.common.collect.ImmutableList.Builder;
 +import com.google.common.util.concurrent.AtomicDouble;
  import com.google.gson.JsonElement;
  import com.mojang.datafixers.DataFixer;
--import com.mojang.datafixers.util.Pair;
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.DataResult;
- import com.mojang.serialization.JsonOps;
+ import com.mojang.datafixers.util.Pair;
 @@ -40,6 +_,7 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
@@ -19,14 +16,6 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
-@@ -71,7 +_,6 @@
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.ai.village.poi.PoiManager;
--import net.minecraft.world.entity.boss.EnderDragonPart;
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.chunk.ChunkAccess;
 @@ -98,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.phys.Vec3;

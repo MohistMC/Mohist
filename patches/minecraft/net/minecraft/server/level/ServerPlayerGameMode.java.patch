@@ -402,7 +402,7 @@
              int i = p_9264_.getCount();
              int j = p_9264_.getDamageValue();
              InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
-@@ -290,60 +_,116 @@
+@@ -290,41 +_,97 @@
          }
      }
  
@@ -441,25 +441,6 @@
 -
 -            if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
 -                UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
--                InteractionResult interactionresult1;
--                if (this.isCreative()) {
--                    int i = p_9268_.getCount();
--                    interactionresult1 = p_9268_.useOn(useoncontext);
--                    p_9268_.setCount(i);
--                } else {
--                    interactionresult1 = p_9268_.useOn(useoncontext);
--                }
--
--                if (interactionresult1.consumesAction()) {
--                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
--                }
--
--                return interactionresult1;
--            } else {
--                return InteractionResult.PASS;
--            }
--        }
--    }
 +
 +   // CraftBukkit start - whole method
 +   public boolean interactResult = false;
@@ -549,22 +530,28 @@
 +               }
 +           }
 +
-+           if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
-+               if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)
-+                   return InteractionResult.PASS;
-+               InteractionResult interactionresult1;
-+               if (this.isCreative()) {
-+                   int i = p_9268_.getCount();
-+                   interactionresult1 = p_9268_.useOn(useoncontext);
-+                   p_9268_.setCount(i);
-+               } else {
-+                   interactionresult1 = p_9268_.useOn(useoncontext);
-+               }
-+
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
++                if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
+                 InteractionResult interactionresult1;
+                 if (this.isCreative()) {
+                     int i = p_9268_.getCount();
+@@ -334,16 +_,15 @@
+                     interactionresult1 = p_9268_.useOn(useoncontext);
+                 }
+ 
+-                if (interactionresult1.consumesAction()) {
+-                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
+-                }
 +               if (interactionresult1.consumesAction()) {
 +                   CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
 +               }
-+
+ 
+-                return interactionresult1;
+-            } else {
+-                return InteractionResult.PASS;
+-            }
+-        }
+-    }
 +               return interactionresult1;
 +           }
 +       }

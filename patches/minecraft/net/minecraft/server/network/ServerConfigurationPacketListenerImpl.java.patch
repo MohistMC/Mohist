@@ -44,8 +44,8 @@
  
 -    public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
 -        super(p_301415_, p_298106_, p_301309_);
-+   public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_, ServerPlayer player) { // CraftBukkit
-+      super(p_301415_, p_298106_, p_301309_, player); // CraftBukkit
++    public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_, ServerPlayer player) { // CraftBukkit
++        super(p_301415_, p_298106_, p_301309_, player); // CraftBukkit
          this.gameProfile = p_301309_.gameProfile();
          this.clientInformation = p_301309_.clientInformation();
 +        this.taskContext = new net.minecraftforge.network.config.ConfigurationTaskContext(p_298106_, this::send, this::finishCurrentTask);
@@ -73,22 +73,26 @@
          this.addOptionalTasks();
          this.configurationTasks.add(new JoinWorldTask());
          this.startNextTask();
-@@ -126,13 +_,13 @@
+@@ -126,16 +_,16 @@
                  return;
              }
  
 -            Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), this.gameProfile);
-+         	Component component = null; // CraftBukkit - login checks already completed
++            Component component = null; // CraftBukkit - login checks already completed
              if (component != null) {
                  this.disconnect(component);
                  return;
              }
  
 -            ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
-+         	ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player); // CraftBukkit
++            ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player); // CraftBukkit
              playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation));
          } catch (Exception exception) {
-             LOGGER.error("Couldn't place player in world", (Throwable)exception);
+-            LOGGER.error("Couldn't place player in world", (Throwable)exception);
++            LOGGER.error("Couldn't place player in world", (Throwable) exception);
+             this.connection.send(new ClientboundDisconnectPacket(DISCONNECT_REASON_INVALID_DATA));
+             this.connection.disconnect(DISCONNECT_REASON_INVALID_DATA);
+         }
 @@ -153,7 +_,7 @@
              ConfigurationTask configurationtask = this.configurationTasks.poll();
              if (configurationtask != null) {

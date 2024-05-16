@@ -1,13 +1,6 @@
 --- a/net/minecraft/server/commands/DebugCommand.java
 +++ b/net/minecraft/server/commands/DebugCommand.java
-@@ -31,12 +_,14 @@
- import net.minecraft.commands.execution.tasks.CallFunction;
- import net.minecraft.commands.functions.CommandFunction;
- import net.minecraft.commands.functions.InstantiatedFunction;
-+import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.MinecraftServer;
+@@ -37,6 +_,7 @@
  import net.minecraft.util.TimeUtil;
  import net.minecraft.util.profiling.ProfileResults;
  import org.apache.commons.io.IOUtils;
