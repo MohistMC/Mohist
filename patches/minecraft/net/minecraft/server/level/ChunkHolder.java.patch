@@ -31,15 +31,6 @@
      private static final List<ChunkStatus> CHUNK_STATUSES = ChunkStatus.getStatusList();
      private final AtomicReferenceArray<CompletableFuture<ChunkResult<ChunkAccess>>> futures = new AtomicReferenceArray<>(CHUNK_STATUSES.size());
      private final LevelHeightAccessor levelHeightAccessor;
-@@ -50,7 +_,7 @@
-     private CompletableFuture<ChunkAccess> chunkToSave = CompletableFuture.completedFuture(null);
-     @Nullable
-     private final DebugBuffer<ChunkHolder.ChunkSaveDebug> chunkToSaveHistory = null;
--    public int oldTicketLevel;
-+    private int oldTicketLevel;
-     private int ticketLevel;
-     private int queueLevel;
-     private final ChunkPos pos;
 @@ -64,6 +_,7 @@
      private boolean wasAccessibleSinceLastSave;
      private CompletableFuture<Void> pendingFullStateConfirmation = CompletableFuture.completedFuture(null);

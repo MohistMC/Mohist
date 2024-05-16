@@ -53,7 +53,7 @@
 +   	// CraftBukkit start
 +   	public void acceptConnections() {
 +      	synchronized (this.channels) {
-+         	for (final ChannelFuture future : this.channels) {
++         	for (ChannelFuture future : this.channels) {
 +            	future.channel().config().setAutoRead(true);
 +         	}
 +      	}

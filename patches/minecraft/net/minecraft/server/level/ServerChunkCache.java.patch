@@ -30,41 +30,89 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
  
  public class ServerChunkCache extends ChunkSource {
-@@ -54,8 +_,8 @@
-     public final ChunkMap chunkMap;
-     private final DimensionDataStorage dataStorage;
-     private long lastInhabitedUpdate;
--    public boolean spawnEnemies = true;
--    public boolean spawnFriendlies = true;
-+   	public boolean spawnEnemies = true;
-+   	public boolean spawnFriendlies = true;
-     private static final int CACHE_SIZE = 4;
-     private final long[] lastChunkPos = new long[4];
-     private final ChunkStatus[] lastChunkStatus = new ChunkStatus[4];
-@@ -93,12 +_,22 @@
+@@ -65,18 +_,18 @@
+     private NaturalSpawner.SpawnState lastSpawnState;
+ 
+     public ServerChunkCache(
+-        ServerLevel p_214982_,
+-        LevelStorageSource.LevelStorageAccess p_214983_,
+-        DataFixer p_214984_,
+-        StructureTemplateManager p_214985_,
+-        Executor p_214986_,
+-        ChunkGenerator p_214987_,
+-        int p_214988_,
+-        int p_214989_,
+-        boolean p_214990_,
+-        ChunkProgressListener p_214991_,
+-        ChunkStatusUpdateListener p_214992_,
+-        Supplier<DimensionDataStorage> p_214993_
++            ServerLevel p_214982_,
++            LevelStorageSource.LevelStorageAccess p_214983_,
++            DataFixer p_214984_,
++            StructureTemplateManager p_214985_,
++            Executor p_214986_,
++            ChunkGenerator p_214987_,
++            int p_214988_,
++            int p_214989_,
++            boolean p_214990_,
++            ChunkProgressListener p_214991_,
++            ChunkStatusUpdateListener p_214992_,
++            Supplier<DimensionDataStorage> p_214993_
+     ) {
+         this.level = p_214982_;
+         this.mainThreadProcessor = new ServerChunkCache.MainThreadExecutor(p_214982_);
+@@ -85,7 +_,7 @@
+         file1.mkdirs();
+         this.dataStorage = new DimensionDataStorage(file1, p_214984_, p_214982_.registryAccess());
+         this.chunkMap = new ChunkMap(
+-            p_214982_, p_214983_, p_214984_, p_214985_, p_214986_, this.mainThreadProcessor, this, p_214987_, p_214991_, p_214992_, p_214993_, p_214988_, p_214990_
++                p_214982_, p_214983_, p_214984_, p_214985_, p_214986_, this.mainThreadProcessor, this, p_214987_, p_214991_, p_214992_, p_214993_, p_214988_, p_214990_
+         );
+         this.lightEngine = this.chunkMap.getLightEngine();
+         this.distanceManager = this.chunkMap.getDistanceManager();
+@@ -93,6 +_,16 @@
          this.clearCache();
      }
  
-+   // CraftBukkit start - properly implement isChunkLoaded
-+   public boolean isChunkLoaded(int chunkX, int chunkZ) {
-+      ChunkHolder chunk = this.chunkMap.getUpdatingChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
-+      if (chunk == null) {
-+         return false;
-+      }
-+      return chunk.getFullChunkNow() != null;
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start - properly implement isChunkLoaded
++    public boolean isChunkLoaded(int chunkX, int chunkZ) {
++        ChunkHolder chunk = this.chunkMap.getUpdatingChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
++        if (chunk == null) {
++            return false;
++        }
++        return chunk.getFullChunkNow() != null;
++    }
++    // CraftBukkit end
 +
      public ThreadedLevelLightEngine getLightEngine() {
          return this.lightEngine;
      }
- 
--    @Nullable
--    public ChunkHolder getVisibleChunkIfPresent(long p_8365_) {
-+   	@Nullable
-+   	public ChunkHolder getVisibleChunkIfPresent(long p_8365_) {
-         return this.chunkMap.getVisibleChunkIfPresent(p_8365_);
-     }
+@@ -131,7 +_,7 @@
+             for (int j = 0; j < 4; j++) {
+                 if (i == this.lastChunkPos[j] && p_334940_ == this.lastChunkStatus[j]) {
+                     ChunkAccess chunkaccess = this.lastChunk[j];
+-                    if (chunkaccess != null || !p_8363_) {
++                    if (chunkaccess != null) { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
+                         return chunkaccess;
+                     }
+                 }
+@@ -143,7 +_,7 @@
+             ChunkResult<ChunkAccess> chunkresult = completablefuture.join();
+             ChunkAccess chunkaccess1 = chunkresult.orElse(null);
+             if (chunkaccess1 == null && p_8363_) {
+-                throw (IllegalStateException)Util.pauseInIde(new IllegalStateException("Chunk not there when requested: " + chunkresult.getError()));
++                throw (IllegalStateException) Util.pauseInIde(new IllegalStateException("Chunk not there when requested: " + chunkresult.getError()));
+             } else {
+                 this.storeInCache(i, chunkaccess1, p_334940_);
+                 return chunkaccess1;
+@@ -163,7 +_,7 @@
+             for (int j = 0; j < 4; j++) {
+                 if (i == this.lastChunkPos[j] && this.lastChunkStatus[j] == ChunkStatus.FULL) {
+                     ChunkAccess chunkaccess = this.lastChunk[j];
+-                    return chunkaccess instanceof LevelChunk ? (LevelChunk)chunkaccess : null;
++                    return chunkaccess instanceof LevelChunk ? (LevelChunk) chunkaccess : null;
+                 }
+             }
  
 @@ -171,6 +_,10 @@
              if (chunkholder == null) {
@@ -77,23 +125,90 @@
                  ChunkResult<ChunkAccess> chunkresult = chunkholder.getFutureIfPresent(ChunkStatus.FULL).getNow(null);
                  if (chunkresult == null) {
                      return null;
+@@ -179,7 +_,7 @@
+                     if (chunkaccess1 != null) {
+                         this.storeInCache(i, chunkaccess1, ChunkStatus.FULL);
+                         if (chunkaccess1 instanceof LevelChunk) {
+-                            return (LevelChunk)chunkaccess1;
++                            return (LevelChunk) chunkaccess1;
+                         }
+                     }
+ 
+@@ -203,9 +_,9 @@
+             this.mainThreadProcessor.managedBlock(completablefuture::isDone);
+         } else {
+             completablefuture = CompletableFuture.<CompletableFuture<ChunkResult<ChunkAccess>>>supplyAsync(
+-                    () -> this.getChunkFutureMainThread(p_8432_, p_8433_, p_329681_, p_8435_), this.mainThreadProcessor
+-                )
+-                .thenCompose(p_333930_ -> (CompletionStage<ChunkResult<ChunkAccess>>)p_333930_);
++                            () -> this.getChunkFutureMainThread(p_8432_, p_8433_, p_329681_, p_8435_), this.mainThreadProcessor
++                    )
++                    .thenCompose(p_333930_ -> (CompletionStage<ChunkResult<ChunkAccess>>) p_333930_);
+         }
+ 
+         return completablefuture;
+@@ -216,7 +_,16 @@
+         long i = chunkpos.toLong();
+         int j = ChunkLevel.byStatus(p_334479_);
+         ChunkHolder chunkholder = this.getVisibleChunkIfPresent(i);
+-        if (p_8460_) {
++
++        // CraftBukkit start - don't add new ticket for currently unloading chunk
++        boolean currentlyUnloading = false;
++        if (chunkholder != null) {
++            FullChunkStatus oldChunkState = ChunkLevel.fullStatus(chunkholder.oldTicketLevel);
++            FullChunkStatus currentChunkState = ChunkLevel.fullStatus(chunkholder.getTicketLevel());
++            currentlyUnloading = (oldChunkState.isOrAfter(FullChunkStatus.FULL) && !currentChunkState.isOrAfter(FullChunkStatus.FULL));
++        }
++        if (p_8460_ && !currentlyUnloading) {
++            // CraftBukkit end
+             this.distanceManager.addTicket(TicketType.UNKNOWN, chunkpos, j, chunkpos);
+             if (this.chunkAbsent(chunkholder, j)) {
+                 ProfilerFiller profilerfiller = this.level.getProfiler();
+@@ -225,7 +_,7 @@
+                 chunkholder = this.getVisibleChunkIfPresent(i);
+                 profilerfiller.pop();
+                 if (this.chunkAbsent(chunkholder, j)) {
+-                    throw (IllegalStateException)Util.pauseInIde(new IllegalStateException("No chunk holder after ticket has been added"));
++                    throw (IllegalStateException) Util.pauseInIde(new IllegalStateException("No chunk holder after ticket has been added"));
+                 }
+             }
+         }
+@@ -234,7 +_,7 @@
+     }
+ 
+     private boolean chunkAbsent(@Nullable ChunkHolder p_8417_, int p_8418_) {
+-        return p_8417_ == null || p_8417_.getTicketLevel() > p_8418_;
++        return p_8417_ == null || p_8417_.oldTicketLevel > p_8418_; // CraftBukkit using oldTicketLevel for isLoaded checks
+     }
+ 
+     @Override
 @@ -305,7 +_,15 @@
  
      @Override
      public void close() throws IOException {
 -        this.save(true);
-+      	// CraftBukkit start
-+      	close(true);
-+   	}
++        // CraftBukkit start
++        close(true);
++    }
 +
-+   	public void close(boolean save) throws IOException {
-+      	if (save) {
-+         	this.save(true);
-+      	}
-+      	// CraftBukkit end
++    public void close(boolean save) throws IOException {
++        if (save) {
++            this.save(true);
++        }
++        // CraftBukkit end
          this.lightEngine.close();
          this.chunkMap.close();
      }
+@@ -351,7 +_,7 @@
+                 profilerfiller.popPush("naturalSpawnCount");
+                 int l = this.distanceManager.getNaturalSpawnChunkCount();
+                 NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.createState(
+-                    l, this.level.getAllEntities(), this::getFullChunk, new LocalMobCapCalculator(this.chunkMap)
++                        l, this.level.getAllEntities(), this::getFullChunk, new LocalMobCapCalculator(this.chunkMap)
+                 );
+                 this.lastSpawnState = naturalspawner$spawnstate;
+                 profilerfiller.popPush("spawnAndTick");
 @@ -363,7 +_,7 @@
                  for (ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
                      LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
@@ -112,7 +227,7 @@
 +    }
 +
 +    public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_, boolean forceTicks) {
-+       this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, forceTicks);
++        this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, forceTicks);
      }
  
      public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
@@ -121,7 +236,7 @@
 +    }
 +
 +    public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_, boolean forceTicks) {
-+       this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, forceTicks);
++        this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, forceTicks);
      }
  
      @Override
@@ -130,17 +245,17 @@
          this.distanceManager.removeTicketsOnClosing();
      }
 +
-+   // CraftBukkit start - modelled on below
-+   public void purgeUnload() {
-+      this.level.getProfiler().push("purge");
-+      this.distanceManager.purgeStaleTickets();
-+      this.runDistanceManagerUpdates();
-+      this.level.getProfiler().popPush("unload");
-+      this.chunkMap.tick(() -> true);
-+      this.level.getProfiler().pop();
-+      this.clearCache();
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start - modelled on below
++    public void purgeUnload() {
++        this.level.getProfiler().push("purge");
++        this.distanceManager.purgeStaleTickets();
++        this.runDistanceManagerUpdates();
++        this.level.getProfiler().popPush("unload");
++        this.chunkMap.tick(() -> true);
++        this.level.getProfiler().pop();
++        this.clearCache();
++    }
++    // CraftBukkit end
  
      static record ChunkAndHolder(LevelChunk chunk, ChunkHolder holder) {
      }

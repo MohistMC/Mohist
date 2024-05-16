@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,16 +_,22 @@
+@@ -2,16 +_,19 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
@@ -10,46 +10,26 @@
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
- import com.mojang.brigadier.suggestion.Suggestions;
+-import com.mojang.brigadier.suggestion.Suggestions;
 +import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
 +import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
- import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
+-import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import java.net.SocketAddress;
-+import java.time.Instant;
 +import java.util.Arrays;
  import java.util.Collections;
  import java.util.EnumSet;
  import java.util.HashMap;
-@@ -22,12 +_,17 @@
+@@ -22,6 +_,7 @@
  import java.util.Set;
  import java.util.concurrent.CancellationException;
  import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.ExecutionException;
-+import java.util.concurrent.atomic.AtomicInteger;
-+import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
-+import java.util.function.UnaryOperator;
  import java.util.stream.Collectors;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
- import net.minecraft.ChatFormatting;
-+import net.minecraft.SharedConstants;
- import net.minecraft.Util;
- import net.minecraft.advancements.AdvancementHolder;
- import net.minecraft.advancements.CriteriaTriggers;
-@@ -40,6 +_,8 @@
- import net.minecraft.core.component.DataComponents;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.nbt.ListTag;
-+import net.minecraft.nbt.StringTag;
- import net.minecraft.network.Connection;
- import net.minecraft.network.TickablePacketListener;
- import net.minecraft.network.chat.ChatType;
 @@ -48,6 +_,7 @@
  import net.minecraft.network.chat.LastSeenMessagesValidator;
  import net.minecraft.network.chat.MessageSignature;
@@ -75,14 +55,6 @@
  import net.minecraft.network.protocol.game.ClientboundStartConfigurationPacket;
  import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
  import net.minecraft.network.protocol.game.ClientboundTagQueryPacket;
-@@ -131,6 +_,7 @@
- import net.minecraft.util.Mth;
- import net.minecraft.util.SignatureValidator;
- import net.minecraft.util.StringUtil;
-+import net.minecraft.world.Container;
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.effect.MobEffects;
 @@ -138,9 +_,12 @@
  import net.minecraft.world.entity.ExperienceOrb;
  import net.minecraft.world.entity.HasCustomInventoryScreen;
@@ -110,9 +82,11 @@
  import net.minecraft.world.item.BlockItem;
  import net.minecraft.world.item.BucketItem;
  import net.minecraft.world.item.Item;
-@@ -163,6 +_,7 @@
+@@ -161,8 +_,8 @@
+ import net.minecraft.world.item.component.CustomData;
+ import net.minecraft.world.item.component.WritableBookContent;
  import net.minecraft.world.item.component.WrittenBookContent;
- import net.minecraft.world.item.crafting.RecipeHolder;
+-import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.level.BaseCommandBlock;
 +import net.minecraft.world.level.ClipContext;
  import net.minecraft.world.level.GameRules;
@@ -176,7 +150,7 @@
  
      public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
 -        super(p_9770_, p_9771_, p_300908_);
-+        super(p_9770_, p_9771_, p_300908_, p_9772_);
++        super(p_9770_, p_9771_, p_300908_, p_9772_); // CraftBukkit
          this.chunkSender = new PlayerChunkSender(p_9771_.isMemoryConnection());
          this.player = p_9772_;
          p_9772_.connection = this;
@@ -212,7 +186,7 @@
      public void tick() {
          if (this.ackBlockChangesUpTo > -1) {
              this.send(new ClientboundBlockChangedAckPacket(this.ackBlockChangesUpTo));
-@@ -305,8 +_,8 @@
+@@ -305,8 +_,9 @@
          }
  
          if (this.player.getLastActionTime() > 0L
@@ -220,6 +194,7 @@
 -            && Util.getMillis() - this.player.getLastActionTime() > (long)this.server.getPlayerIdleTimeout() * 1000L * 60L) {
 +                && this.server.getPlayerIdleTimeout() > 0
 +                && Util.getMillis() - this.player.getLastActionTime() > (long) this.server.getPlayerIdleTimeout() * 1000L * 60L) {
++            this.player.resetLastActionTime(); // CraftBukkit - SPIGOT-854
              this.disconnect(Component.translatable("multiplayer.disconnect.idling"));
          }
      }
@@ -403,7 +378,7 @@
          this.player.getRecipeBook().setBookSetting(p_9895_.getBookType(), p_9895_.isOpen(), p_9895_.isFiltering());
      }
  
-@@ -512,18 +_,11 @@
+@@ -512,18 +_,10 @@
          }
  
          ParseResults<CommandSourceStack> parseresults = this.server.getCommands().getDispatcher().parse(stringreader, this.player.createCommandSourceStack());
@@ -420,8 +395,7 @@
 -                }
 -            );
 +        this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((p_296597_) -> {
-+            if (p_296597_.isEmpty())
-+                return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
++            if (p_296597_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
 +            this.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_296597_));
 +        });
      }
@@ -469,7 +443,7 @@
          this.player.connection.send(new ClientboundSetCarriedItemPacket(this.player.getInventory().selected));
      }
  
-@@ -734,7 +_,16 @@
+@@ -734,7 +_,15 @@
      public void handleSelectTrade(ServerboundSelectTradePacket p_9905_) {
          PacketUtils.ensureRunningOnSameThread(p_9905_, this, this.player.serverLevel());
          int i = p_9905_.getItem();
@@ -483,7 +457,6 @@
 +                return;
 +            }
 +            // CraftBukkit end
-+
              if (!merchantmenu.stillValid(this.player)) {
                  LOGGER.debug("Player {} interacted with invalid menu {}", this.player, merchantmenu);
                  return;
@@ -506,6 +479,30 @@
          int i = p_9862_.slot();
          if (Inventory.isHotbarSlot(i) || i == 40) {
              List<String> list = Lists.newArrayList();
+@@ -761,10 +_,12 @@
+     }
+ 
+     private void updateBookContents(List<FilteredText> p_9813_, int p_9814_) {
+-        ItemStack itemstack = this.player.getInventory().getItem(p_9814_);
++        ItemStack handItem = this.player.getInventory().getItem(p_9814_);
++        ItemStack itemstack = handItem.copy();
+         if (itemstack.is(Items.WRITABLE_BOOK)) {
+             List<Filterable<String>> list = p_9813_.stream().map(this::filterableFromOutgoing).toList();
+             itemstack.set(DataComponents.WRITABLE_BOOK_CONTENT, new WritableBookContent(list));
++            CraftEventFactory.handleEditBookEvent(player, p_9814_, handItem, itemstack); // CraftBukkit
+         }
+     }
+ 
+@@ -775,7 +_,8 @@
+             itemstack1.remove(DataComponents.WRITABLE_BOOK_CONTENT);
+             List<Filterable<Component>> list = p_215210_.stream().map(p_326455_ -> this.filterableFromOutgoing(p_326455_).<Component>map(Component::literal)).toList();
+             itemstack1.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(this.filterableFromOutgoing(p_215209_), this.player.getName().getString(), 0, list, true));
+-            this.player.getInventory().setItem(p_215211_, itemstack1);
++            CraftEventFactory.handleEditBookEvent(player, p_215211_, itemstack, itemstack1); // CraftBukkit
++            this.player.getInventory().setItem(p_215211_, itemstack); // CraftBukkit - event factory updates the hand book
+         }
+     }
+ 
 @@ -783,7 +_,7 @@
          return this.player.isTextFilteringEnabled() ? Filterable.passThrough(p_328315_.filteredOrEmpty()) : Filterable.from(p_328315_);
      }
@@ -524,11 +521,10 @@
                  if (this.tickCount == 0) {
                      this.resetPosition();
                  }
-@@ -832,6 +_,8 @@
+@@ -832,6 +_,7 @@
                          this.awaitingTeleportTime = this.tickCount;
                          this.teleport(this.awaitingPositionFromClient.x, this.awaitingPositionFromClient.y, this.awaitingPositionFromClient.z, this.player.getYRot(), this.player.getXRot());
                      }
-+
 +                    this.allowedPlayerTicks = 20; // CraftBukkit
                  } else {
                      this.awaitingTeleportTime = this.tickCount;
@@ -800,7 +796,7 @@
          Iterable<VoxelShape> iterable = p_289008_.getCollisions(this.player, aabb.deflate(1.0E-5F));
          VoxelShape voxelshape = Shapes.create(p_288986_.deflate(1.0E-5F));
  
-@@ -973,32 +_,86 @@
+@@ -973,32 +_,94 @@
          return false;
      }
  
@@ -883,6 +879,14 @@
              this.awaitingTeleport = 0;
          }
  
++        // CraftBukkit start - update last location
++        this.lastPosX = this.awaitingPositionFromClient.x;
++        this.lastPosY = this.awaitingPositionFromClient.y;
++        this.lastPosZ = this.awaitingPositionFromClient.z;
++        this.lastYaw = pYaw;
++        this.lastPitch = pPitch;
++        // CraftBukkit end
++
          this.awaitingTeleportTime = this.tickCount;
 -        this.player.resetCurrentImpulseContext();
 -        this.player.absMoveTo(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_);
@@ -1142,7 +1146,7 @@
                  PlayerChatMessage playerchatmessage;
                  try {
                      playerchatmessage = this.getSignedMessage(p_9841_, optional.get());
-@@ -1192,12 +_,15 @@
+@@ -1192,24 +_,44 @@
                  }
  
                  CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
@@ -1161,7 +1165,36 @@
          }
      }
  
-@@ -1220,8 +_,8 @@
+     @Override
+     public void handleChatCommand(ServerboundChatCommandPacket p_215225_) {
+         this.tryHandleChat(p_215225_.command(), () -> {
++            // CraftBukkit start - SPIGOT-7346: Prevent disconnected players from executing commands
++            if (player.hasDisconnected()) {
++                return;
++            }
++            // CraftBukkit end
+             this.performUnsignedChatCommand(p_215225_.command());
+             this.detectRateSpam();
+         });
+     }
+ 
+     private void performUnsignedChatCommand(String p_334078_) {
++        // CraftBukkit start
++        String command = "/" + p_334078_;
++        LOGGER.info(this.player.getScoreboardName() + " issued server command: " + command);
++
++        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getCraftPlayer(), command, new LazyPlayerSet(server));
++        this.cserver.getPluginManager().callEvent(event);
++
++        if (event.isCancelled()) {
++            return;
++        }
++        p_334078_ = event.getMessage().substring(1);
++        // CraftBukkit end
+         ParseResults<CommandSourceStack> parseresults = this.parseCommand(p_334078_);
+         if (this.server.enforceSecureProfile() && SignableCommand.hasSignableArguments(parseresults)) {
+             LOGGER.error(
+@@ -1220,12 +_,17 @@
              this.server.getCommands().performCommand(parseresults, p_334078_);
          }
      }
@@ -1172,6 +1205,15 @@
      public void handleSignedChatCommand(ServerboundChatCommandSignedPacket p_330005_) {
          Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(p_330005_.lastSeenMessages());
          if (!optional.isEmpty()) {
+             this.tryHandleChat(p_330005_.command(), () -> {
++                // CraftBukkit start - SPIGOT-7346: Prevent disconnected players from executing commands
++                if (player.hasDisconnected()) {
++                    return;
++                }
++                // CraftBukkit end
+                 this.performSignedChatCommand(p_330005_, optional.get());
+                 this.detectRateSpam();
+             });
 @@ -1233,19 +_,34 @@
      }
  
@@ -1220,12 +1262,20 @@
      ) {
          String s = p_331214_.stream().map(ArgumentSignatures.Entry::name).collect(Collectors.joining(", "));
          String s1 = p_329273_.stream().map(SignableCommand.Argument::name).collect(Collectors.joining(", "));
-@@ -1346,15 +_,47 @@
+@@ -1310,7 +_,7 @@
+     private void tryHandleChat(String p_334915_, Runnable p_336106_) {
+         if (isChatMessageIllegal(p_334915_)) {
+             this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"));
+-        } else if (this.player.getChatVisibility() == ChatVisiblity.HIDDEN) {
++        } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) {
+             this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
+         } else {
+             this.player.resetLastActionTime();
+@@ -1346,7 +_,23 @@
      }
  
      private void broadcastChatMessage(PlayerChatMessage p_243277_) {
 -        this.server.getPlayerList().broadcastChatMessage(p_243277_, this.player, ChatType.bind(ChatType.CHAT, this.player));
--        this.detectRateSpam();
 +        String s = p_243277_.signedContent();
 +        if (s.isEmpty()) {
 +            LOGGER.warn(this.player.getScoreboardName() + " tried to send an empty message");
@@ -1238,38 +1288,14 @@
 +                }
 +            });
 +        } else if (this.player.getChatVisibility() == ChatVisiblity.SYSTEM) { // Re-add "Command Only" flag check
-+            this.send(new ClientboundSystemChatPacket(Component.translatable("chat.cannotSend").withStyle(ChatFormatting.RED), false)); // Paper - Adventure
++            this.send(new ClientboundSystemChatPacket(Component.translatable("chat.cannotSend").withStyle(ChatFormatting.RED), false));
 +        } else {
 +            this.chat(s, p_243277_, true);
 +        }
 +        // this.server.getPlayerList().broadcastChatMessage(p_243277_, this.player, ChatType.bind(ChatType.CHAT, this.player));
-+        this.detectRateSpam(s);
-+    }
-+
-+    private String s = null;
-+
-+    private void detectRateSpam(String string) {
-+        s = string;
-+        detectRateSpam();
+         this.detectRateSpam();
      }
  
-     private void detectRateSpam() {
-+        boolean counted = true;
-+        for (String exclude : org.spigotmc.SpigotConfig.spamExclusions) {
-+            if (exclude != null && s != null && s.startsWith(exclude)) {
-+                counted = false;
-+                break;
-+            }
-+        }
-+        if (!counted) return;
-         this.chatSpamTickCount += 20;
-         if (this.chatSpamTickCount > 200 && !this.server.getPlayerList().isOp(this.player.getGameProfile())) {
-             this.disconnect(Component.translatable("disconnect.spam"));
-         }
-+
-     }
- 
-     @Override
 @@ -1367,16 +_,63 @@
          }
      }
