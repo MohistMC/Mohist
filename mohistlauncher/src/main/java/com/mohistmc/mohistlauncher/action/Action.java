@@ -46,14 +46,13 @@ public abstract class Action {
 
     public final String forgeStart;
     public final File universalJar;
-    public final File serverJar;
+    public final File official;
 
     public final File lzma;
     public final File installInfo;
 
     public final String otherStart;
     public final File unpacked;
-    public final File srg;
 
     public final String mcpStart;
     public final File mcpZip;
@@ -70,7 +69,7 @@ public abstract class Action {
 
         this.forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer;
         this.universalJar = new File(forgeStart + "-universal.jar");
-        this.serverJar = new File(forgeStart + "-server.jar");
+        this.official = new File(forgeStart + "-official.jar");
 
         this.lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
         this.installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
@@ -78,7 +77,6 @@ public abstract class Action {
         this.otherStart = libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer;
 
         this.unpacked = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-unpacked.jar");
-        this.srg = new File(otherStart + "-srg.jar");
 
         this.mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;
         this.mcpZip = new File(mcpStart + ".zip");
@@ -140,9 +138,6 @@ public abstract class Action {
 
     public boolean needsInstall() throws IOException {
         if (installInfo.exists()) {
-            if (!serverJar.exists()) {
-                return true;
-            }
             String lzmaMD5 = MD5Util.get(lzma);
             List<String> lines = Files.readAllLines(installInfo.toPath());
 

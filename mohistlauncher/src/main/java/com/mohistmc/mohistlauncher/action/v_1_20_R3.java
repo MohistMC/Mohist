@@ -26,6 +26,7 @@ public class v_1_20_R3 {
         public final File lowcodelanguage;
         public final File mojmap;
         public final File mergedMapping;
+        public final File PATCHED;
 
         protected Install() throws Exception {
             super();
@@ -34,6 +35,7 @@ public class v_1_20_R3 {
             this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            this.PATCHED = new File(libPath + "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer + "-server.jar");
 
             this.mojmap = new File(otherStart + "-mappings.tsrg");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.tsrg");
@@ -75,7 +77,12 @@ public class v_1_20_R3 {
             if (mcpZip.exists()) {
                 if (!mcpTsrg.exists()) {
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            "--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTsrg.getAbsolutePath(), "--key", "mappings");
+                            "--task",
+                            "MCP_DATA",
+                            "--input", mcpZip.getAbsolutePath(),
+                            "--output", mcpTsrg.getAbsolutePath(),
+                            "--key",
+                            "mappings");
                 }
             } else {
                 System.out.println(I18n.as("installation.mcpfilemissing"));
@@ -86,24 +93,27 @@ public class v_1_20_R3 {
                 unpacked.delete();
             }
 
-            if (JarTool.isCorrupted(srg)) {
-                srg.delete();
+            if (JarTool.isCorrupted(official)) {
+                official.delete();
             }
 
-            if (!mergedMapping.exists()) {
-                run("net.minecraftforge.installertools.ConsoleTool",
-                        "--task", "MERGE_MAPPING", "--left", mcpTsrg.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right");
-            }
-
-            if (!srg.exists()) {
+            if (!official.exists()) {
                 run("net.minecraftforge.fart.Main",
-                        "--input", unpacked.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix", "--strip-sigs");
+                        "--input", unpacked.getAbsolutePath(),
+                        "--output", official.getAbsolutePath(),
+                        "--names", mojmap.getAbsolutePath(),
+                        "--ann-fix",
+                        "--ids-fix",
+                        "--src-fix",
+                        "--record-fix",
+                        "--strip-sigs",
+                        "--reverse");
             }
 
             String storedServerMD5 = null;
             String storedLzmaMD5 = null;
             String storeduniversalJarMD5 = MD5Util.get(universalJar);
-            String serverMD5 = MD5Util.get(serverJar);
+            String serverMD5 = MD5Util.get(official);
             String lzmaMD5 = MD5Util.get(lzma);
 
             if (installInfo.exists()) {
@@ -116,10 +126,14 @@ public class v_1_20_R3 {
                 }
             }
 
-            if (!serverJar.exists() || storedServerMD5 == null || storedLzmaMD5 == null || !storedServerMD5.equals(serverMD5) || !storedLzmaMD5.equals(lzmaMD5)) {
+            if (!official.exists() || storedServerMD5 == null || storedLzmaMD5 == null || !storedServerMD5.equals(serverMD5) || !storedLzmaMD5.equals(lzmaMD5)) {
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        "--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath(), "--data", "--unpatched");
-                serverMD5 = MD5Util.get(serverJar);
+                        "--clean", official.getAbsolutePath(),
+                        "--output", PATCHED.getAbsolutePath(),
+                        "--apply", lzma.getAbsolutePath(),
+                        "--data",
+                        "--unpatched");
+                serverMD5 = MD5Util.get(official);
             }
 
             FileWriter fw = new FileWriter(installInfo);
