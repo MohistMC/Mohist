@@ -8,6 +8,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.mohist.Mohist;
+import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import com.mohistmc.mohist.util.Level2LevelStem;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
@@ -326,6 +327,8 @@ public final class CraftServer implements Server {
         Bukkit.setServer(this);
 
         CraftRegistry.setMinecraftRegistry(console.registryAccess());
+
+        ForgeInjectBukkit.init();
 
         if (!Main.useConsole) {
             this.getLogger().info("Console input is disabled due to --noconsole command argument");

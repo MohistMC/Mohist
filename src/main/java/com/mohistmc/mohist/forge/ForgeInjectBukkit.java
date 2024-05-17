@@ -3,9 +3,9 @@ package com.mohistmc.mohist.forge;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.mohist.Mohist;
 import com.mohistmc.mohist.api.ServerAPI;
-import com.mohistmc.dynamicenum.MohistDynamEnum;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -210,11 +209,14 @@ public class ForgeInjectBukkit {
                 NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation);
                 String entityType = resourceLocation.toString();
                 int typeId = entityType.hashCode();
-                EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE), List.of(entityType.toLowerCase(), Entity.class, typeId, false));
-                bukkitType.key = key;
-                entityTypeMap.put(key, bukkitType);
-                EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
-                EntityType.ID_MAP.put((short) typeId, bukkitType);
+                EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE), List.of(resourceLocation.getPath(), Entity.class, typeId));
+                Mohist.LOGGER.debug("Registered {} as entity {}", resourceLocation, bukkitType);
+                if (bukkitType != null) {
+                    bukkitType.key = key;
+                    entityTypeMap.put(key, bukkitType);
+                    EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
+                    EntityType.ID_MAP.put((short) typeId, bukkitType);
+                }
             }
         }
     }
