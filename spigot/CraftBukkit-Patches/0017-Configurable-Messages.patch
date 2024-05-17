@@ -1,0 +1,110 @@
+From 792db8b284c1e166d59a230bf20446bcd9d61230 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 21 Jun 2013 19:21:58 +1000
+Subject: [PATCH] Configurable Messages
+
+
+diff --git a/src/main/java/net/minecraft/server/network/HandshakeListener.java b/src/main/java/net/minecraft/server/network/HandshakeListener.java
+index d997edbd57..1cf2ab25ef 100644
+--- a/src/main/java/net/minecraft/server/network/HandshakeListener.java
++++ b/src/main/java/net/minecraft/server/network/HandshakeListener.java
+@@ -105,10 +105,10 @@ public class HandshakeListener implements PacketHandshakingInListener {
+         if (packethandshakinginsetprotocol.protocolVersion() != SharedConstants.getCurrentVersion().getProtocolVersion()) {
+             IChatMutableComponent ichatmutablecomponent;
+ 
+-            if (packethandshakinginsetprotocol.protocolVersion() < 754) {
+-                ichatmutablecomponent = IChatBaseComponent.translatable("multiplayer.disconnect.outdated_client", SharedConstants.getCurrentVersion().getName());
++            if (packethandshakinginsetprotocol.protocolVersion() < SharedConstants.getCurrentVersion().getProtocolVersion()) { // Spigot - SPIGOT-7546: Handle version check correctly for outdated client message
++                ichatmutablecomponent = IChatBaseComponent.literal( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedClientMessage.replaceAll("'", "''"), SharedConstants.getCurrentVersion().getName() ) ); // Spigot
+             } else {
+-                ichatmutablecomponent = IChatBaseComponent.translatable("multiplayer.disconnect.incompatible", SharedConstants.getCurrentVersion().getName());
++                ichatmutablecomponent = IChatBaseComponent.literal( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedServerMessage.replaceAll("'", "''"), SharedConstants.getCurrentVersion().getName() ) ); // Spigot
+             }
+ 
+             this.connection.send(new PacketLoginOutDisconnect(ichatmutablecomponent));
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 956b276a9c..0cfa14ad69 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -597,7 +597,7 @@ public abstract class PlayerList {
+             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(ichatmutablecomponent));
+         } else if (!this.isWhiteListed(gameprofile)) {
+             ichatmutablecomponent = IChatBaseComponent.translatable("multiplayer.disconnect.not_whitelisted");
+-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CraftChatMessage.fromComponent(ichatmutablecomponent));
++            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
+         } else if (this.ipBans.isBanned(socketaddress)) {
+             IpBanEntry ipbanentry = this.ipBans.get(socketaddress);
+ 
+@@ -611,7 +611,7 @@ public abstract class PlayerList {
+         } else {
+             // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
+             if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile)) {
+-                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full");
++                event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
+             }
+         }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 1673f57cc7..f0131e677f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -868,11 +868,11 @@ public final class CraftServer implements Server {
+             return true;
+         }
+ 
+-        if (sender instanceof Player) {
+-            sender.sendMessage("Unknown command. Type \"/help\" for help.");
+-        } else {
+-            sender.sendMessage("Unknown command. Type \"help\" for help.");
++        // Spigot start
++        if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
++            sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
+         }
++        // Spigot end
+ 
+         return false;
+     }
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index fc352ecf10..8ad8b25894 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -12,6 +12,7 @@ import java.util.Map;
+ import java.util.logging.Level;
+ import net.minecraft.server.MinecraftServer;
+ import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
+ import org.bukkit.command.Command;
+ import org.bukkit.configuration.InvalidConfigurationException;
+ import org.bukkit.configuration.file.YamlConfiguration;
+@@ -175,4 +176,28 @@ public class SpigotConfig
+         tabComplete = getInt( "commands.tab-complete", 0 );
+         sendNamespaced = getBoolean( "commands.send-namespaced", true );
+     }
++
++    public static String whitelistMessage;
++    public static String unknownCommandMessage;
++    public static String serverFullMessage;
++    public static String outdatedClientMessage = "Outdated client! Please use {0}";
++    public static String outdatedServerMessage = "Outdated server! I\'m still on {0}";
++    private static String transform(String s)
++    {
++        return ChatColor.translateAlternateColorCodes( '&', s ).replaceAll( "\\\\n", "\n" );
++    }
++    private static void messages()
++    {
++        if (version < 8)
++        {
++            set( "messages.outdated-client", outdatedClientMessage );
++            set( "messages.outdated-server", outdatedServerMessage );
++        }
++
++        whitelistMessage = transform( getString( "messages.whitelist", "You are not whitelisted on this server!" ) );
++        unknownCommandMessage = transform( getString( "messages.unknown-command", "Unknown command. Type \"/help\" for help." ) );
++        serverFullMessage = transform( getString( "messages.server-full", "The server is full!" ) );
++        outdatedClientMessage = transform( getString( "messages.outdated-client", outdatedClientMessage ) );
++        outdatedServerMessage = transform( getString( "messages.outdated-server", outdatedServerMessage ) );
++    }
+ }
+-- 
+2.43.2
+

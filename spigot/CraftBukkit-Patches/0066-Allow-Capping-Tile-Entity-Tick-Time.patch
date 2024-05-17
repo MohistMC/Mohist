@@ -1,0 +1,109 @@
+From ca6d7f97e91f7f39993cbd71a6f1a463fcb587c9 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 20 Feb 2015 21:39:31 +1100
+Subject: [PATCH] Allow Capping (Tile)Entity Tick Time.
+
+This patch adds world configuration options for max-tick-time.entity / max-tick-time.tile which allows setting a hard cap on the amount of time (in milliseconds) that a tick can consume. The default values of 50ms each are very conservative and mean this feature will not activate until the server is well below 15tps (minimum). Values of 20ms each have been reported to provide a good performance increase, however I personally think 25ms for entities and 10-15ms for tiles would give even more significant gains, assuming that these things are not a large priority on your server.
+
+For tiles there is very little tradeoff for this option, as tile ticks are based on wall time for most things, however for entities setting this option too low could lead to jerkiness / lag. The gain however is a faster and more responsive server to other actions such as blocks, chat, combat etc.
+
+This feature was commisioned by Chunkr.
+
+diff --git a/src/main/java/net/minecraft/world/level/World.java b/src/main/java/net/minecraft/world/level/World.java
+index a48d98f0cb..85e1492165 100644
+--- a/src/main/java/net/minecraft/world/level/World.java
++++ b/src/main/java/net/minecraft/world/level/World.java
+@@ -158,6 +158,9 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+ 
+     public final SpigotTimings.WorldTimingsHandler timings; // Spigot
+     public static BlockPosition lastPhysicsProblem; // Spigot
++    private org.spigotmc.TickLimiter entityLimiter;
++    private org.spigotmc.TickLimiter tileLimiter;
++    private int tileTickPosition;
+ 
+     public CraftWorld getWorld() {
+         return this.world;
+@@ -248,6 +251,8 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+         });
+         // CraftBukkit end
+         timings = new SpigotTimings.WorldTimingsHandler(this); // Spigot - code below can generate new world and access timings
++        this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
++        this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
+     }
+ 
+     @Override
+@@ -640,14 +645,23 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+         timings.tileEntityPending.stopTiming(); // Spigot
+ 
+         timings.tileEntityTick.startTiming(); // Spigot
+-        Iterator<TickingBlockEntity> iterator = this.blockEntityTickers.iterator();
++        // Spigot start
++        // Iterator<TickingBlockEntity> iterator = this.blockEntityTickers.iterator();
+         boolean flag = this.tickRateManager().runsNormally();
+ 
+-        while (iterator.hasNext()) {
+-            TickingBlockEntity tickingblockentity = (TickingBlockEntity) iterator.next();
++        int tilesThisCycle = 0;
++        for (tileLimiter.initTick();
++                tilesThisCycle < blockEntityTickers.size() && (tilesThisCycle % 10 != 0 || tileLimiter.shouldContinue());
++                tileTickPosition++, tilesThisCycle++) {
++            tileTickPosition = (tileTickPosition < blockEntityTickers.size()) ? tileTickPosition : 0;
++            TickingBlockEntity tickingblockentity = (TickingBlockEntity) this.blockEntityTickers.get(tileTickPosition);
++            // Spigot end
+ 
+             if (tickingblockentity.isRemoved()) {
+-                iterator.remove();
++                // Spigot start
++                tilesThisCycle--;
++                this.blockEntityTickers.remove(tileTickPosition--);
++                // Spigot end
+             } else if (flag && this.shouldTickBlocksAt(tickingblockentity.getPos())) {
+                 tickingblockentity.tick();
+             }
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 76aeff3324..68cf01386e 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -373,4 +373,13 @@ public class SpigotWorldConfig
+     {
+         hangingTickFrequency = getInt( "hanging-tick-frequency", 100 );
+     }
++
++    public int tileMaxTickTime;
++    public int entityMaxTickTime;
++    private void maxTickTimes()
++    {
++        tileMaxTickTime = getInt("max-tick-time.tile", 50);
++        entityMaxTickTime = getInt("max-tick-time.entity", 50);
++        log("Tile Max Tick Time: " + tileMaxTickTime + "ms Entity max Tick Time: " + entityMaxTickTime + "ms");
++    }
+ }
+diff --git a/src/main/java/org/spigotmc/TickLimiter.java b/src/main/java/org/spigotmc/TickLimiter.java
+new file mode 100644
+index 0000000000..23a39382be
+--- /dev/null
++++ b/src/main/java/org/spigotmc/TickLimiter.java
+@@ -0,0 +1,20 @@
++package org.spigotmc;
++
++public class TickLimiter {
++
++    private final int maxTime;
++    private long startTime;
++
++    public TickLimiter(int maxtime) {
++        this.maxTime = maxtime;
++    }
++
++    public void initTick() {
++        startTime = System.currentTimeMillis();
++    }
++
++    public boolean shouldContinue() {
++        long remaining = System.currentTimeMillis() - startTime;
++        return remaining < maxTime;
++    }
++}
+-- 
+2.43.2
+

@@ -1,0 +1,24 @@
+From ac454c184eb5de7174c82fc52c2641308bea2585 Mon Sep 17 00:00:00 2001
+From: Thinkofdeath <thinkofdeath@spigotmc.org>
+Date: Wed, 2 Jul 2014 23:35:51 +0100
+Subject: [PATCH] Better item validation
+
+
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index 6d50516340..cecd6ebee2 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -184,6 +184,10 @@ public final class ItemStack implements DataComponentHolder {
+                 registryfriendlybytebuf.writeVarInt(0);
+             } else {
+                 registryfriendlybytebuf.writeVarInt(itemstack.getCount());
++                // Spigot start - filter
++                itemstack = itemstack.copy();
++                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++                // Spigot end
+                 ITEM_STREAM_CODEC.encode(registryfriendlybytebuf, itemstack.getItemHolder()); // CraftBukkit - decompile error
+                 DataComponentPatch.STREAM_CODEC.encode(registryfriendlybytebuf, itemstack.components.asPatch());
+             }
+-- 
+2.43.2
+

@@ -1,0 +1,71 @@
+From 6ceaebf802bf18164f0c155350a278f8c268e0e2 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sun, 27 Jul 2014 20:46:04 +1000
+Subject: [PATCH] Apply NBTReadLimiter to more things.
+
+
+diff --git a/src/main/java/net/minecraft/nbt/NBTCompressedStreamTools.java b/src/main/java/net/minecraft/nbt/NBTCompressedStreamTools.java
+index 8685362b8e..72de4bff69 100644
+--- a/src/main/java/net/minecraft/nbt/NBTCompressedStreamTools.java
++++ b/src/main/java/net/minecraft/nbt/NBTCompressedStreamTools.java
+@@ -325,6 +325,12 @@ public class NBTCompressedStreamTools {
+     }
+ 
+     public static NBTTagCompound read(DataInput datainput, NBTReadLimiter nbtreadlimiter) throws IOException {
++        // Spigot start
++        if ( datainput instanceof io.netty.buffer.ByteBufInputStream )
++        {
++            datainput = new DataInputStream(new org.spigotmc.LimitStream((InputStream) datainput, nbtreadlimiter));
++        }
++        // Spigot end
+         NBTBase nbtbase = readUnnamedTag(datainput, nbtreadlimiter);
+ 
+         if (nbtbase instanceof NBTTagCompound) {
+diff --git a/src/main/java/org/spigotmc/LimitStream.java b/src/main/java/org/spigotmc/LimitStream.java
+new file mode 100644
+index 0000000000..e74c61ca9b
+--- /dev/null
++++ b/src/main/java/org/spigotmc/LimitStream.java
+@@ -0,0 +1,39 @@
++package org.spigotmc;
++
++import java.io.FilterInputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import net.minecraft.nbt.NBTReadLimiter;
++
++public class LimitStream extends FilterInputStream
++{
++
++    private final NBTReadLimiter limit;
++
++    public LimitStream(InputStream is, NBTReadLimiter limit)
++    {
++        super( is );
++        this.limit = limit;
++    }
++
++    @Override
++    public int read() throws IOException
++    {
++        limit.accountBytes( 1 );
++        return super.read();
++    }
++
++    @Override
++    public int read(byte[] b) throws IOException
++    {
++        limit.accountBytes( b.length );
++        return super.read( b );
++    }
++
++    @Override
++    public int read(byte[] b, int off, int len) throws IOException
++    {
++        limit.accountBytes( len );
++        return super.read( b, off, len );
++    }
++}
+-- 
+2.43.2
+

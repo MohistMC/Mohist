@@ -1,0 +1,37 @@
+From 4268875f1e3851c5bd6e77fbf185d0f2e3e75afa Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sun, 24 Oct 2021 20:29:25 +1100
+Subject: [PATCH] Configurable Thunder Chance
+
+
+diff --git a/src/main/java/net/minecraft/server/level/WorldServer.java b/src/main/java/net/minecraft/server/level/WorldServer.java
+index 84b4a8048b..c455cb8572 100644
+--- a/src/main/java/net/minecraft/server/level/WorldServer.java
++++ b/src/main/java/net/minecraft/server/level/WorldServer.java
+@@ -524,7 +524,7 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+         GameProfilerFiller gameprofilerfiller = this.getProfiler();
+ 
+         gameprofilerfiller.push("thunder");
+-        if (flag && this.isThundering() && this.random.nextInt(100000) == 0) {
++        if (flag && this.isThundering() && this.spigotConfig.thunderChance > 0 && this.random.nextInt(this.spigotConfig.thunderChance) == 0) { // Spigot
+             BlockPosition blockposition = this.findLightningTargetAround(this.getBlockRandomPos(j, 0, k, 15));
+ 
+             if (this.isRainingAt(blockposition)) {
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 68cf01386e..b6ac09ee9f 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -382,4 +382,10 @@ public class SpigotWorldConfig
+         entityMaxTickTime = getInt("max-tick-time.entity", 50);
+         log("Tile Max Tick Time: " + tileMaxTickTime + "ms Entity max Tick Time: " + entityMaxTickTime + "ms");
+     }
++
++    public int thunderChance;
++    private void thunderChance()
++    {
++        thunderChance = getInt("thunder-chance", 100000);
++    }
+ }
+-- 
+2.43.2
+

@@ -68,7 +68,7 @@ public class BrandingControl {
     }
 
     public static String getServerBranding() {
-        return "forge";
+        return "mohist";
     }
 
     public static ResourceManagerReloadListener resourceManagerReloadListener() {

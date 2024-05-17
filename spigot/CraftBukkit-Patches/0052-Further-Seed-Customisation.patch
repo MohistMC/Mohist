@@ -1,0 +1,232 @@
+From 69ac16749c0c90c96c3ed4f16d9504e3c7ca8372 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 4 Jul 2014 13:28:45 +1000
+Subject: [PATCH] Further Seed Customisation
+
+Allow server admins that really want to to customise the seeds used in world generation even further.
+
+diff --git a/src/main/java/net/minecraft/server/level/PlayerChunkMap.java b/src/main/java/net/minecraft/server/level/PlayerChunkMap.java
+index d67296445b..d86f9bffb0 100644
+--- a/src/main/java/net/minecraft/server/level/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/level/PlayerChunkMap.java
+@@ -203,7 +203,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.c {
+             this.randomState = RandomState.create(GeneratorSettingBase.dummy(), (HolderGetter) iregistrycustom.lookupOrThrow(Registries.NOISE), j);
+         }
+ 
+-        this.chunkGeneratorState = chunkgenerator.createState(iregistrycustom.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, j);
++        this.chunkGeneratorState = chunkgenerator.createState(iregistrycustom.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, j, worldserver.spigotConfig); // Spigot
+         this.mainThreadExecutor = iasynctaskhandler;
+         ThreadedMailbox<Runnable> threadedmailbox = ThreadedMailbox.create(executor, "worldgen");
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/monster/EntitySlime.java b/src/main/java/net/minecraft/world/entity/monster/EntitySlime.java
+index 76341d3d66..6c445ace2e 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/EntitySlime.java
++++ b/src/main/java/net/minecraft/world/entity/monster/EntitySlime.java
+@@ -343,7 +343,7 @@ public class EntitySlime extends EntityInsentient implements IMonster {
+                 }
+ 
+                 ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(blockposition);
+-                boolean flag = SeededRandom.seedSlimeChunk(chunkcoordintpair.x, chunkcoordintpair.z, ((GeneratorAccessSeed) generatoraccess).getSeed(), 987234911L).nextInt(10) == 0;
++                boolean flag = SeededRandom.seedSlimeChunk(chunkcoordintpair.x, chunkcoordintpair.z, ((GeneratorAccessSeed) generatoraccess).getSeed(), generatoraccess.getMinecraftWorld().spigotConfig.slimeSeed).nextInt(10) == 0; // Spigot
+ 
+                 if (randomsource.nextInt(10) == 0 && flag && blockposition.getY() < 40) {
+                     return checkMobSpawnRules(entitytypes, generatoraccess, enummobspawn, blockposition, randomsource);
+diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java b/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java
+index 1457de06cd..b1eedb99f3 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java
++++ b/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -108,8 +108,8 @@ public abstract class ChunkGenerator {
+ 
+     protected abstract MapCodec<? extends ChunkGenerator> codec();
+ 
+-    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> holderlookup, RandomState randomstate, long i) {
+-        return ChunkGeneratorStructureState.createForNormal(randomstate, i, this.biomeSource, holderlookup);
++    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> holderlookup, RandomState randomstate, long i, org.spigotmc.SpigotWorldConfig conf) { // Spigot
++        return ChunkGeneratorStructureState.createForNormal(randomstate, i, this.biomeSource, holderlookup, conf); // Spigot
+     }
+ 
+     public Optional<ResourceKey<MapCodec<? extends ChunkGenerator>>> getTypeNameForDataFixer() {
+diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java b/src/main/java/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
+index c196274ed9..f11134ca3d 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
++++ b/src/main/java/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
+@@ -34,6 +34,11 @@ import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStr
+ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
+ import org.slf4j.Logger;
+ 
++// Spigot start
++import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
++import org.spigotmc.SpigotWorldConfig;
++// Spigot end
++
+ public class ChunkGeneratorStructureState {
+ 
+     private static final Logger LOGGER = LogUtils.getLogger();
+@@ -46,21 +51,81 @@ public class ChunkGeneratorStructureState {
+     private boolean hasGeneratedPositions;
+     private final List<Holder<StructureSet>> possibleStructureSets;
+ 
+-    public static ChunkGeneratorStructureState createForFlat(RandomState randomstate, long i, WorldChunkManager worldchunkmanager, Stream<Holder<StructureSet>> stream) {
++    public static ChunkGeneratorStructureState createForFlat(RandomState randomstate, long i, WorldChunkManager worldchunkmanager, Stream<Holder<StructureSet>> stream, SpigotWorldConfig conf) { // Spigot
+         List<Holder<StructureSet>> list = stream.filter((holder) -> {
+             return hasBiomesForStructureSet((StructureSet) holder.value(), worldchunkmanager);
+         }).toList();
+ 
+-        return new ChunkGeneratorStructureState(randomstate, worldchunkmanager, i, 0L, list);
++        return new ChunkGeneratorStructureState(randomstate, worldchunkmanager, i, 0L, injectSpigot(list, conf)); // Spigot
+     }
+ 
+-    public static ChunkGeneratorStructureState createForNormal(RandomState randomstate, long i, WorldChunkManager worldchunkmanager, HolderLookup<StructureSet> holderlookup) {
++    public static ChunkGeneratorStructureState createForNormal(RandomState randomstate, long i, WorldChunkManager worldchunkmanager, HolderLookup<StructureSet> holderlookup, SpigotWorldConfig conf) { // Spigot
+         List<Holder<StructureSet>> list = (List) holderlookup.listElements().filter((holder_c) -> {
+             return hasBiomesForStructureSet((StructureSet) holder_c.value(), worldchunkmanager);
+         }).collect(Collectors.toUnmodifiableList());
+ 
+-        return new ChunkGeneratorStructureState(randomstate, worldchunkmanager, i, i, list);
++        return new ChunkGeneratorStructureState(randomstate, worldchunkmanager, i, i, injectSpigot(list, conf)); // Spigot
++    }
++
++    // Spigot start
++    private static List<Holder<StructureSet>> injectSpigot(List<Holder<StructureSet>> list, SpigotWorldConfig conf) {
++        return list.stream().map((holder) -> {
++            StructureSet structureset = holder.value();
++            if (structureset.placement() instanceof RandomSpreadStructurePlacement randomConfig) {
++                String name = holder.unwrapKey().orElseThrow().location().getPath();
++                int seed = randomConfig.salt;
++
++                switch (name) {
++                    case "desert_pyramids":
++                        seed = conf.desertSeed;
++                        break;
++                    case "end_cities":
++                        seed = conf.endCitySeed;
++                        break;
++                    case "nether_complexes":
++                        seed = conf.netherSeed;
++                        break;
++                    case "igloos":
++                        seed = conf.iglooSeed;
++                        break;
++                    case "jungle_temples":
++                        seed = conf.jungleSeed;
++                        break;
++                    case "woodland_mansions":
++                        seed = conf.mansionSeed;
++                        break;
++                    case "ocean_monuments":
++                        seed = conf.monumentSeed;
++                        break;
++                    case "nether_fossils":
++                        seed = conf.fossilSeed;
++                        break;
++                    case "ocean_ruins":
++                        seed = conf.oceanSeed;
++                        break;
++                    case "pillager_outposts":
++                        seed = conf.outpostSeed;
++                        break;
++                    case "ruined_portals":
++                        seed = conf.portalSeed;
++                        break;
++                    case "shipwrecks":
++                        seed = conf.shipwreckSeed;
++                        break;
++                    case "swamp_huts":
++                        seed = conf.swampSeed;
++                        break;
++                    case "villages":
++                        seed = conf.villageSeed;
++                        break;
++                }
++
++                structureset = new StructureSet(structureset.structures(), new RandomSpreadStructurePlacement(randomConfig.locateOffset, randomConfig.frequencyReductionMethod, randomConfig.frequency, seed, randomConfig.exclusionZone, randomConfig.spacing(), randomConfig.separation(), randomConfig.spreadType()));
++            }
++            return Holder.direct(structureset);
++        }).collect(Collectors.toUnmodifiableList());
+     }
++    // Spigot end
+ 
+     private static boolean hasBiomesForStructureSet(StructureSet structureset, WorldChunkManager worldchunkmanager) {
+         Stream<Holder<BiomeBase>> stream = structureset.structures().stream().flatMap((structureset_a) -> {
+diff --git a/src/main/java/net/minecraft/world/level/levelgen/ChunkProviderFlat.java b/src/main/java/net/minecraft/world/level/levelgen/ChunkProviderFlat.java
+index 6006583657..fd2401e331 100644
+--- a/src/main/java/net/minecraft/world/level/levelgen/ChunkProviderFlat.java
++++ b/src/main/java/net/minecraft/world/level/levelgen/ChunkProviderFlat.java
+@@ -49,14 +49,14 @@ public class ChunkProviderFlat extends ChunkGenerator {
+     }
+ 
+     @Override
+-    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> holderlookup, RandomState randomstate, long i) {
++    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> holderlookup, RandomState randomstate, long i, org.spigotmc.SpigotWorldConfig conf) { // Spigot
+         Stream<Holder<StructureSet>> stream = (Stream) this.settings.structureOverrides().map(HolderSet::stream).orElseGet(() -> {
+             return holderlookup.listElements().map((holder_c) -> {
+                 return holder_c;
+             });
+         });
+ 
+-        return ChunkGeneratorStructureState.createForFlat(randomstate, i, this.biomeSource, stream);
++        return ChunkGeneratorStructureState.createForFlat(randomstate, i, this.biomeSource, stream, conf); // Spigot
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+index dfe09d8858..185e9dbc76 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -219,7 +219,7 @@ public class CraftChunk implements Chunk {
+     @Override
+     public boolean isSlimeChunk() {
+         // 987234911L is deterimined in EntitySlime when seeing if a slime can spawn in a chunk
+-        return SeededRandom.seedSlimeChunk(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
++        return SeededRandom.seedSlimeChunk(getX(), getZ(), getWorld().getSeed(), worldServer.spigotConfig.slimeSeed).nextInt(10) == 0;
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 7f5f97defc..7882c95f4c 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -294,4 +294,40 @@ public class SpigotWorldConfig
+     {
+         endPortalSoundRadius = getInt( "end-portal-sound-radius", 0 );
+     }
++
++    public int villageSeed;
++    public int desertSeed;
++    public int iglooSeed;
++    public int jungleSeed;
++    public int swampSeed;
++    public int monumentSeed;
++    public int oceanSeed;
++    public int outpostSeed;
++    public int shipwreckSeed;
++    public int slimeSeed;
++    public int endCitySeed;
++    public int netherSeed;
++    public int mansionSeed;
++    public int fossilSeed;
++    public int portalSeed;
++    private void initWorldGenSeeds()
++    {
++        villageSeed = getInt( "seed-village", 10387312 );
++        desertSeed = getInt( "seed-desert", 14357617 );
++        iglooSeed = getInt( "seed-igloo", 14357618 );
++        jungleSeed = getInt( "seed-jungle", 14357619 );
++        swampSeed = getInt( "seed-swamp", 14357620 );
++        monumentSeed = getInt( "seed-monument", 10387313 );
++        shipwreckSeed = getInt( "seed-shipwreck", 165745295 );
++        oceanSeed = getInt( "seed-ocean", 14357621 );
++        outpostSeed = getInt( "seed-outpost", 165745296 );
++        endCitySeed = getInt( "seed-endcity", 10387313 );
++        slimeSeed = getInt( "seed-slime", 987234911 );
++        netherSeed = getInt( "seed-nether", 30084232 );
++        mansionSeed = getInt( "seed-mansion", 10387319 );
++        fossilSeed = getInt( "seed-fossil", 14357921 );
++        portalSeed = getInt( "seed-portal", 34222645 );
++        log( "Custom Map Seeds:  Village: " + villageSeed + " Desert: " + desertSeed + " Igloo: " + iglooSeed + " Jungle: " + jungleSeed + " Swamp: " + swampSeed + " Monument: " + monumentSeed
++                + " Ocean: " + oceanSeed + " Shipwreck: " + shipwreckSeed + " End City: " + endCitySeed + " Slime: " + slimeSeed + " Nether: " + netherSeed + " Mansion: " + mansionSeed + " Fossil: " + fossilSeed + " Portal: " + portalSeed );
++    }
+ }
+-- 
+2.43.2
+

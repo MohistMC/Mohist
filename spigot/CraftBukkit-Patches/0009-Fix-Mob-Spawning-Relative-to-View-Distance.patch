@@ -1,0 +1,97 @@
+From 04067bc306183b44766f77dd329a2e35d409ea4c Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 21 Jun 2013 17:29:54 +1000
+Subject: [PATCH] Fix Mob Spawning Relative to View Distance
+
+Changes the mob spawning algorithm to properly account for view distance and the range around players.
+
+Needs better documentation.
+
+diff --git a/src/main/java/net/minecraft/server/level/ChunkProviderServer.java b/src/main/java/net/minecraft/server/level/ChunkProviderServer.java
+index 722bfac225..9ae5030802 100644
+--- a/src/main/java/net/minecraft/server/level/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/level/ChunkProviderServer.java
+@@ -429,7 +429,7 @@ public class ChunkProviderServer extends IChunkProvider {
+ 
+                     if (this.level.isNaturalSpawningAllowed(chunkcoordintpair) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkcoordintpair)) {
+                         chunk1.incrementInhabitedTime(j);
+-                        if (flag && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkcoordintpair)) {
++                        if (flag && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkcoordintpair) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkcoordintpair, true)) { // Spigot
+                             SpawnerCreature.spawnForChunk(this.level, chunk1, spawnercreature_d, this.spawnFriendlies, this.spawnEnemies, flag1);
+                         }
+ 
+diff --git a/src/main/java/net/minecraft/server/level/PlayerChunkMap.java b/src/main/java/net/minecraft/server/level/PlayerChunkMap.java
+index 514e21fe35..fdeaf4b8b2 100644
+--- a/src/main/java/net/minecraft/server/level/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/level/PlayerChunkMap.java
+@@ -1125,6 +1125,17 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.c {
+     }
+ 
+     boolean anyPlayerCloseEnoughForSpawning(ChunkCoordIntPair chunkcoordintpair) {
++        // Spigot start
++        return anyPlayerCloseEnoughForSpawning(chunkcoordintpair, false);
++    }
++
++    boolean anyPlayerCloseEnoughForSpawning(ChunkCoordIntPair chunkcoordintpair, boolean reducedRange) {
++        int chunkRange = level.spigotConfig.mobSpawnRange;
++        chunkRange = (chunkRange > level.spigotConfig.viewDistance) ? (byte) level.spigotConfig.viewDistance : chunkRange;
++        chunkRange = (chunkRange > 8) ? 8 : chunkRange;
++
++        double blockRange = (reducedRange) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++        // Spigot end
+         if (!this.distanceManager.hasPlayersNearby(chunkcoordintpair.toLong())) {
+             return false;
+         } else {
+@@ -1138,7 +1149,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.c {
+                 }
+ 
+                 entityplayer = (EntityPlayer) iterator.next();
+-            } while (!this.playerIsCloseEnoughForSpawning(entityplayer, chunkcoordintpair));
++            } while (!this.playerIsCloseEnoughForSpawning(entityplayer, chunkcoordintpair, blockRange)); // Spigot
+ 
+             return true;
+         }
+@@ -1156,7 +1167,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.c {
+             while (iterator.hasNext()) {
+                 EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+ 
+-                if (this.playerIsCloseEnoughForSpawning(entityplayer, chunkcoordintpair)) {
++                if (this.playerIsCloseEnoughForSpawning(entityplayer, chunkcoordintpair, 16384.0D)) { // Spigot
+                     builder.add(entityplayer);
+                 }
+             }
+@@ -1165,13 +1176,13 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.c {
+         }
+     }
+ 
+-    private boolean playerIsCloseEnoughForSpawning(EntityPlayer entityplayer, ChunkCoordIntPair chunkcoordintpair) {
++    private boolean playerIsCloseEnoughForSpawning(EntityPlayer entityplayer, ChunkCoordIntPair chunkcoordintpair, double range) { // Spigot
+         if (entityplayer.isSpectator()) {
+             return false;
+         } else {
+             double d0 = euclideanDistanceSquared(chunkcoordintpair, entityplayer);
+ 
+-            return d0 < 16384.0D;
++            return d0 < range; // Spigot
+         }
+     }
+ 
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index acaf903011..0c0c29efe5 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -180,4 +180,11 @@ public class SpigotWorldConfig
+ 
+         log( "Simulation Distance: " + simulationDistance );
+     }
++
++    public byte mobSpawnRange;
++    private void mobSpawnRange()
++    {
++        mobSpawnRange = (byte) getInt( "mob-spawn-range", 6 );
++        log( "Mob Spawn Range: " + mobSpawnRange );
++    }
+ }
+-- 
+2.43.2
+

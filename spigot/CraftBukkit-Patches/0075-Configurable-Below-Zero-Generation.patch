@@ -1,0 +1,69 @@
+From 202aa83a56b1128613b3e7c80a29209dbcf53de9 Mon Sep 17 00:00:00 2001
+From: DerFrZocker <derrieple@gmail.com>
+Date: Sun, 28 Nov 2021 12:09:29 +1100
+Subject: [PATCH] Configurable Below Zero Generation
+
+
+diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/IChunkLoader.java b/src/main/java/net/minecraft/world/level/chunk/storage/IChunkLoader.java
+index 18b58c024a..9f15cd84fe 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/storage/IChunkLoader.java
++++ b/src/main/java/net/minecraft/world/level/chunk/storage/IChunkLoader.java
+@@ -105,12 +105,27 @@ public class IChunkLoader implements AutoCloseable {
+                 }
+             }
+ 
++            // Spigot start - SPIGOT-6806: Quick and dirty way to prevent below zero generation in old chunks, by setting the status to heightmap instead of empty
++            boolean stopBelowZero = false;
++            boolean belowZeroGenerationInExistingChunks = (generatoraccess != null) ? ((WorldServer) generatoraccess).spigotConfig.belowZeroGenerationInExistingChunks : org.spigotmc.SpigotConfig.belowZeroGenerationInExistingChunks;
++
++            if (i <= 2730 && !belowZeroGenerationInExistingChunks) {
++                stopBelowZero = "full".equals(nbttagcompound.getCompound("Level").getString("Status"));
++            }
++            // Spigot end
++
+             injectDatafixingContext(nbttagcompound, resourcekey, optional);
+             nbttagcompound = DataFixTypes.CHUNK.updateToCurrentVersion(this.fixerUpper, nbttagcompound, Math.max(1493, i));
+             if (i < SharedConstants.getCurrentVersion().getDataVersion().getVersion()) {
+                 GameProfileSerializer.addCurrentDataVersion(nbttagcompound);
+             }
+ 
++            // Spigot start
++            if (stopBelowZero) {
++                nbttagcompound.putString("Status", net.minecraft.core.registries.BuiltInRegistries.CHUNK_STATUS.getKey(ChunkStatus.SPAWN).toString());
++            }
++            // Spigot end
++
+             nbttagcompound.remove("__context");
+             return nbttagcompound;
+         } catch (Exception exception) {
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 595d80dfd9..0076a7334c 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -398,4 +398,9 @@ public class SpigotConfig
+     private static void disablePlayerDataSaving() {
+         disablePlayerDataSaving = getBoolean("players.disable-saving", false);
+     }
++
++    public static boolean belowZeroGenerationInExistingChunks;
++    private static void belowZeroGenerationInExistingChunks() {
++        belowZeroGenerationInExistingChunks = getBoolean("world-settings.default.below-zero-generation-in-existing-chunks", true);
++    }
+ }
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index b6ac09ee9f..ebddbf6d0c 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -388,4 +388,9 @@ public class SpigotWorldConfig
+     {
+         thunderChance = getInt("thunder-chance", 100000);
+     }
++
++    public boolean belowZeroGenerationInExistingChunks;
++    private void belowZeroGenerationInExistingChunks() {
++        belowZeroGenerationInExistingChunks = getBoolean("below-zero-generation-in-existing-chunks", true);
++    }
+ }
+-- 
+2.43.2
+

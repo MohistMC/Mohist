@@ -1,0 +1,51 @@
+From 9b47611ba855708a0393b287d87974a780556a27 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 14 Dec 2019 10:26:52 +1100
+Subject: [PATCH] Add log-villager-deaths option
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/EntityLiving.java b/src/main/java/net/minecraft/world/entity/EntityLiving.java
+index a40b5528d3..8201e90bd1 100644
+--- a/src/main/java/net/minecraft/world/entity/EntityLiving.java
++++ b/src/main/java/net/minecraft/world/entity/EntityLiving.java
+@@ -1706,7 +1706,7 @@ public abstract class EntityLiving extends Entity implements Attackable {
+             }
+ 
+             if (!this.level().isClientSide && this.hasCustomName()) {
+-                EntityLiving.LOGGER.info("Named entity {} died: {}", this, this.getCombatTracker().getDeathMessage().getString());
++                if (org.spigotmc.SpigotConfig.logNamedDeaths) EntityLiving.LOGGER.info("Named entity {} died: {}", this, this.getCombatTracker().getDeathMessage().getString()); // Spigot
+             }
+ 
+             this.dead = true;
+diff --git a/src/main/java/net/minecraft/world/entity/npc/EntityVillager.java b/src/main/java/net/minecraft/world/entity/npc/EntityVillager.java
+index 1ce9b20ece..661939e996 100644
+--- a/src/main/java/net/minecraft/world/entity/npc/EntityVillager.java
++++ b/src/main/java/net/minecraft/world/entity/npc/EntityVillager.java
+@@ -660,7 +660,7 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+ 
+     @Override
+     public void die(DamageSource damagesource) {
+-        EntityVillager.LOGGER.info("Villager {} died, message: '{}'", this, damagesource.getLocalizedDeathMessage(this).getString());
++        if (org.spigotmc.SpigotConfig.logVillagerDeaths) EntityVillager.LOGGER.info("Villager {} died, message: '{}'", this, damagesource.getLocalizedDeathMessage(this).getString()); // Spigot
+         Entity entity = damagesource.getEntity();
+ 
+         if (entity != null) {
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index cc3036ac95..a0e07e59d9 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -386,4 +386,11 @@ public class SpigotConfig
+         disableAdvancementSaving = getBoolean("advancements.disable-saving", false);
+         disabledAdvancements = getList("advancements.disabled", Arrays.asList(new String[]{"minecraft:story/disabled"}));
+     }
++
++    public static boolean logVillagerDeaths;
++    public static boolean logNamedDeaths;
++    private static void logDeaths() {
++        logVillagerDeaths = getBoolean("settings.log-villager-deaths", true);
++        logNamedDeaths = getBoolean("settings.log-named-deaths", true);
++    }
+ }
+-- 
+2.43.2
+

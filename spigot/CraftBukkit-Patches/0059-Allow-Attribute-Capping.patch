@@ -1,0 +1,65 @@
+From 7b471fd716c7487d801f32d25457628f1700ac6c Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Mon, 28 Jul 2014 16:55:51 +1000
+Subject: [PATCH] Allow Attribute Capping.
+
+Apply some sensible defaults and allow server owners to customize the maximum values of selected common attributes.
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/attributes/GenericAttributes.java b/src/main/java/net/minecraft/world/entity/ai/attributes/GenericAttributes.java
+index 18ec489135..76119e0e07 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/attributes/GenericAttributes.java
++++ b/src/main/java/net/minecraft/world/entity/ai/attributes/GenericAttributes.java
+@@ -10,7 +10,7 @@ public class GenericAttributes {
+ 
+     public static final Holder<AttributeBase> ARMOR = register("generic.armor", (new AttributeRanged("attribute.name.generic.armor", 0.0D, 0.0D, 30.0D)).setSyncable(true));
+     public static final Holder<AttributeBase> ARMOR_TOUGHNESS = register("generic.armor_toughness", (new AttributeRanged("attribute.name.generic.armor_toughness", 0.0D, 0.0D, 20.0D)).setSyncable(true));
+-    public static final Holder<AttributeBase> ATTACK_DAMAGE = register("generic.attack_damage", new AttributeRanged("attribute.name.generic.attack_damage", 2.0D, 0.0D, 2048.0D));
++    public static final Holder<AttributeBase> ATTACK_DAMAGE = register("generic.attack_damage", new AttributeRanged("attribute.name.generic.attack_damage", 2.0D, 0.0D, org.spigotmc.SpigotConfig.attackDamage));
+     public static final Holder<AttributeBase> ATTACK_KNOCKBACK = register("generic.attack_knockback", new AttributeRanged("attribute.name.generic.attack_knockback", 0.0D, 0.0D, 5.0D));
+     public static final Holder<AttributeBase> ATTACK_SPEED = register("generic.attack_speed", (new AttributeRanged("attribute.name.generic.attack_speed", 4.0D, 0.0D, 1024.0D)).setSyncable(true));
+     public static final Holder<AttributeBase> BLOCK_BREAK_SPEED = register("player.block_break_speed", (new AttributeRanged("attribute.name.player.block_break_speed", 1.0D, 0.0D, 1024.0D)).setSyncable(true));
+@@ -24,8 +24,8 @@ public class GenericAttributes {
+     public static final Holder<AttributeBase> KNOCKBACK_RESISTANCE = register("generic.knockback_resistance", new AttributeRanged("attribute.name.generic.knockback_resistance", 0.0D, 0.0D, 1.0D));
+     public static final Holder<AttributeBase> LUCK = register("generic.luck", (new AttributeRanged("attribute.name.generic.luck", 0.0D, -1024.0D, 1024.0D)).setSyncable(true));
+     public static final Holder<AttributeBase> MAX_ABSORPTION = register("generic.max_absorption", (new AttributeRanged("attribute.name.generic.max_absorption", 0.0D, 0.0D, 2048.0D)).setSyncable(true));
+-    public static final Holder<AttributeBase> MAX_HEALTH = register("generic.max_health", (new AttributeRanged("attribute.name.generic.max_health", 20.0D, 1.0D, 1024.0D)).setSyncable(true));
+-    public static final Holder<AttributeBase> MOVEMENT_SPEED = register("generic.movement_speed", (new AttributeRanged("attribute.name.generic.movement_speed", 0.699999988079071D, 0.0D, 1024.0D)).setSyncable(true));
++    public static final Holder<AttributeBase> MAX_HEALTH = register("generic.max_health", (new AttributeRanged("attribute.name.generic.max_health", 20.0D, 1.0D, org.spigotmc.SpigotConfig.maxHealth)).setSyncable(true));
++    public static final Holder<AttributeBase> MOVEMENT_SPEED = register("generic.movement_speed", (new AttributeRanged("attribute.name.generic.movement_speed", 0.699999988079071D, 0.0D, org.spigotmc.SpigotConfig.movementSpeed)).setSyncable(true));
+     public static final Holder<AttributeBase> SAFE_FALL_DISTANCE = register("generic.safe_fall_distance", (new AttributeRanged("attribute.name.generic.safe_fall_distance", 3.0D, -1024.0D, 1024.0D)).setSyncable(true));
+     public static final Holder<AttributeBase> SCALE = register("generic.scale", (new AttributeRanged("attribute.name.generic.scale", 1.0D, 0.0625D, 16.0D)).setSyncable(true));
+     public static final Holder<AttributeBase> SPAWN_REINFORCEMENTS_CHANCE = register("zombie.spawn_reinforcements", new AttributeRanged("attribute.name.zombie.spawn_reinforcements", 0.0D, 0.0D, 1.0D));
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 0ace6c586c..e6d90a3c65 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -16,6 +16,8 @@ import java.util.logging.Level;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.resources.MinecraftKey;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.world.entity.ai.attributes.AttributeRanged;
++import net.minecraft.world.entity.ai.attributes.GenericAttributes;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.Command;
+@@ -338,4 +340,17 @@ public class SpigotConfig
+     {
+         movedTooQuicklyMultiplier = getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
+     }
++
++    public static double maxHealth = 2048;
++    public static double movementSpeed = 2048;
++    public static double attackDamage = 2048;
++    private static void attributeMaxes()
++    {
++        maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
++        ( (AttributeRanged) GenericAttributes.MAX_HEALTH.value() ).maxValue = maxHealth;
++        movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
++        ( (AttributeRanged) GenericAttributes.MOVEMENT_SPEED.value() ).maxValue = movementSpeed;
++        attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
++        ( (AttributeRanged) GenericAttributes.ATTACK_DAMAGE.value() ).maxValue = attackDamage;
++    }
+ }
+-- 
+2.43.2
+

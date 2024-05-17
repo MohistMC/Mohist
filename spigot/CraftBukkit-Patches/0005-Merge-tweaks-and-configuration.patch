@@ -1,0 +1,86 @@
+From fa9e7021c5bf5a9fc4414ac4d48b78bb9c46ac87 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 23 Mar 2013 09:46:33 +1100
+Subject: [PATCH] Merge tweaks and configuration
+
+This allows the merging of Experience orbs, as well as the configuration of the merge radius of items. Additionally it refactors the merge algorithm to be a better experience for players.
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/EntityItem.java b/src/main/java/net/minecraft/world/entity/item/EntityItem.java
+index 88f3044ffc..21845bcfa5 100644
+--- a/src/main/java/net/minecraft/world/entity/item/EntityItem.java
++++ b/src/main/java/net/minecraft/world/entity/item/EntityItem.java
+@@ -246,7 +246,10 @@ public class EntityItem extends Entity implements TraceableEntity {
+ 
+     private void mergeWithNeighbours() {
+         if (this.isMergable()) {
+-            List<EntityItem> list = this.level().getEntitiesOfClass(EntityItem.class, this.getBoundingBox().inflate(0.5D, 0.0D, 0.5D), (entityitem) -> {
++            // Spigot start
++            double radius = this.level().spigotConfig.itemMerge;
++            List<EntityItem> list = this.level().getEntitiesOfClass(EntityItem.class, this.getBoundingBox().inflate(radius, radius - 0.5D, radius), (entityitem) -> {
++                // Spigot end
+                 return entityitem != this && entityitem.isMergable();
+             });
+             Iterator iterator = list.iterator();
+@@ -276,7 +279,7 @@ public class EntityItem extends Entity implements TraceableEntity {
+         ItemStack itemstack1 = entityitem.getItem();
+ 
+         if (Objects.equals(this.target, entityitem.target) && areMergable(itemstack, itemstack1)) {
+-            if (itemstack1.getCount() < itemstack.getCount()) {
++            if (true || itemstack1.getCount() < itemstack.getCount()) { // Spigot
+                 merge(this, itemstack, entityitem, itemstack1);
+             } else {
+                 merge(entityitem, itemstack1, this, itemstack);
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index c8fc7b8481..71e7fc23f2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -707,6 +707,23 @@ public class CraftEventFactory {
+             return false;
+         }
+ 
++        // Spigot start - SPIGOT-7523: Merge after spawn event and only merge if the event was not cancelled (gets checked above)
++        if (entity instanceof EntityExperienceOrb xp) {
++            double radius = world.spigotConfig.expMerge;
++            if (radius > 0) {
++                List<Entity> entities = world.getEntities(entity, entity.getBoundingBox().inflate(radius, radius, radius));
++                for (Entity e : entities) {
++                    if (e instanceof EntityExperienceOrb loopItem) {
++                        if (!loopItem.isRemoved()) {
++                            xp.value += loopItem.value;
++                            loopItem.discard(null); // Add Bukkit remove cause
++                        }
++                    }
++                }
++            }
++        }
++        // Spigot end
++
+         return true;
+     }
+ 
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index f42972427b..5ff085b9e6 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -134,4 +134,18 @@ public class SpigotWorldConfig
+         weepingVinesModifier = getAndValidateGrowth( "WeepingVines" );
+         caveVinesModifier = getAndValidateGrowth( "CaveVines" );
+     }
++
++    public double itemMerge;
++    private void itemMerge()
++    {
++        itemMerge = getDouble("merge-radius.item", 2.5 );
++        log( "Item Merge Radius: " + itemMerge );
++    }
++
++    public double expMerge;
++    private void expMerge()
++    {
++        expMerge = getDouble("merge-radius.exp", 3.0 );
++        log( "Experience Merge Radius: " + expMerge );
++    }
+ }
+-- 
+2.43.2
+

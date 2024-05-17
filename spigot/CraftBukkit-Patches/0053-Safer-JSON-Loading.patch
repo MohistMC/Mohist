@@ -1,0 +1,44 @@
+From 8c7bbb01d41cdceffcfd1fd2596e808f1f136ff5 Mon Sep 17 00:00:00 2001
+From: Suddenly <suddenly@suddenly.coffee>
+Date: Tue, 8 Jul 2014 09:44:18 +1000
+Subject: [PATCH] Safer JSON Loading
+
+
+diff --git a/src/main/java/net/minecraft/server/players/JsonList.java b/src/main/java/net/minecraft/server/players/JsonList.java
+index f4544fb327..e10fc779bd 100644
+--- a/src/main/java/net/minecraft/server/players/JsonList.java
++++ b/src/main/java/net/minecraft/server/players/JsonList.java
+@@ -175,6 +175,14 @@ public abstract class JsonList<K, V extends JsonListEntry<K>> {
+                             this.map.put(this.getKeyForUser(jsonlistentry.getUser()), (V) jsonlistentry); // CraftBukkit - decompile error
+                         }
+                     }
++                // Spigot Start
++                } catch ( com.google.gson.JsonParseException | NullPointerException ex )
++                {
++                    org.bukkit.Bukkit.getLogger().log( java.util.logging.Level.WARNING, "Unable to read file " + this.file + ", backing it up to {0}.backup and creating new copy.", ex );
++                    File backup = new File( this.file + ".backup" );
++                    this.file.renameTo( backup );
++                    this.file.delete();
++                // Spigot End
+                 } catch (Throwable throwable) {
+                     if (bufferedreader != null) {
+                         try {
+diff --git a/src/main/java/net/minecraft/server/players/UserCache.java b/src/main/java/net/minecraft/server/players/UserCache.java
+index 0ee2026472..8c998e3077 100644
+--- a/src/main/java/net/minecraft/server/players/UserCache.java
++++ b/src/main/java/net/minecraft/server/players/UserCache.java
+@@ -250,6 +250,11 @@ public class UserCache {
+             }
+         } catch (FileNotFoundException filenotfoundexception) {
+             ;
++        // Spigot Start
++        } catch (com.google.gson.JsonSyntaxException | NullPointerException ex) {
++            UserCache.LOGGER.warn( "Usercache.json is corrupted or has bad formatting. Deleting it to prevent further issues." );
++            this.file.delete();
++        // Spigot End
+         } catch (JsonParseException | IOException ioexception) {
+             UserCache.LOGGER.warn("Failed to load profile cache {}", this.file, ioexception);
+         }
+-- 
+2.43.2
+

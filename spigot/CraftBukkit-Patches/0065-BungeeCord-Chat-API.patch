@@ -1,0 +1,400 @@
+From 75c8c7a3a03ee7202e197bb725fdb0fd872f6437 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 13 Dec 2014 03:06:05 +0100
+Subject: [PATCH] BungeeCord Chat API
+
+
+diff --git a/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java b/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
+index eed54194c5..1525849692 100644
+--- a/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
++++ b/src/main/java/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
+@@ -13,6 +13,12 @@ public record ClientboundSystemChatPacket(IChatBaseComponent content, boolean ov
+ 
+     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSystemChatPacket> STREAM_CODEC = StreamCodec.composite(ComponentSerialization.TRUSTED_STREAM_CODEC, ClientboundSystemChatPacket::content, ByteBufCodecs.BOOL, ClientboundSystemChatPacket::overlay, ClientboundSystemChatPacket::new);
+ 
++    // Spigot start
++    public ClientboundSystemChatPacket(net.md_5.bungee.api.chat.BaseComponent[] content, boolean overlay) {
++        this(org.bukkit.craftbukkit.util.CraftChatMessage.fromJSON(net.md_5.bungee.chat.ComponentSerializer.toString(content)), overlay);
++    }
++    // Spigot end
++
+     @Override
+     public PacketType<ClientboundSystemChatPacket> type() {
+         return GamePacketTypes.CLIENTBOUND_SYSTEM_CHAT;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 36b099c058..a061c248a2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -264,6 +264,8 @@ import org.yaml.snakeyaml.Yaml;
+ import org.yaml.snakeyaml.constructor.SafeConstructor;
+ import org.yaml.snakeyaml.error.MarkedYAMLException;
+ 
++import net.md_5.bungee.api.chat.BaseComponent; // Spigot
++
+ public final class CraftServer implements Server {
+     private final String serverName = "CraftBukkit";
+     private final String serverVersion;
+@@ -2533,6 +2535,20 @@ public final class CraftServer implements Server {
+         public void restart() {
+             org.spigotmc.RestartCommand.restart();
+         }
++
++        @Override
++        public void broadcast(BaseComponent component) {
++            for (Player player : getOnlinePlayers()) {
++                player.spigot().sendMessage(component);
++            }
++        }
++
++        @Override
++        public void broadcast(BaseComponent... components) {
++            for (Player player : getOnlinePlayers()) {
++                player.spigot().sendMessage(components);
++            }
++        }
+     };
+ 
+     public org.bukkit.Server.Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+index 861739d4c4..6b36321091 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+@@ -99,6 +99,29 @@ public abstract class ServerCommandSender implements CommandSender {
+     // Spigot start
+     private final org.bukkit.command.CommandSender.Spigot spigot = new org.bukkit.command.CommandSender.Spigot()
+     {
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component)
++        {
++            ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(component));
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
++        {
++            ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(components));
++        }
++
++        @Override
++        public void sendMessage(UUID sender, net.md_5.bungee.api.chat.BaseComponent... components)
++        {
++            this.sendMessage(components);
++        }
++
++        @Override
++        public void sendMessage(UUID sender, net.md_5.bungee.api.chat.BaseComponent component)
++        {
++            this.sendMessage(component);
++        }
+     };
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index eaa0a1355d..493365515c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -58,6 +58,8 @@ import org.bukkit.util.BoundingBox;
+ import org.bukkit.util.NumberConversions;
+ import org.bukkit.util.Vector;
+ 
++import net.md_5.bungee.api.chat.BaseComponent; // Spigot
++
+ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     private static PermissibleBase perm;
+     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
+@@ -881,6 +883,26 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     // Spigot start
+     private final org.bukkit.entity.Entity.Spigot spigot = new org.bukkit.entity.Entity.Spigot()
+     {
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component)
++        {
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
++        {
++        }
++
++        @Override
++        public void sendMessage(UUID sender, BaseComponent... components)
++        {
++        }
++
++        @Override
++        public void sendMessage(UUID sender, BaseComponent component)
++        {
++        }
+     };
+ 
+     public org.bukkit.entity.Entity.Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index e4fab756c7..845f4c09d4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -194,6 +194,8 @@ import org.bukkit.profile.PlayerProfile;
+ import org.bukkit.scoreboard.Scoreboard;
+ import org.jetbrains.annotations.NotNull;
+ 
++import net.md_5.bungee.api.chat.BaseComponent; // Spigot
++
+ @DelegateDeserialization(CraftOfflinePlayer.class)
+ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private long firstPlayed = 0;
+@@ -2354,6 +2356,48 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+ 
+             return java.util.Collections.unmodifiableSet( ret );
+         }
++
++        @Override
++        public void sendMessage(BaseComponent component) {
++          sendMessage( new BaseComponent[] { component } );
++        }
++
++        @Override
++        public void sendMessage(BaseComponent... components) {
++           this.sendMessage(net.md_5.bungee.api.ChatMessageType.SYSTEM, components);
++        }
++
++        @Override
++        public void sendMessage(UUID sender, BaseComponent component) {
++            this.sendMessage(net.md_5.bungee.api.ChatMessageType.CHAT, sender, component);
++        }
++
++        @Override
++        public void sendMessage(UUID sender, BaseComponent... components) {
++            this.sendMessage(net.md_5.bungee.api.ChatMessageType.CHAT, sender, components);
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent component) {
++            sendMessage( position, new BaseComponent[] { component } );
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
++            this.sendMessage(position, null, components);
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, UUID sender, BaseComponent component) {
++            sendMessage( position, sender, new BaseComponent[] { component } );
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, UUID sender, BaseComponent... components) {
++            if ( getHandle().connection == null ) return;
++
++            getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(components, position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR));
++        }
+     };
+ 
+     public Player.Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+index ed599634a1..0d0c14997c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+@@ -20,6 +20,14 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
+ import org.bukkit.inventory.meta.BookMeta;
+ import org.bukkit.inventory.meta.WritableBookMeta;
+ 
++// Spigot start
++import java.util.AbstractList;
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.chat.ComponentSerializer;
++import net.minecraft.network.chat.IChatBaseComponent;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++// Spigot end
++
+ @DelegateDeserialization(SerializableMeta.class)
+ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBookMeta {
+     @ItemMetaKey.Specific(ItemMetaKey.Specific.To.NBT)
+@@ -291,6 +299,83 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
+     // Spigot start
+     private BookMeta.Spigot spigot = new SpigotMeta();
+     private class SpigotMeta extends BookMeta.Spigot {
++
++        private String pageToJSON(String page) {
++            // Convert from plain String to JSON (similar to conversion between writable books and written books):
++            IChatBaseComponent component = CraftChatMessage.fromString(page, true, true)[0];
++            return CraftChatMessage.toJSON(component);
++        }
++
++        private String componentsToPage(BaseComponent[] components) {
++            // Convert component to plain String:
++            return CraftChatMessage.fromJSONComponent(ComponentSerializer.toString(components));
++        }
++
++        @Override
++        public BaseComponent[] getPage(final int page) {
++            Preconditions.checkArgument(isValidPage(page), "Invalid page number");
++            return ComponentSerializer.parse(pageToJSON(pages.get(page - 1)));
++        }
++
++        @Override
++        public void setPage(final int page, final BaseComponent... text) {
++            if (!isValidPage(page)) {
++                throw new IllegalArgumentException("Invalid page number " + page + "/" + getPageCount());
++            }
++
++            BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
++            CraftMetaBook.this.pages.set(page - 1, componentsToPage(newText));
++        }
++
++        @Override
++        public void setPages(final BaseComponent[]... pages) {
++            setPages(Arrays.asList(pages));
++        }
++
++        @Override
++        public void addPage(final BaseComponent[]... pages) {
++            for (BaseComponent[] page : pages) {
++                if (page == null) {
++                    page = new BaseComponent[0];
++                }
++
++                CraftMetaBook.this.internalAddPage(componentsToPage(page));
++            }
++        }
++
++        @Override
++        public List<BaseComponent[]> getPages() {
++            if (CraftMetaBook.this.pages == null) return ImmutableList.of();
++            final List<String> copy = ImmutableList.copyOf(CraftMetaBook.this.pages);
++            return new AbstractList<BaseComponent[]>() {
++
++                @Override
++                public BaseComponent[] get(int index) {
++                    return ComponentSerializer.parse(pageToJSON(copy.get(index)));
++                }
++
++                @Override
++                public int size() {
++                    return copy.size();
++                }
++            };
++        }
++
++        @Override
++        public void setPages(List<BaseComponent[]> pages) {
++            if (pages.isEmpty()) {
++                CraftMetaBook.this.pages = null;
++                return;
++            }
++
++            if (CraftMetaBook.this.pages != null) {
++                CraftMetaBook.this.pages.clear();
++            }
++
++            for (BaseComponent[] page : pages) {
++                addPage(page);
++            }
++        }
+     };
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java
+index e1361a6760..b5e7e344fc 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java
+@@ -20,6 +20,12 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
+ import org.bukkit.craftbukkit.util.CraftChatMessage;
+ import org.bukkit.inventory.meta.BookMeta;
+ 
++// Spigot start
++import java.util.AbstractList;
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.chat.ComponentSerializer;
++// Spigot end
++
+ @DelegateDeserialization(SerializableMeta.class)
+ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
+     @ItemMetaKey.Specific(ItemMetaKey.Specific.To.NBT)
+@@ -369,6 +375,83 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
+     // Spigot start
+     private BookMeta.Spigot spigot = new SpigotMeta();
+     private class SpigotMeta extends BookMeta.Spigot {
++
++        private String pageToJSON(IChatBaseComponent page) {
++            // Page data is already in JSON format:
++            return CraftChatMessage.toJSON(page);
++        }
++
++        private IChatBaseComponent componentsToPage(BaseComponent[] components) {
++            // asserted: components != null
++            // Pages are in JSON format:
++            return CraftChatMessage.fromJSON(ComponentSerializer.toString(components));
++        }
++
++        @Override
++        public BaseComponent[] getPage(final int page) {
++            Preconditions.checkArgument(isValidPage(page), "Invalid page number");
++            return ComponentSerializer.parse(pageToJSON(pages.get(page - 1)));
++        }
++
++        @Override
++        public void setPage(final int page, final BaseComponent... text) {
++            if (!isValidPage(page)) {
++                throw new IllegalArgumentException("Invalid page number " + page + "/" + getPageCount());
++            }
++
++            BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
++            CraftMetaBookSigned.this.pages.set(page - 1, componentsToPage(newText));
++        }
++
++        @Override
++        public void setPages(final BaseComponent[]... pages) {
++            setPages(Arrays.asList(pages));
++        }
++
++        @Override
++        public void addPage(final BaseComponent[]... pages) {
++            for (BaseComponent[] page : pages) {
++                if (page == null) {
++                    page = new BaseComponent[0];
++                }
++
++                CraftMetaBookSigned.this.internalAddPage(componentsToPage(page));
++            }
++        }
++
++        @Override
++        public List<BaseComponent[]> getPages() {
++            if (CraftMetaBookSigned.this.pages == null) return ImmutableList.of();
++            final List<IChatBaseComponent> copy = ImmutableList.copyOf(CraftMetaBookSigned.this.pages);
++            return new AbstractList<BaseComponent[]>() {
++
++                @Override
++                public BaseComponent[] get(int index) {
++                    return ComponentSerializer.parse(pageToJSON(copy.get(index)));
++                }
++
++                @Override
++                public int size() {
++                    return copy.size();
++                }
++            };
++        }
++
++        @Override
++        public void setPages(List<BaseComponent[]> pages) {
++            if (pages.isEmpty()) {
++                CraftMetaBookSigned.this.pages = null;
++                return;
++            }
++
++            if (CraftMetaBookSigned.this.pages != null) {
++                CraftMetaBookSigned.this.pages.clear();
++            }
++
++            for (BaseComponent[] page : pages) {
++                addPage(page);
++            }
++        }
+     };
+ 
+     @Override
+-- 
+2.43.2
+

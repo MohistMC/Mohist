@@ -1,0 +1,43 @@
+From 8f0eafa8f7b83934e7ed4e03e1cf0d96081703e4 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 8 Aug 2014 19:57:03 +1000
+Subject: [PATCH] Plug WorldMap Memory Leak
+
+
+diff --git a/src/main/java/net/minecraft/server/level/WorldServer.java b/src/main/java/net/minecraft/server/level/WorldServer.java
+index d02c81f01a..84b4a8048b 100644
+--- a/src/main/java/net/minecraft/server/level/WorldServer.java
++++ b/src/main/java/net/minecraft/server/level/WorldServer.java
+@@ -2072,6 +2072,29 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+ 
+         public void onTrackingEnd(Entity entity) {
+             org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
++            // Spigot start
++            if ( entity instanceof EntityHuman )
++            {
++                com.google.common.collect.Streams.stream( getServer().getAllLevels() ).map( WorldServer::getDataStorage ).forEach( (worldData) ->
++                {
++                    for (Object o : worldData.cache.values() )
++                    {
++                        if ( o instanceof WorldMap )
++                        {
++                            WorldMap map = (WorldMap) o;
++                            map.carriedByPlayers.remove( (EntityHuman) entity );
++                            for ( Iterator<WorldMap.WorldMapHumanTracker> iter = (Iterator<WorldMap.WorldMapHumanTracker>) map.carriedBy.iterator(); iter.hasNext(); )
++                            {
++                                if ( iter.next().player == entity )
++                                {
++                                    iter.remove();
++                                }
++                            }
++                        }
++                    }
++                } );
++            }
++            // Spigot end
+             // Spigot Start
+             if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof EntityPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
+                 for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) entity.getBukkitEntity()).getInventory().getViewers())) {
+-- 
+2.43.2
+

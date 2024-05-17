@@ -1,0 +1,204 @@
+From b07a4932efc9931592f8b6af1b17efbadc93b345 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sun, 2 Jun 2013 15:10:56 +1000
+Subject: [PATCH] Skeleton API Implementations
+
+This contains the basic, empty implementations for some Spigot-API extensions. They are included early in the patching progress so that compilation will still succeed midway despite the APIs only being provided by subsequent patches.
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index d1d13683a4..36255ef9a2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2489,4 +2489,16 @@ public final class CraftServer implements Server {
+     public UnsafeValues getUnsafe() {
+         return CraftMagicNumbers.INSTANCE;
+     }
++
++    // Spigot start
++    private final org.bukkit.Server.Spigot spigot = new org.bukkit.Server.Spigot()
++    {
++
++    };
++
++    public org.bukkit.Server.Spigot spigot()
++    {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index fe3252ea23..33865e427c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -2051,4 +2051,15 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+             this.persistentDataContainer.putAll((NBTTagCompound) c);
+         }
+     }
++
++    // Spigot start
++    private final org.bukkit.World.Spigot spigot = new org.bukkit.World.Spigot()
++    {
++    };
++
++    public org.bukkit.World.Spigot spigot()
++    {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
+index f9d3b5a499..b63472322d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
+@@ -132,4 +132,11 @@ public class ProxiedNativeCommandSender implements ProxiedCommandSender {
+         getCaller().setOp(value);
+     }
+ 
++    // Spigot start
++    @Override
++    public org.bukkit.command.CommandSender.Spigot spigot()
++    {
++       return getCaller().spigot();
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+index be10d200e5..861739d4c4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+@@ -95,4 +95,16 @@ public abstract class ServerCommandSender implements CommandSender {
+     public void sendMessage(UUID uuid, String... messages) {
+         this.sendMessage(messages); // ServerCommandSenders have no use for senders
+     }
++
++    // Spigot start
++    private final org.bukkit.command.CommandSender.Spigot spigot = new org.bukkit.command.CommandSender.Spigot()
++    {
++    };
++
++    @Override
++    public org.bukkit.command.CommandSender.Spigot spigot()
++    {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index f5b6b5cd24..a81a639cd5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -876,4 +876,15 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         }
+         return perm;
+     }
++
++    // Spigot start
++    private final org.bukkit.entity.Entity.Spigot spigot = new org.bukkit.entity.Entity.Spigot()
++    {
++    };
++
++    public org.bukkit.entity.Entity.Spigot spigot()
++    {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java
+index 3a4fb14bff..3a68e1cf5c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java
+@@ -50,4 +50,15 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
+     public String toString() {
+         return "CraftLightningStrike";
+     }
++
++    // Spigot start
++    private final LightningStrike.Spigot spigot = new LightningStrike.Spigot() {
++
++    };
++
++    @Override
++    public LightningStrike.Spigot spigot() {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 304453fcd9..f1bab98382 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2311,4 +2311,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     public boolean isAllowingServerListings() {
+         return getHandle().allowsListing();
+     }
++
++    // Spigot start
++    private final Player.Spigot spigot = new Player.Spigot()
++    {
++    };
++
++    public Player.Spigot spigot()
++    {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+index d338430fde..ed599634a1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+@@ -246,6 +246,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
+         if (this.pages != null) {
+             meta.pages = new ArrayList<String>(this.pages);
+         }
++        meta.spigot = meta.new SpigotMeta(); // Spigot
+         return meta;
+     }
+ 
+@@ -286,4 +287,15 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
+ 
+         return builder;
+     }
++
++    // Spigot start
++    private BookMeta.Spigot spigot = new SpigotMeta();
++    private class SpigotMeta extends BookMeta.Spigot {
++    };
++
++    @Override
++    public BookMeta.Spigot spigot() {
++        return spigot;
++    }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java
+index 075c01a830..e1361a6760 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBookSigned.java
+@@ -292,6 +292,7 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
+         if (this.pages != null) {
+             meta.pages = new ArrayList<IChatBaseComponent>(this.pages);
+         }
++        meta.spigot = meta.new SpigotMeta(); // Spigot
+         return meta;
+     }
+ 
+@@ -364,4 +365,15 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
+ 
+         return builder;
+     }
++
++    // Spigot start
++    private BookMeta.Spigot spigot = new SpigotMeta();
++    private class SpigotMeta extends BookMeta.Spigot {
++    };
++
++    @Override
++    public BookMeta.Spigot spigot() {
++        return spigot;
++    }
++    // Spigot end
+ }
+-- 
+2.43.2
+

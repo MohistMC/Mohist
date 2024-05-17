@@ -1,0 +1,33 @@
+From 7dc4ba7ef2b0182534f57be785eb97d929ef7f59 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Mon, 20 Jan 2014 13:44:07 +1100
+Subject: [PATCH] Catch stalling on corrupted map data / NBT arrays.
+
+
+diff --git a/src/main/java/net/minecraft/nbt/NBTTagByteArray.java b/src/main/java/net/minecraft/nbt/NBTTagByteArray.java
+index 64933f0576..16b3d48bc2 100644
+--- a/src/main/java/net/minecraft/nbt/NBTTagByteArray.java
++++ b/src/main/java/net/minecraft/nbt/NBTTagByteArray.java
+@@ -25,6 +25,7 @@ public class NBTTagByteArray extends NBTList<NBTTagByte> {
+         private static byte[] readAccounted(DataInput datainput, NBTReadLimiter nbtreadlimiter) throws IOException {
+             nbtreadlimiter.accountBytes(24L);
+             int i = datainput.readInt();
++            com.google.common.base.Preconditions.checkArgument( i < 1 << 24); // Spigot
+ 
+             nbtreadlimiter.accountBytes(1L, (long) i);
+             byte[] abyte = new byte[i];
+diff --git a/src/main/java/net/minecraft/nbt/NBTTagIntArray.java b/src/main/java/net/minecraft/nbt/NBTTagIntArray.java
+index 7e4c021ca7..96d4721c66 100644
+--- a/src/main/java/net/minecraft/nbt/NBTTagIntArray.java
++++ b/src/main/java/net/minecraft/nbt/NBTTagIntArray.java
+@@ -25,6 +25,7 @@ public class NBTTagIntArray extends NBTList<NBTTagInt> {
+         private static int[] readAccounted(DataInput datainput, NBTReadLimiter nbtreadlimiter) throws IOException {
+             nbtreadlimiter.accountBytes(24L);
+             int i = datainput.readInt();
++            com.google.common.base.Preconditions.checkArgument( i < 1 << 24); // Spigot
+ 
+             nbtreadlimiter.accountBytes(4L, (long) i);
+             int[] aint = new int[i];
+-- 
+2.43.2
+

@@ -1,0 +1,30 @@
+From 7b61e270d78b3c544b33e0587fb2b13a32e3bdb1 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sun, 2 Jun 2013 15:20:49 +1000
+Subject: [PATCH] BungeeCord Support
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index f2d7e907..eb3141b6 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -2198,6 +2198,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     // Spigot start
+     public class Spigot extends Entity.Spigot {
+ 
++        /**
++         * Gets the connection address of this player, regardless of whether it
++         * has been spoofed or not.
++         *
++         * @return the player's connection address
++         */
++        @NotNull
++        public InetSocketAddress getRawAddress() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ 
+     @NotNull
+-- 
+2.43.2
+

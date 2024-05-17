@@ -1,0 +1,89 @@
+From c98c1bf576679ab6b0a302c2f6cf3a8565cbfcfc Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 23 Mar 2013 09:52:41 +1100
+Subject: [PATCH] View Distance
+
+This commit allows the user to select per world view distances.
+
+diff --git a/src/main/java/net/minecraft/server/level/WorldServer.java b/src/main/java/net/minecraft/server/level/WorldServer.java
+index ff1d7729be..98b46416c4 100644
+--- a/src/main/java/net/minecraft/server/level/WorldServer.java
++++ b/src/main/java/net/minecraft/server/level/WorldServer.java
+@@ -287,8 +287,8 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+ 
+         this.entityManager = new PersistentEntitySectionManager<>(Entity.class, new WorldServer.a(), entitypersistentstorage);
+         StructureTemplateManager structuretemplatemanager = minecraftserver.getStructureManager();
+-        int j = minecraftserver.getPlayerList().getViewDistance();
+-        int k = minecraftserver.getPlayerList().getSimulationDistance();
++        int j = this.spigotConfig.viewDistance; // Spigot
++        int k = this.spigotConfig.simulationDistance; // Spigot
+         PersistentEntitySectionManager persistententitysectionmanager = this.entityManager;
+ 
+         Objects.requireNonNull(this.entityManager);
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index f140b42a03..956b276a9c 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -236,7 +236,8 @@ public abstract class PlayerList {
+         boolean flag1 = gamerules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO);
+         boolean flag2 = gamerules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
+ 
+-        playerconnection.send(new PacketPlayOutLogin(entityplayer.getId(), worlddata.isHardcore(), this.server.levelKeys(), this.getMaxPlayers(), this.viewDistance, this.simulationDistance, flag1, !flag, flag2, entityplayer.createCommonSpawnInfo(worldserver1), this.server.enforceSecureProfile()));
++        // Spigot - view distance
++        playerconnection.send(new PacketPlayOutLogin(entityplayer.getId(), worlddata.isHardcore(), this.server.levelKeys(), this.getMaxPlayers(), worldserver1.spigotConfig.viewDistance, worldserver1.spigotConfig.simulationDistance, flag1, !flag, flag2, entityplayer.createCommonSpawnInfo(worldserver1), this.server.enforceSecureProfile()));
+         entityplayer.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
+         playerconnection.send(new PacketPlayOutServerDifficulty(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
+         playerconnection.send(new PacketPlayOutAbilities(entityplayer.getAbilities()));
+@@ -775,6 +776,8 @@ public abstract class PlayerList {
+         WorldData worlddata = worldserver2.getLevelData();
+ 
+         entityplayer1.connection.send(new PacketPlayOutRespawn(entityplayer1.createCommonSpawnInfo(worldserver2), (byte) i));
++        entityplayer1.connection.send(new PacketPlayOutViewDistance(worldserver1.spigotConfig.viewDistance)); // Spigot
++        entityplayer1.connection.send(new ClientboundSetSimulationDistancePacket(worldserver1.spigotConfig.simulationDistance)); // Spigot
+         entityplayer1.connection.teleport(CraftLocation.toBukkit(entityplayer1.position(), worldserver2.getWorld(), entityplayer1.getYRot(), entityplayer1.getXRot())); // CraftBukkit
+         entityplayer1.connection.send(new PacketPlayOutSpawnPosition(worldserver1.getSharedSpawnPos(), worldserver1.getSharedSpawnAngle()));
+         entityplayer1.connection.send(new PacketPlayOutServerDifficulty(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 5ff085b9e6..acaf903011 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -148,4 +148,36 @@ public class SpigotWorldConfig
+         expMerge = getDouble("merge-radius.exp", 3.0 );
+         log( "Experience Merge Radius: " + expMerge );
+     }
++
++    public int viewDistance;
++    private void viewDistance()
++    {
++        if ( SpigotConfig.version < 12 )
++        {
++            set( "view-distance", null );
++        }
++
++        Object viewDistanceObject = get( "view-distance", "default" );
++        viewDistance = ( viewDistanceObject ) instanceof Number ? ( (Number) viewDistanceObject ).intValue() : -1;
++        if ( viewDistance <= 0 )
++        {
++            viewDistance = Bukkit.getViewDistance();
++        }
++
++        viewDistance = Math.max( Math.min( viewDistance, 32 ), 3 );
++        log( "View Distance: " + viewDistance );
++    }
++
++    public int simulationDistance;
++    private void simulationDistance()
++    {
++        Object simulationDistanceObject = get( "simulation-distance", "default" );
++        simulationDistance = ( simulationDistanceObject ) instanceof Number ? ( (Number) simulationDistanceObject ).intValue() : -1;
++        if ( simulationDistance <= 0 )
++        {
++            simulationDistance = Bukkit.getSimulationDistance();
++        }
++
++        log( "Simulation Distance: " + simulationDistance );
++    }
+ }
+-- 
+2.43.2
+
