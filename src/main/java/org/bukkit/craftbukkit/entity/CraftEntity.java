@@ -4,8 +4,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Lists;
+import com.mohistmc.mohist.bukkit.entity.MohistModsEntity;
 import com.mohistmc.mohist.bukkit.entity.MohistModsVehicle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -13,14 +16,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.VehicleEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -33,6 +39,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.entity.CraftEntityTypes.EntityTypeData;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -46,6 +53,7 @@ import org.bukkit.entity.Pose;
 import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
+import org.bukkit.event.entity.EntityRemoveEvent.Cause;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.PermissibleBase;
@@ -59,6 +67,7 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import net.md_5.bungee.api.chat.BaseComponent; // Spigot
+import org.spigotmc.AsyncCatcher;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;
@@ -93,14 +102,21 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             }
         }
 
-        CraftEntityTypes.EntityTypeData<?, T> entityTypeData = CraftEntityTypes.getEntityTypeData(CraftEntityType.minecraftToBukkit(entity.getType()));
+        EntityTypeData<?, T> entityTypeData = CraftEntityTypes.getEntityTypeData(CraftEntityType.minecraftToBukkit(entity.getType()));
 
         if (entityTypeData != null) {
             return (CraftEntity) entityTypeData.convertFunction().apply(server, entity);
         }
-
-        if (entity instanceof VehicleEntity vehicle) {
-            return new MohistModsVehicle(server, vehicle);
+        
+        CraftEntity modsEntity = null;
+        switch (entity) {
+            case VehicleEntity vehicle -> modsEntity = new MohistModsVehicle(server, vehicle);
+            case LivingEntity livingEntity -> modsEntity = new CraftLivingEntity(server, livingEntity);
+            case Entity entity1 -> modsEntity = new MohistModsEntity(server, entity1);
+        }
+        
+        if (modsEntity != null) {
+            return modsEntity;
         }
 
         throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
@@ -233,10 +249,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z) {
         Preconditions.checkState(!this.entity.generation, "Cannot get nearby entities during world generation");
-        org.spigotmc.AsyncCatcher.catchOp("getNearbyEntities"); // Spigot
+        AsyncCatcher.catchOp("getNearbyEntities"); // Spigot
 
         List<Entity> notchEntityList = this.entity.level().getEntities(this.entity, this.entity.getBoundingBox().inflate(x, y, z), Predicates.alwaysTrue());
-        List<org.bukkit.entity.Entity> bukkitEntityList = new java.util.ArrayList<org.bukkit.entity.Entity>(notchEntityList.size());
+        List<org.bukkit.entity.Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(notchEntityList.size());
 
         for (Entity e : notchEntityList) {
             bukkitEntityList.add(e.getBukkitEntity());
@@ -299,7 +315,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public void remove() {
         this.entity.pluginRemoved = true;
-        this.entity.discard(this.getHandle().generation ? null : EntityRemoveEvent.Cause.PLUGIN);
+        this.entity.discard(this.getHandle().generation ? null : Cause.PLUGIN);
     }
 
     @Override
@@ -587,10 +603,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public Set<Player> getTrackedBy() {
         Preconditions.checkState(!this.entity.generation, "Cannot get tracking players during world generation");
-        ImmutableSet.Builder<Player> players = ImmutableSet.builder();
+        Builder<Player> players = ImmutableSet.builder();
 
         ServerLevel world = ((CraftWorld) this.getWorld()).getHandle();
-        ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
+        TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
 
         if (entityTracker != null) {
             for (ServerPlayerConnection connection : entityTracker.seenBy) {
@@ -821,7 +837,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return location.getWorld().addEntity(copy.getBukkitEntity());
     }
 
-    private Entity copy(net.minecraft.world.level.Level level) {
+    private Entity copy(Level level) {
         CompoundTag compoundTag = new CompoundTag();
         this.getHandle().saveAsPassenger(compoundTag, false);
 
@@ -857,7 +873,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
 
         ServerLevel world = ((CraftWorld) this.getWorld()).getHandle();
-        ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
+        TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
 
         if (entityTracker == null) {
             return;
@@ -885,16 +901,16 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     // Spigot start
-    private final org.bukkit.entity.Entity.Spigot spigot = new org.bukkit.entity.Entity.Spigot()
+    private final Spigot spigot = new Spigot()
     {
 
         @Override
-        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component)
+        public void sendMessage(BaseComponent component)
         {
         }
 
         @Override
-        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
+        public void sendMessage(BaseComponent... components)
         {
         }
 
@@ -909,7 +925,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
     };
 
-    public org.bukkit.entity.Entity.Spigot spigot()
+    public Spigot spigot()
     {
         return this.spigot;
     }
