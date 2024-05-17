@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/commands/ScheduleCommand.java
++++ b/net/minecraft/server/commands/ScheduleCommand.java
+@@ -100,7 +_,7 @@
+         } else {
+             long i = p_138429_.getLevel().getGameTime() + (long)p_138431_;
+             ResourceLocation resourcelocation = p_138430_.getFirst();
+-            TimerQueue<MinecraftServer> timerqueue = p_138429_.getServer().getWorldData().overworldData().getScheduledEvents();
++            TimerQueue<MinecraftServer> timerqueue = p_138429_.getLevel().K.overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer
+             p_138430_.getSecond().ifLeft(p_312526_ -> {
+                 String s = resourcelocation.toString();
+                 if (p_138432_) {

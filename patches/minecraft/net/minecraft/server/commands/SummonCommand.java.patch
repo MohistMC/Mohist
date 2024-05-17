@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/commands/SummonCommand.java
++++ b/net/minecraft/server/commands/SummonCommand.java
+@@ -23,6 +_,7 @@
+ import net.minecraft.world.entity.MobSpawnType;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class SummonCommand {
+     private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.summon.failed"));
+@@ -93,7 +_,7 @@
+                 if (p_270947_ && entity instanceof Mob) {
+                     ((Mob)entity).finalizeSpawn(p_270582_.getLevel(), p_270582_.getLevel().getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.COMMAND, null);
+                 }
+-
++                entity.spawnReason(CreatureSpawnEvent.SpawnReason.COMMAND);
+                 if (!serverlevel.tryAddFreshEntityWithPassengers(entity)) {
+                     throw ERROR_DUPLICATE_UUID.create();
+                 } else {

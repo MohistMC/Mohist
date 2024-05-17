@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/commands/SetWorldSpawnCommand.java
++++ b/net/minecraft/server/commands/SetWorldSpawnCommand.java
+@@ -34,7 +_,7 @@
+ 
+     private static int setSpawn(CommandSourceStack p_138667_, BlockPos p_138668_, float p_138669_) {
+         ServerLevel serverlevel = p_138667_.getLevel();
+-        if (serverlevel.dimension() != Level.OVERWORLD) {
++        if (false && serverlevel.dimension() != Level.OVERWORLD) { // CraftBukkit - SPIGOT-7649: allow in all worlds
+             p_138667_.sendFailure(Component.translatable("commands.setworldspawn.failure.not_overworld"));
+             return 0;
+         } else {

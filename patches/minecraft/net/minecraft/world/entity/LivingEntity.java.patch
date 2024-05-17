@@ -388,7 +388,7 @@
          return d0;
      }
  
-@@ -934,21 +_,37 @@
+@@ -934,21 +_,41 @@
          this.entityData.set(DATA_EFFECT_PARTICLES, List.of());
      }
  
@@ -429,6 +429,10 @@
 +
 +         return flag;
 +      }
++   }
++
++   public void removeAllEffectsCause(EntityPotionEffectEvent.Cause cause){
++       removeAllEffectsCause.set(cause);
 +   }
 +
 +   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {

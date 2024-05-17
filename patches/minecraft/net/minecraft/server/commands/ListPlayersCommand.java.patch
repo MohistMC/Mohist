@@ -4,18 +4,16 @@
      private static int format(CommandSourceStack p_137827_, Function<ServerPlayer, Component> p_137828_) {
          PlayerList playerlist = p_137827_.getServer().getPlayerList();
          List<ServerPlayer> list = playerlist.getPlayers();
--        Component component = ComponentUtils.formatList(list, p_137828_);
++        // CraftBukkit start
++        if (p_137827_.getBukkitSender() instanceof org.bukkit.entity.Player) {
++            org.bukkit.entity.Player sender = (org.bukkit.entity.Player) p_137827_.getBukkitSender();
++            list = list.stream().filter((ep) -> sender.canSee(ep.getBukkitEntity())).collect(java.util.stream.Collectors.toList());
++        }
++        List<ServerPlayer> finalList = list;
++        // CraftBukkit end
+         Component component = ComponentUtils.formatList(list, p_137828_);
 -        p_137827_.sendSuccess(() -> Component.translatable("commands.list.players", list.size(), playerlist.getMaxPlayers(), component), false);
-+      // CraftBukkit start
-+      if (p_137827_.getBukkitSender() instanceof org.bukkit.entity.Player) {
-+         org.bukkit.entity.Player sender = (org.bukkit.entity.Player) p_137827_.getBukkitSender();
-+         list = list.stream().filter((ep) -> sender.canSee(ep.getBukkitEntity())).collect(java.util.stream.Collectors.toList());
-+      }
-+      // CraftBukkit end
-+      Component component = ComponentUtils.formatList(list, p_137828_);
-+      List<ServerPlayer> finalList = list;
 +        p_137827_.sendSuccess(() -> Component.translatable("commands.list.players", finalList.size(), playerlist.getMaxPlayers(), component), false);
          return list.size();
--    }
-+   }
+     }
  }

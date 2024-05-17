@@ -38,7 +38,14 @@
          if (worldborder.getWarningBlocks() == p_139274_) {
              throw ERROR_SAME_WARNING_DISTANCE.create();
          } else {
-@@ -174,7 +_,7 @@
+@@ -168,13 +_,13 @@
+     }
+ 
+     private static int getSize(CommandSourceStack p_139251_) {
+-        double d0 = p_139251_.getServer().overworld().getWorldBorder().getSize();
++        double d0 = p_139251_.getLevel().getWorldBorder().getSize(); // CraftBukkit
+         p_139251_.sendSuccess(() -> Component.translatable("commands.worldborder.get", String.format(Locale.ROOT, "%.0f", d0)), false);
+         return Mth.floor(d0 + 0.5);
      }
  
      private static int setCenter(CommandSourceStack p_139263_, Vec2 p_139264_) throws CommandSyntaxException {

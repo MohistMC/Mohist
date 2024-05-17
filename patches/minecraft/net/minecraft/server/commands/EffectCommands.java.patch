@@ -1,0 +1,34 @@
+--- a/net/minecraft/server/commands/EffectCommands.java
++++ b/net/minecraft/server/commands/EffectCommands.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.LivingEntity;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ 
+ public class EffectCommands {
+     private static final SimpleCommandExceptionType ERROR_GIVE_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.effect.give.failed"));
+@@ -177,6 +_,7 @@
+         for (Entity entity : p_250411_) {
+             if (entity instanceof LivingEntity) {
+                 MobEffectInstance mobeffectinstance = new MobEffectInstance(p_249495_, j, p_251498_, false, p_249944_);
++                ((LivingEntity)entity).addEffectCause(EntityPotionEffectEvent.Cause.COMMAND);
+                 if (((LivingEntity)entity).addEffect(mobeffectinstance, p_250553_.getEntity())) {
+                     i++;
+                 }
+@@ -202,6 +_,7 @@
+         int i = 0;
+ 
+         for (Entity entity : p_136961_) {
++            ((LivingEntity)entity).removeAllEffectsCause(EntityPotionEffectEvent.Cause.COMMAND);
+             if (entity instanceof LivingEntity && ((LivingEntity)entity).removeAllEffects()) {
+                 i++;
+             }
+@@ -225,6 +_,7 @@
+         int i = 0;
+ 
+         for (Entity entity : p_248561_) {
++            ((LivingEntity)entity).removeAllEffectsCause(EntityPotionEffectEvent.Cause.COMMAND);
+             if (entity instanceof LivingEntity && ((LivingEntity)entity).removeEffect(p_249198_)) {
+                 i++;
+             }

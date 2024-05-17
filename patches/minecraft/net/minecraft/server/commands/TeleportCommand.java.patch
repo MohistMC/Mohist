@@ -1,6 +1,17 @@
 --- a/net/minecraft/server/commands/TeleportCommand.java
 +++ b/net/minecraft/server/commands/TeleportCommand.java
-@@ -269,6 +_,9 @@
+@@ -31,6 +_,10 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.event.entity.EntityTeleportEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
+ 
+ public class TeleportCommand {
+     private static final SimpleCommandExceptionType INVALID_POSITION = new SimpleCommandExceptionType(Component.translatable("commands.teleport.invalidPosition"));
+@@ -269,13 +_,39 @@
          float p_139023_,
          @Nullable TeleportCommand.LookAt p_139024_
      ) throws CommandSyntaxException {
@@ -10,3 +21,34 @@
          BlockPos blockpos = BlockPos.containing(p_139018_, p_139019_, p_139020_);
          if (!Level.isInSpawnableBounds(blockpos)) {
              throw INVALID_POSITION.create();
+         } else {
+             float f = Mth.wrapDegrees(p_139022_);
+             float f1 = Mth.wrapDegrees(p_139023_);
+-            if (p_139016_.teleportTo(p_139017_, p_139018_, p_139019_, p_139020_, p_139021_, f, f1)) {
++            // CraftBukkit start - Teleport event
++            boolean result;
++            if (p_139016_ instanceof ServerPlayer player) {
++                result = player.teleportTo(p_139017_, p_139018_, p_139019_, p_139020_, p_139021_, f, f1, PlayerTeleportEvent.TeleportCause.COMMAND);
++            } else {
++                Location to = new Location(p_139017_.getWorld(), p_139018_, p_139019_, p_139020_, f, f1);
++                EntityTeleportEvent eventCB = new EntityTeleportEvent(p_139016_.getBukkitEntity(), p_139016_.getBukkitEntity().getLocation(), to);
++                p_139017_.getCraftServer().getPluginManager().callEvent(eventCB);
++                if (eventCB.isCancelled()) {
++                    return;
++                }
++
++                p_139018_ = to.getX();
++                p_139019_ = to.getY();
++                p_139020_ = to.getZ();
++                f = to.getYaw();
++                f1 = to.getPitch();
++                p_139017_ = ((CraftWorld) to.getWorld()).getHandle();
++
++                result = p_139016_.teleportTo(p_139017_, p_139018_, p_139019_, p_139020_, p_139021_, f, f1);
++            }
++
++            if (result) {
++                // CraftBukkit end
+                 if (p_139024_ != null) {
+                     p_139024_.perform(p_139015_, p_139016_);
+                 }
