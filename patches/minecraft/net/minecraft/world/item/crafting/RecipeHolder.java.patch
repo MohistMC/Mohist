@@ -8,12 +8,13 @@
  
  public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
      public static final StreamCodec<RegistryFriendlyByteBuf, RecipeHolder<?>> STREAM_CODEC = StreamCodec.composite(
-@@ -31,4 +_,8 @@
+@@ -30,5 +_,9 @@
+     @Override
      public String toString() {
          return this.id.toString();
-     }
++    }
 +
-+   public final org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      return this.value.toBukkitRecipe(CraftNamespacedKey.fromMinecraft(this.id));
-+   }
++    public final org.bukkit.inventory.Recipe toBukkitRecipe() {
++        return this.value.toBukkitRecipe(CraftNamespacedKey.fromMinecraft(this.id));
+     }
  }

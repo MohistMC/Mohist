@@ -15,15 +15,16 @@
      @Override
      public boolean isIncomplete() {
 -        return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
+-    }
 +        return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
-     }
++    }
 +
-+   // CraftBukkit start
-+   @Override
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      return new CraftSmithingTrimRecipe(id, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start
++    @Override
++    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++        return new CraftSmithingTrimRecipe(id, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
++    }
++    // CraftBukkit end
  
      public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
          private static final MapCodec<SmithingTrimRecipe> CODEC = RecordCodecBuilder.mapCodec(

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1,17 +_,21 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.server.level;
  
  import com.google.common.net.InetAddresses;
@@ -9,12 +9,7 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Dynamic;
- import java.net.InetSocketAddress;
-+import java.net.SocketAddress;
- import java.util.Collection;
- import java.util.List;
- import java.util.Optional;
+@@ -12,6 +_,7 @@
  import java.util.OptionalInt;
  import java.util.Set;
  import java.util.UUID;
@@ -22,6 +17,14 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
+@@ -40,7 +_,6 @@
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.OutgoingChatMessage;
+ import net.minecraft.network.chat.RemoteChatSession;
+-import net.minecraft.network.chat.Style;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 @@ -96,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
@@ -59,7 +62,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.portal.PortalInfo;
  import net.minecraft.world.level.storage.LevelData;
-@@ -157,1762 +_,2443 @@
+@@ -157,1762 +_,2442 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreAccess;
  import net.minecraft.world.scores.ScoreHolder;
@@ -1767,11 +1770,10 @@
 +
 +   // Mohsit start
 +   public AtomicReference<TeleportCause> changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
-+
-+   public Entity changeDimension(ServerLevel serverlevel, PlayerTeleportEvent.TeleportCause teleportCause) {
-+      changeDimensionCause.set(teleportCause);
-+      return changeDimension(serverlevel);
++   public void changeDimensionCause(TeleportCause cause) {
++      this.changeDimensionCause.set(cause);
 +   }
++   // Mohist end
 +
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {

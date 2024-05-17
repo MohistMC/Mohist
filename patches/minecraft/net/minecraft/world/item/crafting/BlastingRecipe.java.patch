@@ -17,16 +17,16 @@
          return RecipeSerializer.BLASTING_RECIPE;
      }
 +
-+   // CraftBukkit start
-+   @Override
-+   public Recipe toBukkitRecipe(NamespacedKey id) {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
++    // CraftBukkit start
++    @Override
++    public Recipe toBukkitRecipe(NamespacedKey id) {
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftBlastingRecipe recipe = new CraftBlastingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
-+      recipe.setGroup(this.group);
-+      recipe.setCategory(CraftRecipe.getCategory(this.category()));
++        CraftBlastingRecipe recipe = new CraftBlastingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
++        recipe.setGroup(this.group);
++        recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +
-+      return recipe;
-+   }
-+   // CraftBukkit end
++        return recipe;
++    }
++    // CraftBukkit end
  }

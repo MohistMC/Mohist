@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
-@@ -3,6 +_,7 @@
- import com.mojang.serialization.Codec;
- import net.minecraft.core.HolderLookup;
- import net.minecraft.core.NonNullList;
-+import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.network.RegistryFriendlyByteBuf;
 @@ -31,9 +_,9 @@
          NonNullList<ItemStack> nonnulllist = NonNullList.withSize(p_44004_.getContainerSize(), ItemStack.EMPTY);
  
@@ -26,9 +18,9 @@
          NonNullList<Ingredient> nonnulllist = this.getIngredients();
 -        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch(p_151268_ -> p_151268_.getItems().length == 0);
 +        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
-     }
++    }
 +
-+   default org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      return () -> new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
-+   }
++    default org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
++        return () -> new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
+     }
  }

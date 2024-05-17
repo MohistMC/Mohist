@@ -7,16 +7,7 @@
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.MapCodec;
-@@ -8,30 +_,56 @@
- import java.util.List;
- import net.minecraft.core.HolderLookup;
- import net.minecraft.core.NonNullList;
-+import net.minecraft.core.RegistryAccess;
-+import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.network.RegistryFriendlyByteBuf;
- import net.minecraft.network.codec.StreamCodec;
-+import net.minecraft.util.ExtraCodecs;
- import net.minecraft.world.entity.player.StackedContents;
+@@ -14,24 +_,47 @@
  import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -46,23 +37,23 @@
 +        this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
 +    }
 +
-+   // CraftBukkit start
-+   @SuppressWarnings("unchecked")
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      if (this.result.isEmpty()) {
-+         return new MohistSpecialRecipe(id, this);
-+      }
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-+      CraftShapelessRecipe recipe = new CraftShapelessRecipe(id, result, this);
-+      recipe.setGroup(this.group);
-+      recipe.setCategory(CraftRecipe.getCategory(this.category()));
++    // CraftBukkit start
++    @SuppressWarnings("unchecked")
++    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++        if (this.result.isEmpty()) {
++            return new MohistSpecialRecipe(id, this);
++        }
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
++        CraftShapelessRecipe recipe = new CraftShapelessRecipe(id, result, this);
++        recipe.setGroup(this.group);
++        recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +
-+      for (Ingredient list : this.ingredients) {
-+         recipe.addIngredient(CraftRecipe.toBukkit(list));
-+      }
-+      return recipe;
-+   }
-+   // CraftBukkit end
++        for (Ingredient list : this.ingredients) {
++            recipe.addIngredient(CraftRecipe.toBukkit(list));
++        }
++        return recipe;
++    }
++    // CraftBukkit end
 +
 +   public RecipeSerializer<?> getSerializer() {
 +      return RecipeSerializer.SHAPELESS_RECIPE;

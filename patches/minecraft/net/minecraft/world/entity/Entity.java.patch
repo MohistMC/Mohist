@@ -1088,7 +1088,7 @@
      protected boolean couldAcceptPassenger() {
          return true;
      }
-@@ -2097,13 +_,19 @@
+@@ -2097,13 +_,20 @@
              ServerLevel serverlevel = (ServerLevel)this.level();
              if (this.isInsidePortal) {
                  MinecraftServer minecraftserver = serverlevel.getServer();
@@ -1103,7 +1103,8 @@
 -                    this.changeDimension(serverlevel1);
 +                    // CraftBukkit start
 +                    if (this instanceof ServerPlayer serverPlayer) {
-+                        serverPlayer.changeDimension(serverlevel1, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
++                        serverPlayer.changeDimensionCause(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
++                        serverPlayer.changeDimension(serverlevel1);
 +                    } else {
 +                        this.changeDimension(serverlevel1);
 +                    }

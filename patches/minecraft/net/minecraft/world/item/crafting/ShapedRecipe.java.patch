@@ -1,20 +1,13 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -1,18 +_,39 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.item.crafting;
  
 +import com.mohistmc.mohist.bukkit.inventory.MohistSpecialRecipe;
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
- import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
- import net.minecraft.core.HolderLookup;
- import net.minecraft.core.NonNullList;
-+import net.minecraft.core.RegistryAccess;
-+import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.network.RegistryFriendlyByteBuf;
- import net.minecraft.network.codec.StreamCodec;
-+import net.minecraft.util.ExtraCodecs;
+@@ -11,8 +_,25 @@
  import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -45,69 +38,69 @@
          this(p_272759_, p_273506_, p_310709_, p_272852_, true);
      }
  
-+   // CraftBukkit start
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      if (this.getWidth() < 1 || this.getWidth() > 3 || this.getHeight() < 1 || this.getHeight() > 3 || this.result.isEmpty()) {
-+         return new MohistSpecialRecipe(id, this);
-+      }
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-+      CraftShapedRecipe recipe = new CraftShapedRecipe(id, result, this);
-+      recipe.setGroup(this.group);
-+      recipe.setCategory(CraftRecipe.getCategory(this.category()));
++    // CraftBukkit start
++    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++        if (this.getWidth() < 1 || this.getWidth() > 3 || this.getHeight() < 1 || this.getHeight() > 3 || this.result.isEmpty()) {
++            return new MohistSpecialRecipe(id, this);
++        }
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
++        CraftShapedRecipe recipe = new CraftShapedRecipe(id, result, this);
++        recipe.setGroup(this.group);
++        recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +
-+      switch (this.pattern.height()) {
-+         case 1:
-+            switch (this.pattern.width()) {
-+               case 1:
-+                  recipe.shape("a");
-+                  break;
-+               case 2:
-+                  recipe.shape("ab");
-+                  break;
-+               case 3:
-+                  recipe.shape("abc");
-+                  break;
++        switch (this.pattern.height()) {
++            case 1:
++                switch (this.pattern.width()) {
++                    case 1:
++                        recipe.shape("a");
++                        break;
++                    case 2:
++                        recipe.shape("ab");
++                        break;
++                    case 3:
++                        recipe.shape("abc");
++                        break;
++                }
++                break;
++            case 2:
++                switch (this.pattern.width()) {
++                    case 1:
++                        recipe.shape("a", "b");
++                        break;
++                    case 2:
++                        recipe.shape("ab", "cd");
++                        break;
++                    case 3:
++                        recipe.shape("abc", "def");
++                        break;
++                }
++                break;
++            case 3:
++                switch (this.pattern.width()) {
++                    case 1:
++                        recipe.shape("a", "b", "c");
++                        break;
++                    case 2:
++                        recipe.shape("ab", "cd", "ef");
++                        break;
++                    case 3:
++                        recipe.shape("abc", "def", "ghi");
++                        break;
++                }
++                break;
++        }
++        char c = 'a';
++        for (Ingredient list : this.pattern.ingredients()) {
++            RecipeChoice choice = CraftRecipe.toBukkit(list);
++            if (choice != null) {
++                recipe.setIngredient(c, choice);
 +            }
-+            break;
-+         case 2:
-+            switch (this.pattern.width()) {
-+               case 1:
-+                  recipe.shape("a", "b");
-+                  break;
-+               case 2:
-+                  recipe.shape("ab", "cd");
-+                  break;
-+               case 3:
-+                  recipe.shape("abc", "def");
-+                  break;
-+            }
-+            break;
-+         case 3:
-+            switch (this.pattern.width()) {
-+               case 1:
-+                  recipe.shape("a", "b", "c");
-+                  break;
-+               case 2:
-+                  recipe.shape("ab", "cd", "ef");
-+                  break;
-+               case 3:
-+                  recipe.shape("abc", "def", "ghi");
-+                  break;
-+            }
-+            break;
-+      }
-+      char c = 'a';
-+      for (Ingredient list : this.pattern.ingredients()) {
-+         RecipeChoice choice = CraftRecipe.toBukkit(list);
-+         if (choice != null) {
-+            recipe.setIngredient(c, choice);
-+         }
 +
-+         c++;
-+      }
-+      return recipe;
-+   }
-+   // CraftBukkit end
++            c++;
++        }
++        return recipe;
++    }
++    // CraftBukkit end
 +
      @Override
      public RecipeSerializer<?> getSerializer() {

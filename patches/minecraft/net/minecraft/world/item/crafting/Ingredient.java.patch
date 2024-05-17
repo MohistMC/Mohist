@@ -1,33 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -1,9 +_,11 @@
- package net.minecraft.world.item.crafting;
- 
- import com.google.common.collect.Lists;
-+import com.google.gson.JsonElement;
- import com.mojang.datafixers.util.Either;
- import com.mojang.serialization.Codec;
- import com.mojang.serialization.DataResult;
-+import com.mojang.serialization.JsonOps;
- import com.mojang.serialization.codecs.RecordCodecBuilder;
- import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
- import it.unimi.dsi.fastutil.ints.IntArrayList;
-@@ -16,30 +_,43 @@
- import java.util.function.Predicate;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
-+import net.minecraft.Util;
- import net.minecraft.core.Holder;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.core.registries.Registries;
-+import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.network.RegistryFriendlyByteBuf;
- import net.minecraft.network.codec.StreamCodec;
- import net.minecraft.tags.TagKey;
-+import net.minecraft.util.ExtraCodecs;
- import net.minecraft.world.entity.player.StackedContents;
- import net.minecraft.world.item.Item;
- import net.minecraft.world.item.ItemStack;
+@@ -28,18 +_,28 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -71,6 +44,22 @@
              this.itemStacks = Arrays.stream(this.values).flatMap(p_43916_ -> p_43916_.getItems().stream()).distinct().toArray(ItemStack[]::new);
          }
  
+@@ -62,6 +_,15 @@
+             return p_43914_.isEmpty();
+         } else {
+             for (ItemStack itemstack : this.getItems()) {
++                // CraftBukkit start
++                if (exact) {
++                    if (itemstack.getItem() == p_43914_.getItem() && ItemStack.isSameItemSameComponents(p_43914_, itemstack)) {
++                        return true;
++                    }
++
++                    continue;
++                }
++                // CraftBukkit end
+                 if (itemstack.is(p_43914_.getItem())) {
+                     return true;
+                 }
 @@ -72,7 +_,8 @@
      }
  

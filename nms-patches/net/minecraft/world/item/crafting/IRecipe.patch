@@ -1,9 +1,0 @@
---- a/net/minecraft/world/item/crafting/IRecipe.java
-+++ b/net/minecraft/world/item/crafting/IRecipe.java
-@@ -72,4 +72,6 @@
-             return recipeitemstack.getItems().length == 0;
-         });
-     }
-+
-+    org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id); // CraftBukkit
- }

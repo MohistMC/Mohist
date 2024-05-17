@@ -463,8 +463,12 @@
      }
  
      public GameType getDefaultGameType() {
-@@ -542,6 +_,13 @@
-         serverleveldata.setWorldBorder(serverlevel2.getWorldBorder().createSettings());
+@@ -539,9 +_,16 @@
+ 
+         ServerLevel serverlevel2 = this.overworld();
+         ServerLevelData serverleveldata = this.worldData.overworldData();
+-        serverleveldata.setWorldBorder(serverlevel2.getWorldBorder().createSettings());
++        if (serverlevel2 != null) serverleveldata.setWorldBorder(serverlevel2.getWorldBorder().createSettings());
          this.worldData.setCustomBossEvents(this.getCustomBossEvents().save(this.registryAccess()));
          this.storageSource.saveDataTag(this.registryAccess(), this.worldData, this.getPlayerList().getSingleplayerData());
 +        for (ServerLevel world : this.getAllLevels()) {

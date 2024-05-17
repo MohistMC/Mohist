@@ -17,7 +17,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
-@@ -37,25 +_,38 @@
+@@ -37,45 +_,76 @@
      private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
      private static final Logger LOGGER = LogUtils.getLogger();
      private final HolderLookup.Provider registries;
@@ -58,7 +58,17 @@
                  Recipe<?> recipe = Recipe.CODEC.parse(registryops, entry.getValue()).getOrThrow(JsonParseException::new);
                  RecipeHolder<?> recipeholder = new RecipeHolder<>(resourcelocation, recipe);
                  builder.put(recipe.getType(), recipeholder);
-@@ -70,6 +_,20 @@
+                 builder1.put(resourcelocation, recipeholder);
+             } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
+-                LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
++                LOGGER.debug("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
+             }
+         }
+ 
+-        this.byType = builder.build();
+-        this.byName = builder1.build();
++        this.byType = LinkedHashMultimap.create(builder.build());
++        this.byName = Maps.newHashMap(builder1.build());
          LOGGER.info("Loaded {} recipes", this.byType.size());
      }
  
@@ -79,10 +89,41 @@
      public boolean hadErrorsLoading() {
          return this.hasErrors;
      }
-@@ -164,6 +_,25 @@
-         this.byType = builder.build();
-         this.byName = builder1.build();
+ 
+     public <C extends Container, T extends Recipe<C>> Optional<RecipeHolder<T>> getRecipeFor(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
+-        return this.byType(p_44016_).stream().filter(p_296918_ -> p_296918_.value().matches(p_44017_, p_44018_)).findFirst();
++        List<RecipeHolder<T>> list = this.byType(p_44016_).stream().filter(p_296918_ -> p_296918_.value().matches(p_44017_, p_44018_)).toList();
++        Optional<RecipeHolder<T>> recipe = (list.isEmpty()) ? Optional.empty() : Optional.of(list.getLast()); // CraftBukkit - SPIGOT-4638: last recipe gets priority
++        p_44017_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
++        return recipe;
++        // CraftBukkit end
      }
+ 
+     public <C extends Container, T extends Recipe<C>> Optional<RecipeHolder<T>> getRecipeFor(
+@@ -88,7 +_,12 @@
+             }
+         }
+ 
+-        return this.byType(p_220249_).stream().filter(p_296912_ -> p_296912_.value().matches(p_220250_, p_220251_)).findFirst();
++        // CraftBukkit start
++        List<RecipeHolder<T>> list = this.byType(p_220249_).stream().filter(p_296912_ -> p_296912_.value().matches(p_220250_, p_220251_)).toList();
++        Optional<RecipeHolder<T>> recipe = (list.isEmpty()) ? Optional.empty() : Optional.of(list.getLast()); // CraftBukkit - SPIGOT-4638: last recipe gets priority
++        p_220250_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
++        return recipe;
++        // CraftBukkit end
+     }
+ 
+     public <C extends Container, T extends Recipe<C>> List<RecipeHolder<T>> getAllRecipesFor(RecipeType<T> p_44014_) {
+@@ -161,9 +_,28 @@
+             builder1.put(recipeholder.id(), recipeholder);
+         }
+ 
+-        this.byType = builder.build();
+-        this.byName = builder1.build();
+-    }
++        this.byType = LinkedHashMultimap.create(builder.build());
++        this.byName = Maps.newHashMap(builder1.build());
++    }
 +
 +    // CraftBukkit start
 +    public boolean removeRecipe(ResourceLocation mcKey) {

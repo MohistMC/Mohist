@@ -23,22 +23,23 @@
      @Override
      public boolean isIncomplete() {
 -        return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
+-    }
 +        return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
-     }
++    }
 +
-+   // CraftBukkit start
-+   @Override
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      if (this.result.isEmpty()) {
-+         return new MohistSpecialRecipe(id, this);
-+      }
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
++    // CraftBukkit start
++    @Override
++    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++        if (this.result.isEmpty()) {
++            return new MohistSpecialRecipe(id, this);
++        }
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
++        CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
 +
-+      return recipe;
-+   }
-+   // CraftBukkit end
++        return recipe;
++    }
++    // CraftBukkit end
  
      public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {
          private static final MapCodec<SmithingTransformRecipe> CODEC = RecordCodecBuilder.mapCodec(

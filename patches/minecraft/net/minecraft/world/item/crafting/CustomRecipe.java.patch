@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/item/crafting/CustomRecipe.java
 +++ b/net/minecraft/world/item/crafting/CustomRecipe.java
-@@ -1,7 +_,9 @@
- package net.minecraft.world.item.crafting;
+@@ -2,6 +_,7 @@
  
  import net.minecraft.core.HolderLookup;
-+import net.minecraft.core.RegistryAccess;
  import net.minecraft.world.item.ItemStack;
 +import org.bukkit.NamespacedKey;
  
@@ -15,10 +13,10 @@
          return this.category;
      }
 +
-+   // CraftBukkit start
-+   @Override
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(id,this);
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start
++    @Override
++    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++        return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(id, this);
++    }
++    // CraftBukkit end
  }
