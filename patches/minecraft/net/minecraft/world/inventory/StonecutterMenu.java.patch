@@ -10,19 +10,19 @@
  
  public class StonecutterMenu extends AbstractContainerMenu {
      public static final int INPUT_SLOT = 0;
-@@ -41,8 +_,29 @@
+@@ -41,8 +_,30 @@
              StonecutterMenu.this.slotsChanged(this);
              StonecutterMenu.this.slotUpdateListener.run();
          }
--    };
++
++        // CraftBukkit start
++        @Override
++        public Location getLocation() {
++            return StonecutterMenu.this.access.getLocation();
++        }
++        // CraftBukkit end
+     };
 -    final ResultContainer resultContainer = new ResultContainer();
-+      // CraftBukkit start
-+      @Override
-+      public Location getLocation() {
-+         return StonecutterMenu.this.access.getLocation();
-+      }
-+      // CraftBukkit end
-+   };
 +   final ResultContainer resultContainer = new ResultContainer();
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
@@ -54,7 +54,7 @@
  
      @Override
      public boolean stillValid(Player p_40307_) {
-+      if (!this.checkReachable) return true; // CraftBukkit
++        if (!this.checkReachable) return true; // CraftBukkit
          return stillValid(this.access, p_40307_, Blocks.STONECUTTER);
      }
  

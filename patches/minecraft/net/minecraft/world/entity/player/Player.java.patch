@@ -26,7 +26,7 @@
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
-@@ -112,9 +_,23 @@
+@@ -112,9 +_,25 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
@@ -41,6 +41,8 @@
 +import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
 +import org.bukkit.event.entity.EntityKnockbackEvent;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
 +import org.bukkit.event.player.PlayerVelocityEvent;
  import org.slf4j.Logger;
@@ -137,6 +139,14 @@
      }
  
      @Override
+@@ -335,6 +_,7 @@
+     private void turtleHelmetTick() {
+         ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
+         if (itemstack.is(Items.TURTLE_HELMET) && !this.isEyeInFluid(FluidTags.WATER)) {
++            this.addEffectCause(EntityPotionEffectEvent.Cause.TURTLE_HELMET);
+             this.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 200, 0, false, false, true));
+         }
+     }
 @@ -387,6 +_,10 @@
      }
  
@@ -161,28 +171,28 @@
      public void rideTick() {
          if (!this.level().isClientSide && this.wantsToStopRiding() && this.isPassenger()) {
              this.stopRiding();
-+         // CraftBukkit start - SPIGOT-7316: no longer passenger, dismount and return
-+         if (!this.isPassenger()) {
-             this.setShiftKeyDown(false);
+-            this.setShiftKeyDown(false);
 -        } else {
-+            return;
-+         }
-+      }
-+      {
-+         // CraftBukkit end
++            // CraftBukkit start - SPIGOT-7316: no longer passenger, dismount and return
++            if (!this.isPassenger()) {
++                this.setShiftKeyDown(false);
++                return;
++            }
++        }
++        {
++            // CraftBukkit end
              super.rideTick();
              this.oBob = this.bob;
              this.bob = 0.0F;
-@@ -510,7 +_,8 @@
+@@ -510,6 +_,8 @@
  
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION)) {
              if (this.getHealth() < this.getMaxHealth() && this.tickCount % 20 == 0) {
--                this.heal(1.0F);
-+            // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
-+            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
++                // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
++                this.heal$regainReason(EntityRegainHealthEvent.RegainReason.REGEN);
+                 this.heal(1.0F);
              }
  
-             if (this.foodData.needsFood() && this.tickCount % 10 == 0) {
 @@ -613,6 +_,7 @@
  
      @Override
@@ -210,54 +220,58 @@
  
      @Nullable
      public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_) {
-@@ -703,13 +_,54 @@
-                     (double)(-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F),
-                     (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6
+@@ -689,7 +_,7 @@
+             if (p_36180_) {
+                 float f = this.random.nextFloat() * 0.5F;
+                 float f1 = this.random.nextFloat() * (float) (Math.PI * 2);
+-                itementity.setDeltaMovement((double)(-Mth.sin(f1) * f), 0.2F, (double)(Mth.cos(f1) * f));
++                itementity.setDeltaMovement((double) (-Mth.sin(f1) * f), 0.2F, (double) (Mth.cos(f1) * f));
+             } else {
+                 float f7 = 0.3F;
+                 float f8 = Mth.sin(this.getXRot() * (float) (Math.PI / 180.0));
+@@ -699,17 +_,49 @@
+                 float f5 = this.random.nextFloat() * (float) (Math.PI * 2);
+                 float f6 = 0.02F * this.random.nextFloat();
+                 itementity.setDeltaMovement(
+-                    (double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6,
+-                    (double)(-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F),
+-                    (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6
++                        (double) (-f3 * f2 * 0.3F) + Math.cos((double) f5) * (double) f6,
++                        (double) (-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F),
++                        (double) (f4 * f2 * 0.3F) + Math.sin((double) f5) * (double) f6
                  );
-+         }
+             }
 +
-+         // CraftBukkit start - fire PlayerDropItemEvent
-+         if (callEventA.getAndSet(true)) { // SPIGOT-2942: Add boolean to call event
++            // CraftBukkit start - fire PlayerDropItemEvent
++            if (!callEventA.getAndSet(true)) { // SPIGOT-2942: Add boolean to call event
++                return itementity;
++            }
 +            org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
 +            Item drop = (Item) itementity.getBukkitEntity();
 +
 +            PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
 +            this.level.getCraftServer().getPluginManager().callEvent(event);
 +
-+            if (!event.isCancelled()) {
-+               // Paper start - remove player from map on drop
-+               if (p_36179_.getItem() == Items.FILLED_MAP) {
-+                  net.minecraft.world.level.saveddata.maps.MapItemSavedData worldmap = net.minecraft.world.item.MapItem.getSavedData(p_36179_, this.level());
-+                  if (worldmap != null) {
-+                     worldmap.tickCarriedBy(this, p_36179_);
-+                  }
-+               }
-+               // Paper end
-+               return itementity;
-+            } else {
-+               org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
-+               if (p_36181_ && (cur == null || cur.getAmount() == 0)) {
-+                  // The complete stack was dropped
-+                  player.getInventory().setItemInHand(drop.getItemStack());
-+               } else if (p_36181_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
-+                  // Only one item is dropped
-+                  cur.setAmount(cur.getAmount() + 1);
-+                  player.getInventory().setItemInHand(cur);
-+               } else {
-+                  // Fallback
-+                  player.getInventory().addItem(drop.getItemStack());
-+               }
-+               return null;
-             }
--
++            if (event.isCancelled()) {
++                org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
++                if (p_36181_ && (cur == null || cur.getAmount() == 0)) {
++                    // The complete stack was dropped
++                    player.getInventory().setItemInHand(drop.getItemStack());
++                } else if (p_36181_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++                    // Only one item is dropped
++                    cur.setAmount(cur.getAmount() + 1);
++                    player.getInventory().setItemInHand(cur);
++                } else {
++                    // Fallback
++                    player.getInventory().addItem(drop.getItemStack());
++                }
++                return null;
++            }
 +            // CraftBukkit end
-+         } else {
+ 
              return itementity;
--        }
--    }
-+         }
-+      }
-+   }
+         }
+     }
  
 +    /** @deprecated Use {@link #getDestroySpeed(BlockState,BlockPos) */
      public float getDestroySpeed(BlockState p_36282_) {
@@ -292,41 +306,37 @@
          if (this.isInvulnerableTo(p_36154_)) {
              return false;
          } else if (this.abilities.invulnerable && !p_36154_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-@@ -854,11 +_,11 @@
+@@ -854,12 +_,12 @@
                  return false;
              } else {
                  if (!this.level().isClientSide) {
 -                    this.removeEntitiesOnShoulder();
--                }
-+               // this.removeEntitiesOnShoulder(); // CraftBukkit - moved doen
-+            }
++                    // this.removeEntitiesOnShoulder(); // CraftBukkit - moved down
+                 }
  
--                if (p_36154_.scalesWithDifficulty()) {
--                    if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-+            if (p_36154_.scalesWithDifficulty()) {
-+               if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-                         p_36155_ = 0.0F;
+                 if (p_36154_.scalesWithDifficulty()) {
+                     if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
+-                        p_36155_ = 0.0F;
++                        return false; // CraftBukkit - f = 0.0f -> return false
                      }
  
-@@ -871,15 +_,20 @@
+                     if (this.level().getDifficulty() == Difficulty.EASY) {
+@@ -871,7 +_,13 @@
                      }
                  }
  
 -                return p_36155_ == 0.0F ? false : super.hurt(p_36154_, p_36155_);
--            }
--        }
--    }
--
-+            // CraftBukkit start - Don't filter out 0 damage
-+            boolean damaged = super.hurt(p_36154_, p_36155_);
-+            if (damaged) {
-+               this.removeEntitiesOnShoulder();
-+                              }
-+            return damaged;
-+            // CraftBukkit end
-+         }
-+      }
-+   }
++                // CraftBukkit start - Don't filter out 0 damage
++                boolean damaged = super.hurt(p_36154_, p_36155_);
++                if (damaged) {
++                    this.removeEntitiesOnShoulder();
++                }
++                return damaged;
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -879,7 +_,7 @@
      @Override
      protected void blockUsingShield(LivingEntity p_36295_) {
          super.blockUsingShield(p_36295_);
@@ -335,6 +345,42 @@
              this.disableShield();
          }
      }
+@@ -890,13 +_,29 @@
+     }
+ 
+     public boolean canHarmPlayer(Player p_36169_) {
+-        Team team = this.getTeam();
+-        Team team1 = p_36169_.getTeam();
+-        if (team == null) {
+-            return true;
++        // CraftBukkit start - Change to check OTHER player's scoreboard team according to API
++        // To summarize this method's logic, it's "Can parameter hurt this"
++        org.bukkit.scoreboard.Team team;
++        if (p_36169_ instanceof ServerPlayer) {
++            ServerPlayer thatPlayer = (ServerPlayer) p_36169_;
++            team = thatPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thatPlayer.getBukkitEntity());
++            if (team == null || team.allowFriendlyFire()) {
++                return true;
++            }
+         } else {
+-            return !team.isAlliedTo(team1) ? true : team.isAllowFriendlyFire();
+-        }
++            // This should never be called, but is implemented anyway
++            org.bukkit.OfflinePlayer thisPlayer = p_36169_.level().getCraftServer().getOfflinePlayer(p_36169_.getScoreboardName());
++            team = p_36169_.level().getCraftServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
++            if (team == null || team.allowFriendlyFire()) {
++                return true;
++            }
++        }
++
++        if (this instanceof ServerPlayer) {
++            return !team.hasPlayer(((ServerPlayer) this).getBukkitEntity());
++        }
++        return !team.hasPlayer(this.level().getCraftServer().getOfflinePlayer(this.getScoreboardName()));
++        // CraftBukkit end
+     }
+ 
+     @Override
 @@ -911,7 +_,7 @@
  
      @Override
@@ -1048,11 +1094,12 @@
              Vec3 vec31 = this.getDeltaMovement();
              this.setDeltaMovement(vec31.x, d2 * 0.6, vec31.z);
              this.resetFallDistance();
-+         // CraftBukkit start
-+         if (getSharedFlag(7) && !org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
-             this.setSharedFlag(7, false);
-+         }
-+         // CraftBukkit end
+-            this.setSharedFlag(7, false);
++            // CraftBukkit start
++            if (getSharedFlag(7) && !org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++                this.setSharedFlag(7, false);
++            }
++            // CraftBukkit end
          } else {
              super.travel(p_36359_);
          }
@@ -1163,18 +1210,16 @@
          if (!this.abilities.invulnerable) {
              if (!this.level().isClientSide) {
 -                this.foodData.addExhaustion(p_36400_);
-+            // CraftBukkit start
-+            EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, this.reason.getAndSet(EntityExhaustionEvent.ExhaustionReason.UNKNOWN), p_36400_);
-+            if (!event.isCancelled()) {
-+               this.foodData.addExhaustion(event.getExhaustion());
++                // CraftBukkit start
++                EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, this.reason.getAndSet(EntityExhaustionEvent.ExhaustionReason.UNKNOWN), p_36400_);
++                if (!event.isCancelled()) {
++                    this.foodData.addExhaustion(event.getExhaustion());
++                }
++                // CraftBukkit end
              }
--        }
--    }
-+            // CraftBukkit end
-+         }
 +
-+      }
-+   }
+         }
+     }
 +
 +   // Mohist start
 +   // CraftBukkit start
@@ -1191,13 +1236,12 @@
  
      public Optional<WardenSpawnTracker> getWardenSpawnTracker() {
          return Optional.empty();
-@@ -1758,6 +_,16 @@
+@@ -1758,6 +_,15 @@
          }
      }
  
 +   // Mohist start
 +   // CraftBukkit start
-+
 +   public void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
 +      this.silent0.set(silent);
 +      setItemSlot(enumitemslot, itemstack);

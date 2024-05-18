@@ -443,14 +443,13 @@
  
      public Collection<MobEffectInstance> getActiveEffects() {
          return this.activeEffects.values();
-@@ -968,31 +_,71 @@
+@@ -968,31 +_,74 @@
      }
  
      public final boolean addEffect(MobEffectInstance p_21165_) {
 -        return this.addEffect(p_21165_, null);
-+        return this.addEffect(p_21165_, (Entity)null);
-     }
- 
+-    }
+-
 -    public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 -        if (!this.canBeAffected(p_147208_)) {
 -            return false;
@@ -465,16 +464,22 @@
 -            } else if (mobeffectinstance.update(p_147208_)) {
 -                this.onEffectUpdated(mobeffectinstance, true, p_147209_);
 -                flag = true;
++        return this.addEffect(p_21165_, (Entity)null);
++    }
++
 +   // CraftBukkit start
 +   public boolean addEffect(MobEffectInstance pEffectInstance, EntityPotionEffectEvent.Cause cause) {
 +      return addEffect(pEffectInstance, (Entity) null, cause);
 +   }
 +
 +   // Mohist start
-+   private static AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
-+   public static void addEffectCause(EntityPotionEffectEvent.Cause cause) {
++   private static final AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++   public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
 +       addEffectCause.set(cause);
 +   }
++    public static void addEffectCausePublic(EntityPotionEffectEvent.Cause cause) {
++        addEffectCause.set(cause);
++    }
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 +      boolean isAsync = AsyncCatcher.catchAsync();
 +      if (isTickingEffects) {

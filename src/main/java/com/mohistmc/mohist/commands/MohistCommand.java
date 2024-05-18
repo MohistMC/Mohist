@@ -129,7 +129,7 @@ public class MohistCommand extends Command {
                                 }
                             }
                         }
-                        if (args[0].equalsIgnoreCase("reset")) {
+                        if (args[1].equalsIgnoreCase("reset")) {
                             p.setFlySpeed(0.1f);
                             p.setWalkSpeed(0.2f);
                             p.sendMessage(I18n.as("mohistcmd.flightAndWalkspeedRestore"));

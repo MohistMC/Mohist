@@ -38,7 +38,7 @@
  
      @Override
      public boolean stillValid(Player p_39047_) {
-+      if (!this.checkReachable) return true; // CraftBukkit
++        if (!this.checkReachable) return true; // CraftBukkit
          return stillValid(this.access, p_39047_, Blocks.BEACON);
      }
  
@@ -60,16 +60,16 @@
          }
      }
 +
-+   // CraftBukkit start
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    // CraftBukkit start
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      CraftInventory inventory = new CraftInventoryBeacon(this.beacon);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        CraftInventory inventory = new CraftInventoryBeacon(this.beacon);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
  }

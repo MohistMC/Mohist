@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/PlayerEnderChestContainer.java
 +++ b/net/minecraft/world/inventory/PlayerEnderChestContainer.java
-@@ -8,14 +_,29 @@
+@@ -8,13 +_,29 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
@@ -13,24 +13,31 @@
      private EnderChestBlockEntity activeChest;
 -
 -    public PlayerEnderChestContainer() {
--        super(27);
--    }
-+   // CraftBukkit start
-+   private final Player owner;
++    // CraftBukkit start
++    private final Player owner;
 +
-+   public InventoryHolder getBukkitOwner() {
-+      return owner.getBukkitEntity();
-+   }
++    public InventoryHolder getBukkitOwner() {
++        return owner.getBukkitEntity();
++    }
 +
-+   @Override
++    @Override
 +    public Location getLocation() {
-+      return this.activeChest != null ? CraftLocation.toBukkit(this.activeChest.getBlockPos(), this.activeChest.getLevel().getWorld()) : null;
-+   }
++        return this.activeChest != null ? CraftLocation.toBukkit(this.activeChest.getBlockPos(), this.activeChest.getLevel().getWorld()) : null;
++    }
 +
-+   public PlayerEnderChestContainer(Player owner) {
-+      super(27);
-+      this.owner = owner;
-+   }
++    public PlayerEnderChestContainer(Player owner) {
+         super(27);
++        this.owner = owner;
++        // CraftBukkit end
+     }
  
      public void setActiveChest(EnderChestBlockEntity p_40106_) {
-         this.activeChest = p_40106_;
+@@ -48,7 +_,7 @@
+             ItemStack itemstack = this.getItem(i);
+             if (!itemstack.isEmpty()) {
+                 CompoundTag compoundtag = new CompoundTag();
+-                compoundtag.putByte("Slot", (byte)i);
++                compoundtag.putByte("Slot", (byte) i);
+                 listtag.add(itemstack.save(p_335225_, compoundtag));
+             }
+         }

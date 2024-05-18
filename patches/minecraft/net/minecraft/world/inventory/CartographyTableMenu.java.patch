@@ -1,7 +1,17 @@
 --- a/net/minecraft/world/inventory/CartographyTableMenu.java
 +++ b/net/minecraft/world/inventory/CartographyTableMenu.java
-@@ -15,8 +_,27 @@
- import net.minecraft.world.level.Level;
+@@ -1,6 +_,5 @@
+ package net.minecraft.world.inventory;
+ 
+-import net.minecraft.core.BlockPos;
+ import net.minecraft.core.component.DataComponents;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
+@@ -12,11 +_,29 @@
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.MapItem;
+ import net.minecraft.world.item.component.MapPostProcessing;
+-import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 +import org.bukkit.Location;
@@ -10,21 +20,21 @@
  
  public class CartographyTableMenu extends AbstractContainerMenu {
 +
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   private org.bukkit.entity.Player player;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private org.bukkit.entity.Player player;
 +
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      CraftInventoryCartography inventory = new CraftInventoryCartography(this.container, this.resultContainer);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        CraftInventoryCartography inventory = new CraftInventoryCartography(this.container, this.resultContainer);
++        bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
      public static final int MAP_SLOT = 0;
      public static final int ADDITIONAL_SLOT = 1;
      public static final int RESULT_SLOT = 2;
@@ -33,38 +43,40 @@
              super.setChanged();
          }
 +
-+      // CraftBukkit start
-+      @Override
-+      public Location getLocation() {
-+         return access.getLocation();
-+      }
-+      // CraftBukkit end
++        // CraftBukkit start
++        @Override
++        public Location getLocation() {
++            return access.getLocation();
++        }
++        // CraftBukkit end
      };
      private final ResultContainer resultContainer = new ResultContainer() {
          @Override
-@@ -39,6 +_,12 @@
+@@ -39,6 +_,13 @@
              CartographyTableMenu.this.slotsChanged(this);
              super.setChanged();
          }
-+      // CraftBukkit start
-+      @Override
-+      public Location getLocation() {
-+         return access.getLocation();
-+      }
-+      // CraftBukkit end
++
++        // CraftBukkit start
++        @Override
++        public Location getLocation() {
++            return access.getLocation();
++        }
++        // CraftBukkit end
      };
  
      public CartographyTableMenu(int p_39140_, Inventory p_39141_) {
-@@ -91,10 +_,12 @@
+@@ -91,10 +_,13 @@
          for (int k = 0; k < 9; k++) {
              this.addSlot(new Slot(p_39144_, k, 8 + k * 18, 142));
          }
-+      	player = (org.bukkit.entity.Player) p_39144_.player.getBukkitEntity(); // CraftBukkit
++
++        player = (org.bukkit.entity.Player) p_39144_.player.getBukkitEntity(); // CraftBukkit
      }
  
      @Override
      public boolean stillValid(Player p_39149_) {
-+      if (!this.checkReachable) return true; // CraftBukkit
++        if (!this.checkReachable) return true; // CraftBukkit
          return stillValid(this.access, p_39149_, Blocks.CARTOGRAPHY_TABLE);
      }
  

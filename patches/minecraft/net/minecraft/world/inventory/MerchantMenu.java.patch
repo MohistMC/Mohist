@@ -13,18 +13,18 @@
      private boolean showProgressBar;
      private boolean canRestock;
  
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   private Inventory player;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private Inventory player;
 +
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity == null) {
-+         bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), new CraftInventoryMerchant(trader, tradeContainer), this);
-+      }
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity == null) {
++            bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), new CraftInventoryMerchant(trader, tradeContainer), this);
++        }
++        return bukkitEntity;
++    }
++    // CraftBukkit end
 +
      public MerchantMenu(int p_40033_, Inventory p_40034_) {
          this(p_40033_, p_40034_, new ClientSideMerchant(p_40034_.player));
@@ -38,3 +38,12 @@
          for (int i = 0; i < 3; i++) {
              for (int j = 0; j < 9; j++) {
                  this.addSlot(new Slot(p_40037_, j + i * 9 + 9, 108 + j * 18, 84 + i * 18));
+@@ -149,7 +_,7 @@
+     }
+ 
+     private void playTradeSound() {
+-        if (!this.trader.isClientSide()) {
++        if (!this.trader.isClientSide() && this.trader instanceof Entity) { // CraftBukkit - SPIGOT-5035
+             Entity entity = (Entity)this.trader;
+             entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(), this.trader.getNotifyTradeSound(), SoundSource.NEUTRAL, 1.0F, 1.0F, false);
+         }

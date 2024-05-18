@@ -10,53 +10,65 @@
  
  public class LoomMenu extends AbstractContainerMenu {
      private static final int PATTERN_NOT_SET = -1;
-@@ -48,14 +_,26 @@
+@@ -48,6 +_,13 @@
              LoomMenu.this.slotsChanged(this);
              LoomMenu.this.slotUpdateListener.run();
          }
--    };
-+      // CraftBukkit start
-+      @Override
-+      public Location getLocation() {
-+         return LoomMenu.this.access.getLocation();
-+      }
-+      // CraftBukkit end
-+   };
++
++        // CraftBukkit start
++        @Override
++        public Location getLocation() {
++            return LoomMenu.this.access.getLocation();
++        }
++        // CraftBukkit end
+     };
      private final Container outputContainer = new SimpleContainer(1) {
          @Override
-         public void setChanged() {
+@@ -55,6 +_,13 @@
              super.setChanged();
              LoomMenu.this.slotUpdateListener.run();
          }
--    };
-+      // CraftBukkit start
-+      @Override
-+      public Location getLocation() {
-+         return LoomMenu.this.access.getLocation();
-+      }
-+      // CraftBukkit end
-+   };
++
++        // CraftBukkit start
++        @Override
++        public Location getLocation() {
++            return LoomMenu.this.access.getLocation();
++        }
++        // CraftBukkit end
+     };
  
      public LoomMenu(int p_39856_, Inventory p_39857_) {
-         this(p_39856_, p_39857_, ContainerLevelAccess.NULL);
+@@ -119,10 +_,12 @@
+ 
+         this.addDataSlot(this.selectedBannerPatternIndex);
+         this.patternGetter = p_39860_.player.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN);
++        player = (org.bukkit.entity.Player) p_39860_.player.getBukkitEntity(); // CraftBukkit
+     }
+ 
+     @Override
+     public boolean stillValid(Player p_39865_) {
++        if (!this.checkReachable) return true; // CraftBukkit
+         return stillValid(this.access, p_39865_, Blocks.LOOM);
+     }
+ 
 @@ -306,4 +_,20 @@
      public Slot getResultSlot() {
          return this.resultSlot;
      }
 +
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   private org.bukkit.entity.Player player;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private org.bukkit.entity.Player player;
 +
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
++        bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
  }

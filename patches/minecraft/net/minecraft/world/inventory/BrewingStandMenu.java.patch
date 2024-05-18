@@ -10,14 +10,24 @@
  public class BrewingStandMenu extends AbstractContainerMenu {
      private static final int BOTTLE_SLOT_START = 0;
      private static final int BOTTLE_SLOT_END = 2;
-@@ -30,20 +_,26 @@
+@@ -30,20 +_,36 @@
      private final ContainerData brewingStandData;
      private final Slot ingredientSlot;
  
 +   	// CraftBukkit start
 +   	private CraftInventoryView bukkitEntity = null;
 +   	private Inventory player;
-+   	// CraftBukkit end
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.brewingStand);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
 +
      public BrewingStandMenu(int p_39090_, Inventory p_39091_) {
          this(p_39090_, p_39091_, new SimpleContainer(5), new SimpleContainerData(2));
@@ -57,23 +67,9 @@
                      if (!this.moveItemStackTo(itemstack1, 0, 3, false)) {
                          return ItemStack.EMPTY;
                      }
-@@ -156,13 +_,37 @@
-         }
+@@ -157,12 +_,23 @@
      }
  
-+   // CraftBukkit start
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
-+
-+      CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.brewingStand);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
-+
      public static class PotionSlot extends Slot {
 +        private final PotionBrewing potionBrewing;
 +

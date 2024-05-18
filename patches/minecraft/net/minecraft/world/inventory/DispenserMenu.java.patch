@@ -13,10 +13,10 @@
      private static final int USE_ROW_SLOT_START = 36;
      private static final int USE_ROW_SLOT_END = 45;
      private final Container dispenser;
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   private Inventory player;
-+   // CraftBukkit end
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private Inventory player;
++    // CraftBukkit end
  
      public DispenserMenu(int p_39433_, Inventory p_39434_) {
          this(p_39433_, p_39434_, new SimpleContainer(9));
@@ -43,16 +43,16 @@
          this.dispenser.stopOpen(p_39442_);
      }
 +
-+   // CraftBukkit start
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    // CraftBukkit start
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      CraftInventory inventory = new CraftInventory(this.dispenser);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        CraftInventory inventory = new CraftInventory(this.dispenser);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
  }

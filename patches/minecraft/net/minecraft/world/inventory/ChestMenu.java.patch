@@ -18,29 +18,29 @@
      private static final int SLOTS_PER_ROW = 9;
      private final Container container;
      private final int containerRows;
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   private Inventory player;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private Inventory player;
 +
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      CraftInventory inventory;
-+      if (this.container instanceof Inventory) {
-+         inventory = new CraftInventoryPlayer((Inventory) this.container);
-+      } else if (this.container instanceof CompoundContainer) {
-+         inventory = new CraftInventoryDoubleChest((CompoundContainer) this.container);
-+      } else {
-+         inventory = new CraftInventory(this.container);
-+      }
++        CraftInventory inventory;
++        if (this.container instanceof Inventory) {
++            inventory = new CraftInventoryPlayer((Inventory) this.container);
++        } else if (this.container instanceof CompoundContainer) {
++            inventory = new CraftInventoryDoubleChest((CompoundContainer) this.container);
++        } else {
++            inventory = new CraftInventory(this.container);
++        }
 +
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
  
      private ChestMenu(MenuType<?> p_39224_, int p_39225_, Inventory p_39226_, int p_39227_) {
          this(p_39224_, p_39225_, p_39226_, new SimpleContainer(9 * p_39227_), p_39227_);

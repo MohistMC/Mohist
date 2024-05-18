@@ -4,7 +4,7 @@
  
      @Override
      public boolean stillValid(Player p_39780_) {
-+      if (!this.checkReachable) return true; // CraftBukkit
++        if (!this.checkReachable) return true; // CraftBukkit
          return this.access.evaluate((p_327088_, p_327089_) -> !this.isValidBlock(p_327088_.getBlockState(p_327089_)) ? false : p_39780_.canInteractWithBlock(p_327089_, 4.0), true);
      }
  

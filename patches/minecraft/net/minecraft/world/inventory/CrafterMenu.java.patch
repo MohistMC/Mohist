@@ -1,15 +1,17 @@
 --- a/net/minecraft/world/inventory/CrafterMenu.java
 +++ b/net/minecraft/world/inventory/CrafterMenu.java
-@@ -9,8 +9,27 @@
- import net.minecraft.world.level.World;
+@@ -8,6 +_,8 @@
+ import net.minecraft.world.item.crafting.RecipeHolder;
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.CrafterBlock;
- 
-+// CraftBukkit start
 +import org.bukkit.craftbukkit.inventory.CraftInventoryCrafter;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-+// CraftBukkit end
-+
- public class CrafterMenu extends Container implements ICrafting {
+ 
+ public class CrafterMenu extends AbstractContainerMenu implements ContainerListener {
+     protected static final int SLOT_COUNT = 9;
+@@ -20,6 +_,21 @@
+     private final Player player;
+     private final CraftingContainer container;
  
 +    // CraftBukkit start
 +    private CraftInventoryView bukkitEntity = null;
@@ -25,14 +27,15 @@
 +        return bukkitEntity;
 +    }
 +    // CraftBukkit end
-     protected static final int SLOT_COUNT = 9;
-     private static final int INV_SLOT_START = 9;
-     private static final int INV_SLOT_END = 36;
-@@ -117,6 +136,7 @@
++
+     public CrafterMenu(int p_310742_, Inventory p_312080_) {
+         super(MenuType.CRAFTER_3x3, p_310742_);
+         this.player = p_312080_.player;
+@@ -109,6 +_,7 @@
  
      @Override
-     public boolean stillValid(EntityHuman entityhuman) {
+     public boolean stillValid(Player p_309546_) {
 +        if (!this.checkReachable) return true; // CraftBukkit
-         return this.container.stillValid(entityhuman);
+         return this.container.stillValid(p_309546_);
      }
  

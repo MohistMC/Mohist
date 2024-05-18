@@ -8,7 +8,7 @@
 +   	// CraftBukkit start
 +   	public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel pLevel, @Nullable Entity pSource, Vec3 pPos, double pRadius, MobEffectInstance pEffect, int pDuration, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
 +      	// Mohist start
-+      	LivingEntity.addEffectCause(cause);
++      	LivingEntity.addEffectCausePublic(cause);
 +      	return addEffectToPlayersAround(pLevel, pSource, pPos, pRadius, pEffect, pDuration);
 +      	// Mohist end
 +   	}

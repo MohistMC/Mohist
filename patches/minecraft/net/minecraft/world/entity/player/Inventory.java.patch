@@ -34,58 +34,58 @@
      public final NonNullList<ItemStack> armor = NonNullList.withSize(4, ItemStack.EMPTY);
      public final NonNullList<ItemStack> offhand = NonNullList.withSize(1, ItemStack.EMPTY);
 -    private final List<NonNullList<ItemStack>> compartments = ImmutableList.of(this.items, this.armor, this.offhand);
-+   	public final List<NonNullList<ItemStack>> compartments = ImmutableList.of(this.items, this.armor, this.offhand);
++    public final List<NonNullList<ItemStack>> compartments = ImmutableList.of(this.items, this.armor, this.offhand);
      public int selected;
      public final Player player;
      private int timesChanged;
  
-+   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-+   private int maxStack = MAX_STACK;
++    // CraftBukkit start - add fields and methods
++    public List<HumanEntity> transaction = new java.util.ArrayList<>();
++    private int maxStack = MAX_STACK;
 +
-+   public List<ItemStack> getContents() {
-+      List<ItemStack> combined = new ArrayList<ItemStack>(items.size() + armor.size() + offhand.size());
-+      for (List<net.minecraft.world.item.ItemStack> sub : this.compartments) {
-+         combined.addAll(sub);
-+      }
++    public List<ItemStack> getContents() {
++        List<ItemStack> combined = new ArrayList<ItemStack>(items.size() + armor.size() + offhand.size());
++        for (List<net.minecraft.world.item.ItemStack> sub : this.compartments) {
++            combined.addAll(sub);
++        }
 +
-+      return combined;
-+   }
++        return combined;
++    }
 +
-+   public List<ItemStack> getArmorContents() {
-+      return this.armor;
-+   }
++    public List<ItemStack> getArmorContents() {
++        return this.armor;
++    }
 +
-+   public void onOpen(CraftHumanEntity who) {
-+      transaction.add(who);
-+   }
++    public void onOpen(CraftHumanEntity who) {
++        transaction.add(who);
++    }
 +
-+   public void onClose(CraftHumanEntity who) {
-+      transaction.remove(who);
-+   }
++    public void onClose(CraftHumanEntity who) {
++        transaction.remove(who);
++    }
 +
-+   public List<HumanEntity> getViewers() {
-+      return transaction;
-+   }
++    public List<HumanEntity> getViewers() {
++        return transaction;
++    }
 +
-+   public org.bukkit.inventory.InventoryHolder getOwner() {
-+      return this.player.getBukkitEntity();
-+   }
++    public org.bukkit.inventory.InventoryHolder getOwner() {
++        return this.player.getBukkitEntity();
++    }
 +
-+   @Override
-+   public int getMaxStackSize() {
-+      return maxStack;
-+   }
++    @Override
++    public int getMaxStackSize() {
++        return maxStack;
++    }
 +
-+   public void setMaxStackSize(int size) {
-+      maxStack = size;
-+   }
++    public void setMaxStackSize(int size) {
++        maxStack = size;
++    }
 +
-+   @Override
-+   public Location getLocation() {
-+      return player.getBukkitEntity().getLocation();
-+   }
-+   // CraftBukkit end
++    @Override
++    public Location getLocation() {
++        return player.getBukkitEntity().getLocation();
++    }
++    // CraftBukkit end
 +
      public Inventory(Player p_35983_) {
          this.player = p_35983_;
@@ -94,31 +94,46 @@
          return !p_36015_.isEmpty() && ItemStack.isSameItemSameComponents(p_36015_, p_36016_) && p_36015_.isStackable() && p_36015_.getCount() < this.getMaxStackSize(p_36015_);
      }
  
-+   // CraftBukkit start - Watch method above! :D
-+   public int canHold(ItemStack itemstack) {
-+      int remains = itemstack.getCount();
-+      for (int i = 0; i < this.items.size(); ++i) {
-+         ItemStack itemstack1 = this.getItem(i);
-+         if (itemstack1.isEmpty()) return itemstack.getCount();
++    // CraftBukkit start - Watch method above! :D
++    public int canHold(ItemStack itemstack) {
++        int remains = itemstack.getCount();
++        for (int i = 0; i < this.items.size(); ++i) {
++            ItemStack itemstack1 = this.getItem(i);
++            if (itemstack1.isEmpty()) return itemstack.getCount();
 +
-+         if (this.hasRemainingSpaceForItem(itemstack1, itemstack)) {
-+            remains -= (itemstack1.getMaxStackSize() < this.getMaxStackSize() ? itemstack1.getMaxStackSize() : this.getMaxStackSize()) - itemstack1.getCount();
-+         }
-+         if (remains <= 0) return itemstack.getCount();
-+      }
-+      ItemStack offhandItemStack = this.getItem(this.items.size() + this.armor.size());
-+      if (this.hasRemainingSpaceForItem(offhandItemStack, itemstack)) {
-+         remains -= (offhandItemStack.getMaxStackSize() < this.getMaxStackSize() ? offhandItemStack.getMaxStackSize() : this.getMaxStackSize()) - offhandItemStack.getCount();
-+      }
-+      if (remains <= 0) return itemstack.getCount();
++            if (this.hasRemainingSpaceForItem(itemstack1, itemstack)) {
++                remains -= (itemstack1.getMaxStackSize() < this.getMaxStackSize() ? itemstack1.getMaxStackSize() : this.getMaxStackSize()) - itemstack1.getCount();
++            }
++            if (remains <= 0) return itemstack.getCount();
++        }
++        ItemStack offhandItemStack = this.getItem(this.items.size() + this.armor.size());
++        if (this.hasRemainingSpaceForItem(offhandItemStack, itemstack)) {
++            remains -= (offhandItemStack.getMaxStackSize() < this.getMaxStackSize() ? offhandItemStack.getMaxStackSize() : this.getMaxStackSize()) - offhandItemStack.getCount();
++        }
++        if (remains <= 0) return itemstack.getCount();
 +
-+      return itemstack.getCount() - remains;
-+   }
-+   // CraftBukkit end
++        return itemstack.getCount() - remains;
++    }
++    // CraftBukkit end
 +
      public int getFreeSlot() {
          for (int i = 0; i < this.items.size(); i++) {
              if (this.items.get(i).isEmpty()) {
+@@ -109,10 +_,10 @@
+         for (int i = 0; i < this.items.size(); i++) {
+             ItemStack itemstack = this.items.get(i);
+             if (!this.items.get(i).isEmpty()
+-                && ItemStack.isSameItemSameComponents(p_36044_, this.items.get(i))
+-                && !this.items.get(i).isDamaged()
+-                && !itemstack.isEnchanted()
+-                && !itemstack.has(DataComponents.CUSTOM_NAME)) {
++                    && ItemStack.isSameItemSameComponents(p_36044_, this.items.get(i))
++                    && !this.items.get(i).isDamaged()
++                    && !itemstack.isEnchanted()
++                    && !itemstack.has(DataComponents.CUSTOM_NAME)) {
+                 return i;
+             }
+         }
 @@ -130,7 +_,7 @@
  
          for (int k = 0; k < 9; k++) {
@@ -128,6 +143,15 @@
                  return l;
              }
          }
+@@ -139,7 +_,7 @@
+     }
+ 
+     public void swapPaint(double p_35989_) {
+-        int i = (int)Math.signum(p_35989_);
++        int i = (int) Math.signum(p_35989_);
+         this.selected -= i;
+ 
+         while (this.selected < 0) {
 @@ -211,11 +_,13 @@
      }
  
@@ -152,3 +176,39 @@
                  crashreportcategory.setDetail("Item ID", Item.getId(p_36042_.getItem()));
                  crashreportcategory.setDetail("Item data", p_36042_.getDamageValue());
                  crashreportcategory.setDetail("Item name", () -> p_36042_.getHoverName().getString());
+@@ -291,7 +_,7 @@
+ 
+             int j = p_150077_.getMaxStackSize() - this.getItem(i).getCount();
+             if (this.add(i, p_150077_.split(j)) && p_150078_ && this.player instanceof ServerPlayer) {
+-                ((ServerPlayer)this.player).connection.send(new ClientboundContainerSetSlotPacket(-2, 0, i, this.getItem(i)));
++                ((ServerPlayer) this.player).connection.send(new ClientboundContainerSetSlotPacket(-2, 0, i, this.getItem(i)));
+             }
+         }
+     }
+@@ -371,7 +_,7 @@
+         for (int i = 0; i < this.items.size(); i++) {
+             if (!this.items.get(i).isEmpty()) {
+                 CompoundTag compoundtag = new CompoundTag();
+-                compoundtag.putByte("Slot", (byte)i);
++                compoundtag.putByte("Slot", (byte) i);
+                 p_36027_.add(this.items.get(i).save(this.player.registryAccess(), compoundtag));
+             }
+         }
+@@ -379,7 +_,7 @@
+         for (int j = 0; j < this.armor.size(); j++) {
+             if (!this.armor.get(j).isEmpty()) {
+                 CompoundTag compoundtag1 = new CompoundTag();
+-                compoundtag1.putByte("Slot", (byte)(j + 100));
++                compoundtag1.putByte("Slot", (byte) (j + 100));
+                 p_36027_.add(this.armor.get(j).save(this.player.registryAccess(), compoundtag1));
+             }
+         }
+@@ -387,7 +_,7 @@
+         for (int k = 0; k < this.offhand.size(); k++) {
+             if (!this.offhand.get(k).isEmpty()) {
+                 CompoundTag compoundtag2 = new CompoundTag();
+-                compoundtag2.putByte("Slot", (byte)(k + 150));
++                compoundtag2.putByte("Slot", (byte) (k + 150));
+                 p_36027_.add(this.offhand.get(k).save(this.player.registryAccess(), compoundtag2));
+             }
+         }

@@ -16,82 +16,78 @@
 +import org.bukkit.event.inventory.InventoryType;
  
  public class TransientCraftingContainer implements CraftingContainer {
--    private final NonNullList<ItemStack> items;
--    private final int width;
--    private final int height;
--    private final AbstractContainerMenu menu;
-+   private final NonNullList<ItemStack> items;
-+   private final int width;
-+   private final int height;
-+   private final AbstractContainerMenu menu;
+     private final NonNullList<ItemStack> items;
+     private final int width;
+     private final int height;
+     private final AbstractContainerMenu menu;
 +
-+   // CraftBukkit start - add fields
-+   public List<HumanEntity> transaction = new java.util.ArrayList<>();
-+   private RecipeHolder<?> currentRecipe;
-+   public Container resultInventory;
-+   public Player owner;
-+   private int maxStack = MAX_STACK;
++    // CraftBukkit start - add fields
++    public List<HumanEntity> transaction = new java.util.ArrayList<>();
++    private RecipeHolder<?> currentRecipe;
++    public Container resultInventory;
++    public Player owner;
++    private int maxStack = MAX_STACK;
 +
-+   public List<ItemStack> getContents() {
-+      return this.items;
-+   }
++    public List<ItemStack> getContents() {
++        return this.items;
++    }
 +
-+   public void onOpen(CraftHumanEntity who) {
-+      transaction.add(who);
-+   }
++    public void onOpen(CraftHumanEntity who) {
++        transaction.add(who);
++    }
 +
-+   public InventoryType getInvType() {
-+      return items.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
-+   }
++    public InventoryType getInvType() {
++        return items.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
++    }
 +
-+   public void onClose(CraftHumanEntity who) {
-+      transaction.remove(who);
-+   }
++    public void onClose(CraftHumanEntity who) {
++        transaction.remove(who);
++    }
 +
-+   public List<HumanEntity> getViewers() {
-+      return transaction;
-+   }
++    public List<HumanEntity> getViewers() {
++        return transaction;
++    }
 +
-+   public org.bukkit.inventory.InventoryHolder getOwner() {
-+      return (owner == null) ? null : owner.getBukkitEntity();
-+   }
++    public org.bukkit.inventory.InventoryHolder getOwner() {
++        return (owner == null) ? null : owner.getBukkitEntity();
++    }
 +
-+   // Mohist start
-+   public void setOwner(Player owner) {
-+      this.owner = owner;
-+   }
-+   // Mohist end
++    // Mohist start
++    public void setOwner(Player owner) {
++        this.owner = owner;
++    }
++    // Mohist end
 +
-+   @Override
-+   public int getMaxStackSize() {
-+      return this.maxStack;
-+   }
++    @Override
++    public int getMaxStackSize() {
++        return this.maxStack;
++    }
 +
-+   public void setMaxStackSize(int size) {
-+      this.maxStack = size;
-+      this.resultInventory.setMaxStackSize(size);
-+   }
++    public void setMaxStackSize(int size) {
++        this.maxStack = size;
++        this.resultInventory.setMaxStackSize(size);
++    }
 +
-+   @Override
-+   public Location getLocation() {
-+      return this.menu instanceof CraftingMenu ? ((CraftingMenu) this.menu).access.getLocation() : this.owner.getBukkitEntity().getLocation();
-+   }
++    @Override
++    public Location getLocation() {
++        return this.menu instanceof CraftingMenu ? ((CraftingMenu) this.menu).access.getLocation() : this.owner.getBukkitEntity().getLocation();
++    }
 +
-+   @Override
-+   public RecipeHolder<?> getCurrentRecipe() {
-+      return this.currentRecipe;
-+   }
++    @Override
++    public RecipeHolder<?> getCurrentRecipe() {
++        return this.currentRecipe;
++    }
 +
-+   @Override
-+   public void setCurrentRecipe(RecipeHolder<?> currentRecipe) {
-+      this.currentRecipe = currentRecipe;
-+   }
++    @Override
++    public void setCurrentRecipe(RecipeHolder<?> currentRecipe) {
++        this.currentRecipe = currentRecipe;
++    }
 +
-+   public TransientCraftingContainer(AbstractContainerMenu container, int i, int j, Player player) {
-+      this(container, i, j);
-+      this.owner = player;
-+   }
-+   // CraftBukkit end
++    public TransientCraftingContainer(AbstractContainerMenu container, int i, int j, Player player) {
++        this(container, i, j);
++        this.owner = player;
++    }
++    // CraftBukkit end
 +
  
      public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {

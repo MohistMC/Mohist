@@ -42,78 +42,100 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -43,11 +_,11 @@
-     public static final int QUICKCRAFT_HEADER_CONTINUE = 1;
-     public static final int QUICKCRAFT_HEADER_END = 2;
-     public static final int CARRIED_SLOT_SIZE = Integer.MAX_VALUE;
--    public NonNullList<ItemStack> lastSlots = NonNullList.create();
--    public NonNullList<Slot> slots = NonNullList.create();
--    private final List<DataSlot> dataSlots = Lists.newArrayList();
--    private ItemStack carried = ItemStack.EMPTY;
--    public NonNullList<ItemStack> remoteSlots = NonNullList.create();
-+   public NonNullList<ItemStack> lastSlots = NonNullList.create();
-+   public NonNullList<Slot> slots = NonNullList.create();
-+   private final List<DataSlot> dataSlots = Lists.newArrayList();
-+   private ItemStack carried = ItemStack.EMPTY;
-+   public NonNullList<ItemStack> remoteSlots = NonNullList.create();
-     private final IntList remoteDataSlots = new IntArrayList();
-     private ItemStack remoteCarried = ItemStack.EMPTY;
-     private int stateId;
-@@ -62,6 +_,45 @@
+@@ -62,6 +_,48 @@
      private ContainerSynchronizer synchronizer;
      private boolean suppressRemoteUpdates;
  
-+   // CraftBukkit start
-+   public boolean checkReachable = true;
-+   // Mohist start
-+   public InventoryView bukkitView = null;
++    // CraftBukkit start
++    public boolean checkReachable = true;
++    // Mohist start
++    public InventoryView bukkitView = null;
 +
-+   public InventoryView getBukkitView(){
-+      return bukkitView;
-+   }
++    public InventoryView getBukkitView() {
++        return bukkitView;
++    }
 +
-+   // Mohist end
-+   public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
-+      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-+      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-+      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+      ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
-+   }
-+   private Component title;
-+   public Component getTitle() {
-+      // Mohist: null title -> empty title
-+      if (this.title == null) {
-+         if (this.menuType != null) {
-+            ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.menuType);
-+             if (key == null) {
-+                 this.title = Component.literal(this.toString());
-+             } else {
-+                 this.title = Component.translatable(key.toString());
-+             }
-+         } else {
-+            this.title = Component.literal(this.toString());
-+         }
-+      }
-+      return this.title;
-+   }
-+   public void setTitle(Component title) {
-+      this.title = title;
-+   }
-+   // CraftBukkit end
++    // Mohist end
++    public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
++        InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
++        ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++        ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++        ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++        ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++    }
++
++    private Component title;
++
++    public Component getTitle() {
++        // Mohist: null title -> empty title
++        if (this.title == null) {
++            if (this.menuType != null) {
++                ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.menuType);
++                if (key == null) {
++                    this.title = Component.literal(this.toString());
++                } else {
++                    this.title = Component.translatable(key.toString());
++                }
++            } else {
++                this.title = Component.literal(this.toString());
++            }
++        }
++        return this.title;
++    }
++
++    public void setTitle(Component title) {
++        this.title = title;
++    }
++    // CraftBukkit end
 +
      protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
          this.menuType = p_38851_;
          this.containerId = p_38852_;
-@@ -340,6 +_,7 @@
+@@ -286,7 +_,7 @@
+             CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
+             CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
+             crashreportcategory.setDetail(
+-                "Menu Type", () -> this.menuType != null ? BuiltInRegistries.MENU.getKey(this.menuType).toString() : "<no type>"
++                    "Menu Type", () -> this.menuType != null ? BuiltInRegistries.MENU.getKey(this.menuType).toString() : "<no type>"
+             );
+             crashreportcategory.setDetail("Menu Class", () -> this.getClass().getCanonicalName());
+             crashreportcategory.setDetail("Slot Count", this.slots.size());
+@@ -318,14 +_,14 @@
+                 Slot slot = this.slots.get(p_150431_);
+                 ItemStack itemstack = this.getCarried();
+                 if (canItemQuickReplace(slot, itemstack, true)
+-                    && slot.mayPlace(itemstack)
+-                    && (this.quickcraftType == 2 || itemstack.getCount() > this.quickcraftSlots.size())
+-                    && this.canDragTo(slot)) {
++                        && slot.mayPlace(itemstack)
++                        && (this.quickcraftType == 2 || itemstack.getCount() > this.quickcraftSlots.size())
++                        && this.canDragTo(slot)) {
+                     this.quickcraftSlots.add(slot);
+                 }
+             } else if (this.quickcraftStatus == 2) {
+                 if (!this.quickcraftSlots.isEmpty()) {
+-                    if (this.quickcraftSlots.size() == 1) {
++                    if (false && this.quickcraftSlots.size() == 1) { // CraftBukkit - treat everything as a drag since we are unable to easily call InventoryClickEvent instead
+                         int i1 = this.quickcraftSlots.iterator().next().index;
+                         this.resetQuickCraft();
+                         this.doClick(i1, this.quickcraftType, ClickType.PICKUP, p_150434_);
+@@ -340,23 +_,61 @@
  
                      int k1 = this.getCarried().getCount();
  
-+               		Map<Integer, ItemStack> draggedSlots = new HashMap<>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
++                    Map<Integer, ItemStack> draggedSlots = new HashMap<>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
                      for (Slot slot1 : this.quickcraftSlots) {
                          ItemStack itemstack1 = this.getCarried();
                          if (slot1 != null
-@@ -351,12 +_,49 @@
+-                            && canItemQuickReplace(slot1, itemstack1, true)
+-                            && slot1.mayPlace(itemstack1)
+-                            && (this.quickcraftType == 2 || itemstack1.getCount() >= this.quickcraftSlots.size())
+-                            && this.canDragTo(slot1)) {
++                                && canItemQuickReplace(slot1, itemstack1, true)
++                                && slot1.mayPlace(itemstack1)
++                                && (this.quickcraftType == 2 || itemstack1.getCount() >= this.quickcraftSlots.size())
++                                && this.canDragTo(slot1)) {
+                             int j = slot1.hasItem() ? slot1.getItem().getCount() : 0;
                              int k = Math.min(itemstack3.getMaxStackSize(), slot1.getMaxStackSize(itemstack3));
                              int l = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack3) + j, k);
                              k1 -= l - j;
@@ -124,48 +146,48 @@
 -                    itemstack3.setCount(k1);
 -                    this.setCarried(itemstack3);
 +
-+                     // slot1.setByPlayer(itemstack2.copyWithCount(l));
-+                     draggedSlots.put(slot1.index, itemstack3.copyWithCount(l)); // CraftBukkit - Put in map instead of setting
-+                  }
-+               }
++                            // slot1.setByPlayer(itemstack2.copyWithCount(l));
++                            draggedSlots.put(slot1.index, itemstack3.copyWithCount(l)); // CraftBukkit - Put in map instead of setting
++                        }
++                    }
 +
-+               // CraftBukkit start - InventoryDragEvent
-+               InventoryView view = this.getBukkitView();
-+               org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack3);
-+               newcursor.setAmount(k1);
-+               Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<>();
-+               for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet()) {
-+                  eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
-+               }
++                    // CraftBukkit start - InventoryDragEvent
++                    InventoryView view = this.getBukkitView();
++                    org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack3);
++                    newcursor.setAmount(k1);
++                    Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<>();
++                    for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet()) {
++                        eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
++                    }
 +
-+               // It's essential that we set the cursor to the new value here to prevent item duplication if a plugin closes the inventory.
-+               ItemStack oldCursor = this.getCarried();
-+               this.setCarried(CraftItemStack.asNMSCopy(newcursor));
++                    // It's essential that we set the cursor to the new value here to prevent item duplication if a plugin closes the inventory.
++                    ItemStack oldCursor = this.getCarried();
++                    this.setCarried(CraftItemStack.asNMSCopy(newcursor));
 +
-+               InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.quickcraftType == 1, eventmap);
-+               p_150434_.level().getCraftServer().getPluginManager().callEvent(event);
++                    InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.quickcraftType == 1, eventmap);
++                    p_150434_.level().getCraftServer().getPluginManager().callEvent(event);
 +
-+               // Whether or not a change was made to the inventory that requires an update.
-+               boolean needsUpdate = event.getResult() != Result.DEFAULT;
++                    // Whether or not a change was made to the inventory that requires an update.
++                    boolean needsUpdate = event.getResult() != Result.DEFAULT;
 +
-+               if (event.getResult() != Result.DENY) {
-+                  for (Map.Entry<Integer, ItemStack> dslot : draggedSlots.entrySet()) {
-+                     view.setItem(dslot.getKey(), CraftItemStack.asBukkitCopy(dslot.getValue()));
-+                  }
-+                  // The only time the carried item will be set to null is if the inventory is closed by the server.
-+                  // If the inventory is closed by the server, then the cursor items are dropped.  This is why we change the cursor early.
-+                  if (this.getCarried() != null) {
-+                     this.setCarried(CraftItemStack.asNMSCopy(event.getCursor()));
-+                     needsUpdate = true;
-+                  }
-+               } else {
-+                  this.setCarried(oldCursor);
-+               }
++                    if (event.getResult() != Result.DENY) {
++                        for (Map.Entry<Integer, ItemStack> dslot : draggedSlots.entrySet()) {
++                            view.setItem(dslot.getKey(), CraftItemStack.asBukkitCopy(dslot.getValue()));
++                        }
++                        // The only time the carried item will be set to null is if the inventory is closed by the server.
++                        // If the inventory is closed by the server, then the cursor items are dropped.  This is why we change the cursor early.
++                        if (this.getCarried() != null) {
++                            this.setCarried(CraftItemStack.asNMSCopy(event.getCursor()));
++                            needsUpdate = true;
++                        }
++                    } else {
++                        this.setCarried(oldCursor);
++                    }
 +
-+               if (needsUpdate && p_150434_ instanceof ServerPlayer) {
-+                  this.sendAllDataToRemote();
-+               }
-+               // CraftBukkit end
++                    if (needsUpdate && p_150434_ instanceof ServerPlayer) {
++                        this.sendAllDataToRemote();
++                    }
++                    // CraftBukkit end
                  }
  
                  this.resetQuickCraft();
@@ -174,68 +196,128 @@
                  if (!this.getCarried().isEmpty()) {
                      if (clickaction == ClickAction.PRIMARY) {
 -                        p_150434_.drop(this.getCarried(), true);
--                        this.setCarried(ItemStack.EMPTY);
-+                  // CraftBukkit start
-+                  ItemStack carried = this.getCarried();
-+                  this.setCarried(ItemStack.EMPTY);
-+                  p_150434_.drop(carried, true);
-+                  // CraftBukkit end
++                        // CraftBukkit start
++                        ItemStack carried = this.getCarried();
+                         this.setCarried(ItemStack.EMPTY);
++                        p_150434_.drop(carried, true);
++                        // CraftBukkit end
                      } else {
                          p_150434_.drop(this.getCarried().split(1), true);
                      }
-@@ -401,6 +_,7 @@
+@@ -401,38 +_,48 @@
                  ItemStack itemstack10 = this.getCarried();
                  p_150434_.updateTutorialInventoryAction(itemstack10, slot7.getItem(), clickaction);
                  if (!this.tryItemClickBehaviourOverride(p_150434_, clickaction, slot7, itemstack9, itemstack10)) {
+-                    if (itemstack9.isEmpty()) {
+-                        if (!itemstack10.isEmpty()) {
+-                            int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
+-                            this.setCarried(slot7.safeInsert(itemstack10, i3));
+-                        }
+-                    } else if (slot7.mayPickup(p_150434_)) {
+-                        if (itemstack10.isEmpty()) {
+-                            int j3 = clickaction == ClickAction.PRIMARY ? itemstack9.getCount() : (itemstack9.getCount() + 1) / 2;
+-                            Optional<ItemStack> optional1 = slot7.tryRemove(j3, Integer.MAX_VALUE, p_150434_);
+-                            optional1.ifPresent(p_150421_ -> {
+-                                this.setCarried(p_150421_);
+-                                slot7.onTake(p_150434_, p_150421_);
+-                            });
+-                        } else if (slot7.mayPlace(itemstack10)) {
+-                            if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
+-                                int k3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
+-                                this.setCarried(slot7.safeInsert(itemstack10, k3));
+-                            } else if (itemstack10.getCount() <= slot7.getMaxStackSize(itemstack10)) {
+-                                this.setCarried(itemstack9);
+-                                slot7.setByPlayer(itemstack10);
+-                            }
+-                        } else if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
+-                            Optional<ItemStack> optional = slot7.tryRemove(itemstack9.getCount(), itemstack10.getMaxStackSize() - itemstack10.getCount(), p_150434_);
+-                            optional.ifPresent(p_150428_ -> {
+-                                itemstack10.grow(p_150428_.getCount());
+-                                slot7.onTake(p_150434_, p_150428_);
+-                            });
+-                        }
+-                    }
 +                    if (!net.minecraftforge.event.ForgeEventFactory.onItemStackedOn(itemstack9, itemstack10, slot7, clickaction, p_150434_, createCarriedSlotAccess()))
-                     if (itemstack9.isEmpty()) {
-                         if (!itemstack10.isEmpty()) {
-                             int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
-@@ -433,7 +_,16 @@
++                        if (itemstack9.isEmpty()) {
++                            if (!itemstack10.isEmpty()) {
++                                int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
++                                this.setCarried(slot7.safeInsert(itemstack10, i3));
++                            }
++                        } else if (slot7.mayPickup(p_150434_)) {
++                            if (itemstack10.isEmpty()) {
++                                int j3 = clickaction == ClickAction.PRIMARY ? itemstack9.getCount() : (itemstack9.getCount() + 1) / 2;
++                                Optional<ItemStack> optional1 = slot7.tryRemove(j3, Integer.MAX_VALUE, p_150434_);
++                                optional1.ifPresent(p_150421_ -> {
++                                    this.setCarried(p_150421_);
++                                    slot7.onTake(p_150434_, p_150421_);
++                                });
++                            } else if (slot7.mayPlace(itemstack10)) {
++                                if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
++                                    int k3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
++                                    this.setCarried(slot7.safeInsert(itemstack10, k3));
++                                } else if (itemstack10.getCount() <= slot7.getMaxStackSize(itemstack10)) {
++                                    this.setCarried(itemstack9);
++                                    slot7.setByPlayer(itemstack10);
++                                }
++                            } else if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
++                                Optional<ItemStack> optional = slot7.tryRemove(itemstack9.getCount(), itemstack10.getMaxStackSize() - itemstack10.getCount(), p_150434_);
++                                optional.ifPresent(p_150428_ -> {
++                                    itemstack10.grow(p_150428_.getCount());
++                                    slot7.onTake(p_150434_, p_150428_);
++                                });
++                            }
++                        }
                  }
  
                  slot7.setChanged();
-+            // CraftBukkit start - Make sure the client has the right slot contents
-+            if (p_150434_ instanceof ServerPlayer serverPlayer && slot7.getMaxStackSize() != 64) {
-+               serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot7.index, slot7.getItem()));
-+               // Updating a crafting inventory makes the client reset the result slot, have to send it again
-+               if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
-+                  serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), 0, this.getSlot(0).getItem()));
-+               }
++                // CraftBukkit start - Make sure the client has the right slot contents
++                if (p_150434_ instanceof ServerPlayer serverPlayer && slot7.getMaxStackSize() != 64) {
++                    serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot7.index, slot7.getItem()));
++                    // Updating a crafting inventory makes the client reset the result slot, have to send it again
++                    if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
++                        serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), 0, this.getSlot(0).getItem()));
++                    }
++                }
++                // CraftBukkit end
              }
-+            // CraftBukkit end
-+         }
          } else if (p_150433_ == ClickType.SWAP && (p_150432_ >= 0 && p_150432_ < 9 || p_150432_ == 40)) {
              ItemStack itemstack2 = inventory.getItem(p_150432_);
-             Slot slot5 = this.slots.get(p_150431_);
-@@ -535,16 +_,18 @@
+@@ -508,8 +_,8 @@
+     private boolean tryItemClickBehaviourOverride(Player p_249615_, ClickAction p_250300_, Slot p_249384_, ItemStack p_251073_, ItemStack p_252026_) {
+         FeatureFlagSet featureflagset = p_249615_.level().enabledFeatures();
+         return p_252026_.isItemEnabled(featureflagset) && p_252026_.overrideStackedOnOther(p_249384_, p_250300_, p_249615_)
+-            ? true
+-            : p_251073_.isItemEnabled(featureflagset) && p_251073_.overrideOtherStackedOnMe(p_252026_, p_249384_, p_250300_, p_249615_, this.createCarriedSlotAccess());
++                ? true
++                : p_251073_.isItemEnabled(featureflagset) && p_251073_.overrideOtherStackedOnMe(p_252026_, p_249384_, p_250300_, p_249615_, this.createCarriedSlotAccess());
+     }
+ 
+     private SlotAccess createCarriedSlotAccess() {
+@@ -535,19 +_,21 @@
          if (p_38940_ instanceof ServerPlayer) {
              ItemStack itemstack = this.getCarried();
              if (!itemstack.isEmpty()) {
 -                if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
--                    p_38940_.getInventory().placeItemBackInInventory(itemstack);
--                } else {
--                    p_38940_.drop(itemstack, false);
--                }
--
++                this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
++                if (p_38940_.isAlive() && !((ServerPlayer) p_38940_).hasDisconnected()) {
+                     p_38940_.getInventory().placeItemBackInInventory(itemstack);
+                 } else {
+                     p_38940_.drop(itemstack, false);
+                 }
+ 
 -                this.setCarried(ItemStack.EMPTY);
-+            this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
-+            if (p_38940_.isAlive() && !((ServerPlayer)p_38940_).hasDisconnected()) {
-+               p_38940_.getInventory().placeItemBackInInventory(itemstack);
-+            } else {
-+               p_38940_.drop(itemstack, false);
++                // this.setCarried(ItemStack.EMPTY); // CraftBukkit - moved up
              }
--        }
--    }
+         }
 +
-+            // this.setCarried(ItemStack.EMPTY); // CraftBukkit - moved up
-+         }
-+      }
-+
-+   }
+     }
  
      protected void clearContainer(Player p_150412_, Container p_150413_) {
-         if (!p_150412_.isAlive() || p_150412_ instanceof ServerPlayer && ((ServerPlayer)p_150412_).hasDisconnected()) {
+-        if (!p_150412_.isAlive() || p_150412_ instanceof ServerPlayer && ((ServerPlayer)p_150412_).hasDisconnected()) {
++        if (!p_150412_.isAlive() || p_150412_ instanceof ServerPlayer && ((ServerPlayer) p_150412_).hasDisconnected()) {
+             for (int j = 0; j < p_150413_.getContainerSize(); j++) {
+                 p_150412_.drop(p_150413_.removeItemNoUpdate(j), false);
+             }
 @@ -598,7 +_,7 @@
                  ItemStack itemstack = slot.getItem();
                  if (!itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
@@ -245,17 +327,69 @@
                      if (j <= k) {
                          p_38904_.setCount(0);
                          itemstack.setCount(j);
+@@ -677,13 +_,13 @@
+     public static boolean canItemQuickReplace(@Nullable Slot p_38900_, ItemStack p_38901_, boolean p_38902_) {
+         boolean flag = p_38900_ == null || !p_38900_.hasItem();
+         return !flag && ItemStack.isSameItemSameComponents(p_38901_, p_38900_.getItem())
+-            ? p_38900_.getItem().getCount() + (p_38902_ ? 0 : p_38901_.getCount()) <= p_38901_.getMaxStackSize()
+-            : flag;
++                ? p_38900_.getItem().getCount() + (p_38902_ ? 0 : p_38901_.getCount()) <= p_38901_.getMaxStackSize()
++                : flag;
+     }
+ 
+     public static int getQuickCraftPlaceCount(Set<Slot> p_279393_, int p_279288_, ItemStack p_279172_) {
+         return switch (p_279288_) {
+-            case 0 -> Mth.floor((float)p_279172_.getCount() / (float)p_279393_.size());
++            case 0 -> Mth.floor((float) p_279172_.getCount() / (float) p_279393_.size());
+             case 1 -> 1;
+             case 2 -> p_279172_.getMaxStackSize();
+             default -> p_279172_.getCount();
+@@ -695,7 +_,7 @@
+     }
+ 
+     public static int getRedstoneSignalFromBlockEntity(@Nullable BlockEntity p_38919_) {
+-        return p_38919_ instanceof Container ? getRedstoneSignalFromContainer((Container)p_38919_) : 0;
++        return p_38919_ instanceof Container ? getRedstoneSignalFromContainer((Container) p_38919_) : 0;
+     }
+ 
+     public static int getRedstoneSignalFromContainer(@Nullable Container p_38939_) {
+@@ -707,11 +_,11 @@
+             for (int i = 0; i < p_38939_.getContainerSize(); i++) {
+                 ItemStack itemstack = p_38939_.getItem(i);
+                 if (!itemstack.isEmpty()) {
+-                    f += (float)itemstack.getCount() / (float)p_38939_.getMaxStackSize(itemstack);
++                    f += (float) itemstack.getCount() / (float) p_38939_.getMaxStackSize(itemstack);
+                 }
+             }
+ 
+-            f /= (float)p_38939_.getContainerSize();
++            f /= (float) p_38939_.getContainerSize();
+             return Mth.lerpDiscrete(f, 0, 15);
+         }
+     }
+@@ -721,6 +_,11 @@
+     }
+ 
+     public ItemStack getCarried() {
++        // CraftBukkit start
++        if (this.carried.isEmpty()) {
++            this.setCarried(ItemStack.EMPTY);
++        }
++        // CraftBukkit end
+         return this.carried;
+     }
+ 
 @@ -769,4 +_,13 @@
          this.stateId = this.stateId + 1 & 32767;
          return this.stateId;
      }
 +
-+   // CraftBukkit start
-+   public void broadcastCarriedItem() {
-+      this.remoteCarried = this.getCarried().copy();
-+      if (this.synchronizer != null) {
-+         this.synchronizer.sendCarriedChange(this, this.remoteCarried);
-+      }
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start
++    public void broadcastCarriedItem() {
++        this.remoteCarried = this.getCarried().copy();
++        if (this.synchronizer != null) {
++            this.synchronizer.sendCarriedChange(this, this.remoteCarried);
++        }
++    }
++    // CraftBukkit end
  }

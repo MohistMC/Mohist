@@ -10,20 +10,20 @@
  public class ShulkerBoxMenu extends AbstractContainerMenu {
      private static final int CONTAINER_SIZE = 27;
      private final Container container;
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity;
-+   private Inventory player;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity;
++    private Inventory player;
 +
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), new CraftInventory(this.container), this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), new CraftInventory(this.container), this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
  
      public ShulkerBoxMenu(int p_40188_, Inventory p_40189_) {
          this(p_40188_, p_40189_, new SimpleContainer(27));
@@ -31,7 +31,7 @@
          super(MenuType.SHULKER_BOX, p_40191_);
          checkContainerSize(p_40193_, 27);
          this.container = p_40193_;
-+      this.player = p_40192_; // CraftBukkit - save player
++        this.player = p_40192_; // CraftBukkit - save player
          p_40193_.startOpen(p_40192_.player);
          int i = 3;
          int j = 9;

@@ -9,11 +9,10 @@
  
  public class HorseInventoryMenu extends AbstractContainerMenu {
      private final Container horseContainer;
-@@ -15,8 +_,24 @@
+@@ -15,8 +_,23 @@
      private static final int SLOT_BODY_ARMOR = 1;
      private static final int SLOT_HORSE_INVENTORY_START = 2;
  
-+
 +   	// CraftBukkit start
 +   	CraftInventoryView bukkitEntity;
 +   	Inventory player;

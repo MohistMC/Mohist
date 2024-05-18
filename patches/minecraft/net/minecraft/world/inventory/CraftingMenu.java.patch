@@ -37,19 +37,19 @@
 +   	public final ContainerLevelAccess access;
 +   	private final Player player;
 +
-+   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
 +
-+      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
-+      bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
++        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++        bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
  
      public CraftingMenu(int p_39353_, Inventory p_39354_) {
          this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
@@ -57,8 +57,8 @@
          super(MenuType.CRAFTING, p_39356_);
          this.access = p_39358_;
          this.player = p_39357_.player;
-+      ((TransientCraftingContainer)this.craftSlots).setOwner(p_39357_.player); // CraftBukkit - pass player // Mohist
-+      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots;
++        ((TransientCraftingContainer)this.craftSlots).setOwner(p_39357_.player); // CraftBukkit - pass player // Mohist
++        ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots;
          this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
  
          for (int i = 0; i < 3; i++) {
@@ -89,7 +89,7 @@
  
      @Override
      public boolean stillValid(Player p_39368_) {
-+      if (!this.checkReachable) return true; // CraftBukkit
++        if (!this.checkReachable) return true; // CraftBukkit
          return stillValid(this.access, p_39368_, Blocks.CRAFTING_TABLE);
      }
  
