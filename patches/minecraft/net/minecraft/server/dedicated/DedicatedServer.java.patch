@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -2,11 +_,13 @@
+@@ -2,11 +_,14 @@
  
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
++import com.mohistmc.MohistConfig;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -92,7 +93,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -164,14 +_,26 @@
+@@ -164,14 +_,28 @@
           return false;
        } else {
           this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
@@ -100,6 +101,8 @@
 +         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +         org.spigotmc.SpigotConfig.registerCommands();
 +         // Spigot end
++         MohistConfig.init((java.io.File) options.valueOf("mohist-settings"));
++         MohistConfig.registerCommands();
 +         // CraftBukkit start
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);

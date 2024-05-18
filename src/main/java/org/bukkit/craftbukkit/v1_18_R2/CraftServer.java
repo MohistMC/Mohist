@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.util.Level2LevelStem;
@@ -674,7 +675,11 @@ public final class CraftServer implements Server {
 
     @Override
     public long getConnectionThrottle() {
-        return this.configuration.getInt("settings.connection-throttle");
+        if (org.spigotmc.SpigotConfig.bungee || MohistConfig.velocity_enabled) { // Paper - Velocity support
+            return -1;
+        } else {
+            return this.configuration.getInt("settings.connection-throttle");
+        }
     }
 
     @Override
