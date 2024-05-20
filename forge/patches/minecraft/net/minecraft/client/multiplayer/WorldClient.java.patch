@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
+@@ -34,6 +34,9 @@
+ import net.minecraft.world.chunk.IChunkProvider;
+ import net.minecraft.world.storage.SaveHandlerMP;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
++
+ @SideOnly(Side.CLIENT)
+ public class WorldClient extends World
+ {
+@@ -51,8 +54,11 @@
+         super(new SaveHandlerMP(), "MpServer", WorldProvider.func_76570_a(p_i45063_3_), p_i45063_2_, p_i45063_5_);
+         this.field_73035_a = p_i45063_1_;
+         this.field_73013_u = p_i45063_4_;
+-        this.func_72950_A(8, 64, 8);
+         this.field_72988_C = p_i45063_1_.field_147305_a;
++        this.field_72995_K = true;
++        this.finishSetup();
++        this.func_72950_A(8, 64, 8);
++        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
+     }
+ 
+     public void func_72835_b()
+@@ -261,6 +267,12 @@
+ 
+     protected void func_72979_l()
+     {
++        super.func_72979_l();
++    }
++
++    @Override
++    public void updateWeatherBody()
++    {
+         if (!this.field_73011_w.field_76576_e)
+         {
+             ;

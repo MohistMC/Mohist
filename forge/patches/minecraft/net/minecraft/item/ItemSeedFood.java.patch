@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSeedFood.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSeedFood.java
+@@ -2,9 +2,13 @@
+ 
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.IPlantable;
++import net.minecraftforge.common.util.ForgeDirection;
+ 
+-public class ItemSeedFood extends ItemFood
++public class ItemSeedFood extends ItemFood implements IPlantable
+ {
+     private Block field_150908_b;
+     private Block field_82809_c;
+@@ -25,7 +29,7 @@
+         }
+         else if (p_77648_2_.func_82247_a(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_) && p_77648_2_.func_82247_a(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, p_77648_1_))
+         {
+-            if (p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_) == this.field_82809_c && p_77648_3_.func_147437_c(p_77648_4_, p_77648_5_ + 1, p_77648_6_))
++            if (p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).canSustainPlant(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, ForgeDirection.UP, this) && p_77648_3_.func_147437_c(p_77648_4_, p_77648_5_ + 1, p_77648_6_))
+             {
+                 p_77648_3_.func_147449_b(p_77648_4_, p_77648_5_ + 1, p_77648_6_, this.field_150908_b);
+                 --p_77648_1_.field_77994_a;
+@@ -41,4 +45,22 @@
+             return false;
+         }
+     }
++
++    @Override
++    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
++    {
++        return EnumPlantType.Crop;
++    }
++
++    @Override
++    public Block getPlant(IBlockAccess world, int x, int y, int z)
++    {
++        return field_150908_b;
++    }
++
++    @Override
++    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
++    {
++        return 0;
++    }
+ }

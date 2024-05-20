@@ -1,0 +1,63 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSkull.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSkull.java
+@@ -2,6 +2,7 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
+@@ -109,8 +110,6 @@
+         return p_149692_1_;
+     }
+ 
+-    public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_) {}
+-
+     public void func_149681_a(World p_149681_1_, int p_149681_2_, int p_149681_3_, int p_149681_4_, int p_149681_5_, EntityPlayer p_149681_6_)
+     {
+         if (p_149681_6_.field_71075_bZ.field_75098_d)
+@@ -118,19 +117,28 @@
+             p_149681_5_ |= 8;
+             p_149681_1_.func_72921_c(p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 4);
+         }
++        this.func_149697_b(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 0);
+ 
+         super.func_149681_a(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, p_149681_6_);
+     }
+ 
+     public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     {
+-        if (!p_149749_1_.field_72995_K)
++        super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
++    }
++
++    @Override
++    public ArrayList<ItemStack> getDrops(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, int p_149749_6_, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+         {
+             if ((p_149749_6_ & 8) == 0)
+             {
+                 ItemStack itemstack = new ItemStack(Items.field_151144_bL, 1, this.func_149643_k(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
+                 TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.func_147438_o(p_149749_2_, p_149749_3_, p_149749_4_);
+ 
++                if (tileentityskull == null) return ret;
++
+                 if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
+                 {
+                     itemstack.func_77982_d(new NBTTagCompound());
+@@ -139,11 +147,10 @@
+                     itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
+                 }
+ 
+-                this.func_149642_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, itemstack);
++                ret.add(itemstack);
+             }
+-
+-            super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
+         }
++        return ret;
+     }
+ 
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)

@@ -1,0 +1,365 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
++++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
+@@ -2,17 +2,25 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import net.minecraft.entity.Entity;
++import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
++import net.minecraft.world.WorldSettings.GameType;
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.biome.WorldChunkManager;
+ import net.minecraft.world.biome.WorldChunkManagerHell;
++import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.IChunkProvider;
+ import net.minecraft.world.gen.ChunkProviderFlat;
+ import net.minecraft.world.gen.ChunkProviderGenerate;
+ import net.minecraft.world.gen.FlatGeneratorInfo;
++import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.client.IRenderHandler;
++import net.minecraftforge.common.DimensionManager;
+ 
+ public abstract class WorldProvider
+ {
+@@ -149,13 +157,13 @@
+ 
+     public static WorldProvider func_76570_a(int p_76570_0_)
+     {
+-        return (WorldProvider)(p_76570_0_ == -1 ? new WorldProviderHell() : (p_76570_0_ == 0 ? new WorldProviderSurface() : (p_76570_0_ == 1 ? new WorldProviderEnd() : null)));
++        return DimensionManager.createProviderFor(p_76570_0_);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public float func_76571_f()
+     {
+-        return 128.0F;
++        return this.field_76577_b.getCloudHeight();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -193,4 +201,320 @@
+     }
+ 
+     public abstract String func_80007_l();
++
++    /*======================================= Forge Start =========================================*/
++    private IRenderHandler skyRenderer = null;
++    private IRenderHandler cloudRenderer = null;
++    private IRenderHandler weatherRenderer = null;
++
++    /**
++     * Sets the providers current dimension ID, used in default getSaveFolder()
++     * Added to allow default providers to be registered for multiple dimensions.
++     *
++     * @param dim Dimension ID
++     */
++    public void setDimension(int dim)
++    {
++        this.field_76574_g = dim;
++    }
++
++    /**
++     * Returns the sub-folder of the world folder that this WorldProvider saves to.
++     * EXA: DIM1, DIM-1
++     * @return The sub-folder name to save this world's chunks to.
++     */
++    public String getSaveFolder()
++    {
++        return (field_76574_g == 0 ? null : "DIM" + field_76574_g);
++    }
++
++    /**
++     * A message to display to the user when they transfer to this dimension.
++     *
++     * @return The message to be displayed
++     */
++    public String getWelcomeMessage()
++    {
++        if (this instanceof WorldProviderEnd)
++        {
++            return "Entering the End";
++        }
++        else if (this instanceof WorldProviderHell)
++        {
++            return "Entering the Nether";
++        }
++        return null;
++    }
++
++    /**
++     * A Message to display to the user when they transfer out of this dismension.
++     *
++     * @return The message to be displayed
++     */
++    public String getDepartMessage()
++    {
++        if (this instanceof WorldProviderEnd)
++        {
++            return "Leaving the End";
++        }
++        else if (this instanceof WorldProviderHell)
++        {
++            return "Leaving the Nether";
++        }
++        return null;
++    }
++
++    /**
++     * The dimensions movement factor. Relative to normal overworld.
++     * It is applied to the players position when they transfer dimensions.
++     * Exa: Nether movement is 8.0
++     * @return The movement factor
++     */
++    public double getMovementFactor()
++    {
++        if (this instanceof WorldProviderHell)
++        {
++            return 8.0;
++        }
++        return 1.0;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getSkyRenderer()
++    {
++        return this.skyRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setSkyRenderer(IRenderHandler skyRenderer)
++    {
++        this.skyRenderer = skyRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getCloudRenderer()
++    {
++        return cloudRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setCloudRenderer(IRenderHandler renderer)
++    {
++        cloudRenderer = renderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getWeatherRenderer()
++    {
++        return weatherRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setWeatherRenderer(IRenderHandler renderer)
++    {
++        weatherRenderer = renderer;
++    }
++
++    public ChunkCoordinates getRandomizedSpawnPoint()
++    {
++        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.field_76579_a.func_72861_E());
++
++        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == GameType.ADVENTURE;
++        int spawnFuzz = field_76577_b.getSpawnFuzz();
++        int spawnFuzzHalf = spawnFuzz / 2;
++
++        if (!field_76576_e && !isAdventure && net.minecraftforge.common.ForgeModContainer.defaultHasSpawnFuzz)
++        {
++            chunkcoordinates.field_71574_a += this.field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.field_71573_c += this.field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.field_71572_b = this.field_76579_a.func_72825_h(chunkcoordinates.field_71574_a, chunkcoordinates.field_71573_c);
++        }
++
++        return chunkcoordinates;
++    }
++
++    /**
++     * Determine if the cusor on the map should 'spin' when rendered, like it does for the player in the nether.
++     *
++     * @param entity The entity holding the map, playername, or frame-ENTITYID
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Postion
++     * @return True to 'spin' the cursor
++     */
++    public boolean shouldMapSpin(String entity, double x, double y, double z)
++    {
++        return field_76574_g < 0;
++    }
++
++    /**
++     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
++     *
++     * @param player The player that is respawning
++     * @return The dimension to respawn the player in
++     */
++    public int getRespawnDimension(EntityPlayerMP player)
++    {
++        return 0;
++    }
++
++    /*======================================= Start Moved From World =========================================*/
++
++    public BiomeGenBase getBiomeGenForCoords(int x, int z)
++    {
++        return field_76579_a.getBiomeGenForCoordsBody(x, z);
++    }
++
++    public boolean isDaytime()
++    {
++        return field_76579_a.field_73008_k < 4;
++    }
++
++    /**
++     * The current sun brightness factor for this dimension.
++     * 0.0f means no light at all, and 1.0f means maximum sunlight.
++     * This will be used for the "calculateSkylightSubtracted"
++     * which is for Sky light value calculation.
++     *
++     * @return The current brightness factor
++     * */
++    public float getSunBrightnessFactor(float par1)
++    {
++        return field_76579_a.getSunBrightnessFactor(par1);
++    }
++
++    /**
++     * Calculates the current moon phase factor.
++     * This factor is effective for slimes.
++     * (This method do not affect the moon rendering)
++     * */
++    public float getCurrentMoonPhaseFactor()
++    {
++        return field_76579_a.getCurrentMoonPhaseFactorBody();
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
++    {
++        return field_76579_a.getSkyColorBody(cameraEntity, partialTicks);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 drawClouds(float partialTicks)
++    {
++        return field_76579_a.drawCloudsBody(partialTicks);
++    }
++
++    /**
++     * Gets the Sun Brightness for rendering sky.
++     * */
++    @SideOnly(Side.CLIENT)
++    public float getSunBrightness(float par1)
++    {
++        return field_76579_a.getSunBrightnessBody(par1);
++    }
++
++    /**
++     * Gets the Star Brightness for rendering sky.
++     * */
++    @SideOnly(Side.CLIENT)
++    public float getStarBrightness(float par1)
++    {
++        return field_76579_a.getStarBrightnessBody(par1);
++    }
++
++    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
++    {
++        field_76579_a.field_72985_G = allowHostile;
++        field_76579_a.field_72992_H = allowPeaceful;
++    }
++
++    public void calculateInitialWeather()
++    {
++        field_76579_a.calculateInitialWeatherBody();
++    }
++
++    public void updateWeather()
++    {
++        field_76579_a.updateWeatherBody();
++    }
++
++    public boolean canBlockFreeze(int x, int y, int z, boolean byWater)
++    {
++        return field_76579_a.canBlockFreezeBody(x, y, z, byWater);
++    }
++
++    public boolean canSnowAt(int x, int y, int z, boolean checkLight)
++    {
++        return field_76579_a.canSnowAtBody(x, y, z, checkLight);
++    }
++
++    public void setWorldTime(long time)
++    {
++        field_76579_a.field_72986_A.func_76068_b(time);
++    }
++
++    public long getSeed()
++    {
++        return field_76579_a.field_72986_A.func_76063_b();
++    }
++
++    public long getWorldTime()
++    {
++        return field_76579_a.field_72986_A.func_76073_f();
++    }
++
++    public ChunkCoordinates getSpawnPoint()
++    {
++        WorldInfo info = field_76579_a.field_72986_A;
++        return new ChunkCoordinates(info.func_76079_c(), info.func_76075_d(), info.func_76074_e());
++    }
++
++    public void setSpawnPoint(int x, int y, int z)
++    {
++        field_76579_a.field_72986_A.func_76081_a(x, y, z);
++    }
++
++    public boolean canMineBlock(EntityPlayer player, int x, int y, int z)
++    {
++        return field_76579_a.canMineBlockBody(player, x, y, z);
++    }
++
++    public boolean isBlockHighHumidity(int x, int y, int z)
++    {
++        return field_76579_a.func_72807_a(x, z).func_76736_e();
++    }
++
++    public int getHeight()
++    {
++        return 256;
++    }
++
++    public int getActualHeight()
++    {
++        return field_76576_e ? 128 : 256;
++    }
++
++    public double getHorizon()
++    {
++        return field_76579_a.field_72986_A.func_76067_t().getHorizon(field_76579_a);
++    }
++
++    public void resetRainAndThunder()
++    {
++        field_76579_a.field_72986_A.func_76080_g(0);
++        field_76579_a.field_72986_A.func_76084_b(false);
++        field_76579_a.field_72986_A.func_76090_f(0);
++        field_76579_a.field_72986_A.func_76069_a(false);
++    }
++
++    public boolean canDoLightning(Chunk chunk)
++    {
++        return true;
++    }
++
++    public boolean canDoRainSnowIce(Chunk chunk)
++    {
++        return true;
++    }
+ }

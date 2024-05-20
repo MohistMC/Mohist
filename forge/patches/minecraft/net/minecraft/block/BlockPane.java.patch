@@ -1,0 +1,52 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPane.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
+@@ -15,6 +15,8 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
++import static net.minecraftforge.common.util.ForgeDirection.*;
+ 
+ public class BlockPane extends Block
+ {
+@@ -62,10 +64,10 @@
+ 
+     public void func_149743_a(World p_149743_1_, int p_149743_2_, int p_149743_3_, int p_149743_4_, AxisAlignedBB p_149743_5_, List p_149743_6_, Entity p_149743_7_)
+     {
+-        boolean flag = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_, p_149743_3_, p_149743_4_ - 1));
+-        boolean flag1 = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_, p_149743_3_, p_149743_4_ + 1));
+-        boolean flag2 = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_ - 1, p_149743_3_, p_149743_4_));
+-        boolean flag3 = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_ + 1, p_149743_3_, p_149743_4_));
++        boolean flag  = this.canPaneConnectTo(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_ - 1, NORTH);
++        boolean flag1 = this.canPaneConnectTo(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_ + 1, SOUTH);
++        boolean flag2 = this.canPaneConnectTo(p_149743_1_, p_149743_2_ - 1, p_149743_3_, p_149743_4_, WEST );
++        boolean flag3 = this.canPaneConnectTo(p_149743_1_, p_149743_2_ + 1, p_149743_3_, p_149743_4_, EAST );
+ 
+         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
+         {
+@@ -117,10 +119,10 @@
+         float f1 = 0.5625F;
+         float f2 = 0.4375F;
+         float f3 = 0.5625F;
+-        boolean flag = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_, p_149719_3_, p_149719_4_ - 1));
+-        boolean flag1 = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_, p_149719_3_, p_149719_4_ + 1));
+-        boolean flag2 = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_ - 1, p_149719_3_, p_149719_4_));
+-        boolean flag3 = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_ + 1, p_149719_3_, p_149719_4_));
++        boolean flag  = this.canPaneConnectTo(p_149719_1_, p_149719_2_, p_149719_3_, p_149719_4_ - 1, NORTH);
++        boolean flag1 = this.canPaneConnectTo(p_149719_1_, p_149719_2_, p_149719_3_, p_149719_4_ + 1, SOUTH);
++        boolean flag2 = this.canPaneConnectTo(p_149719_1_, p_149719_2_ - 1, p_149719_3_, p_149719_4_, WEST );
++        boolean flag3 = this.canPaneConnectTo(p_149719_1_, p_149719_2_ + 1, p_149719_3_, p_149719_4_, EAST );
+ 
+         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
+         {
+@@ -186,4 +188,10 @@
+         this.field_149761_L = p_149651_1_.func_94245_a(this.field_150101_M);
+         this.field_150102_N = p_149651_1_.func_94245_a(this.field_150100_a);
+     }
++
++    public boolean canPaneConnectTo(IBlockAccess world, int x, int y, int z, ForgeDirection dir)
++    {
++        return func_150098_a(world.func_147439_a(x, y, z)) || 
++                world.isSideSolid(x, y, z, dir.getOpposite(), false);
++    }
+ }

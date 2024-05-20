@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
+@@ -110,7 +110,7 @@
+                     {
+                         Block block = this.field_145850_b.func_147439_a(l, k, i1);
+ 
+-                        if (block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150484_ah && block != Blocks.field_150339_S)
++                        if (!block.isBeaconBase(this.field_145850_b, l, k, i1, field_145851_c, field_145848_d, field_145849_e))
+                         {
+                             flag = false;
+                             break;
+@@ -357,6 +357,6 @@
+ 
+     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
+     {
+-        return p_94041_2_.func_77973_b() == Items.field_151166_bC || p_94041_2_.func_77973_b() == Items.field_151045_i || p_94041_2_.func_77973_b() == Items.field_151043_k || p_94041_2_.func_77973_b() == Items.field_151042_j;
++        return p_94041_2_.func_77973_b() != null && p_94041_2_.func_77973_b().isBeaconPayment(p_94041_2_);
+     }
+ }

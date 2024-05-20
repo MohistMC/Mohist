@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockMobSpawner.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMobSpawner.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityMobSpawner;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+ public class BlockMobSpawner extends BlockContainer
+@@ -36,10 +37,15 @@
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+-        int j1 = 15 + p_149690_1_.field_73012_v.nextInt(15) + p_149690_1_.field_73012_v.nextInt(15);
+-        this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
+     }
+ 
++    private Random rand = new Random();
++    @Override
++    public int getExpDrop(IBlockAccess world, int metadata, int fortune)
++    {
++        return 15 + rand.nextInt(15) + rand.nextInt(15);
++    }
++
+     public boolean func_149662_c()
+     {
+         return false;

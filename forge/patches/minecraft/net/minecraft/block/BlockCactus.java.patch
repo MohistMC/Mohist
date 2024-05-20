@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
+@@ -11,9 +11,13 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.IIcon;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.util.ForgeDirection;
++import net.minecraftforge.common.IPlantable;
+ 
+-public class BlockCactus extends Block
++public class BlockCactus extends Block implements IPlantable
+ {
+     @SideOnly(Side.CLIENT)
+     private IIcon field_150041_a;
+@@ -125,7 +129,7 @@
+         else
+         {
+             Block block = p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
+-            return block == Blocks.field_150434_aF || block == Blocks.field_150354_m;
++            return block.canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
+         }
+     }
+ 
+@@ -141,4 +145,22 @@
+         this.field_150041_a = p_149651_1_.func_94245_a(this.func_149641_N() + "_top");
+         this.field_150040_b = p_149651_1_.func_94245_a(this.func_149641_N() + "_bottom");
+     }
++
++    @Override
++    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
++    {
++        return EnumPlantType.Desert;
++    }
++
++    @Override
++    public Block getPlant(IBlockAccess world, int x, int y, int z)
++    {
++        return this;
++    }
++
++    @Override
++    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
++    {
++        return -1;
++    }
+ }

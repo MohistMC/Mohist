@@ -1,0 +1,129 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -33,6 +33,7 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public final class ItemStack
+ {
+@@ -124,6 +125,7 @@
+ 
+     public boolean func_77943_a(EntityPlayer p_77943_1_, World p_77943_2_, int p_77943_3_, int p_77943_4_, int p_77943_5_, int p_77943_6_, float p_77943_7_, float p_77943_8_, float p_77943_9_)
+     {
++        if (!p_77943_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+         boolean flag = this.func_77973_b().func_77648_a(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+ 
+         if (flag)
+@@ -182,7 +184,7 @@
+ 
+     public int func_77976_d()
+     {
+-        return this.func_77973_b().func_77639_j();
++        return this.func_77973_b().getItemStackLimit(this);
+     }
+ 
+     public boolean func_77985_e()
+@@ -192,7 +194,7 @@
+ 
+     public boolean func_77984_f()
+     {
+-        return this.field_151002_e.func_77612_l() <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable");
++        return this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable");
+     }
+ 
+     public boolean func_77981_g()
+@@ -202,32 +204,27 @@
+ 
+     public boolean func_77951_h()
+     {
+-        return this.func_77984_f() && this.field_77991_e > 0;
++        return this.func_77984_f() && func_77973_b().isDamaged(this);
+     }
+ 
+     public int func_77952_i()
+     {
+-        return this.field_77991_e;
++        return func_77973_b().getDisplayDamage(this);
+     }
+ 
+     public int func_77960_j()
+     {
+-        return this.field_77991_e;
++        return func_77973_b().getDamage(this);
+     }
+ 
+     public void func_77964_b(int p_77964_1_)
+     {
+-        this.field_77991_e = p_77964_1_;
+-
+-        if (this.field_77991_e < 0)
+-        {
+-            this.field_77991_e = 0;
+-        }
++        func_77973_b().setDamage(this, p_77964_1_);
+     }
+ 
+     public int func_77958_k()
+     {
+-        return this.field_151002_e.func_77612_l();
++        return func_77973_b().getMaxDamage(this);
+     }
+ 
+     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
+@@ -259,8 +256,8 @@
+                 }
+             }
+ 
+-            this.field_77991_e += p_96631_1_;
+-            return this.field_77991_e > this.func_77958_k();
++            func_77964_b(func_77960_j() + p_96631_1_); //Redirect through Item's callback if applicable.
++            return func_77960_j() > func_77958_k();
+         }
+     }
+ 
+@@ -319,7 +316,7 @@
+ 
+     public boolean func_150998_b(Block p_150998_1_)
+     {
+-        return this.field_151002_e.func_150897_b(p_150998_1_);
++        return func_77973_b().canHarvestBlock(p_150998_1_, this);
+     }
+ 
+     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
+@@ -626,16 +623,24 @@
+         {
+             arraylist.add("Durability: " + (this.func_77958_k() - this.func_77952_i()) + " / " + this.func_77958_k());
+         }
++        ForgeEventFactory.onItemTooltip(this, p_82840_1_, arraylist, p_82840_2_);
+ 
+         return arraylist;
+     }
+ 
++    @Deprecated
+     @SideOnly(Side.CLIENT)
+     public boolean func_77962_s()
+     {
+-        return this.func_77973_b().func_77636_d(this);
++        return hasEffect(0);
+     }
+ 
++    @SideOnly(Side.CLIENT)
++    public boolean hasEffect(int pass)
++    {
++        return this.func_77973_b().hasEffect(this, pass);
++    }
++
+     public EnumRarity func_77953_t()
+     {
+         return this.func_77973_b().func_77613_e(this);
+@@ -737,7 +742,7 @@
+         }
+         else
+         {
+-            object = this.func_77973_b().func_111205_h();
++            object = this.func_77973_b().getAttributeModifiers(this);
+         }
+ 
+         return (Multimap)object;

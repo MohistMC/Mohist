@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
++++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -50,7 +50,7 @@
+ 
+         if (field_77331_b[p_i1926_1_] != null)
+         {
+-            throw new IllegalArgumentException("Duplicate enchantment id!");
++            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + field_77331_b[p_i1926_1_].getClass() + " Enchantment ID:" + p_i1926_1_);
+         }
+         else
+         {
+@@ -124,6 +124,45 @@
+ 
+     public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
+ 
++    /**
++     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
++     * applies for <i>all possible</i> enchantments.
++     * @param stack
++     * @return
++     */
++    public boolean canApplyAtEnchantingTable(ItemStack stack)
++    {
++        return func_92089_a(stack);
++    }
++
++    private static final java.lang.reflect.Field bookSetter = Enchantment.class.getDeclaredFields()[1];
++    /**
++     * Add to the list of enchantments applicable by the anvil from a book
++     *
++     * @param enchantment
++     */
++    public static void addToBookList(Enchantment enchantment)
++    {
++        try
++        {
++            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
++                com.google.common.collect.ObjectArrays.concat(field_92090_c, enchantment));
++        }
++        catch (Exception e)
++        {
++            throw new RuntimeException(e); //Rethrow see what happens
++        }
++    }
++
++    /**
++     * Is this enchantment allowed to be enchanted on books via Enchantment Table
++     * @return false to disable the vanilla feature
++     */
++    public boolean isAllowedOnBooks()
++    {
++        return true;
++    }
++
+     static
+     {
+         ArrayList var0 = new ArrayList();
