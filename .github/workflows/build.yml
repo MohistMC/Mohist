@@ -19,7 +19,7 @@ jobs:
     - name: Setup mohist 1.7.10
       run: |
         chmod +x ./gradlew
-        ./gradlew setupCrucible
+        ./gradlew cleanCache clean setupCrucible --refresh-dependencies
     - name: Build mohist 1.7.10
       run: |
         chmod +x ./gradlew
@@ -28,4 +28,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Mohist-1.7.10-46-server
-        path: projects/mohist/build/libs/mohist-1.7.10-46-server.jar
+        path: build/distributions/*
