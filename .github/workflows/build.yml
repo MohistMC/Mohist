@@ -1,0 +1,31 @@
+name: Test and build mohist 1.7.10
+
+on:
+  push:
+    branches: [ 1.7.10 ]
+  pull_request:
+    branches: [ 1.7.10 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        java-version: 8
+        distribution: 'temurin'
+    - name: Setup mohist 1.7.10
+      run: |
+        chmod +x ./gradlew
+        ./gradlew setupCauldron
+    - name: Build mohist 1.7.10
+      run: |
+        chmod +x ./gradlew
+        ./gradlew launch4j
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Mohist-1.7.10-46-server
+        path: projects/mohist/build/libs/mohist-1.7.10-46-server.jar
