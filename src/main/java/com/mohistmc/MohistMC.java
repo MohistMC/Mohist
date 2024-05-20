@@ -48,8 +48,6 @@ public class MohistMC {
             EulaUtil.writeInfos();
         }
 
-        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
-
         System.out.println(i18n.get("mohist.start"));
         System.out.println(i18n.get("load.libraries"));
         String[] allArgs = Arrays.asList("--tweakClass", "cpw.mods.fml.common.launcher.FMLServerTweaker").toArray(new String[args.length + 2]);
