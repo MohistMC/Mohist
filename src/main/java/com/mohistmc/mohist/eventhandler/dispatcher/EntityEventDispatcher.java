@@ -99,7 +99,7 @@ public class EntityEventDispatcher {
 
     @SubscribeEvent
     public void callEntityTameEvent(AnimalTameEvent event) {
-        var bukkit = CraftEventFactory.callEntityTameEvent(event.getAnimal(), ((CraftHumanEntity) event.getAnimal().getBukkitEntity().getPassenger()).getHandle());
+        var bukkit = CraftEventFactory.callEntityTameEvent(event.getAnimal(), event.getTamer());
         if (bukkit.isCancelled()) {
             event.setCanceled(true);
         }
