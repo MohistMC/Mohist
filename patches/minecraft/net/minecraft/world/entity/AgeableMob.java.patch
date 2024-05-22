@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
-@@ -19,12 +_,32 @@
+@@ -19,12 +_,12 @@
      protected int age;
      protected int forcedAge;
      protected int forcedAgeTimer;
@@ -11,26 +11,6 @@
      }
  
 -    @Override
-+   // Spigot start
-+   @Override
-+   public void inactiveTick() {
-+      super.inactiveTick();
-+      if (this.level.isClientSide || this.ageLocked) { // CraftBukkit
-+         this.refreshDimensions();
-+      } else {
-+         int i = this.getAge();
-+
-+         if (i < 0) {
-+            ++i;
-+            this.setAge(i);
-+         } else if (i > 0) {
-+            --i;
-+            this.setAge(i);
-+         }
-+      }
-+   }
-+   // Spigot end
-+
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_) {
          if (p_146749_ == null) {
              p_146749_ = new AgeableMob.AgeableMobGroupData(true);

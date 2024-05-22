@@ -312,19 +312,7 @@
      }
  
      public void resetEmptyTime() {
-@@ -733,17 +_,27 @@
-     }
- 
-     public void tickNonPassenger(Entity p_8648_) {
-+        // Spigot start
-+        if (!org.spigotmc.ActivationRange.checkIfActive(p_8648_)) {
-+            p_8648_.tickCount++;
-+            p_8648_.inactiveTick();
-+            return;
-+        }
-+        // Spigot end
-         p_8648_.setOldPosAndRot();
-         ProfilerFiller profilerfiller = this.getProfiler();
+@@ -738,12 +_,15 @@
          p_8648_.tickCount++;
          this.getProfiler().push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_8648_.getType()).toString());
          profilerfiller.incrementCounter("tickNonPassenger");

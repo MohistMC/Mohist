@@ -19,103 +19,14 @@
  import org.slf4j.Logger;
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
-@@ -260,46 +_,56 @@
+@@ -260,7 +_,6 @@
          return this.assignProfessionWhenSpawned;
      }
  
 -    @Override
--    protected void customServerAiStep() {
--        this.level().getProfiler().push("villagerBrain");
--        this.getBrain().tick((ServerLevel)this.level(), this);
--        this.level().getProfiler().pop();
--        if (this.assignProfessionWhenSpawned) {
--            this.assignProfessionWhenSpawned = false;
--        }
--
--        if (!this.isTrading() && this.updateMerchantTimer > 0) {
--            this.updateMerchantTimer--;
--            if (this.updateMerchantTimer <= 0) {
--                if (this.increaseProfessionLevelOnUpdate) {
--                    this.increaseMerchantCareer();
--                    this.increaseProfessionLevelOnUpdate = false;
--                }
--
--                this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
--            }
--        }
--
--        if (this.lastTradedPlayer != null && this.level() instanceof ServerLevel) {
--            ((ServerLevel)this.level()).onReputationEvent(ReputationEventType.TRADE, this.lastTradedPlayer, this);
--            this.level().broadcastEntityEvent(this, (byte)14);
--            this.lastTradedPlayer = null;
--        }
--
--        if (!this.isNoAi() && this.random.nextInt(100) == 0) {
--            Raid raid = ((ServerLevel)this.level()).getRaidAt(this.blockPosition());
--            if (raid != null && raid.isActive() && !raid.isOver()) {
--                this.level().broadcastEntityEvent(this, (byte)42);
--            }
--        }
--
--        if (this.getVillagerData().getProfession() == VillagerProfession.NONE && this.isTrading()) {
--            this.stopTrading();
--        }
--
--        super.customServerAiStep();
--    }
-+   // Spigot Start
-+   @Override
-+   public void inactiveTick() {
-+      // SPIGOT-3874, SPIGOT-3894, SPIGOT-3846, SPIGOT-5286 :(
-+      if (this.level().spigotConfig.tickInactiveVillagers && this.isEffectiveAi()) {
-+         this.customServerAiStep();
-+      }
-+      super.inactiveTick();
-+   }
-+   // Spigot End
-+
-+   protected void customServerAiStep() {
-+       this.level().getProfiler().push("villagerBrain");
-+       this.getBrain().tick((ServerLevel) this.level(), this);
-+       this.level().getProfiler().pop();
-+       if (this.assignProfessionWhenSpawned) {
-+           this.assignProfessionWhenSpawned = false;
-+       }
-+
-+       if (!this.isTrading() && this.updateMerchantTimer > 0) {
-+           this.updateMerchantTimer--;
-+           if (this.updateMerchantTimer <= 0) {
-+               if (this.increaseProfessionLevelOnUpdate) {
-+                   this.increaseMerchantCareer();
-+                   this.increaseProfessionLevelOnUpdate = false;
-+               }
-+
-+               this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-+           }
-+       }
-+
-+       if (this.lastTradedPlayer != null && this.level() instanceof ServerLevel) {
-+           ((ServerLevel) this.level()).onReputationEvent(ReputationEventType.TRADE, this.lastTradedPlayer, this);
-+           this.level().broadcastEntityEvent(this, (byte) 14);
-+           this.lastTradedPlayer = null;
-+       }
-+
-+       if (!this.isNoAi() && this.random.nextInt(100) == 0) {
-+           Raid raid = ((ServerLevel) this.level()).getRaidAt(this.blockPosition());
-+           if (raid != null && raid.isActive() && !raid.isOver()) {
-+               this.level().broadcastEntityEvent(this, (byte) 42);
-+           }
-+       }
-+
-+       if (this.getVillagerData().getProfession() == VillagerProfession.NONE && this.isTrading()) {
-+           this.stopTrading();
-+       }
-+
-+       super.customServerAiStep();
-+   }
- 
-     @Override
-     public void tick() {
+     protected void customServerAiStep() {
+         this.level().getProfiler().push("villagerBrain");
+         this.getBrain().tick((ServerLevel)this.level(), this);
 @@ -314,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {
@@ -134,22 +45,21 @@
          this.setUnhappyCounter(40);
          if (!this.level().isClientSide()) {
              this.makeSound(SoundEvents.VILLAGER_NO);
-@@ -389,8 +_,14 @@
+@@ -389,7 +_,13 @@
          this.updateDemand();
  
          for (MerchantOffer merchantoffer : this.getOffers()) {
-+         // CraftBukkit start
-+         VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
-+         Bukkit.getPluginManager().callEvent(event);
-+         if (!event.isCancelled()) {
-             merchantoffer.resetUses();
--        }
-+         }
-+         // CraftBukkit end
-+      }
+-            merchantoffer.resetUses();
++            // CraftBukkit start
++            VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
++            Bukkit.getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++                merchantoffer.resetUses();
++            }
++            // CraftBukkit end
+         }
  
          this.resendOffersToTradingPlayer();
-         this.lastRestockGameTime = this.level().getGameTime();
 @@ -443,9 +_,15 @@
          int i = 2 - this.numberOfRestocksToday;
          if (i > 0) {

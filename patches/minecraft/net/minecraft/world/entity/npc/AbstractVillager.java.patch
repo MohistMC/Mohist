@@ -26,14 +26,14 @@
 -    private final SimpleContainer inventory = new SimpleContainer(8);
 +   	private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
 +
-+   // CraftBukkit start
-+   private CraftMerchant craftMerchant;
++    // CraftBukkit start
++    private CraftMerchant craftMerchant;
 +
-+   @Override
-+   public CraftMerchant getCraftMerchant() {
-+      return (craftMerchant == null) ? craftMerchant = new CraftMerchant(this) : craftMerchant;
-+   }
-+   // CraftBukkit end
++    @Override
++    public CraftMerchant getCraftMerchant() {
++        return (craftMerchant == null) ? craftMerchant = new CraftMerchant(this) : craftMerchant;
++    }
++    // CraftBukkit end
  
      public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
          super(p_35267_, p_35268_);

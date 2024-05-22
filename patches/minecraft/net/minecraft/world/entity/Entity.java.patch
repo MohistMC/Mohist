@@ -155,7 +155,7 @@
      protected boolean isInsidePortal;
      protected int portalTime;
      protected BlockPos portalEntrancePos;
-@@ -237,17 +_,90 @@
+@@ -237,17 +_,89 @@
      private boolean onGroundNoBlocks = false;
      private float crystalSoundIntensity;
      private int lastCrystalSoundPlayTick;
@@ -186,7 +186,6 @@
 +    public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
 +    public final boolean defaultActivationState;
 +    public long activatedTick = Integer.MIN_VALUE;
-+    public void inactiveTick() { }
 +    // Spigot end
 +
 +    public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
@@ -239,13 +238,13 @@
          this.position = Vec3.ZERO;
          this.blockPosition = BlockPos.ZERO;
          this.chunkPosition = ChunkPos.ZERO;
-+      // Spigot start
-+      if (p_19871_ != null && p_19871_ instanceof ServerLevel) {
-+         this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, p_19871_.spigotConfig);
-+      } else {
-+         this.defaultActivationState = false;
-+      }
-+      // Spigot end
++        // Spigot start
++        if (p_19871_ != null && p_19871_ instanceof ServerLevel) {
++            this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, p_19871_.spigotConfig);
++        } else {
++            this.defaultActivationState = false;
++        }
++        // Spigot end
          SynchedEntityData.Builder synchedentitydata$builder = new SynchedEntityData.Builder(this);
          synchedentitydata$builder.define(DATA_SHARED_FLAGS_ID, (byte)0);
          synchedentitydata$builder.define(DATA_AIR_SUPPLY_ID, this.getMaxAirSupply());

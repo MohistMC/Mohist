@@ -58,23 +58,11 @@
          ParticleOptions particleoptions = this.entityData.get(DATA_PARTICLE);
          if (particleoptions instanceof ColorParticleOption colorparticleoption) {
              int i = this.potionContents.equals(PotionContents.EMPTY) ? 0 : this.potionContents.getColor();
-@@ -128,7 +_,18 @@
+@@ -128,7 +_,6 @@
          this.duration = p_19735_;
      }
  
 -    @Override
-+   // Spigot start - copied from below
-+   @Override
-+   public void inactiveTick() {
-+      super.inactiveTick();
-+
-+      if (this.tickCount >= this.waitTime + this.duration) {
-+         this.discard();
-+         return;
-+      }
-+   }
-+   // Spigot end
-+
      public void tick() {
          super.tick();
          boolean flag = this.isWaiting();

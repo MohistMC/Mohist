@@ -25,26 +25,11 @@
  
      public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_37027_, Level p_37028_) {
          super(p_37027_, p_37028_);
-@@ -77,7 +_,22 @@
+@@ -77,7 +_,6 @@
          this.setOwner(p_37052_);
      }
  
-+    // Spigot Start - copied from tick
-     @Override
-+    public void inactiveTick() {
-+        this.life += 1;
-+
-+        if (!this.level.isClientSide && this.life > this.lifetime) {
-+            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
-+                this.explode();
-+            }
-+            // CraftBukkit end
-+        }
-+        super.inactiveTick();
-+    }
-+    // Spigot End
-+
+-    @Override
      protected void defineSynchedData(SynchedEntityData.Builder p_332895_) {
          p_332895_.define(DATA_ID_FIREWORKS_ITEM, getDefaultItem());
          p_332895_.define(DATA_ATTACHED_TO_TARGET, OptionalInt.empty());

@@ -418,13 +418,10 @@
          this.player.connection.send(new ClientboundSetCarriedItemPacket(this.player.getInventory().selected));
      }
  
-@@ -734,7 +_,15 @@
-     public void handleSelectTrade(ServerboundSelectTradePacket p_9905_) {
+@@ -735,6 +_,13 @@
          PacketUtils.ensureRunningOnSameThread(p_9905_, this, this.player.serverLevel());
          int i = p_9905_.getItem();
--        if (this.player.containerMenu instanceof MerchantMenu merchantmenu) {
-+        AbstractContainerMenu abstractcontainermenu = this.player.containerMenu;
-+        if (abstractcontainermenu instanceof MerchantMenu merchantmenu) {
+         if (this.player.containerMenu instanceof MerchantMenu merchantmenu) {
 +            // CraftBukkit start
 +            final org.bukkit.event.inventory.TradeSelectEvent tradeSelectEvent = CraftEventFactory.callTradeSelectEvent(this.player, i, merchantmenu);
 +            if (tradeSelectEvent.isCancelled()) {

@@ -105,7 +105,7 @@
      protected int fallFlyTicks;
      private BlockPos lastPos;
      private Optional<BlockPos> lastClimbablePos = Optional.empty();
-@@ -236,8 +_,28 @@
+@@ -236,8 +_,21 @@
      private float swimAmount;
      private float swimAmountO;
      protected Brain<?> brain;
@@ -126,13 +126,6 @@
 +      return getYHeadRot();
 +   }
 +    // CraftBukkit end
-+    // Spigot start
-+    public void inactiveTick()
-+    {
-+        super.inactiveTick();
-+        ++this.noActionTime; // Above all the floats
-+    }
-+    // Spigot end
  
      protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
          super(p_20966_, p_20967_);
