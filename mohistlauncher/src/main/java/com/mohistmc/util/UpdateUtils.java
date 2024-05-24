@@ -51,9 +51,10 @@ public class UpdateUtils {
                 if (MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
                     File mohistjar = MohistMCStart.jarTool.getFile();
                     System.out.println(I18n.as("download.file", mohistjar.getName(), NumberUtil.getSize(ConnectionUtil.getConn(url).getContentLength())));
-                    ConnectionUtil.downloadFile(url, mohistjar);
-                    System.out.println(I18n.as("download.file.ok", mohistjar.getName()));
-                    restartServer(Arrays.asList("java", "-jar", MohistMCStart.jarTool.getJarName()), true);
+                    if (ConnectionUtil.downloadFile(url, mohistjar)) {
+                        System.out.println(I18n.as("download.file.ok", mohistjar.getName()));
+                        restartServer(Arrays.asList("java", "-jar", MohistMCStart.jarTool.getJarName()), true);
+                    }
                 }
             }
         } catch (Throwable e) {

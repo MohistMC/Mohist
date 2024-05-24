@@ -397,7 +397,7 @@
     }
  
 +   // Mohist start
-+   private AtomicBoolean mohist$pFire = new AtomicBoolean(false);
++   private final AtomicBoolean mohist$pFire = new AtomicBoolean(false);
 +   public void mohist$pFire(boolean pFire) {
 +      mohist$pFire.set(pFire);
 +   }
