@@ -942,11 +942,13 @@
           p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
        }
  
-@@ -1556,14 +_,17 @@
+@@ -1555,15 +_,18 @@
+             int j = 25 - i;
              float f = p_21194_ * (float)j;
              float f1 = p_21194_;
-             p_21194_ = Math.max(f / 25.0F, 0.0F);
+-            p_21194_ = Math.max(f / 25.0F, 0.0F);
 -            float f2 = f1 - p_21194_;
++            float mixin = Math.max(f / 25.0F, 0.0F);
 +            // CraftBukkit - Moved to damageEntity0(DamageSource, float)
 +            /*
 +            float f2 = f1 - pDamageAmount;
