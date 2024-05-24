@@ -42,7 +42,7 @@ public class UpdateUtils {
             var jar_version = Integer.parseInt(DataParser.versionMap.get("mohist"));
             var build_number = json.asInteger("id");
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("createdAt")));
-            String url = json.asString("url");
+            String url = json.asString("originUrl");
 
             if (jar_version >= build_number) {
                 System.out.println(I18n.as("update.latest", jar_version, build_number));
