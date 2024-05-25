@@ -173,8 +173,8 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
 
         if (!tag.isEmpty()) {
             CraftBlockEntityState<?> blockEntityTag = this.blockEntityTag;
-            if (this.blockEntityTag == null) {
-                this.blockEntityTag = CraftMetaBlockState.getBlockState(material, null);
+            if (blockEntityTag == null) {
+                blockEntityTag = CraftMetaBlockState.getBlockState(material, null);
             }
 
             // Convert to map

@@ -194,7 +194,7 @@ public class ConfigByWorlds {
     public static void getSpawn(String w, Player player) {
         World world = Bukkit.getWorld(w);
         if (f.exists()) {
-            if (config.getString("worlds." + world.getName()) != null) {
+            if (config.getString("worlds." + world.getName()) != null && config.getString("worlds." + world.getName() + ".spawn") != null) {
                 double x = config.getDouble("worlds." + world.getName() + ".spawn.x");
                 double y = config.getDouble("worlds." + world.getName() + ".spawn.y");
                 double z = config.getDouble("worlds." + world.getName() + ".spawn.z");

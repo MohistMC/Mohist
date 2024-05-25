@@ -441,7 +441,7 @@
          if (this.bans.isBanned(p_11258_)) {
              UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
              MutableComponent mutablecomponent1 = Component.translatable("multiplayer.disconnect.banned.reason", userbanlistentry.getReason());
-@@ -390,66 +_,121 @@
+@@ -390,66 +_,122 @@
                  mutablecomponent1.append(Component.translatable("multiplayer.disconnect.banned.expiration", BAN_DATE_FORMAT.format(userbanlistentry.getExpires())));
              }
  
@@ -592,6 +592,7 @@
 -        ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.server.overworld();
 +        ServerLevel serverlevel1 = ((CraftWorld) mohist$location.getWorld()).getHandle();
          ServerPlayer serverplayer = new ServerPlayer(this.server, serverlevel1, p_11237_.getGameProfile(), p_11237_.clientInformation());
++        serverplayer.getBukkitEntity().restore(p_11237_.getBukkitEntity());
 +        serverplayer.setBukkitEntity(p_11237_.getBukkitEntity());
 +        p_11237_.connection.player = serverplayer;
          serverplayer.connection = p_11237_.connection;
@@ -601,7 +602,7 @@
          serverplayer.setId(p_11237_.getId());
          serverplayer.setMainArm(p_11237_.getMainArm());
  
-@@ -457,65 +_,82 @@
+@@ -457,65 +_,80 @@
              serverplayer.addTag(s);
          }
  
@@ -630,6 +631,11 @@
 -        }
 -
 -        byte b0 = (byte)(p_11238_ ? 1 : 0);
+-        ServerLevel serverlevel2 = serverplayer.serverLevel();
+-        LevelData leveldata = serverlevel2.getLevelData();
+-        serverplayer.connection.send(new ClientboundRespawnPacket(serverplayer.createCommonSpawnInfo(serverlevel2), b0));
+-        serverplayer.connection
+-            .teleport(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ(), serverplayer.getYRot(), serverplayer.getXRot());
 +        serverplayer.forceSetPositionRotation(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
 +        // CraftBukkit end
 +
@@ -637,14 +643,9 @@
 +            serverplayer.setPos(serverplayer.getX(), serverplayer.getY() + 1.0D, serverplayer.getZ());
 +        }
 +
-+
 +        byte b0 = (byte) (p_11238_ ? 1 : 0);
-         ServerLevel serverlevel2 = serverplayer.serverLevel();
--        LevelData leveldata = serverlevel2.getLevelData();
 +        LevelData worlddata = serverlevel1.getLevelData();
-         serverplayer.connection.send(new ClientboundRespawnPacket(serverplayer.createCommonSpawnInfo(serverlevel2), b0));
--        serverplayer.connection
--            .teleport(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ(), serverplayer.getYRot(), serverplayer.getXRot());
++        serverplayer.connection.send(new ClientboundRespawnPacket(serverplayer.createCommonSpawnInfo(serverlevel1), b0));
 +        serverplayer.connection.send(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +        serverplayer.connection.send(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
 +        serverplayer.spawnIn(serverlevel1);

@@ -18,6 +18,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -280,6 +281,7 @@ public final class CraftServer implements Server {
     protected final DedicatedServer console;
     protected final DedicatedPlayerList playerList;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
+    private final Map<UUID, World> worldsByUUID = new Object2ObjectLinkedOpenHashMap<>(); // MultiPaper - optimize getWorld(UUID)
     private final Map<Class<?>, Registry<?>> registries = new HashMap<>();
     private YamlConfiguration configuration;
     private YamlConfiguration commandsConfiguration;
@@ -996,13 +998,14 @@ public final class CraftServer implements Server {
     public World createWorld(WorldCreator creator) {
         Preconditions.checkState(this.console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
         Preconditions.checkArgument(creator != null, "WorldCreator cannot be null");
-
+        Level2LevelStem.initPluginWorld.set(true); // Mohist
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(this.getWorldContainer(), name);
         World world = this.getWorld(name);
-
+        Level2LevelStem.bukkit = folder;
+        Level2LevelStem.bukkit_name = name;
         if (world != null) {
             return world;
         }
@@ -1019,20 +1022,7 @@ public final class CraftServer implements Server {
             biomeProvider = this.getBiomeProvider(name);
         }
 
-        ResourceKey<LevelStem> actualDimension;
-        switch (creator.environment()) {
-            case NORMAL:
-                actualDimension = LevelStem.OVERWORLD;
-                break;
-            case NETHER:
-                actualDimension = LevelStem.NETHER;
-                break;
-            case THE_END:
-                actualDimension = LevelStem.END;
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal dimension (" + creator.environment() + ")");
-        }
+        ResourceKey<LevelStem> actualDimension = ForgeInjectBukkit.environment0.get(creator.environment());
 
         LevelStorageSource.LevelStorageAccess worldSession;
         try {
@@ -1139,10 +1129,12 @@ public final class CraftServer implements Server {
             worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
         net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider); // TODO MOHIST
-        ServerLevel internal = (ServerLevel) new ServerLevel(this.console, this.console.executor, worldSession, worlddata, worldKey, worlddimension, this.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
+        ServerLevel internal = new ServerLevel(this.console, this.console.executor, worldSession, worlddata, worldKey, worlddimension, this.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
                 worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, this.console.overworld().getRandomSequences());
 
-        if (!(this.worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+        name = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        if (!(worlds.containsKey(name))) {
+            Level2LevelStem.initPluginWorld.set(false); // Mohist
             return null;
         }
 
@@ -1155,7 +1147,10 @@ public final class CraftServer implements Server {
         internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
 
         this.pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
-        return internal.getWorld();
+        World world1 = internal.getWorld();
+        world1.setBukkit(true);
+        Level2LevelStem.reloadAndInit(world1);
+        return world1;
     }
 
     @Override
@@ -1224,11 +1219,13 @@ public final class CraftServer implements Server {
     public World getWorld(String name) {
         Preconditions.checkArgument(name != null, "name cannot be null");
 
-        return this.worlds.get(name.toLowerCase(java.util.Locale.ENGLISH));
+        String worldname = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        return worlds.get(worldname);
     }
 
     @Override
     public World getWorld(UUID uid) {
+        if (true) return this.worldsByUUID.get(uid);
         for (World world : this.worlds.values()) {
             if (world.getUID().equals(uid)) {
                 return world;
@@ -1243,7 +1240,9 @@ public final class CraftServer implements Server {
             System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
             return;
         }
-        this.worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
+        this.worldsByUUID.put(world.getUID(), world); // MultiPaper - optimize getWorld(UUID)
+        String worldname = world.getName().contains("DIM") ? world.getName() : world.getName().toLowerCase(java.util.Locale.ENGLISH);
+        worlds.put(worldname, world);
     }
 
     @Override

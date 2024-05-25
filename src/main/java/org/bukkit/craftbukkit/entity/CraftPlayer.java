@@ -2188,6 +2188,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         this.getHandle().connection.send(packetReset);
     }
 
+    public void restore(CraftPlayer player) {
+        setDisplayName(player.getDisplayName());
+        player.setHandle(getHandle());
+    }
+
     @Override
     public void spawnParticle(Particle particle, Location location, int count) {
         this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count);

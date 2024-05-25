@@ -940,7 +940,7 @@
          this.player.disconnect();
          this.server.getPlayerList().remove(this.player);
 +        String quitMessage = this.server.getPlayerList().quitMessage;
-+        if (!quitMessage.isEmpty()) {
++        if (quitMessage != null && !quitMessage.isEmpty()) {
 +            this.server.getPlayerList().broadcastMessage(CraftChatMessage.fromString(quitMessage));
 +        }
 +        // CraftBukkit end
