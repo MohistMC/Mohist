@@ -10,15 +10,6 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
-@@ -22,6 +_,8 @@
- import java.lang.management.ManagementFactory;
- import java.lang.management.ThreadInfo;
- import java.lang.management.ThreadMXBean;
-+import java.math.BigDecimal;
-+import java.math.RoundingMode;
- import java.net.Proxy;
- import java.nio.file.Files;
- import java.nio.file.Path;
 @@ -35,19 +_,26 @@
  import java.util.Map;
  import java.util.Objects;

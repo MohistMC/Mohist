@@ -16,6 +16,14 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+@@ -23,6 +_,7 @@
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.nio.charset.StandardCharsets;
++import java.util.ConcurrentModificationException;
+ import java.util.Iterator;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
 @@ -52,7 +_,9 @@
      final LongSet ticketsToRelease = new LongOpenHashSet();
      final Executor mainThreadExecutor;
@@ -27,6 +35,16 @@
  
      protected DistanceManager(Executor p_140774_, Executor p_140775_) {
          ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
+@@ -113,7 +_,9 @@
+         }
+ 
+         if (!this.chunksToUpdateFutures.isEmpty()) {
++            try {
+             this.chunksToUpdateFutures.forEach(p_183908_ -> p_183908_.updateFutures(p_140806_, this.mainThreadExecutor));
++            } catch (ConcurrentModificationException ignored) {}
+             this.chunksToUpdateFutures.clear();
+             return true;
+         } else {
 @@ -130,8 +_,8 @@
  
                          CompletableFuture<ChunkResult<LevelChunk>> completablefuture = chunkholder.getEntityTickingChunkFuture();

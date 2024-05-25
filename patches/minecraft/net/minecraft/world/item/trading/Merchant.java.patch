@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/item/trading/Merchant.java
 +++ b/net/minecraft/world/item/trading/Merchant.java
-@@ -9,6 +_,7 @@
+@@ -1,14 +_,15 @@
+ package net.minecraft.world.item.trading;
+ 
++import com.mohistmc.mohist.paper.event.player.PlayerPurchaseEvent;
+ import java.util.OptionalInt;
+ import javax.annotation.Nullable;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.world.SimpleMenuProvider;
+-import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.inventory.MerchantMenu;
  import net.minecraft.world.item.ItemStack;
@@ -12,7 +21,7 @@
  
      void overrideOffers(MerchantOffers p_45306_);
  
-+   	default void processTrade(MerchantOffer merchantRecipe, @Nullable io.papermc.paper.event.player.PlayerPurchaseEvent event) { this.notifyTrade(merchantRecipe); } // Paper
++   	default void processTrade(MerchantOffer merchantRecipe, @Nullable PlayerPurchaseEvent event) { this.notifyTrade(merchantRecipe); } // Paper
 +
      void notifyTrade(MerchantOffer p_45305_);
  

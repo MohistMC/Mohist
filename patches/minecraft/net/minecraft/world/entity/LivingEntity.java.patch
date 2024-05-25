@@ -1759,11 +1759,17 @@
          super.tick();
          this.updatingUsingItem();
          this.updateSwimAmount();
-@@ -2460,7 +_,7 @@
+@@ -2460,7 +_,13 @@
          }
      }
  
 -    private void detectEquipmentUpdates() {
++    // CraftBukkit start
++    public void detectEquipmentUpdatesPublic() {
++        detectEquipmentUpdates();
++    }
++    // CraftBukkit end
++
 +    public void detectEquipmentUpdates() {
          Map<EquipmentSlot, ItemStack> map = this.collectEquipmentChanges();
          if (map != null) {

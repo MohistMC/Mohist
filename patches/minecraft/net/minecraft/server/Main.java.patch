@@ -170,6 +170,14 @@
              WorldStem worldstem;
              try {
                  WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
+@@ -180,6 +_,7 @@
+                         p_248086_ -> WorldLoader.load(
+                                 worldloader$initconfig,
+                                 p_308589_ -> {
++                                    worldLoader.set(p_308589_);
+                                     Registry<LevelStem> registry = p_308589_.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
+                                     if (dynamic1 != null) {
+                                         LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(
 @@ -214,6 +_,16 @@
                                              worlddimensions = dedicatedserverproperties.createDimensions(p_308589_.datapackWorldgen());
                                          }
@@ -187,7 +195,7 @@
                                          WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
                                          Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_308589_.datapackWorldgen().allRegistriesLifecycle());
                                          return new WorldLoader.DataLoadOutput<>(
-@@ -244,9 +_,17 @@
+@@ -244,24 +_,36 @@
  
              WorldData worlddata = worldstem.worldData();
              levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
@@ -195,6 +203,15 @@
 +            final MinecraftServer dedicatedserver = MinecraftServer.spin(
                  p_296433_ -> {
 -                    DedicatedServer dedicatedserver1 = new DedicatedServer(
+-                        p_296433_,
+-                        levelstoragesource$levelstorageaccess,
+-                        packrepository,
+-                        worldstem,
+-                        dedicatedserversettings,
+-                        DataFixers.getDataFixer(),
+-                        services,
+-                        LoggerChunkProgressListener::createFromGameruleRadius
+-                    );
 +                    MinecraftServer dedicatedserver1;
 +                    if (gametestEnabled) {
 +                       net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
@@ -202,20 +219,21 @@
 +                       var spawnPos = optionset.valueOf(spawnPosOpt);
 +                       dedicatedserver1 = net.minecraft.gametest.framework.GameTestServer.create(p_296433_, levelstoragesource$levelstorageaccess, packrepository, tests, spawnPos);
 +                    } else {
-+               			// Mohist start - fix mixin
-+                    	dedicatedserver1 = new DedicatedServer(
-                         p_296433_,
-                         levelstoragesource$levelstorageaccess,
-                         packrepository,
-@@ -256,12 +_,17 @@
-                         services,
-                         LoggerChunkProgressListener::createFromGameruleRadius
-                     );
-+               		MinecraftServer.options = optionset;
-+              		 MinecraftServer.worldLoader = worldLoader.getAndSet(null);
-+              		// MinecraftServer.worldLoader = config.get();
-+               		// Mohist end
-+            		}
++                        // Mohist start - fix mixin
++                        dedicatedserver1 = new DedicatedServer(
++                                p_296433_,
++                                levelstoragesource$levelstorageaccess,
++                                packrepository,
++                                worldstem,
++                                dedicatedserversettings,
++                                DataFixers.getDataFixer(),
++                                services,
++                                LoggerChunkProgressListener::createFromGameruleRadius
++                        );
++                        MinecraftServer.options = optionset;
++                        MinecraftServer.worldLoader = worldLoader.getAndSet(null);
++                        // Mohist end
++                    }
                      dedicatedserver1.setPort(optionset.valueOf(optionspec11));
                      dedicatedserver1.setDemo(optionset.has(optionspec2));
                      dedicatedserver1.setId(optionset.valueOf(optionspec12));
