@@ -13,9 +13,9 @@
          return false;
      }
 +
-+   // CraftBukkit start
-+   default boolean addFreshEntity(Entity pEntity, CreatureSpawnEvent.SpawnReason reason) {
-+      return false;
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start
++    default boolean addFreshEntity(Entity pEntity, CreatureSpawnEvent.SpawnReason reason) {
++        return false;
++    }
++    // CraftBukkit end
  }

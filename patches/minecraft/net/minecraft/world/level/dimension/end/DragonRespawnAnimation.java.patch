@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/dimension/end/DragonRespawnAnimation.java
++++ b/net/minecraft/world/level/dimension/end/DragonRespawnAnimation.java
+@@ -10,6 +_,7 @@
+ import net.minecraft.world.level.levelgen.feature.Feature;
+ import net.minecraft.world.level.levelgen.feature.SpikeFeature;
+ import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ 
+ public enum DragonRespawnAnimation {
+     START {
+@@ -97,6 +_,7 @@
+                 for (EndCrystal endcrystal : p_64046_) {
+                     endcrystal.setBeamTarget(null);
+                     p_64044_.explode(endcrystal, endcrystal.getX(), endcrystal.getY(), endcrystal.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
++                    endcrystal.putRemoveCause(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
+                     endcrystal.discard();
+                 }
+             } else if (p_64047_ >= 80) {

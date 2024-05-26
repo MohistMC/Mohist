@@ -33,13 +33,13 @@
                      if (blockstate.isAir()) {
                          if (this.hasFlammableNeighbours(p_230572_, blockpos)) {
 -                            p_230572_.setBlockAndUpdate(blockpos, BaseFireBlock.getState(p_230572_, blockpos));
-+                     // CraftBukkit start - Prevent lava putting something on fire
-+                     if (p_230572_.getBlockState(blockpos).getBlock() != Blocks.FIRE) {
-+                        if (CraftEventFactory.callBlockIgniteEvent(p_230572_, blockpos, p_230573_).isCancelled()) {
-+                           continue;
-+                        }
-+                     }
-+                     // CraftBukkit end
++                            // CraftBukkit start - Prevent lava putting something on fire
++                            if (p_230572_.getBlockState(blockpos).getBlock() != Blocks.FIRE) {
++                                if (CraftEventFactory.callBlockIgniteEvent(p_230572_, blockpos, p_230573_).isCancelled()) {
++                                    continue;
++                                }
++                            }
++                            // CraftBukkit end
 +                            p_230572_.setBlockAndUpdate(blockpos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_230572_, blockpos, p_230573_, Blocks.FIRE.defaultBlockState()));
                              return;
                          }
@@ -51,14 +51,14 @@
 -                    if (p_230572_.isEmptyBlock(blockpos1.above()) && this.isFlammable(p_230572_, blockpos1)) {
 -                        p_230572_.setBlockAndUpdate(blockpos1.above(), BaseFireBlock.getState(p_230572_, blockpos1));
 +                    if (p_230572_.isEmptyBlock(blockpos1.above()) && this.isFlammable(p_230572_, blockpos1, Direction.UP)) {
-+                  // CraftBukkit start - Prevent lava putting something on fire
-+                  BlockPos up = blockpos1.above();
-+                  if (p_230572_.getBlockState(up).getBlock() != Blocks.FIRE) {
-+                     if (CraftEventFactory.callBlockIgniteEvent(p_230572_, up, p_230573_).isCancelled()) {
-+                        continue;
-+                     }
-+                  }
-+                  // CraftBukkit end
++                        // CraftBukkit start - Prevent lava putting something on fire
++                        BlockPos up = blockpos1.above();
++                        if (p_230572_.getBlockState(up).getBlock() != Blocks.FIRE) {
++                            if (CraftEventFactory.callBlockIgniteEvent(p_230572_, up, p_230573_).isCancelled()) {
++                                continue;
++                            }
++                        }
++                        // CraftBukkit end
 +                        p_230572_.setBlockAndUpdate(blockpos1.above(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_230572_, blockpos1.above(), p_230573_, Blocks.FIRE.defaultBlockState()));
                      }
                  }
@@ -97,11 +97,11 @@
              if (this.is(FluidTags.LAVA) && fluidstate.is(FluidTags.WATER)) {
                  if (p_76222_.getBlock() instanceof LiquidBlock) {
 -                    p_76220_.setBlock(p_76221_, Blocks.STONE.defaultBlockState(), 3);
-+               // CraftBukkit start
-+               if (!CraftEventFactory.handleBlockFormEvent(p_76220_.getMinecraftWorld(), p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.STONE.defaultBlockState()), 3)) {
-+                  return;
-+               }
-+               // CraftBukkit end
++                    // CraftBukkit start
++                    if (!CraftEventFactory.handleBlockFormEvent(p_76220_.getMinecraftWorld(), p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.STONE.defaultBlockState()), 3)) {
++                        return;
++                    }
++                    // CraftBukkit end
                  }
  
                  this.fizz(p_76220_, p_76221_);

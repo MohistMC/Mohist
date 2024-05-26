@@ -39,52 +39,50 @@
      }
  
      @Override
-@@ -35,9 +_,46 @@
+@@ -35,9 +_,45 @@
              this.connection.disconnect(DISCONNECT_REASON);
          } else {
              this.hasRequestedStatus = true;
 -            this.connection.send(new ClientboundStatusResponsePacket(this.status));
--        }
--    }
-+          MohistServerListPingEvent event = new MohistServerListPingEvent(connection, MinecraftServer.getServer());
-+          Bukkit.getPluginManager().callEvent(event);
++            MohistServerListPingEvent event = new MohistServerListPingEvent(connection, MinecraftServer.getServer());
++            Bukkit.getPluginManager().callEvent(event);
 +
-+          MinecraftServer server = MinecraftServer.getServer();
-+          final Object[] players = event.getPlayers();
++            MinecraftServer server = MinecraftServer.getServer();
++            final Object[] players = event.getPlayers();
 +
-+          java.util.List<GameProfile> profiles = new java.util.ArrayList<GameProfile>(players.length);
-+          for (Object player : players) {
-+            if (player != null) {
-+               ServerPlayer entityPlayer = ((ServerPlayer) player);
-+               if (entityPlayer.allowsListing()) {
-+                  profiles.add(entityPlayer.getGameProfile());
-+               } else {
-+                  profiles.add(MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
-+               }
++            java.util.List<GameProfile> profiles = new java.util.ArrayList<GameProfile>(players.length);
++            for (Object player : players) {
++                if (player != null) {
++                    ServerPlayer entityPlayer = ((ServerPlayer) player);
++                    if (entityPlayer.allowsListing()) {
++                        profiles.add(entityPlayer.getGameProfile());
++                    } else {
++                        profiles.add(MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
++                    }
++                }
 +            }
-+          }
 +
-+         // Spigot Start
-+         if ( !server.hidesOnlinePlayers() && !profiles.isEmpty() )
-+         {
-+            java.util.Collections.shuffle( profiles ); // This sucks, its inefficient but we have no simple way of doing it differently
-+            profiles = profiles.subList( 0, Math.min( profiles.size(), org.spigotmc.SpigotConfig.playerSample ) ); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
-+         }
-+         // Spigot End
++            // Spigot Start
++            if (!server.hidesOnlinePlayers() && !profiles.isEmpty()) {
++                java.util.Collections.shuffle(profiles); // This sucks, its inefficient but we have no simple way of doing it differently
++                profiles = profiles.subList(0, Math.min(profiles.size(), org.spigotmc.SpigotConfig.playerSample)); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
++            }
++            // Spigot End
 +
-+         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), event.getNumPlayers(), (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles);
++            ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), event.getNumPlayers(), (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles);
 +
-+         ServerStatus ping = new ServerStatus(
-+                 CraftChatMessage.fromString(event.getMotd(), true)[0],
-+                 Optional.of(playerSample),
-+                 Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.getServerVersion(), SharedConstants.getCurrentVersion().getProtocolVersion())),
-+                 (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
-+                 server.enforceSecureProfile(),
-+                 this.status.forgeData()
-+         );
-+         this.connection.send(new ClientboundStatusResponsePacket(ping, this.statusCache));
-+         // CraftBukkit end
-+      }
++            ServerStatus ping = new ServerStatus(
++                    CraftChatMessage.fromString(event.getMotd(), true)[0],
++                    Optional.of(playerSample),
++                    Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.getServerVersion(), SharedConstants.getCurrentVersion().getProtocolVersion())),
++                    (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
++                    server.enforceSecureProfile(),
++                    this.status.forgeData()
++            );
++            this.connection.send(new ClientboundStatusResponsePacket(ping, this.statusCache));
++            // CraftBukkit end
+         }
+-    }
 +   }
  
      @Override

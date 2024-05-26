@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ServerLevelAccessor.java
 +++ b/net/minecraft/world/level/ServerLevelAccessor.java
-@@ -2,6 +_,7 @@
+@@ -2,11 +_,22 @@
  
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.world.entity.Entity;
@@ -8,9 +8,10 @@
  
  public interface ServerLevelAccessor extends LevelAccessor {
      ServerLevel getLevel();
-@@ -9,4 +_,14 @@
+ 
      default void addFreshEntityWithPassengers(Entity p_47206_) {
-         p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
+-        p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
++		this.addFreshEntityWithPassengers(p_47206_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
      }
 +
 +   	default void addFreshEntityWithPassengers(Entity pEntity, CreatureSpawnEvent.SpawnReason reason) {

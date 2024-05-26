@@ -26,15 +26,15 @@
              BlockState blockstate1 = p_255851_.getBlockState(blockpos);
              FluidState fluidstate = this.getNewLiquid(p_255851_, blockpos, blockstate1);
              if (this.canSpreadTo(p_255851_, p_76012_, blockstate, Direction.DOWN, blockpos, blockstate1, p_255851_.getFluidState(blockpos), fluidstate.getType())) {
-+            // CraftBukkit start
-+            org.bukkit.block.Block source = CraftBlock.at(p_255851_, p_76012_);
-+            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
-+            Bukkit.getPluginManager().callEvent(event);
++                // CraftBukkit start
++                org.bukkit.block.Block source = CraftBlock.at(p_255851_, p_76012_);
++                BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
++                Bukkit.getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
-+               return;
-+            }
-+            // CraftBukkit end
++                if (event.isCancelled()) {
++                    return;
++                }
++                // CraftBukkit end
                  this.spreadTo(p_255851_, blockpos, blockstate1, Direction.DOWN, fluidstate);
                  if (this.sourceNeighborCount(p_255851_, p_76012_) >= 3) {
                      this.spreadToSides(p_255851_, p_76012_, p_76013_, blockstate);
@@ -93,24 +93,24 @@
              if (fluidstate.isEmpty()) {
                  p_75997_ = fluidstate;
 -                p_75995_.setBlock(p_75996_, Blocks.AIR.defaultBlockState(), 3);
-+            // CraftBukkit start
-+            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, Blocks.AIR.defaultBlockState());
-+            if (event.isCancelled()) {
-+               return;
-+            }
-+            p_75995_.setBlock(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 3);
-+            // CraftBukkit end
++                // CraftBukkit start
++                FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, Blocks.AIR.defaultBlockState());
++                if (event.isCancelled()) {
++                    return;
++                }
++                p_75995_.setBlock(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 3);
++                // CraftBukkit end
              } else if (!fluidstate.equals(p_75997_)) {
                  p_75997_ = fluidstate;
                  BlockState blockstate = fluidstate.createLegacyBlock();
 -                p_75995_.setBlock(p_75996_, blockstate, 2);
-+            // CraftBukkit start
-+            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, blockstate);
-+            if (event.isCancelled()) {
-+               return;
-+            }
-+            p_75995_.setBlock(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 2);
-+            // CraftBukkit end
++                // CraftBukkit start
++                FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, blockstate);
++                if (event.isCancelled()) {
++                    return;
++                }
++                p_75995_.setBlock(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 2);
++                // CraftBukkit end
                  p_75995_.scheduleTick(p_75996_, fluidstate.getType(), i);
                  p_75995_.updateNeighborsAt(p_75996_, blockstate.getBlock());
              }

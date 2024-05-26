@@ -19,13 +19,13 @@
 +         	// CraftBukkit start
 +         	CraftWorld cworld = p_230764_.getWorld();
 +         	if (cworld != null) {
-+            	BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(p_230764_, p_230766_), CraftBlockData.fromData(p_230765_), CraftBlock.at(p_230764_, p_230768_));
-+            	Bukkit.getPluginManager().callEvent(event);
++                BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(p_230764_, p_230766_), CraftBlockData.fromData(p_230765_), CraftBlock.at(p_230764_, p_230768_));
++                Bukkit.getPluginManager().callEvent(event);
 +
-+            	if (event.isCancelled()) {
-+               	return;
-+            	}
-+         	}
++                if (event.isCancelled()) {
++                    return;
++                }
++            }
 +         	// CraftBukkit end
              p_230765_.handleNeighborChanged(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
          } catch (Throwable throwable) {

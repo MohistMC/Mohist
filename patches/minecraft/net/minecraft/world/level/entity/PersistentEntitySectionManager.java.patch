@@ -8,36 +8,29 @@
  import java.util.function.Consumer;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
-@@ -27,13 +_,15 @@
+@@ -27,6 +_,9 @@
  import net.minecraft.util.VisibleForDebug;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.ChunkPos;
 +import net.minecraft.world.level.chunk.storage.EntityStorage;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRemoveEvent;
  import org.slf4j.Logger;
  
  public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
-     static final Logger LOGGER = LogUtils.getLogger();
-     final Set<UUID> knownUuids = Sets.newHashSet();
-     final LevelCallback<T> callbacks;
--    public final EntityPersistentStorage<T> permanentStorage;
-+   	public final EntityPersistentStorage<T> permanentStorage;
-     private final EntityLookup<T> visibleEntityStorage;
-     final EntitySectionStorage<T> sectionStorage;
-     private final LevelEntityGetter<T> entityGetter;
 @@ -52,6 +_,16 @@
          this.entityGetter = new LevelEntityGetterAdapter<>(this.visibleEntityStorage, this.sectionStorage);
      }
  
-+   // CraftBukkit start - add method to get all entities in chunk
-+   public List<Entity> getEntities(ChunkPos chunkPos) {
-+      return sectionStorage.getExistingSectionsInChunk(chunkPos.toLong()).flatMap(EntitySection::getEntities).map(entity -> (Entity) entity).collect(Collectors.toList());
-+   }
++    // CraftBukkit start - add method to get all entities in chunk
++    public List<Entity> getEntities(ChunkPos chunkPos) {
++        return sectionStorage.getExistingSectionsInChunk(chunkPos.toLong()).flatMap(EntitySection::getEntities).map(entity -> (Entity) entity).collect(Collectors.toList());
++    }
 +
-+   public boolean isPending(long pair) {
-+      return chunkLoadStatuses.get(pair) == ChunkLoadStatus.PENDING;
-+   }
-+   // CraftBukkit end
++    public boolean isPending(long pair) {
++        return chunkLoadStatuses.get(pair) == ChunkLoadStatus.PENDING;
++    }
++    // CraftBukkit end
 +
      void removeSectionIfEmpty(long p_157510_, EntitySection<T> p_157511_) {
          if (p_157511_.isEmpty()) {
@@ -47,7 +40,7 @@
      }
  
 +    public boolean addNewEntityWithoutEvent(T entity) {
-+       return this.addEntityWithoutEvent(entity, false);
++        return this.addEntityWithoutEvent(entity, false);
 +    }
 +
      private boolean addEntity(T p_157539_, boolean p_157540_) {
@@ -72,138 +65,218 @@
              return true;
          }
      }
-@@ -171,31 +_,41 @@
+@@ -101,11 +_,11 @@
+     }
+ 
+     public void addLegacyChunkEntities(Stream<T> p_157553_) {
+-        p_157553_.forEach(p_157607_ -> this.addEntity((T)p_157607_, true));
++        p_157553_.forEach(p_157607_ -> this.addEntity((T) p_157607_, true));
+     }
+ 
+     public void addWorldGenChunkEntities(Stream<T> p_157560_) {
+-        p_157560_.forEach(p_157605_ -> this.addEntity((T)p_157605_, false));
++        p_157560_.forEach(p_157605_ -> this.addEntity((T) p_157605_, false));
+     }
+ 
+     void startTicking(T p_157565_) {
+@@ -171,17 +_,28 @@
          }
      }
  
--    private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_) {
--        PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157513_);
--        if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
--            return false;
--        } else {
++    // Mohist start
++    private final AtomicBoolean callEvent = new AtomicBoolean(false);
++
++    private boolean storeChunkSections(long i, Consumer<T> consumer, boolean callEvent) {
++        this.callEvent.set(callEvent);
++        return storeChunkSections(i, consumer);
++    }
++    // Mohist end
++
+     private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_) {
++        boolean callEvent = this.callEvent.getAndSet(false);
+         PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157513_);
+         if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
+             return false;
+         } else {
 -            List<T> list = this.sectionStorage
 -                .getExistingSectionsInChunk(p_157513_)
 -                .flatMap(p_157542_ -> p_157542_.getEntities().filter(EntityAccess::shouldBeSaved))
 -                .collect(Collectors.toList());
--            if (list.isEmpty()) {
--                if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
--                    this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
--                }
-+   // Mohist start
-+   private AtomicBoolean callEvent = new AtomicBoolean(false);
-+   private boolean storeChunkSections(long i, Consumer<T> consumer, boolean callEvent) {
-+      this.callEvent.set(callEvent);
-+      return storeChunkSections(i, consumer);
-+   }
-+   // Mohist end
++            List<T> list = this.sectionStorage.getExistingSectionsInChunk(p_157513_).flatMap((p_157542_) -> {
++                return p_157542_.getEntities().filter(EntityAccess::shouldBeSaved);
++            }).collect(Collectors.toList());
+             if (list.isEmpty()) {
+                 if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
++                    if (callEvent)
++                        CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
+                     this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
+                 }
  
--                return true;
--            } else if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.FRESH) {
--                this.requestChunkLoad(p_157513_);
--                return false;
--            } else {
--                this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), list));
--                list.forEach(p_157514_);
--                return true;
-+   private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_) {
-+      boolean callEvent = this.callEvent.getAndSet(false);
-+      PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157513_);
-+      if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
-+         return false;
-+      } else {
-+         List<T> list = this.sectionStorage.getExistingSectionsInChunk(p_157513_).flatMap((p_157542_) -> {
-+            return p_157542_.getEntities().filter(EntityAccess::shouldBeSaved);
-+         }).collect(Collectors.toList());
-+         if (list.isEmpty()) {
-+            if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
-+               if (callEvent) CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
-+               this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
-             }
--        }
--    }
-+
-+            return true;
-+         } else if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.FRESH) {
-+            this.requestChunkLoad(p_157513_);
-+            return false;
-+         } else {
-+            if (callEvent) CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
-+            this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), list));
-+            list.forEach(p_157514_);
-+            return true;
-+         }
-+      }
-+   }
- 
-     private void requestChunkLoad(long p_157563_) {
-         this.chunkLoadStatuses.put(p_157563_, PersistentEntitySectionManager.ChunkLoadStatus.PENDING);
-@@ -206,15 +_,18 @@
-         });
+@@ -190,6 +_,8 @@
+                 this.requestChunkLoad(p_157513_);
+                 return false;
+             } else {
++                if (callEvent)
++                    CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
+                 this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), list));
+                 list.forEach(p_157514_);
+                 return true;
+@@ -207,7 +_,10 @@
      }
  
--    private boolean processChunkUnload(long p_157569_) {
+     private boolean processChunkUnload(long p_157569_) {
 -        boolean flag = this.storeChunkSections(p_157569_, p_157595_ -> p_157595_.getPassengersAndSelf().forEach(this::unloadEntity));
--        if (!flag) {
--            return false;
--        } else {
--            this.chunkLoadStatuses.remove(p_157569_);
--            return true;
--        }
--    }
-+   private boolean processChunkUnload(long p_157569_) {
-+      this.callEvent.set(true); // Mohist
-+      boolean flag = this.storeChunkSections(p_157569_, (p_157595_) -> {
-+         p_157595_.getPassengersAndSelf().forEach(this::unloadEntity);
-+      });
-+      if (!flag) {
-+         return false;
-+      } else {
-+         this.chunkLoadStatuses.remove(p_157569_);
-+         return true;
-+      }
-+   }
++        this.callEvent.set(true); // Mohist
++        boolean flag = this.storeChunkSections(p_157569_, (p_157595_) -> {
++            p_157595_.getPassengersAndSelf().forEach(this::unloadEntity);
++        });
+         if (!flag) {
+             return false;
+         } else {
+@@ -217,7 +_,7 @@
+     }
  
      private void unloadEntity(EntityAccess p_157586_) {
-         p_157586_.setRemoved(Entity.RemovalReason.UNLOADED_TO_CHUNK);
-@@ -225,13 +_,17 @@
-         this.chunksToUnload.removeIf((long p_157584_) -> this.chunkVisibility.get(p_157584_) != Visibility.HIDDEN ? true : this.processChunkUnload(p_157584_));
+-        p_157586_.setRemoved(Entity.RemovalReason.UNLOADED_TO_CHUNK);
++        p_157586_.setRemoved(Entity.RemovalReason.UNLOADED_TO_CHUNK, EntityRemoveEvent.Cause.UNLOAD); // CraftBukkit - add Bukkit remove cause
+         p_157586_.setLevelCallback(EntityInLevelCallback.NULL);
      }
  
--    private void processPendingLoads() {
--        ChunkEntities<T> chunkentities;
--        while ((chunkentities = this.loadingInbox.poll()) != null) {
-+   private void processPendingLoads() {
-+      ChunkEntities<T> chunkentities;
-+      while((chunkentities = this.loadingInbox.poll()) != null) {
-             chunkentities.getEntities().forEach(p_157593_ -> this.addEntity((T)p_157593_, true));
+@@ -228,8 +_,12 @@
+     private void processPendingLoads() {
+         ChunkEntities<T> chunkentities;
+         while ((chunkentities = this.loadingInbox.poll()) != null) {
+-            chunkentities.getEntities().forEach(p_157593_ -> this.addEntity((T)p_157593_, true));
++            chunkentities.getEntities().forEach(p_157593_ -> this.addEntity((T) p_157593_, true));
              this.chunkLoadStatuses.put(chunkentities.getPos().toLong(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
--        }
--    }
-+         	// CraftBukkit start - call entity load event
-+         	List<Entity> entities = getEntities(chunkentities.getPos());
-+         	CraftEventFactory.callEntitiesLoadEvent(((EntityStorage) permanentStorage).level, chunkentities.getPos(), entities);
-+         	// CraftBukkit end
-+      	}
-+   }
++            // CraftBukkit start - call entity load event
++            List<Entity> entities = getEntities(chunkentities.getPos());
++            CraftEventFactory.callEntitiesLoadEvent(((EntityStorage) permanentStorage).level, chunkentities.getPos(), entities);
++            // CraftBukkit end
+         }
+     }
  
-     public void tick() {
-         this.processPendingLoads();
-@@ -281,6 +_,15 @@
-     @Override
-     public void close() throws IOException {
-         this.saveAll();
-+      this.permanentStorage.close();
-+   }
-+
-+   // CraftBukkit start - add save boolean
-+   public void close(boolean save) throws IOException {
-+      if (save) {
-+         this.saveAll();
-+      }
-+      // CraftBukkit end
+@@ -284,6 +_,15 @@
          this.permanentStorage.close();
      }
  
++    // CraftBukkit start - add save boolean
++    public void close(boolean save) throws IOException {
++        if (save) {
++            this.saveAll();
++        }
++        // CraftBukkit end
++        this.permanentStorage.close();
++    }
++
+     public boolean isLoaded(UUID p_157551_) {
+         return this.knownUuids.contains(p_157551_);
+     }
+@@ -306,58 +_,58 @@
+ 
+     public void dumpSections(Writer p_157549_) throws IOException {
+         CsvOutput csvoutput = CsvOutput.builder()
+-            .addColumn("x")
+-            .addColumn("y")
+-            .addColumn("z")
+-            .addColumn("visibility")
+-            .addColumn("load_status")
+-            .addColumn("entity_count")
+-            .build(p_157549_);
++                .addColumn("x")
++                .addColumn("y")
++                .addColumn("z")
++                .addColumn("visibility")
++                .addColumn("load_status")
++                .addColumn("entity_count")
++                .build(p_157549_);
+         this.sectionStorage
+-            .getAllChunksWithExistingSections()
+-            .forEach(
+-                (long p_157517_) -> {
+-                    PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157517_);
+-                    this.sectionStorage
+-                        .getExistingSectionPositionsInChunk(p_157517_)
+-                        .forEach(
+-                            (long p_157521_) -> {
+-                                EntitySection<T> entitysection = this.sectionStorage.getSection(p_157521_);
+-                                if (entitysection != null) {
+-                                    try {
+-                                        csvoutput.writeRow(
+-                                            SectionPos.x(p_157521_),
+-                                            SectionPos.y(p_157521_),
+-                                            SectionPos.z(p_157521_),
+-                                            entitysection.getStatus(),
+-                                            persistententitysectionmanager$chunkloadstatus,
+-                                            entitysection.size()
+-                                        );
+-                                    } catch (IOException ioexception) {
+-                                        throw new UncheckedIOException(ioexception);
+-                                    }
+-                                }
+-                            }
+-                        );
+-                }
+-            );
++                .getAllChunksWithExistingSections()
++                .forEach(
++                        (long p_157517_) -> {
++                            PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157517_);
++                            this.sectionStorage
++                                    .getExistingSectionPositionsInChunk(p_157517_)
++                                    .forEach(
++                                            (long p_157521_) -> {
++                                                EntitySection<T> entitysection = this.sectionStorage.getSection(p_157521_);
++                                                if (entitysection != null) {
++                                                    try {
++                                                        csvoutput.writeRow(
++                                                                SectionPos.x(p_157521_),
++                                                                SectionPos.y(p_157521_),
++                                                                SectionPos.z(p_157521_),
++                                                                entitysection.getStatus(),
++                                                                persistententitysectionmanager$chunkloadstatus,
++                                                                entitysection.size()
++                                                        );
++                                                    } catch (IOException ioexception) {
++                                                        throw new UncheckedIOException(ioexception);
++                                                    }
++                                                }
++                                            }
++                                    );
++                        }
++                );
+     }
+ 
+     @VisibleForDebug
+     public String gatherStats() {
+         return this.knownUuids.size()
+-            + ","
+-            + this.visibleEntityStorage.count()
+-            + ","
+-            + this.sectionStorage.count()
+-            + ","
+-            + this.chunkLoadStatuses.size()
+-            + ","
+-            + this.chunkVisibility.size()
+-            + ","
+-            + this.loadingInbox.size()
+-            + ","
+-            + this.chunksToUnload.size();
++                + ","
++                + this.visibleEntityStorage.count()
++                + ","
++                + this.sectionStorage.count()
++                + ","
++                + this.chunkLoadStatuses.size()
++                + ","
++                + this.chunkVisibility.size()
++                + ","
++                + this.loadingInbox.size()
++                + ","
++                + this.chunksToUnload.size();
+     }
+ 
+     @VisibleForDebug
 @@ -367,11 +_,13 @@
  
      class Callback implements EntityInLevelCallback {
@@ -218,7 +291,14 @@
              this.currentSectionKey = p_157615_;
              this.currentSection = p_157616_;
          }
-@@ -390,9 +_,13 @@
+@@ -384,15 +_,19 @@
+                 Visibility visibility = this.currentSection.getStatus();
+                 if (!this.currentSection.remove(this.entity)) {
+                     PersistentEntitySectionManager.LOGGER
+-                        .warn("Entity {} wasn't found in section {} (moving to {})", this.entity, SectionPos.of(this.currentSectionKey), i);
++                            .warn("Entity {} wasn't found in section {} (moving to {})", this.entity, SectionPos.of(this.currentSectionKey), i);
+                 }
+ 
                  PersistentEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
                  EntitySection<T> entitysection = PersistentEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
                  entitysection.add(this.entity);
@@ -232,3 +312,12 @@
              }
          }
  
+@@ -430,7 +_,7 @@
+         public void onRemove(Entity.RemovalReason p_157619_) {
+             if (!this.currentSection.remove(this.entity)) {
+                 PersistentEntitySectionManager.LOGGER
+-                    .warn("Entity {} wasn't found in section {} (destroying due to {})", this.entity, SectionPos.of(this.currentSectionKey), p_157619_);
++                        .warn("Entity {} wasn't found in section {} (destroying due to {})", this.entity, SectionPos.of(this.currentSectionKey), p_157619_);
+             }
+ 
+             Visibility visibility = PersistentEntitySectionManager.getEffectiveStatus(this.entity, this.currentSection.getStatus());

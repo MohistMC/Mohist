@@ -24,20 +24,11 @@
  
      public boolean isWithinBounds(BlockPos p_61938_) {
          return (double)(p_61938_.getX() + 1) > this.getMinX()
-@@ -145,6 +_,8 @@
-         for (BorderChangeListener borderchangelistener : this.getListeners()) {
-             borderchangelistener.onBorderSizeSet(this, p_61918_);
-         }
-+      // Mohist - Initialize mod world properties to worlds.yml
-+      ConfigByWorlds.initMods(world, p_61918_);
-     }
- 
-     public void lerpSizeBetween(double p_61920_, double p_61921_, long p_61922_) {
 @@ -162,6 +_,7 @@
      }
  
      public void addListener(BorderChangeListener p_61930_) {
-+      if (listeners.contains(p_61930_)) return; // CraftBukkit
++        if (listeners.contains(p_61930_)) return; // CraftBukkit
          this.listeners.add(p_61930_);
      }
  
