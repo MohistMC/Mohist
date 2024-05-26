@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Mohist 1.20.5</h1>
+  <h1>Mohist 1.20.6</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
