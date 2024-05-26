@@ -250,9 +250,26 @@ public final class ForgeEventFactory {
         return post(event);
     }
 
+    public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction, InteractionHand hand) {
+        var snap = blockSnapshots.get(0);
+        var placedAgainst = snap.getLevel().getBlockState(snap.getPos().relative(direction.getOpposite()));
+        var event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
+        event.setPlaceEventDirection(direction); // Mohist
+        event.setPlaceEventHand(hand); // Mohist
+        return post(event);
+    }
+
     public static boolean onBlockPlace(@Nullable Entity entity, @NotNull BlockSnapshot blockSnapshot, @NotNull Direction direction) {
         var placedAgainst = blockSnapshot.getLevel().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
         var event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
+        return post(event);
+    }
+
+    public static boolean onBlockPlace(@Nullable Entity entity, @NotNull BlockSnapshot blockSnapshot, @NotNull Direction direction, InteractionHand hand) {
+        var placedAgainst = blockSnapshot.getLevel().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
+        var event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
+        event.setPlaceEventDirection(direction); // Mohist
+        event.setPlaceEventHand(hand); // Mohist
         return post(event);
     }
 

@@ -122,6 +122,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
@@ -479,9 +480,9 @@ public final class ForgeHooks {
 
             boolean eventResult = false;
             if (blockSnapshots.size() > 1)
-                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
+                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side, context.getHand());
             else if (blockSnapshots.size() == 1)
-                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side, context.getHand());
 
             if (eventResult) {
                 ret = InteractionResult.FAIL; // cancel placement
