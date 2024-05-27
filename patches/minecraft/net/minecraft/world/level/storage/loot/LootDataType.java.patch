@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataType.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataType.java
+@@ -15,6 +_,8 @@
+ import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
+ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+ import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
++import org.bukkit.craftbukkit.CraftLootTable;
++import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+ import org.slf4j.Logger;
+ 
+ public record LootDataType<T>(ResourceKey<Registry<T>> registryKey, Codec<T> codec, String directory, LootDataType.Validator<T> validator) {
 @@ -34,7 +_,12 @@
      public <V> Optional<T> deserialize(ResourceLocation p_279253_, DynamicOps<V> p_335939_, V p_327740_) {
          DataResult<T> dataresult = this.codec.parse(p_335939_, p_327740_);
@@ -14,3 +23,19 @@
      }
  
      public static Stream<LootDataType<?>> values() {
+@@ -48,9 +_,12 @@
+     }
+ 
+     private static LootDataType.Validator<LootTable> createLootTableValidator() {
+-        return (p_327551_, p_327552_, p_327553_) -> p_327553_.validate(
+-                p_327551_.setParams(p_327553_.getParamSet()).enterElement("{" + p_327552_.registry() + "/" + p_327552_.location() + "}", p_327552_)
+-            );
++        return (p_327551_, p_327552_, p_327553_) -> {
++            p_327553_.validate(
++                    p_327551_.setParams(p_327553_.getParamSet()).enterElement("{" + p_327552_.registry() + "/" + p_327552_.location() + "}", p_327552_)
++                );
++            p_327553_.craftLootTable = new CraftLootTable(CraftNamespacedKey.fromMinecraft(p_327552_.location()), p_327553_); // CraftBukkit
++        };
+     }
+ 
+     @FunctionalInterface

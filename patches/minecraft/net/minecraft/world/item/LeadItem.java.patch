@@ -1,0 +1,87 @@
+--- a/net/minecraft/world/item/LeadItem.java
++++ b/net/minecraft/world/item/LeadItem.java
+@@ -1,8 +_,10 @@
+ package net.minecraft.world.item;
+ 
+ import java.util.List;
++import java.util.concurrent.atomic.AtomicReference;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.tags.BlockTags;
++import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+@@ -12,6 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftEquipmentSlot;
++import org.bukkit.event.hanging.HangingPlaceEvent;
+ 
+ public class LeadItem extends Item {
+     public LeadItem(Item.Properties p_42828_) {
+@@ -26,6 +_,7 @@
+         if (blockstate.is(BlockTags.FENCES)) {
+             Player player = p_42834_.getPlayer();
+             if (!level.isClientSide && player != null) {
++                mohist$bindPlayerMobs_hand(p_42834_.getHand()); // CraftBukkit - Pass hand  // Mohist
+                 bindPlayerMobs(player, level, blockpos);
+             }
+ 
+@@ -35,6 +_,12 @@
+         }
+     }
+ 
++    // Mohist start
++    private static final AtomicReference<InteractionHand> mohist$bindPlayerMobs_hand = new AtomicReference<>(InteractionHand.MAIN_HAND);
++    public static void mohist$bindPlayerMobs_hand(InteractionHand interactionHand) {
++        mohist$bindPlayerMobs_hand.set(interactionHand);
++    }
++
+     public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
+         LeashFenceKnotEntity leashfenceknotentity = null;
+         double d0 = 7.0;
+@@ -43,13 +_,29 @@
+         int k = p_42832_.getZ();
+         AABB aabb = new AABB((double)i - 7.0, (double)j - 7.0, (double)k - 7.0, (double)i + 7.0, (double)j + 7.0, (double)k + 7.0);
+         List<Mob> list = p_42831_.getEntitiesOfClass(Mob.class, aabb, p_335530_ -> p_335530_.getLeashHolder() == p_42830_);
+-
++        InteractionHand enumhand = mohist$bindPlayerMobs_hand.getAndSet(InteractionHand.MAIN_HAND);
+         for (Mob mob : list) {
+             if (leashfenceknotentity == null) {
+                 leashfenceknotentity = LeashFenceKnotEntity.getOrCreateKnot(p_42831_, p_42832_);
++                // CraftBukkit start - fire HangingPlaceEvent
++                org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(enumhand);
++                HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), p_42830_ != null ? (org.bukkit.entity.Player) p_42830_.getBukkitEntity() : null, p_42831_.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
++                Bukkit.getPluginManager().callEvent(event);
++
++                if (event.isCancelled()) {
++                    leashfenceknotentity.discard(null); // CraftBukkit - add Bukkit remove cause
++                    return InteractionResult.PASS;
++                }
++                // CraftBukkit end
+                 leashfenceknotentity.playPlacementSound();
+             }
+ 
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, enumhand).isCancelled()) {
++                continue;
++            }
++            // CraftBukkit end
++
+             mob.setLeashedTo(leashfenceknotentity, true);
+         }
+ 
+@@ -57,6 +_,11 @@
+             p_42831_.gameEvent(GameEvent.BLOCK_ATTACH, p_42832_, GameEvent.Context.of(p_42830_));
+             return InteractionResult.SUCCESS;
+         } else {
++            // CraftBukkit start- remove leash if we do not leash any entity because of the cancelled event
++            if (leashfenceknotentity != null) {
++                leashfenceknotentity.discard(null);
++            }
++            // CraftBukkit end
+             return InteractionResult.PASS;
+         }
+     }

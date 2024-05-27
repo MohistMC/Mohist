@@ -57,20 +57,20 @@
      private final TimerQueue<MinecraftServer> scheduledEvents;
 +    private boolean confirmedExperimentalWarning = false;
 +
-+   // CraftBukkit start - Add world and pdc
-+   public Registry<LevelStem> customDimensions;
-+   private ServerLevel world;
-+   protected Tag pdc;
++    // CraftBukkit start - Add world and pdc
++    public Registry<LevelStem> customDimensions;
++    private ServerLevel world;
++    protected Tag pdc;
 +
-+   public void setWorld(ServerLevel world) {
-+      if (this.world != null) {
-+         return;
-+      }
-+      this.world = world;
-+      if (world.getWorld() != null) world.getWorld().readBukkitValues(pdc);
-+      pdc = null;
-+   }
-+   // CraftBukkit end
++    public void setWorld(ServerLevel world) {
++        if (this.world != null) {
++            return;
++        }
++        this.world = world;
++        if (world.getWorld() != null) world.getWorld().readBukkitValues(pdc);
++        pdc = null;
++    }
++    // CraftBukkit end
  
      private PrimaryLevelData(
          @Nullable CompoundTag p_277888_,
@@ -83,41 +83,59 @@
      }
  
      @Override
-@@ -273,7 +_,15 @@
+@@ -230,8 +_,8 @@
+         NbtUtils.addCurrentDataVersion(p_78547_);
+         DynamicOps<Tag> dynamicops = p_78546_.createSerializationContext(NbtOps.INSTANCE);
+         WorldGenSettings.encode(dynamicops, this.worldOptions, p_78546_)
+-            .resultOrPartial(Util.prefix("WorldGenSettings: ", LOGGER::error))
+-            .ifPresent(p_78574_ -> p_78547_.put("WorldGenSettings", p_78574_));
++                .resultOrPartial(Util.prefix("WorldGenSettings: ", LOGGER::error))
++                .ifPresent(p_78574_ -> p_78547_.put("WorldGenSettings", p_78574_)); // Mohist TODO craftbukkit patch
+         p_78547_.putInt("GameType", this.settings.gameType().getId());
+         p_78547_.putInt("SpawnX", this.spawnPos.getX());
+         p_78547_.putInt("SpawnY", this.spawnPos.getY());
+@@ -251,7 +_,7 @@
+         p_78547_.putBoolean("allowCommands", this.settings.allowCommands());
+         p_78547_.putBoolean("initialized", this.initialized);
+         this.worldBorder.write(p_78547_);
+-        p_78547_.putByte("Difficulty", (byte)this.settings.difficulty().getId());
++        p_78547_.putByte("Difficulty", (byte) this.settings.difficulty().getId());
+         p_78547_.putBoolean("DifficultyLocked", this.difficultyLocked);
+         p_78547_.put("GameRules", this.settings.gameRules().createTag());
+         p_78547_.put("DragonFight", EndDragonFight.Data.CODEC.encodeStart(NbtOps.INSTANCE, this.endDragonFightData).getOrThrow());
+@@ -273,6 +_,14 @@
          if (this.wanderingTraderId != null) {
              p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
          }
--    }
 +        p_78547_.putString("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.settings.getLifecycle()));
 +        p_78547_.putBoolean("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
 +
-+      if (Bukkit.getServer() != null &&  world != null) {
-+         p_78547_.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
-+         world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
-+      }
++        if (Bukkit.getServer() != null && world != null) {
++            p_78547_.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++            world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
++        }
 +
-+   }
+     }
  
      private static ListTag stringCollectionToTag(Set<String> p_277880_) {
-         ListTag listtag = new ListTag();
 @@ -350,6 +_,20 @@
  
      @Override
      public void setThundering(boolean p_78562_) {
-+      // CraftBukkit start
-+      if (this.thundering == p_78562_) {
-+         return;
-+      }
-+
-+      org.bukkit.World world = Bukkit.getWorld(getLevelName());
-+      if (world != null) {
-+         ThunderChangeEvent thunder = new ThunderChangeEvent(world, p_78562_);
-+         Bukkit.getServer().getPluginManager().callEvent(thunder);
-+         if (thunder.isCancelled()) {
++        // CraftBukkit start
++        if (this.thundering == p_78562_) {
 +            return;
-+         }
-+      }
-+      // CraftBukkit end
++        }
++
++        org.bukkit.World world = Bukkit.getWorld(getLevelName());
++        if (world != null) {
++            ThunderChangeEvent thunder = new ThunderChangeEvent(world, p_78562_);
++            Bukkit.getServer().getPluginManager().callEvent(thunder);
++            if (thunder.isCancelled()) {
++                return;
++            }
++        }
++        // CraftBukkit end
          this.thundering = p_78562_;
      }
  
@@ -125,20 +143,20 @@
  
      @Override
      public void setRaining(boolean p_78576_) {
-+      // CraftBukkit start
-+      if (this.raining == p_78576_) {
-+         return;
-+      }
-+
-+      org.bukkit.World world = Bukkit.getWorld(getLevelName());
-+      if (world != null) {
-+         WeatherChangeEvent weather = new WeatherChangeEvent(world, p_78576_);
-+         Bukkit.getServer().getPluginManager().callEvent(weather);
-+         if (weather.isCancelled()) {
++        // CraftBukkit start
++        if (this.raining == p_78576_) {
 +            return;
-+         }
-+      }
-+      // CraftBukkit end
++        }
++
++        org.bukkit.World world = Bukkit.getWorld(getLevelName());
++        if (world != null) {
++            WeatherChangeEvent weather = new WeatherChangeEvent(world, p_78576_);
++            Bukkit.getServer().getPluginManager().callEvent(weather);
++            if (weather.isCancelled()) {
++                return;
++            }
++        }
++        // CraftBukkit end
          this.raining = p_78576_;
      }
  
@@ -146,11 +164,11 @@
      @Override
      public void setDifficulty(Difficulty p_78521_) {
          this.settings = this.settings.withDifficulty(p_78521_);
-+      	// CraftBukkit start
-+      	ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(this.getDifficulty(), this.isDifficultyLocked());
-+      	for (ServerPlayer player : (java.util.List<ServerPlayer>) (java.util.List) world.players()) {
-+         	player.connection.send(packet);
-+	  	}
++        // CraftBukkit start
++        ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(this.getDifficulty(), this.isDifficultyLocked());
++        for (ServerPlayer player : world.players()) {
++            player.connection.send(packet);
++        }
      }
  
      @Override
@@ -175,11 +193,11 @@
          DEBUG;
      }
 +
-+   // CraftBukkit start - Check if the name stored in NBT is the correct one
-+   public void checkName(String name) {
-+      if (!this.settings.levelName.equals(name)) {
-+         this.settings.levelName = name;
-+      }
-+   }
-+   // CraftBukkit end
++    // CraftBukkit start - Check if the name stored in NBT is the correct one
++    public void checkName(String name) {
++        if (!this.settings.levelName.equals(name)) {
++            this.settings.levelName = name;
++        }
++    }
++    // CraftBukkit end
  }

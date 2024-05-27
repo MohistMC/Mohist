@@ -46,7 +46,7 @@
      private final List<LootPool> pools;
      private final List<LootItemFunction> functions;
      private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
-+   public CraftLootTable craftLootTable; // CraftBukkit
++    public CraftLootTable craftLootTable; // CraftBukkit
  
      LootTable(LootContextParamSet p_287716_, Optional<ResourceLocation> p_298628_, List<LootPool> p_298771_, List<LootItemFunction> p_301234_) {
          this.paramSet = p_287716_;
@@ -102,31 +102,28 @@
          }
      }
  
--    public void fill(Container p_287662_, LootParams p_287743_, long p_287585_) {
--        LootContext lootcontext = new LootContext.Builder(p_287743_).withOptionalRandomSeed(p_287585_).create(this.randomSequence);
--        ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(lootcontext);
--        RandomSource randomsource = lootcontext.getRandom();
-+   public AtomicBoolean isPlugin = new AtomicBoolean(false);
-+   public void fillInventory(Container pContainer, LootParams pParams, long pSeed, boolean plugin) {
-+      isPlugin.set(plugin);
-+      fill(pContainer, pParams, pSeed);
-+   }
++    public AtomicBoolean isPlugin = new AtomicBoolean(false);
++    public void fillInventory(Container pContainer, LootParams pParams, long pSeed, boolean plugin) {
++        isPlugin.set(plugin);
++        fill(pContainer, pParams, pSeed);
++    }
 +
-+   public void fill(Container p_287662_, LootParams p_287743_, long p_287585_) {
-+      LootContext lootcontext = (new LootContext.Builder(p_287743_)).withOptionalRandomSeed(p_287585_).create(this.randomSequence);
-+      ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(lootcontext);
-+      RandomSource randomsource = lootcontext.getRandom();
-+      // Mohist start
-+      if (lootcontext.hasParam(LootContextParams.ORIGIN) && lootcontext.hasParam(LootContextParams.THIS_ENTITY)) {
-+         // CraftBukkit start
-+         LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, isPlugin.getAndSet(false));
-+         if (event.isCancelled()) {
-+            return;
-+         }
-+         objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
-+         // CraftBukkit end
-+      }
-+      // Mohist end
+     public void fill(Container p_287662_, LootParams p_287743_, long p_287585_) {
+-        LootContext lootcontext = new LootContext.Builder(p_287743_).withOptionalRandomSeed(p_287585_).create(this.randomSequence);
++        LootContext lootcontext = (new LootContext.Builder(p_287743_)).withOptionalRandomSeed(p_287585_).create(this.randomSequence);
+         ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(lootcontext);
+         RandomSource randomsource = lootcontext.getRandom();
++        // Mohist start
++        if (lootcontext.hasParam(LootContextParams.ORIGIN) && lootcontext.hasParam(LootContextParams.THIS_ENTITY)) {
++            // CraftBukkit start
++            LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, isPlugin.getAndSet(false));
++            if (event.isCancelled()) {
++                return;
++            }
++            objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++            // CraftBukkit end
++        }
++        // Mohist end
          List<Integer> list = this.getAvailableSlots(p_287662_, randomsource);
          this.shuffleAndSplitItems(objectarraylist, list.size(), randomsource);
  

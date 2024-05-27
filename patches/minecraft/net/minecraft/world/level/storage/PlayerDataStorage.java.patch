@@ -23,7 +23,7 @@
      }
  
      public void save(Player p_78434_) {
-+      	if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
++        if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
          try {
              CompoundTag compoundtag = p_78434_.saveWithoutId(new CompoundTag());
              Path path = this.playerDir.toPath();
@@ -69,14 +69,14 @@
              } catch (Exception exception) {
                  LOGGER.warn("Failed to load player data for {}", p_329651_.getName().getString());
              }
-@@ -83,4 +_,69 @@
+@@ -83,4 +_,66 @@
              return p_328937_;
          });
      }
 +
-+   public File getPlayerDataFolder() {
-+      return playerDir;
-+   }
++    public File getPlayerDataFolder() {
++        return playerDir;
++    }
 +
 +    // CraftBukkit start
 +    private Optional<CompoundTag> load(String name, String s1, String s) { // name, uuid, extension
@@ -86,13 +86,11 @@
 +        File file1 = new File(file, s1 + s);
 +        // Spigot Start
 +        boolean usingWrongFile = false;
-+        if ( !file1.exists() )
-+        {
-+            file1 = new File( file, java.util.UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + name ).getBytes( java.nio.charset.StandardCharsets.UTF_8 ) ).toString() + s );
-+            if ( file1.exists() )
-+            {
++        if (!file1.exists()) {
++            file1 = new File(file, java.util.UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString() + s);
++            if (file1.exists()) {
 +                usingWrongFile = true;
-+                org.bukkit.Bukkit.getServer().getLogger().warning( "Using offline mode UUID file for player " + name + " as it is the only copy we can find." );
++                org.bukkit.Bukkit.getServer().getLogger().warning("Using offline mode UUID file for player " + name + " as it is the only copy we can find.");
 +            }
 +        }
 +        // Spigot End
@@ -101,9 +99,8 @@
 +            try {
 +                // Spigot Start
 +                Optional<CompoundTag> optional = Optional.of(NbtIo.readCompressed(file1.toPath(), NbtAccounter.unlimitedHeap()));
-+                if ( usingWrongFile )
-+                {
-+                    file1.renameTo( new File( file1.getPath() + ".offline-read" ) );
++                if (usingWrongFile) {
++                    file1.renameTo(new File(file1.getPath() + ".offline-read"));
 +                }
 +                return optional;
 +                // Spigot End
@@ -134,8 +131,8 @@
 +        });
 +    }
 +
-+   public File getPlayerDir() {
-+      return getPlayerDataFolder();
-+   }
-+   // CraftBukkit end
++    public File getPlayerDir() {
++        return getPlayerDataFolder();
++    }
++    // CraftBukkit end
  }
