@@ -149,7 +149,7 @@ dependencies {
     installer(libs.tools)
     installer('net.minecraftforge:installertools:1.4.3')
     installer 'com.mohistmc:librariesvault:1.20.2'
-    compileOnly 'me.clip:placeholderapi:2.11.3'
+    compileOnly 'me.clip:placeholderapi:2.11.5'
     installer 'commons-lang:commons-lang:2.6-mohist'
     // Paper start
     installer(libs.bundles.log4j)
@@ -689,6 +689,11 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':bootstrap')
     from(zipTree(project(':bootstrap').tasks.jar.outputs.getFiles().asPath)) {
         into ""
     }
+
+    from(project(':mohistplugins').tasks.jar.outputs) {
+        rename { 'data/mohistplugins-' + MC_VERSION + '.jar' }
+    }
+
     from (createServerShimConfig.output)
     from (createServerShimClasspath.output) {
         rename { 'bootstrap-shim.list' }

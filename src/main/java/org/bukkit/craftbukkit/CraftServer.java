@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.mohist.Mohist;
 import com.mohistmc.mohist.forge.ForgeInjectBukkit;
+import com.mohistmc.mohist.plugins.MohistPlugin;
 import com.mohistmc.mohist.util.Level2LevelStem;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
@@ -460,6 +461,7 @@ public final class CraftServer implements Server {
         }
 
         if (type == PluginLoadOrder.POSTWORLD) {
+            MohistPlugin.init(this); // Mohist init mohist plugins
             // Spigot start - Allow vanilla commands to be forced to be the main command
             this.setVanillaCommands(true);
             this.commandMap.setFallbackCommands();

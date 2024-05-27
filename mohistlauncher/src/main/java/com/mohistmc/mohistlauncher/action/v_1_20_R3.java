@@ -50,6 +50,7 @@ public class v_1_20_R3 {
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar", true);
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar", true);
             copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar", false);
+            copyFileFromJar(mohistplugin, "data/mohistplugins-" + mcVer + ".jar", true);
 
             if (!needsInstall()) return;
             System.out.println(I18n.as("installation.start"));

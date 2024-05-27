@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.mohistmc.mohist.plugins.MohistPlugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -507,6 +508,9 @@ public final class SimplePluginManager implements PluginManager {
 
     @Override
     public void disablePlugin(@NotNull final Plugin plugin) {
+        if (plugin.getName().equals("mohist")) {
+            return;
+        }
         if (plugin.isEnabled()) {
             try {
                 plugin.getPluginLoader().disablePlugin(plugin);
@@ -588,6 +592,7 @@ public final class SimplePluginManager implements PluginManager {
     }
 
     private void fireEvent(@NotNull Event event) {
+        MohistPlugin.registerListener(event);
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
 

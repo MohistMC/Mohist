@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Art;
 import org.bukkit.Fluid;
@@ -190,15 +189,6 @@ public class ForgeInjectBukkit {
                 i++;
             }
         }
-    }
-
-
-    // TODO Get mods type?
-    public static WorldType addEnumWorldType(String name) {
-        WorldType worldType = MohistDynamEnum.addEnum(WorldType.class, name, List.of(String.class), List.of(name));
-        Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
-        BY_NAME.put(name.toUpperCase(), worldType);
-        return worldType;
     }
 
     public static void addEnumEntity() {

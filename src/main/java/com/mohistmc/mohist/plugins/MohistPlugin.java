@@ -46,24 +46,17 @@ public class MohistPlugin {
         ItemsConfig.init();
         BackConfig.init();
         WarpsConfig.init();
-        File out = new File("libraries/com/mohistmc/cache", "libPath.txt");
-        if (out.exists()) {
-            String data = null;
-            try {
-                data = Files.readString(out.toPath());
-            } catch (IOException e) {
-                data = "libraries";
-            }
-            File file = new File(data, "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
-            if (file.exists()) {
-                plugin = Control.loadPlugin(file);
-                if (plugin != null) {
-                    server.getPluginManager().enablePlugin(plugin);
-                } else {
-                    LOGGER.error("Failed to load mohistplugins.jar");
-                }
+
+        File file = new File("libraries", "com/mohistmc/mohistplugins/mohistplugins-1.20.6.jar");
+        if (file.exists()) {
+            plugin = Control.loadPlugin(file);
+            if (plugin != null) {
+                server.getPluginManager().enablePlugin(plugin);
+            } else {
+                LOGGER.error("Failed to load mohistplugins.jar");
             }
         }
+
         EntityClear.start();
     }
 

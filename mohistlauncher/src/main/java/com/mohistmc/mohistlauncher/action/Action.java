@@ -60,6 +60,8 @@ public abstract class Action {
 
     public final File bundled;
 
+    public final File mohistplugin;
+
     protected Action() {
         this.mohistVer = DataParser.versionMap.get("mohist");
         this.forgeVer = DataParser.versionMap.get("forge");
@@ -83,6 +85,7 @@ public abstract class Action {
         this.mcpTsrg = new File(mcpStart + "-mappings.tsrg");
 
         this.bundled = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-bundled.jar");
+        this.mohistplugin = new File(libPath, "com/mohistmc/mohistplugins/mohistplugins-" + mcVer + ".jar");
     }
 
     protected void run(String mainClass, String... args) throws Exception {
