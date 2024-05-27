@@ -18,7 +18,6 @@
 
 package com.mohistmc.network.download;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
@@ -31,10 +30,9 @@ import lombok.ToString;
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("https://libraries.mohistmc.cn:25119/releases/"),
     GITHUB("https://mohistmc.github.io/maven/");
 
-    public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
+    public static final DownloadSource defaultSource = MOHIST;
     final
     String url;
 
@@ -47,9 +45,5 @@ public enum DownloadSource {
             }
         }
         return defaultSource;
-    }
-
-    public static boolean isCN() {
-        return MohistMCStart.i18n.isCN();
     }
 }
