@@ -18,7 +18,6 @@
 
 package com.mohistmc.network.download;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
@@ -31,28 +30,17 @@ import lombok.ToString;
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("http://s1.devicloud.cn:25119/"),
-    GITHUB("https://mohistmc.github.io/maven/"),
-    CUSTOM(null);
+    GITHUB("https://mohistmc.github.io/maven/");
 
-    public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
-    public String url;
+    public static final DownloadSource defaultSource = MOHIST;
+    public final String url;
 
     public static DownloadSource get() {
-        String ds = System.getProperty("libraries.downloadsource") == null ? MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE() : System.getProperty("libraries.downloadsource");
-        if (ds.startsWith("http")) {
-            CUSTOM.url = ds;
-            return CUSTOM;
-        }
+        String ds = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
         DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
                 urL = me;
-                if (!ConnectionUtil.canAccess(me.url)) {
-                    if (me.equals(CHINA)) {
-                        urL = MOHIST;
-                    }
-                }
                 if (!ConnectionUtil.canAccess(urL.url)) {
                     return GITHUB;
                 }
@@ -60,9 +48,5 @@ public enum DownloadSource {
             }
         }
         return defaultSource;
-    }
-
-    public static boolean isCN() {
-        return MohistMCStart.i18n.isCN() && ConnectionUtil.measureLatency(CHINA.getUrl()) < ConnectionUtil.measureLatency(MOHIST.getUrl());
     }
 }
