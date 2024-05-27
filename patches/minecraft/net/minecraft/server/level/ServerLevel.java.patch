@@ -692,7 +692,7 @@
      }
  
      @Nullable
-@@ -1582,14 +_,39 @@
+@@ -1582,14 +_,40 @@
          }
      }
  
@@ -718,7 +718,8 @@
 +            blockList.setBlock(p_184101_, Blocks.OBSIDIAN.defaultBlockState(), 3);
 +        });
 +        org.bukkit.World bworld = p_8618_.getWorld();
-+        org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entityAtomicReference.getAndSet(null) == null) ? null : entityAtomicReference.getAndSet(null).getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
++        Entity entity = entityAtomicReference.getAndSet(null);
++        org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
 +
 +        p_8618_.getCraftServer().getPluginManager().callEvent(portalEvent);
 +        if (!portalEvent.isCancelled()) {
