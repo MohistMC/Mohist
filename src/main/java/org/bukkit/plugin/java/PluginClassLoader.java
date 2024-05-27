@@ -2,10 +2,13 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
+import com.mohistmc.mohist.Mohist;
 import com.mohistmc.mohist.bukkit.pluginfix.PluginFixManager;
 import com.mohistmc.mohist.bukkit.remapping.ClassLoaderRemapper;
 import com.mohistmc.mohist.bukkit.remapping.Remapper;
 import com.mohistmc.mohist.bukkit.remapping.RemappingClassLoader;
+import com.mohistmc.mohist.plugins.PluginHooks;
+import cpw.mods.modlauncher.TransformingClassLoader;
 import io.izzel.tools.product.Product2;
 import java.io.File;
 import java.io.IOException;
@@ -112,6 +115,10 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
             throw new InvalidPluginException("Could not invoke main class `" + description.getMain() + "' constructor", ex);
         } catch (ExceptionInInitializerError | InvocationTargetException ex) {
             throw new InvalidPluginException("Exception initializing main class `" + description.getMain() + "'", ex);
+        }
+
+        if (PluginHooks.hook(plugin)) {
+            ((TransformingClassLoader) Mohist.classLoader).addChild(this);
         }
     }
 
