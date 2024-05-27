@@ -1082,7 +1082,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2410,32 +_,65 @@
+@@ -2410,32 +_,66 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -1140,6 +1140,7 @@
 -               if (p_20118_.m_46472_() == Level.f_46430_) {
 -                  ServerLevel.m_8617_(p_20118_);
 +               if (spawnPortal && p_20118_.getTypeKey() == LevelStem.f_63973_) { // CraftBukkit
++                  ServerLevel.entityAtomicReference(this); // Mohist
 +                  ServerLevel.m_8617_(p_20118_); // CraftBukkit
                 }
 +               // CraftBukkit end

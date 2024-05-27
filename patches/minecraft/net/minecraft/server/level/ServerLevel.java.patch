@@ -699,13 +699,16 @@
     }
  
     @Nullable
-@@ -1367,17 +_,43 @@
+@@ -1367,17 +_,47 @@
        }
     }
  
 +
 +   // Mohist start
 +   public static AtomicReference<Entity> entityAtomicReference = new AtomicReference<>(null);
++   public static void entityAtomicReference(Entity entity) {
++      entityAtomicReference.set(entity);
++   }
     public static void m_8617_(ServerLevel p_8618_) {
        BlockPos blockpos = f_8562_;
        int i = blockpos.m_123341_();
@@ -723,7 +726,8 @@
 +         blockList.m_7731_(p_184101_, Blocks.f_50080_.m_49966_(), 3);
        });
 +      org.bukkit.World bworld = p_8618_.getWorld();
-+      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entityAtomicReference.get() == null) ? null : entityAtomicReference.getAndSet(null).getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
++      Entity entity = entityAtomicReference.getAndSet(null);
++      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld,  (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
 +
 +      p_8618_.getCraftServer().getPluginManager().callEvent(portalEvent);
 +      if (!portalEvent.isCancelled()) {
