@@ -21,7 +21,7 @@ public class DefaultLibraries {
 
     public static void loadDefaultLibs() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
-        String url = mirror.equals("") ? (i18n.isLang("CN") ? "https://libraries.mohistmc.cn:25119/releases/" : "https://maven.mohistmc.com/") : mirror;
+        String url = mirror.isEmpty() ? "https://maven.mohistmc.com/" : mirror;
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
