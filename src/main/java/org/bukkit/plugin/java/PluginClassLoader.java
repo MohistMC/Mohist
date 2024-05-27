@@ -8,6 +8,7 @@ import com.mohistmc.mohist.bukkit.remapping.ClassLoaderRemapper;
 import com.mohistmc.mohist.bukkit.remapping.Remapper;
 import com.mohistmc.mohist.bukkit.remapping.RemappingClassLoader;
 import com.mohistmc.mohist.plugins.PluginHooks;
+import cpw.mods.modlauncher.EnumerationHelper;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import io.izzel.tools.product.Product2;
 import java.io.File;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -124,12 +126,26 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
 
     @Override
     public URL getResource(String name) {
-        return findResource(name);
+        Objects.requireNonNull(name);
+        URL url = findResource(name);
+        if (url == null) {
+            if (getParent() != null) {
+                url = getParent().getResource(name);
+            }
+        }
+        return url;
     }
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
-        return findResources(name);
+        Objects.requireNonNull(name);
+        @SuppressWarnings("unchecked")
+        Enumeration<URL>[] tmp = (Enumeration<URL>[]) new Enumeration<?>[2];
+        if (getParent()!= null) {
+            tmp[1] = getParent().getResources(name);
+        }
+        tmp[0] = findResources(name);
+        return EnumerationHelper.merge(tmp[0], tmp[1]);
     }
 
     @Override

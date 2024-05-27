@@ -316,17 +316,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static boolean isLegacy(PluginDescriptionFile pdf) {
-        return pdf.getAPIVersion() == null;
+        return false;
     }
 
     @Override
     public byte[] processClass(PluginDescriptionFile pdf, String path, byte[] clazz) {
-        try {
-            clazz = Commodore.convert(clazz, pdf.getName(), ApiVersion.getOrCreateVersion(pdf.getAPIVersion()));
-        } catch (Exception ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Fatal error trying to convert " + pdf.getFullName() + ":" + path, ex);
-        }
-
         return clazz;
     }
 
