@@ -1,10 +1,6 @@
 package com.mohistmc.network.download;
 
-
 import com.mohistmc.configuration.MohistConfigUtil;
-import com.mohistmc.util.i18n.Message;
-
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -12,10 +8,9 @@ import java.net.URLConnection;
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("https://libraries.mohistmc.cn:25119/releases/"),
     GITHUB("https://mohistmc.github.io/maven/");
 
-    public static final DownloadSource defaultSource = Message.isCN() ? CHINA : MOHIST;
+    public static final DownloadSource defaultSource = MOHIST;
     final String url;
 
     DownloadSource(String url) {

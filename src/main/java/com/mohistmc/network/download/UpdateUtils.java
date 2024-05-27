@@ -1,59 +1,25 @@
 package com.mohistmc.network.download;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.mohistmc.MohistMC;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.Message;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 import static com.mohistmc.network.download.NetworkUtil.getConn;
-import static com.mohistmc.network.download.NetworkUtil.getInput;
 
 public class UpdateUtils {
 
     private static int percentage = 0;
-
-    public static void versionCheck() {
-        System.out.println(Message.getString("update.check"));
-        System.out.println(Message.getString("update.stopcheck"));
-
-        try {
-            JsonElement root = new JsonParser().parse(new InputStreamReader(getInput("https://ci.codemc.io/job/MohistMC/job/Mohist-1.12.2/lastSuccessfulBuild/api/json")));
-
-            String jar_sha = MohistMC.getVersion();
-            String build_number = "1.12.2-" + root.getAsJsonObject().get("number").toString();
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timestamp").toString())));
-
-            if (jar_sha.equals(build_number))
-                System.out.println(Message.getFormatString("update.latest", new Object[]{jar_sha, build_number}));
-            else {
-                System.out.println(Message.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
-                if (bMohist("check_update_auto_download")) {
-                    downloadFile("https://ci.codemc.io/job/MohistMC/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
-                    restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())));
-                }
-            }
-        } catch (Throwable e) {
-            System.out.println(Message.getString("check.update.noci"));
-        }
-    }
 
     public static void downloadFile(String URL, File f) throws Exception {
         URLConnection conn = getConn(URL);

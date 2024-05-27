@@ -33,11 +33,6 @@ public class MohistProxySelector extends ProxySelector {
         String defaultMsg = "[NetworkManager] Network protection and blocked by network rules!";
         boolean intercept = false;
 
-        /*
-        if (uriString.startsWith("socket")) {
-            return this.defaultSelector.select(uri);
-        }
-         */
         if (intercepts.isEmpty()) {
             intercepts = MohistConfig.getStringList0("mohist.networkmanager.intercept", new ArrayList<>());
         }
