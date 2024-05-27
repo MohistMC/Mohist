@@ -19,9 +19,6 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.util.i18n.i18n;
-
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,11 +26,9 @@ import java.net.URLConnection;
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("https://libraries.mohistmc.cn:25119/releases/"),
     GITHUB("https://mohistmc.github.io/maven/");
 
-    String url;
-    public static DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
+    final String url;
 
     DownloadSource(String url) {
         this.url = url;
@@ -44,14 +39,14 @@ public enum DownloadSource {
     }
 
     public static DownloadSource get() {
-        String ds = MohistConfigUtil.sMohist("mohist.libraries_downloadsource", defaultSource.name());
+        String ds = MohistConfigUtil.sMohist("mohist.libraries_downloadsource", MOHIST.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
                 if (isDown(me.url.replace("releases/", "")) != 200) return GITHUB;
                 return me;
             }
         }
-        return defaultSource;
+        return MOHIST;
     }
 
     public static int isDown(String s) {
