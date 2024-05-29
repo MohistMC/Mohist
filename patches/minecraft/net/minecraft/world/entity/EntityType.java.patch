@@ -91,12 +91,13 @@
     }
  
     public static <T extends Entity> Consumer<T> m_263562_(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -371,22 +_,40 @@
+@@ -371,22 +_,41 @@
        }) : p_263579_;
     }
  
 +   // Mohist start
 +   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReasonAtomicReference = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
++
     @Nullable
     public T m_262496_(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_) {
 +      spawnReasonAtomicReference.set(CreatureSpawnEvent.SpawnReason.DEFAULT);
