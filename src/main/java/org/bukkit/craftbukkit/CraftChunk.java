@@ -315,6 +315,7 @@ public class CraftChunk implements Chunk {
 
             data.put("block_states", ChunkSerializer.BLOCK_STATE_CODEC.encodeStart(NbtOps.INSTANCE, cs[i].getStates()).getOrThrow());
             sectionBlockIDs[i] = ChunkSerializer.BLOCK_STATE_CODEC.parse(NbtOps.INSTANCE, data.getCompound("block_states")).getOrThrow(ChunkSerializer.ChunkReadException::new);
+            sectionEmpty[i] = cs[i].hasOnlyAir();
 
             LevelLightEngine lightengine = this.worldServer.getLightEngine();
             DataLayer skyLightArray = lightengine.getLayerListener(LightLayer.SKY).getDataLayerData(SectionPos.of(this.x, chunk.getSectionYFromSectionIndex(i), this.z)); // SPIGOT-7498: Convert section index
