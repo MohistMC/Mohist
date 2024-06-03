@@ -38,7 +38,7 @@
     }
  
     public void m_7026_(Component p_10091_) {
-@@ -31,8 +_,45 @@
+@@ -31,8 +_,37 @@
        if (this.f_10084_) {
           this.f_10083_.m_129507_(f_10081_);
        } else {
@@ -63,14 +63,6 @@
 +            }
 +          }
 +
-+         // Spigot Start
-+         if ( !server.m_183306_() && !profiles.isEmpty() )
-+         {
-+            java.util.Collections.shuffle( profiles ); // This sucks, its inefficient but we have no simple way of doing it differently
-+            profiles = profiles.subList( 0, Math.min( profiles.size(), org.spigotmc.SpigotConfig.playerSample ) ); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
-+         }
-+         // Spigot End
-+
 +         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), (server.m_183306_()) ? 0 : profiles.size(), (server.m_183306_()) ? Collections.emptyList() : profiles);
 +
 +         ServerStatus ping = new ServerStatus(
@@ -81,7 +73,7 @@
 +                 server.m_214005_(),
 +                 Optional.of(new net.minecraftforge.network.ServerStatusPing())
 +         );
-+         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping));
++         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping, statusCache));
 +         // CraftBukkit end
        }
     }
