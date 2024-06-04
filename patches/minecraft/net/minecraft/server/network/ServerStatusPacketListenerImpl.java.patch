@@ -73,7 +73,7 @@
 +                 server.m_214005_(),
 +                 Optional.of(new net.minecraftforge.network.ServerStatusPing())
 +         );
-+         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping, statusCache));
++         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping));
 +         // CraftBukkit end
        }
     }
