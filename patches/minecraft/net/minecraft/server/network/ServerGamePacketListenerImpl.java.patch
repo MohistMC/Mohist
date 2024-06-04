@@ -265,7 +265,7 @@
                      LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
                      this.send(new ClientboundMoveVehiclePacket(entity));
                      return;
-@@ -431,26 +_,92 @@
+@@ -431,10 +_,11 @@
                  d8 = d5 - entity.getZ();
                  d10 = d6 * d6 + d7 * d7 + d8 * d8;
                  boolean flag2 = false;
@@ -277,15 +277,11 @@
 +                Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
                  entity.absMoveTo(d3, d4, d5, f, f1);
-+                this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
                  boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
-                 if (flag && (flag2 || !flag3)) {
-                     entity.absMoveTo(d0, d1, d2, f, f1);
-+                    this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-                     this.send(new ClientboundMoveVehiclePacket(entity));
+@@ -444,13 +_,76 @@
                      return;
                  }
-+
+ 
 +                // CraftBukkit start - fire PlayerMoveEvent
 +                org.bukkit.entity.Player player = this.getCraftPlayer();
 +                if (!hasMoved) {
@@ -347,7 +343,7 @@
 +                    }
 +                }
 +                // CraftBukkit end
- 
++
                  this.player.serverLevel().getChunkSource().move(this.player);
                  this.player.checkMovementStatistics(this.player.getX() - d0, this.player.getY() - d1, this.player.getZ() - d2);
 -                this.clientVehicleIsFloating = d7 >= -0.03125 && !flag1 && !this.server.isFlightAllowed() && !entity.isNoGravity() && this.noBlocksAround(entity);
@@ -1336,7 +1332,7 @@
 +
 +                    public void onInteraction(InteractionHand p_143682_, Vec3 p_143683_) {
 +                        this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
-+                            return p_143687_.interactAt(p_143686_, p_143683_, p_143688_);
++                            return net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_143687_, p_143686_, p_143683_, p_143688_);
 +                        }, new PlayerInteractAtEntityEvent(getCraftPlayer(), entity.getBukkitEntity(), new org.bukkit.util.Vector(p_143683_.x, p_143683_.y, p_143683_.z), (p_143682_ == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND)); // CraftBukkit
 +                    }
 +
