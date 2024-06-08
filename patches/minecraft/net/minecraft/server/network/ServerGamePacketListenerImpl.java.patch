@@ -327,7 +327,7 @@
                 f_9744_.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), d6, d7, d8);
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
-@@ -430,18 +_,88 @@
+@@ -430,10 +_,11 @@
              d8 = d5 - entity.m_20189_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -339,15 +339,11 @@
 +            Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
              entity.m_19890_(d3, d4, d5, f, f1);
-+            this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
              boolean flag3 = serverlevel.m_45756_(entity, entity.m_20191_().m_82406_(0.0625D));
-             if (flag && (flag2 || !flag3)) {
-                entity.m_19890_(d0, d1, d2, f, f1);
-+               this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
-                this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
+@@ -443,6 +_,73 @@
                 return;
              }
-+
+ 
 +            // CraftBukkit start - fire PlayerMoveEvent
 +            org.bukkit.entity.Player player = this.getCraftPlayer();
 +            // Spigot Start
@@ -414,9 +410,10 @@
 +               }
 +            }
 +            // CraftBukkit end
- 
++
              this.f_9743_.m_284548_().m_7726_().m_8385_(this.f_9743_);
              this.f_9743_.m_36378_(this.f_9743_.m_20185_() - d0, this.f_9743_.m_20186_() - d1, this.f_9743_.m_20189_() - d2);
+             this.f_9738_ = d7 >= -0.03125D && !flag1 && !this.f_9745_.m_129915_() && !entity.m_20068_() && this.m_9793_(entity);
 @@ -475,6 +_,7 @@
           }
  
