@@ -405,7 +405,7 @@ public final class CraftServer implements Server {
     private void overrideSpawnLimits() {
         for (SpawnCategory spawnCategory : SpawnCategory.values()) {
             if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
-                spawnCategoryLimit.put(spawnCategory, configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory), 0));
+                spawnCategoryLimit.put(spawnCategory, configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory), 10));
             }
         }
     }
@@ -820,7 +820,7 @@ public final class CraftServer implements Server {
     public int getTicksPerSpawns(SpawnCategory spawnCategory) {
         Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
         Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
-        return this.configuration.getInt(CraftSpawnCategory.getConfigNameTicksPerSpawn(spawnCategory));
+        return this.configuration.getInt(CraftSpawnCategory.getConfigNameTicksPerSpawn(spawnCategory), 1);
     }
 
     @Override

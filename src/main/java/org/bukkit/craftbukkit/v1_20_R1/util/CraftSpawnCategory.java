@@ -31,7 +31,7 @@ public class CraftSpawnCategory {
             case WATER_UNDERGROUND_CREATURE -> "ticks-per.water-underground-creature-spawns";
             case AMBIENT -> "ticks-per.ambient-spawns";
             case AXOLOTL -> "ticks-per.axolotl-spawns";
-            default -> throw new UnsupportedOperationException("Unknown Config value " + spawnCategory + " for ticks-per");
+            default -> "ticks-per." + spawnCategory.name().toLowerCase();
         };
     }
 
