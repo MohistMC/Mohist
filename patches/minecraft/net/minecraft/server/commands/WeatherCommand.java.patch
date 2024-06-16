@@ -1,0 +1,30 @@
+--- a/net/minecraft/server/commands/WeatherCommand.java
++++ b/net/minecraft/server/commands/WeatherCommand.java
+@@ -45,23 +_,23 @@
+     }
+ 
+     private static int getDuration(CommandSourceStack p_265382_, int p_265171_, IntProvider p_265122_) {
+-        return p_265171_ == -1 ? p_265122_.sample(p_265382_.getServer().overworld().getRandom()) : p_265171_;
++        return p_265171_ == -1 ? p_265122_.sample(p_265382_.getLevel().getRandom()) : p_265171_; // CraftBukkit - SPIGOT-7680: per-world
+     }
+ 
+     private static int setClear(CommandSourceStack p_139173_, int p_139174_) {
+-        p_139173_.getServer().overworld().setWeatherParameters(getDuration(p_139173_, p_139174_, ServerLevel.RAIN_DELAY), 0, false, false);
++        p_139173_.getLevel().setWeatherParameters(getDuration(p_139173_, p_139174_, ServerLevel.RAIN_DELAY), 0, false, false); // CraftBukkit - SPIGOT-7680: per-world
+         p_139173_.sendSuccess(() -> Component.translatable("commands.weather.set.clear"), true);
+         return p_139174_;
+     }
+ 
+     private static int setRain(CommandSourceStack p_139178_, int p_139179_) {
+-        p_139178_.getServer().overworld().setWeatherParameters(0, getDuration(p_139178_, p_139179_, ServerLevel.RAIN_DURATION), true, false);
++        p_139178_.getLevel().setWeatherParameters(0, getDuration(p_139178_, p_139179_, ServerLevel.RAIN_DURATION), true, false); // CraftBukkit - SPIGOT-7680: per-world
+         p_139178_.sendSuccess(() -> Component.translatable("commands.weather.set.rain"), true);
+         return p_139179_;
+     }
+ 
+     private static int setThunder(CommandSourceStack p_139183_, int p_139184_) {
+-        p_139183_.getServer().overworld().setWeatherParameters(0, getDuration(p_139183_, p_139184_, ServerLevel.THUNDER_DURATION), true, true);
++        p_139183_.getLevel().setWeatherParameters(0, getDuration(p_139183_, p_139184_, ServerLevel.THUNDER_DURATION), true, true); // CraftBukkit - SPIGOT-7680: per-world
+         p_139183_.sendSuccess(() -> Component.translatable("commands.weather.set.thunder"), true);
+         return p_139184_;
+     }

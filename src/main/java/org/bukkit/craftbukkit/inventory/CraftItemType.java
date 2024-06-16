@@ -10,6 +10,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -174,6 +175,17 @@ public class CraftItemType<M extends ItemMeta> implements ItemType.Typed<M>, Han
     @Override
     public boolean isFuel() {
         return AbstractFurnaceBlockEntity.isFuel(new net.minecraft.world.item.ItemStack(item));
+    }
+
+    @Override
+    public boolean isCompostable() {
+        return ComposterBlock.COMPOSTABLES.containsKey(item);
+    }
+
+    @Override
+    public float getCompostChance() {
+        Preconditions.checkArgument(isCompostable(), "The item type " + getKey() + " is not compostable");
+        return ComposterBlock.COMPOSTABLES.getFloat(item);
     }
 
     @Override

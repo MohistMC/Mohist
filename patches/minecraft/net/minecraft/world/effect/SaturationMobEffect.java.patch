@@ -9,7 +9,7 @@
  
  class SaturationMobEffect extends InstantenousMobEffect {
      protected SaturationMobEffect(MobEffectCategory p_297998_, int p_300022_) {
-@@ -11,7 +_,15 @@
+@@ -11,9 +_,18 @@
      @Override
      public boolean applyEffectTick(LivingEntity p_300503_, int p_301046_) {
          if (!p_300503_.level().isClientSide && p_300503_ instanceof Player player) {
@@ -26,3 +26,6 @@
          }
  
          return true;
+     }
+ }
++

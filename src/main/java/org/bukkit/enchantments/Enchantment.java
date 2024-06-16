@@ -347,10 +347,13 @@ public abstract class Enchantment implements Keyed, Translatable {
     @Contract("null -> null")
     @Nullable
     public static Enchantment getByName(@Nullable String name) {
+
         if (name == null) {
             return null;
         }
-
+        if (name.equals("ARROW_DAMAGE")) {
+            name = "POWER";
+        }
         return getByKey(NamespacedKey.fromString(name.toLowerCase()));
     }
 

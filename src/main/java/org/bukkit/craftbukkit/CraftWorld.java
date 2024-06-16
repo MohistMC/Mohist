@@ -349,6 +349,31 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
 
     @Override
+    public Collection<Player> getPlayersSeeingChunk(Chunk chunk) {
+        Preconditions.checkArgument(chunk != null, "chunk cannot be null");
+
+        return getPlayersSeeingChunk(chunk.getX(), chunk.getZ());
+    }
+
+    @Override
+    public Collection<Player> getPlayersSeeingChunk(int x, int z) {
+        if (!isChunkLoaded(x, z)) {
+            return Collections.emptySet();
+        }
+
+        List<ServerPlayer> players = world.getChunkSource().chunkMap.getPlayers(new ChunkPos(x, z), false);
+
+        if (players.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        return players.stream()
+                .filter(Objects::nonNull)
+                .map(ServerPlayer::getBukkitEntity)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
     public boolean isChunkInUse(int x, int z) {
         return this.isChunkLoaded(x, z);
     }

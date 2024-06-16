@@ -21,7 +21,7 @@
  import net.minecraft.world.inventory.TransientCraftingContainer;
  import net.minecraft.world.item.DyeColor;
  import net.minecraft.world.item.DyeItem;
-@@ -61,9 +_,12 @@
+@@ -61,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
  import net.minecraft.world.level.storage.loot.LootTable;
@@ -29,13 +29,42 @@
 +import org.bukkit.event.entity.SheepRegrowWoolEvent;
 +import org.bukkit.inventory.InventoryView;
  
--public class Sheep extends Animal implements Shearable {
--    private static final int EAT_ANIMATION_TICKS = 40;
-+public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
-+   private static final int EAT_ANIMATION_TICKS = 40;
-     private static final EntityDataAccessor<Byte> DATA_WOOL_ID = SynchedEntityData.defineId(Sheep.class, EntityDataSerializers.BYTE);
-     private static final Map<DyeColor, ItemLike> ITEM_BY_DYE = Util.make(Maps.newEnumMap(DyeColor.class), p_29841_ -> {
-         p_29841_.put(DyeColor.WHITE, Blocks.WHITE_WOOL);
+ public class Sheep extends Animal implements Shearable {
+     private static final int EAT_ANIMATION_TICKS = 40;
+@@ -84,7 +_,7 @@
+         p_29841_.put(DyeColor.BLACK, Blocks.BLACK_WOOL);
+     });
+     private static final Map<DyeColor, float[]> COLORARRAY_BY_COLOR = Maps.<DyeColor, float[]>newEnumMap(
+-        Arrays.stream(DyeColor.values()).collect(Collectors.toMap(p_29868_ -> (DyeColor)p_29868_, Sheep::createSheepColor))
++            Arrays.stream(DyeColor.values()).collect(Collectors.toMap(p_29868_ -> (DyeColor) p_29868_, Sheep::createSheepColor))
+     );
+     private int eatAnimationTick;
+     private EatBlockGoal eatBlockGoal;
+@@ -148,7 +_,7 @@
+     @Override
+     protected void defineSynchedData(SynchedEntityData.Builder p_335407_) {
+         super.defineSynchedData(p_335407_);
+-        p_335407_.define(DATA_WOOL_ID, (byte)0);
++        p_335407_.define(DATA_WOOL_ID, (byte) 0);
+     }
+ 
+     @Override
+@@ -192,13 +_,13 @@
+         } else if (this.eatAnimationTick >= 4 && this.eatAnimationTick <= 36) {
+             return 1.0F;
+         } else {
+-            return this.eatAnimationTick < 4 ? ((float)this.eatAnimationTick - p_29881_) / 4.0F : -((float)(this.eatAnimationTick - 40) - p_29881_) / 4.0F;
++            return this.eatAnimationTick < 4 ? ((float) this.eatAnimationTick - p_29881_) / 4.0F : -((float) (this.eatAnimationTick - 40) - p_29881_) / 4.0F;
+         }
+     }
+ 
+     public float getHeadEatAngleScale(float p_29883_) {
+         if (this.eatAnimationTick > 4 && this.eatAnimationTick <= 36) {
+-            float f = ((float)(this.eatAnimationTick - 4) - p_29883_) / 32.0F;
++            float f = ((float) (this.eatAnimationTick - 4) - p_29883_) / 32.0F;
+             return (float) (Math.PI / 5) + 0.21991149F * Mth.sin(f * 28.7F);
+         } else {
+             return this.eatAnimationTick > 0 ? (float) (Math.PI / 5) : this.getXRot() * (float) (Math.PI / 180.0);
 @@ -208,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_29853_, InteractionHand p_29854_) {
@@ -45,7 +74,7 @@
              if (!this.level().isClientSide && this.readyForShearing()) {
                  this.shear(SoundSource.PLAYERS);
                  this.gameEvent(GameEvent.SHEAR, p_29853_);
-@@ -224,12 +_,24 @@
+@@ -224,20 +_,32 @@
  
      @Override
      public void shear(SoundSource p_29819_) {
@@ -70,52 +99,122 @@
 +            ItemEntity itementity = this.spawnAtLocation(stack, 1);
              if (itementity != null) {
                  itementity.setDeltaMovement(
-                     itementity.getDeltaMovement()
-@@ -329,8 +_,13 @@
+-                    itementity.getDeltaMovement()
+-                        .add(
+-                            (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.1F),
+-                            (double)(this.random.nextFloat() * 0.05F),
+-                            (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.1F)
+-                        )
++                        itementity.getDeltaMovement()
++                                .add(
++                                        (double) ((this.random.nextFloat() - this.random.nextFloat()) * 0.1F),
++                                        (double) (this.random.nextFloat() * 0.05F),
++                                        (double) ((this.random.nextFloat() - this.random.nextFloat()) * 0.1F)
++                                )
+                 );
+             }
+         }
+@@ -252,7 +_,7 @@
+     public void addAdditionalSaveData(CompoundTag p_29864_) {
+         super.addAdditionalSaveData(p_29864_);
+         p_29864_.putBoolean("Sheared", this.isSheared());
+-        p_29864_.putByte("Color", (byte)this.getColor().getId());
++        p_29864_.putByte("Color", (byte) this.getColor().getId());
+     }
+ 
+     @Override
+@@ -288,7 +_,7 @@
+ 
+     public void setColor(DyeColor p_29856_) {
+         byte b0 = this.entityData.get(DATA_WOOL_ID);
+-        this.entityData.set(DATA_WOOL_ID, (byte)(b0 & 240 | p_29856_.getId() & 15));
++        this.entityData.set(DATA_WOOL_ID, (byte) (b0 & 240 | p_29856_.getId() & 15));
+     }
+ 
+     public boolean isSheared() {
+@@ -298,9 +_,9 @@
+     public void setSheared(boolean p_29879_) {
+         byte b0 = this.entityData.get(DATA_WOOL_ID);
+         if (p_29879_) {
+-            this.entityData.set(DATA_WOOL_ID, (byte)(b0 | 16));
++            this.entityData.set(DATA_WOOL_ID, (byte) (b0 | 16));
+         } else {
+-            this.entityData.set(DATA_WOOL_ID, (byte)(b0 & -17));
++            this.entityData.set(DATA_WOOL_ID, (byte) (b0 & -17));
+         }
+     }
+ 
+@@ -323,14 +_,19 @@
+     public Sheep getBreedOffspring(ServerLevel p_149044_, AgeableMob p_149045_) {
+         Sheep sheep = EntityType.SHEEP.create(p_149044_);
+         if (sheep != null) {
+-            sheep.setColor(this.getOffspringColor(this, (Sheep)p_149045_));
++            sheep.setColor(this.getOffspringColor(this, (Sheep) p_149045_));
+         }
+ 
          return sheep;
      }
  
 -    @Override
--    public void ate() {
-+   public void ate() {
-+      // CraftBukkit start
-+      SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
-+      this.level.getCraftServer().getPluginManager().callEvent(event);
+     public void ate() {
++        // CraftBukkit start
++        SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
++        this.level.getCraftServer().getPluginManager().callEvent(event);
 +
-+      if (event.isCancelled()) return;
-+      // CraftBukkit end
++        if (event.isCancelled()) return;
++        // CraftBukkit end
          super.ate();
          this.setSheared(false);
          if (this.isBaby()) {
-@@ -371,9 +_,27 @@
+@@ -346,18 +_,18 @@
+     }
+ 
+     private DyeColor getOffspringColor(Animal p_29824_, Animal p_29825_) {
+-        DyeColor dyecolor = ((Sheep)p_29824_).getColor();
+-        DyeColor dyecolor1 = ((Sheep)p_29825_).getColor();
++        DyeColor dyecolor = ((Sheep) p_29824_).getColor();
++        DyeColor dyecolor1 = ((Sheep) p_29825_).getColor();
+         CraftingContainer craftingcontainer = makeContainer(dyecolor, dyecolor1);
+         return this.level()
+-            .getRecipeManager()
+-            .getRecipeFor(RecipeType.CRAFTING, craftingcontainer, this.level())
+-            .map(p_326982_ -> p_326982_.value().assemble(craftingcontainer, this.level().registryAccess()))
+-            .map(ItemStack::getItem)
+-            .filter(DyeItem.class::isInstance)
+-            .map(DyeItem.class::cast)
+-            .map(DyeItem::getDyeColor)
+-            .orElseGet(() -> this.level().random.nextBoolean() ? dyecolor : dyecolor1);
++                .getRecipeManager()
++                .getRecipeFor(RecipeType.CRAFTING, craftingcontainer, this.level())
++                .map(p_326982_ -> p_326982_.value().assemble(craftingcontainer, this.level().registryAccess()))
++                .map(ItemStack::getItem)
++                .filter(DyeItem.class::isInstance)
++                .map(DyeItem.class::cast)
++                .map(DyeItem::getDyeColor)
++                .orElseGet(() -> this.level().random.nextBoolean() ? dyecolor : dyecolor1);
+     }
+ 
+     private static CraftingContainer makeContainer(DyeColor p_29832_, DyeColor p_29833_) {
+@@ -371,9 +_,22 @@
              public boolean stillValid(Player p_29888_) {
                  return false;
              }
--        }, 2, 1);
--        craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
--        craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
--        return craftingcontainer;
 +
-+         // CraftBukkit start
-+         @Override
-+         public InventoryView getBukkitView() {
-+            return null; // TODO: O.O
-+         }
-+          // CraftBukkit end
-+      }, 2, 1);
-+      craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
-+      craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
-+      ((TransientCraftingContainer) craftingcontainer).resultInventory = new ResultContainer(); // CraftBukkit - add result slot for event
-+      return craftingcontainer;
-+   }
-+
-+    @Override
-+    public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
-+       return readyForShearing();
++            // CraftBukkit start
++            @Override
++            public InventoryView getBukkitView() {
++                return null; // TODO: O.O
++            }
++            // CraftBukkit end
+         }, 2, 1);
+         craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
+         craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
++        ((TransientCraftingContainer) craftingcontainer).resultInventory = new ResultContainer(); // CraftBukkit - add result slot for event
+         return craftingcontainer;
 +    }
 +
 +    @Override
 +    public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, BlockPos pos, int fortune) {
-+       return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
++        return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
      }
  }

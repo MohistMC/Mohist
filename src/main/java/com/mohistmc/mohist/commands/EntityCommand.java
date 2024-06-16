@@ -1,7 +1,6 @@
 package com.mohistmc.mohist.commands;
 
 import com.mohistmc.mohist.api.ChatComponentAPI;
-import com.mohistmc.mohist.api.EntityAPI;
 import com.mohistmc.mohist.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;

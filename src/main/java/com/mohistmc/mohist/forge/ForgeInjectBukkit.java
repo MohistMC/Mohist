@@ -37,7 +37,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Statistic;
 import org.bukkit.World;
-import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.block.CraftBlockStates;
 import org.bukkit.craftbukkit.block.CraftHangingSign;

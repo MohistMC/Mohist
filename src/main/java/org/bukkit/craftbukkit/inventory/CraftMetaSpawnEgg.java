@@ -111,7 +111,6 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     @ItemMetaKey.Specific(ItemMetaKey.Specific.To.NBT)
     static final ItemMetaKey ENTITY_ID = new ItemMetaKey("id");
 
-    private EntityType spawnedType;
     private CompoundTag entityTag;
 
     CraftMetaSpawnEgg(CraftMetaItem meta) {
@@ -121,9 +120,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             return;
         }
 
-        this.spawnedType = egg.spawnedType;
-
-        this.updateMaterial(null); // Trigger type population
+        this.entityTag = egg.entityTag;
     }
 
     CraftMetaSpawnEgg(DataComponentPatch tag) {
@@ -136,11 +133,6 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
 
     CraftMetaSpawnEgg(Map<String, Object> map) {
         super(map);
-
-        String entityType = SerializableMeta.getString(map, CraftMetaSpawnEgg.ENTITY_ID.BUKKIT, true);
-        if (entityType != null) {
-            this.spawnedType = CraftEntityType.stringToBukkit(entityType);
-        }
     }
 
     @Override
@@ -150,30 +142,10 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         if (tag.contains(CraftMetaSpawnEgg.ENTITY_TAG.NBT)) {
             this.entityTag = tag.getCompound(CraftMetaSpawnEgg.ENTITY_TAG.NBT);
 
-            if (context instanceof Map) {
-                Map<String, Object> map = (Map<String, Object>) context;
-
-                // Duplicated from constructor
-                String entityType = SerializableMeta.getString(map, CraftMetaSpawnEgg.ENTITY_ID.BUKKIT, true);
-                if (entityType != null) {
-                    this.spawnedType = CraftEntityType.stringToBukkit(entityType);
-                }
-            }
-
-            if (this.spawnedType != null) {
-                // We have a valid spawn type, just remove the ID now
-                this.entityTag.remove(CraftMetaSpawnEgg.ENTITY_ID.NBT);
-            }
-
             // Tag still has some other data, lets try our luck with a conversion
             if (!this.entityTag.isEmpty()) {
                 // SPIGOT-4128: This is hopeless until we start versioning stacks. RIP data.
                 // entityTag = (NBTTagCompound) MinecraftServer.getServer().dataConverterManager.update(DataConverterTypes.ENTITY, new Dynamic(DynamicOpsNBT.a, entityTag), -1, CraftMagicNumbers.DATA_VERSION).getValue();
-            }
-
-            // See if we can read a converted ID tag
-            if (this.entityTag.contains(CraftMetaSpawnEgg.ENTITY_ID.NBT)) {
-                this.spawnedType = CraftEntityType.stringToBukkit(entityTag.getString(ENTITY_ID.NBT));
             }
         }
     }
@@ -188,10 +160,6 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     @Override
     void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
-
-        if (!this.isSpawnEggEmpty() && this.entityTag == null) {
-            this.entityTag = new CompoundTag();
-        }
 
         if (this.entityTag != null) {
             tag.put(CraftMetaSpawnEgg.ENTITY_TAG, CustomData.of(this.entityTag));
@@ -209,11 +177,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     }
 
     boolean isSpawnEggEmpty() {
-        return !(this.hasSpawnedType() || this.entityTag != null);
-    }
-
-    boolean hasSpawnedType() {
-        return this.spawnedType != null;
+        return !(entityTag != null);
     }
 
     @Override
@@ -245,8 +209,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         if (meta instanceof CraftMetaSpawnEgg) {
             CraftMetaSpawnEgg that = (CraftMetaSpawnEgg) meta;
 
-            return this.hasSpawnedType() ? that.hasSpawnedType() && this.spawnedType.equals(that.spawnedType) : !that.hasSpawnedType()
-                    && this.entityTag != null ? that.entityTag != null && this.entityTag.equals(that.entityTag) : this.entityTag == null;
+            return entityTag != null ? that.entityTag != null && this.entityTag.equals(that.entityTag) : entityTag == null;
         }
         return true;
     }
@@ -261,9 +224,6 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         final int original;
         int hash = original = super.applyHash();
 
-        if (this.hasSpawnedType()) {
-            hash = 73 * hash + this.spawnedType.hashCode();
-        }
         if (this.entityTag != null) {
             hash = 73 * hash + this.entityTag.hashCode();
         }
@@ -282,30 +242,10 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     public CraftMetaSpawnEgg clone() {
         CraftMetaSpawnEgg clone = (CraftMetaSpawnEgg) super.clone();
 
-        clone.spawnedType = this.spawnedType;
         if (this.entityTag != null) {
             clone.entityTag = this.entityTag.copy();
         }
 
         return clone;
-    }
-
-    @Override
-    final Material updateMaterial(Material material) {
-        if (this.spawnedType == null) {
-            this.spawnedType = EntityType.fromId(this.getDamage());
-            this.setDamage(0);
-        }
-
-        if (this.spawnedType != null) {
-            if (this.entityTag != null) {
-                // Remove ID tag as it is now in the material
-                this.entityTag.remove("id");
-            }
-
-            return CraftLegacy.fromLegacy(new MaterialData(Material.LEGACY_MONSTER_EGG, (byte) this.spawnedType.getTypeId()));
-        }
-
-        return super.updateMaterial(material);
     }
 }

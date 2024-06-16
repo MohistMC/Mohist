@@ -151,20 +151,6 @@ public interface ItemFactory {
     ItemStack createItemStack(@NotNull String input) throws IllegalArgumentException;
 
     /**
-     * Apply a material change for an item meta. Do not use under any
-     * circumstances.
-     *
-     * @param meta meta
-     * @param material material
-     * @return updated material
-     * @throws IllegalArgumentException if bad material or data
-     * @apiNote for internal use only
-     */
-    @ApiStatus.Internal
-    @NotNull
-    Material updateMaterial(@NotNull final ItemMeta meta, @NotNull final Material material) throws IllegalArgumentException;
-
-    /**
      * Gets a {@link Material} representing the spawn egg for the provided
      * {@link EntityType}. <br>
      * Will return null for EntityTypes that do not have a corresponding spawn egg.

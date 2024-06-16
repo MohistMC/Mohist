@@ -586,7 +586,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         String unhandled = SerializableMeta.getString(map, "unhandled", true);
         if (unhandled != null) {
-            ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(internal));
+            ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(unhandled));
             try {
                 CompoundTag unhandledTag = NbtIo.readCompressed(buf, NbtAccounter.unlimitedHeap());
                 this.unhandledTags.copy(DataComponentPatch.CODEC.parse(MinecraftServer.getDefaultRegistryAccess().createSerializationContext(NbtOps.INSTANCE), unhandledTag).result().get());
@@ -1685,10 +1685,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     void serializeInternal(final Map<String, Tag> unhandledTags) {
     }
 
-    Material updateMaterial(Material material) {
-        return material;
-    }
-
     static void serializeEnchantments(Map<Enchantment, Integer> enchantments, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
         if (enchantments == null || enchantments.isEmpty()) {
             return;
@@ -1811,6 +1807,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                         CraftMetaMap.MAP_ID.TYPE,
                         CraftMetaPotion.POTION_CONTENTS.TYPE,
                         CraftMetaSkull.SKULL_PROFILE.TYPE,
+                        CraftMetaSkull.NOTE_BLOCK_SOUND.TYPE,
                         CraftMetaSpawnEgg.ENTITY_TAG.TYPE,
                         CraftMetaBlockState.BLOCK_ENTITY_TAG.TYPE,
                         CraftMetaBook.BOOK_CONTENT.TYPE,

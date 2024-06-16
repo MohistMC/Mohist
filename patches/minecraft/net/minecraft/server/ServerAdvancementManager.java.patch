@@ -10,22 +10,25 @@
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
  import com.google.gson.JsonElement;
-@@ -11,7 +_,6 @@
+@@ -10,8 +_,8 @@
+ import com.mojang.logging.LogUtils;
  import com.mojang.serialization.JsonOps;
  import java.util.Collection;
++import java.util.HashMap;
  import java.util.Map;
 -import java.util.Map.Entry;
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.advancements.Advancement;
-@@ -29,23 +_,43 @@
+@@ -29,30 +_,50 @@
  import org.slf4j.Logger;
  
  public class ServerAdvancementManager extends SimpleJsonResourceReloadListener {
 -    private static final Logger LOGGER = LogUtils.getLogger();
 +   private static final Logger LOGGER = LogUtils.getLogger();
      public static final Gson GSON = new GsonBuilder().create();
-     public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
+-    public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
++    public Map<ResourceLocation, AdvancementHolder> advancements = new HashMap<>(); // CraftBukkit - SPIGOT-7734: mutable
      private AdvancementTree tree = new AdvancementTree();
      private final HolderLookup.Provider registries;
 +    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
@@ -64,3 +67,11 @@
                  this.validate(p_326203_, advancement);
                  builder.put(p_326203_, new AdvancementHolder(p_326203_, advancement));
              } catch (Exception exception) {
+                 LOGGER.error("Parsing error loading custom advancement {}: {}", p_326203_, exception.getMessage());
+             }
+         });
+-        this.advancements = builder.buildOrThrow();
++        this.advancements = new HashMap<>(builder.buildOrThrow()); // CraftBukkit - SPIGOT-7734: mutable
+         AdvancementTree advancementtree = new AdvancementTree();
+         advancementtree.addAll(this.advancements.values());
+ 

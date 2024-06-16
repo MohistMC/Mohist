@@ -1,7 +1,7 @@
 package com.mohistmc.mohist;
 
-import com.mohistmc.mohist.eventhandler.EventDispatcherRegistry;
 import com.mohistmc.i18n.i18n;
+import com.mohistmc.mohist.eventhandler.EventDispatcherRegistry;
 import com.mohistmc.mohist.plugins.MohistProxySelector;
 import com.mohistmc.mohist.util.VersionInfo;
 import java.util.HashMap;
