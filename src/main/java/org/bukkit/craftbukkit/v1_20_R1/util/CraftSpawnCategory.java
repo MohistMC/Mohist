@@ -18,7 +18,7 @@ public class CraftSpawnCategory {
             case WATER_UNDERGROUND_CREATURE -> "spawn-limits.water-underground-creature";
             case AMBIENT -> "spawn-limits.ambient";
             case AXOLOTL -> "spawn-limits.axolotls";
-            default -> throw new UnsupportedOperationException("Unknown Config value " + spawnCategory + " for spawn-limits");
+            default -> "spawn-limits." + spawnCategory.name().toLowerCase();
         };
     }
 
