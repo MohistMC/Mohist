@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/levelgen/RandomState.java
++++ b/net/minecraft/world/level/levelgen/RandomState.java
+@@ -35,8 +_,8 @@
+     private RandomState(NoiseGeneratorSettings p_255668_, HolderGetter<NormalNoise.NoiseParameters> p_256663_, final long p_255691_) {
+         this.random = p_255668_.getRandomSource().newInstance(p_255691_).forkPositional();
+         this.noises = p_256663_;
+-        this.aquiferRandom = this.random.fromHashOf(ResourceLocation.withDefaultNamespace("aquifer")).forkPositional();
+-        this.oreRandom = this.random.fromHashOf(ResourceLocation.withDefaultNamespace("ore")).forkPositional();
++        this.aquiferRandom = this.random.fromHashOf(new ResourceLocation("aquifer")).forkPositional();
++        this.oreRandom = this.random.fromHashOf(new ResourceLocation("ore")).forkPositional();
+         this.noiseIntances = new ConcurrentHashMap<>();
+         this.positionalRandoms = new ConcurrentHashMap<>();
+         this.surfaceSystem = new SurfaceSystem(this, p_255668_.defaultBlock(), p_255668_.seaLevel(), this.random);
+@@ -77,7 +_,7 @@
+ 
+             private DensityFunction wrapNew(DensityFunction p_224596_) {
+                 if (p_224596_ instanceof BlendedNoise blendednoise) {
+-                    RandomSource randomsource = flag ? this.newLegacyInstance(0L) : RandomState.this.random.fromHashOf(ResourceLocation.withDefaultNamespace("terrain"));
++                    RandomSource randomsource = flag ? this.newLegacyInstance(0L) : RandomState.this.random.fromHashOf(new ResourceLocation("terrain"));
+                     return blendednoise.withNewRandom(randomsource);
+                 } else {
+                     return (DensityFunction)(p_224596_ instanceof DensityFunctions.EndIslandDensityFunction

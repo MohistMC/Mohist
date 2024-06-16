@@ -7,7 +7,25 @@
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.Dynamic;
-@@ -151,15 +_,24 @@
+@@ -12,9 +_,6 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.registries.Registries;
+-import net.minecraft.network.RegistryFriendlyByteBuf;
+-import net.minecraft.network.codec.ByteBufCodecs;
+-import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.resources.RegistryFileCodec;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+@@ -71,7 +_,6 @@
+                     .apply(p_223568_, DimensionType::new)
+         )
+     );
+-    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DimensionType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.DIMENSION_TYPE);
+     private static final int MOON_PHASES = 8;
+     public static final float[] MOON_BRIGHTNESS_PER_PHASE = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
+     public static final Codec<Holder<DimensionType>> CODEC = RegistryFileCodec.create(Registries.DIMENSION_TYPE, DIRECT_CODEC);
+@@ -155,15 +_,24 @@
          } else if (p_196976_ == Level.END) {
              return p_196977_.resolve("DIM1");
          } else {

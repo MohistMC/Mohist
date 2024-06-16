@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -21,6 +_,7 @@
+@@ -21,11 +_,12 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -8,6 +8,13 @@
  
  public class ChorusFlowerBlock extends Block {
      public static final MapCodec<ChorusFlowerBlock> CODEC = RecordCodecBuilder.mapCodec(
+-        p_341828_ -> p_341828_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("plant").forGetter(p_312628_ -> p_312628_.plant), propertiesCodec())
+-                .apply(p_341828_, ChorusFlowerBlock::new)
++        p_310422_ -> p_310422_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("plant").forGetter(p_312628_ -> p_312628_.plant), propertiesCodec())
++                .apply(p_310422_, ChorusFlowerBlock::new)
+     );
+     public static final int DEAD_AGE = 5;
+     public static final IntegerProperty AGE = BlockStateProperties.AGE_5;
 @@ -65,7 +_,7 @@
          BlockPos blockpos = p_220982_.above();
          if (p_220981_.isEmptyBlock(blockpos) && blockpos.getY() < p_220981_.getMaxBuildHeight()) {

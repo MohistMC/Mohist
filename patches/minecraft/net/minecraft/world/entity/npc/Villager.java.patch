@@ -19,14 +19,6 @@
  import org.slf4j.Logger;
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
-@@ -260,7 +_,6 @@
-         return this.assignProfessionWhenSpawned;
-     }
- 
--    @Override
-     protected void customServerAiStep() {
-         this.level().getProfiler().push("villagerBrain");
-         this.getBrain().tick((ServerLevel)this.level(), this);
 @@ -314,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {
@@ -45,7 +37,7 @@
          this.setUnhappyCounter(40);
          if (!this.level().isClientSide()) {
              this.makeSound(SoundEvents.VILLAGER_NO);
-@@ -389,7 +_,13 @@
+@@ -391,7 +_,13 @@
          this.updateDemand();
  
          for (MerchantOffer merchantoffer : this.getOffers()) {
@@ -60,7 +52,7 @@
          }
  
          this.resendOffersToTradingPlayer();
-@@ -443,9 +_,15 @@
+@@ -445,9 +_,15 @@
          int i = 2 - this.numberOfRestocksToday;
          if (i > 0) {
              for (MerchantOffer merchantoffer : this.getOffers()) {
@@ -78,7 +70,7 @@
  
          for (int j = 0; j < i; j++) {
              this.updateDemand();
-@@ -619,7 +_,7 @@
+@@ -621,7 +_,7 @@
  
      @Override
      public void die(DamageSource p_35419_) {
@@ -87,7 +79,7 @@
          Entity entity = p_35419_.getEntity();
          if (entity != null) {
              this.tellWitnessesThatIWasMurdered(entity);
-@@ -629,7 +_,7 @@
+@@ -631,7 +_,7 @@
          super.die(p_35419_);
      }
  
@@ -96,7 +88,7 @@
          this.releasePoi(MemoryModuleType.HOME);
          this.releasePoi(MemoryModuleType.JOB_SITE);
          this.releasePoi(MemoryModuleType.POTENTIAL_JOB_SITE);
-@@ -725,7 +_,8 @@
+@@ -727,7 +_,8 @@
  
      @Override
      protected Component getTypeName() {
@@ -106,7 +98,7 @@
      }
  
      @Override
-@@ -780,7 +_,7 @@
+@@ -782,7 +_,7 @@
  
      @Override
      public void thunderHit(ServerLevel p_35409_, LightningBolt p_35410_) {
@@ -115,7 +107,7 @@
              LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
              Witch witch = EntityType.WITCH.create(p_35409_);
              if (witch != null) {
-@@ -793,6 +_,12 @@
+@@ -795,6 +_,12 @@
                  }
  
                  witch.setPersistenceRequired();

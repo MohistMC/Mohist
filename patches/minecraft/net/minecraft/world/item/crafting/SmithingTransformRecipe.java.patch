@@ -7,8 +7,11 @@
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
  import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
-@@ -10,6 +_,10 @@
- import net.minecraft.world.Container;
+@@ -7,8 +_,13 @@
+ import net.minecraft.core.HolderLookup;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
+ import net.minecraft.network.codec.StreamCodec;
++import net.minecraft.world.Container;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
@@ -18,7 +21,7 @@
  
  public class SmithingTransformRecipe implements SmithingRecipe {
      final Ingredient template;
-@@ -63,8 +_,22 @@
+@@ -60,8 +_,22 @@
  
      @Override
      public boolean isIncomplete() {

@@ -1,0 +1,73 @@
+--- a/net/minecraft/world/level/levelgen/structure/structures/ShipwreckPieces.java
++++ b/net/minecraft/world/level/levelgen/structure/structures/ShipwreckPieces.java
+@@ -32,39 +_,39 @@
+     private static final int NUMBER_OF_BLOCKS_ALLOWED_IN_WORLD_GEN_REGION = 32;
+     static final BlockPos PIVOT = new BlockPos(4, 0, 15);
+     private static final ResourceLocation[] STRUCTURE_LOCATION_BEACHED = new ResourceLocation[]{
+-        ResourceLocation.withDefaultNamespace("shipwreck/with_mast"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_full"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_fronthalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_backhalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_full"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_fronthalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_backhalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/with_mast_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_full_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_fronthalf_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_backhalf_degraded")
++        new ResourceLocation("shipwreck/with_mast"),
++        new ResourceLocation("shipwreck/sideways_full"),
++        new ResourceLocation("shipwreck/sideways_fronthalf"),
++        new ResourceLocation("shipwreck/sideways_backhalf"),
++        new ResourceLocation("shipwreck/rightsideup_full"),
++        new ResourceLocation("shipwreck/rightsideup_fronthalf"),
++        new ResourceLocation("shipwreck/rightsideup_backhalf"),
++        new ResourceLocation("shipwreck/with_mast_degraded"),
++        new ResourceLocation("shipwreck/rightsideup_full_degraded"),
++        new ResourceLocation("shipwreck/rightsideup_fronthalf_degraded"),
++        new ResourceLocation("shipwreck/rightsideup_backhalf_degraded")
+     };
+     private static final ResourceLocation[] STRUCTURE_LOCATION_OCEAN = new ResourceLocation[]{
+-        ResourceLocation.withDefaultNamespace("shipwreck/with_mast"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/upsidedown_full"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/upsidedown_fronthalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/upsidedown_backhalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_full"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_fronthalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_backhalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_full"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_fronthalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_backhalf"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/with_mast_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/upsidedown_full_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/upsidedown_fronthalf_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/upsidedown_backhalf_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_full_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_fronthalf_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/sideways_backhalf_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_full_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_fronthalf_degraded"),
+-        ResourceLocation.withDefaultNamespace("shipwreck/rightsideup_backhalf_degraded")
++        new ResourceLocation("shipwreck/with_mast"),
++        new ResourceLocation("shipwreck/upsidedown_full"),
++        new ResourceLocation("shipwreck/upsidedown_fronthalf"),
++        new ResourceLocation("shipwreck/upsidedown_backhalf"),
++        new ResourceLocation("shipwreck/sideways_full"),
++        new ResourceLocation("shipwreck/sideways_fronthalf"),
++        new ResourceLocation("shipwreck/sideways_backhalf"),
++        new ResourceLocation("shipwreck/rightsideup_full"),
++        new ResourceLocation("shipwreck/rightsideup_fronthalf"),
++        new ResourceLocation("shipwreck/rightsideup_backhalf"),
++        new ResourceLocation("shipwreck/with_mast_degraded"),
++        new ResourceLocation("shipwreck/upsidedown_full_degraded"),
++        new ResourceLocation("shipwreck/upsidedown_fronthalf_degraded"),
++        new ResourceLocation("shipwreck/upsidedown_backhalf_degraded"),
++        new ResourceLocation("shipwreck/sideways_full_degraded"),
++        new ResourceLocation("shipwreck/sideways_fronthalf_degraded"),
++        new ResourceLocation("shipwreck/sideways_backhalf_degraded"),
++        new ResourceLocation("shipwreck/rightsideup_full_degraded"),
++        new ResourceLocation("shipwreck/rightsideup_fronthalf_degraded"),
++        new ResourceLocation("shipwreck/rightsideup_backhalf_degraded")
+     };
+     static final Map<String, ResourceKey<LootTable>> MARKERS_TO_LOOT = Map.of(
+         "map_chest", BuiltInLootTables.SHIPWRECK_MAP, "treasure_chest", BuiltInLootTables.SHIPWRECK_TREASURE, "supply_chest", BuiltInLootTables.SHIPWRECK_SUPPLY

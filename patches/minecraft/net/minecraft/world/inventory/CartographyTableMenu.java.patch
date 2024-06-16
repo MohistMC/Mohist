@@ -1,17 +1,7 @@
 --- a/net/minecraft/world/inventory/CartographyTableMenu.java
 +++ b/net/minecraft/world/inventory/CartographyTableMenu.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.inventory;
- 
--import net.minecraft.core.BlockPos;
- import net.minecraft.core.component.DataComponents;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.sounds.SoundSource;
-@@ -12,11 +_,29 @@
- import net.minecraft.world.item.Items;
- import net.minecraft.world.item.MapItem;
- import net.minecraft.world.item.component.MapPostProcessing;
--import net.minecraft.world.level.Level;
+@@ -15,8 +_,27 @@
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 +import org.bukkit.Location;

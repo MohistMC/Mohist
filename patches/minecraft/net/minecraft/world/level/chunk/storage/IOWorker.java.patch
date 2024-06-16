@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/level/chunk/storage/IOWorker.java
++++ b/net/minecraft/world/level/chunk/storage/IOWorker.java
+@@ -138,7 +_,7 @@
+         return this.submitTask(() -> {
+             IOWorker.PendingStore ioworker$pendingstore = this.pendingWrites.get(p_156588_);
+             if (ioworker$pendingstore != null) {
+-                return Either.left(Optional.ofNullable(ioworker$pendingstore.copyData()));
++                return Either.left(Optional.ofNullable(ioworker$pendingstore.data));
+             } else {
+                 try {
+                     CompoundTag compoundtag = this.storage.read(p_156588_);
+@@ -240,10 +_,6 @@
+         }
+     }
+ 
+-    public RegionStorageInfo storageInfo() {
+-        return this.storage.info();
+-    }
+-
+     static class PendingStore {
+         @Nullable
+         CompoundTag data;
+@@ -251,12 +_,6 @@
+ 
+         public PendingStore(@Nullable CompoundTag p_63568_) {
+             this.data = p_63568_;
+-        }
+-
+-        @Nullable
+-        CompoundTag copyData() {
+-            CompoundTag compoundtag = this.data;
+-            return compoundtag == null ? null : compoundtag.copy();
+         }
+     }
+ 

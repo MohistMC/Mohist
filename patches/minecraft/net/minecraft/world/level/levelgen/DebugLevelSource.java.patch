@@ -1,13 +1,33 @@
 --- a/net/minecraft/world/level/levelgen/DebugLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/DebugLevelSource.java
-@@ -144,4 +_,10 @@
+@@ -5,6 +_,7 @@
+ import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import java.util.List;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.Executor;
+ import java.util.stream.Collectors;
+ import java.util.stream.StreamSupport;
+ import net.minecraft.core.BlockPos;
+@@ -77,7 +_,9 @@
+     }
+ 
+     @Override
+-    public CompletableFuture<ChunkAccess> fillFromNoise(Blender p_223992_, RandomState p_223993_, StructureManager p_223994_, ChunkAccess p_223995_) {
++    public CompletableFuture<ChunkAccess> fillFromNoise(
++        Executor p_223991_, Blender p_223992_, RandomState p_223993_, StructureManager p_223994_, ChunkAccess p_223995_
++    ) {
+         return CompletableFuture.completedFuture(p_223995_);
+     }
+ 
+@@ -140,5 +_,11 @@
+     @Override
      public int getSeaLevel() {
          return 63;
-     }
++    }
 +
 +    public static void initValidStates() {
 +        ALL_BLOCKS = StreamSupport.stream(BuiltInRegistries.BLOCK.spliterator(), false).flatMap(block -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toList());
 +        GRID_WIDTH = Mth.ceil(Mth.sqrt(ALL_BLOCKS.size()));
 +        GRID_HEIGHT = Mth.ceil((float) (ALL_BLOCKS.size() / GRID_WIDTH));
-+    }
+     }
  }

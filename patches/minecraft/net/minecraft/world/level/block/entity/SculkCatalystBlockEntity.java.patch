@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
-@@ -14,7 +_,9 @@
+@@ -1,7 +_,6 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.google.common.annotations.VisibleForTesting;
+-import net.minecraft.Optionull;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+@@ -15,7 +_,9 @@
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.damagesource.DamageSource;
@@ -10,7 +18,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.SculkCatalystBlock;
  import net.minecraft.world.level.block.SculkSpreader;
-@@ -28,14 +_,15 @@
+@@ -29,14 +_,15 @@
  public class SculkCatalystBlockEntity extends BlockEntity implements GameEventListener.Provider<SculkCatalystBlockEntity.CatalystListener> {
      private final SculkCatalystBlockEntity.CatalystListener catalystListener;
  
@@ -33,7 +41,7 @@
  
      @Override
      protected void loadAdditional(CompoundTag p_334885_, HolderLookup.Provider p_332157_) {
-@@ -58,12 +_,14 @@
+@@ -59,12 +_,14 @@
          final SculkSpreader sculkSpreader;
          private final BlockState blockState;
          private final PositionSource positionSource;
@@ -53,7 +61,17 @@
  
          @Override
          public PositionSource getListenerSource() {
-@@ -107,7 +_,7 @@
+@@ -85,8 +_,7 @@
+         public boolean handleGameEvent(ServerLevel p_283470_, Holder<GameEvent> p_332335_, GameEvent.Context p_283014_, Vec3 p_282350_) {
+             if (p_332335_.is(GameEvent.ENTITY_DIE) && p_283014_.sourceEntity() instanceof LivingEntity livingentity) {
+                 if (!livingentity.wasExperienceConsumed()) {
+-                    DamageSource damagesource = livingentity.getLastDamageSource();
+-                    int i = livingentity.getExperienceReward(p_283470_, Optionull.map(damagesource, DamageSource::getEntity));
++                    int i = livingentity.getExperienceReward();
+                     if (livingentity.shouldDropExperience() && i > 0) {
+                         this.sculkSpreader.addCursors(BlockPos.containing(p_282350_.relative(Direction.UP, 0.5)), i);
+                         this.tryAwardItSpreadsAdvancement(p_283470_, livingentity);
+@@ -109,7 +_,7 @@
              return this.sculkSpreader;
          }
  

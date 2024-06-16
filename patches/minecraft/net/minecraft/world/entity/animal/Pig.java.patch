@@ -37,12 +37,12 @@
  
                  zombifiedpiglin.setPersistenceRequired();
 +                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
-+            // CraftBukkit start
-+            if (CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
-+               return;
-+            }
-+            // CraftBukkit - added a reason for spawning this creature
-+            zombifiedpiglin.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++            	// CraftBukkit start
++            	if (CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
++               		return;
++            	}
++            	// CraftBukkit - added a reason for spawning this creature
++            	zombifiedpiglin.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
                  p_29473_.addFreshEntity(zombifiedpiglin);
                  this.discard();
              } else {

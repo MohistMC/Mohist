@@ -27,8 +27,6 @@
 -
 -        return blockstate1 != null && levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty()) ? blockstate1 : null;
 -    }
--
--    @Override
 +      // CraftBukkit start
 +      if (blockstate1 != null) {
 +         boolean defaultReturn = levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty());
@@ -43,8 +41,8 @@
 +      }
 +      // CraftBukkit end
 +   }
-+
-+ 	@Override
+ 
+     @Override
      public void registerBlocks(Map<Block, Item> p_43252_, Item p_43253_) {
          super.registerBlocks(p_43252_, p_43253_);
          p_43252_.put(this.wallBlock, p_43253_);

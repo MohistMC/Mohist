@@ -37,11 +37,11 @@
 -                if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
 -                    this.level().setBlockAndUpdate(blockpos, blockstate);
 +                if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
-+               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
-+                  continue;
-+               }
-+               // CraftBukkit end
++                	// CraftBukkit start
++                	if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
++                   		continue;
++                	}
++                	// CraftBukkit end
                      this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
                  }
              }
@@ -54,22 +54,17 @@
              this.shear(SoundSource.PLAYERS);
              this.gameEvent(GameEvent.SHEAR, p_29920_);
              if (!this.level().isClientSide) {
-@@ -145,9 +_,12 @@
+@@ -145,7 +_,9 @@
          this.level().playSound(null, this, SoundEvents.SNOW_GOLEM_SHEAR, p_29907_, 1.0F, 1.0F);
          if (!this.level().isClientSide()) {
              this.setPumpkin(false);
 -            this.spawnAtLocation(new ItemStack(Items.CARVED_PUMPKIN), this.getEyeHeight());
--        }
--    }
 +         this.forceDrops = true; // CraftBukkit
-+         this.spawnAtLocation(new ItemStack(Items.CARVED_PUMPKIN), 1.7F);
++         this.spawnAtLocation(new ItemStack(Items.CARVED_PUMPKIN), this.getEyeHeight());
 +         this.forceDrops = false; // CraftBukkit
-+      }
-+
-+   }
+         }
+     }
  
-     @Override
-     public boolean readyForShearing() {
 @@ -189,4 +_,16 @@
      public Vec3 getLeashOffset() {
          return new Vec3(0.0, (double)(0.75F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.4F));

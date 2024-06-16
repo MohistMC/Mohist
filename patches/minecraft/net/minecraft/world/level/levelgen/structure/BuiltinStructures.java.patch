@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/structure/BuiltinStructures.java
++++ b/net/minecraft/world/level/levelgen/structure/BuiltinStructures.java
+@@ -41,6 +_,6 @@
+     ResourceKey<Structure> TRIAL_CHAMBERS = createKey("trial_chambers");
+ 
+     private static ResourceKey<Structure> createKey(String p_209873_) {
+-        return ResourceKey.create(Registries.STRUCTURE, ResourceLocation.withDefaultNamespace(p_209873_));
++        return ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(p_209873_));
+     }
+ }

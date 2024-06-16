@@ -106,11 +106,11 @@
 -            boolean flag2 = p_155289_.brewTime == 0;
 -            if (flag2 && flag) {
 -                doBrew(p_155286_, p_155287_, p_155289_.items);
--                setChanged(p_155286_, p_155287_, p_155288_);
 -            } else if (!flag || !itemstack1.is(p_155289_.ingredient)) {
 -                p_155289_.brewTime = 0;
--                setChanged(p_155286_, p_155287_, p_155288_);
 -            }
+-
+-            setChanged(p_155286_, p_155287_, p_155288_);
 -        } else if (flag && p_155289_.fuel > 0) {
 -            p_155289_.fuel--;
 -            p_155289_.brewTime = 400;
@@ -216,7 +216,7 @@
          }
  
          p_155293_.set(3, itemstack);
-@@ -207,6 +_,9 @@
+@@ -211,6 +_,9 @@
          if (p_59017_ == 3) {
              PotionBrewing potionbrewing = this.level != null ? this.level.potionBrewing() : PotionBrewing.EMPTY;
              return potionbrewing.isIngredient(p_59018_);
@@ -226,7 +226,7 @@
          } else {
              return p_59017_ == 4
                  ? p_59018_.is(Items.BLAZE_POWDER)
-@@ -242,5 +_,34 @@
+@@ -246,5 +_,34 @@
      @Override
      protected AbstractContainerMenu createMenu(int p_58990_, Inventory p_58991_) {
          return new BrewingStandMenu(p_58990_, p_58991_, this, this.dataAccess);

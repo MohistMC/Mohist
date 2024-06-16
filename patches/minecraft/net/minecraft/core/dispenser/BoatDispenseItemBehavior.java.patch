@@ -10,18 +10,9 @@
  
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
      private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-@@ -30,28 +_,55 @@
-         Direction direction = p_123375_.state().getValue(DispenserBlock.FACING);
-         ServerLevel serverlevel = p_123375_.level();
-         Vec3 vec3 = p_123375_.center();
--        double d0 = 0.5625 + (double)EntityType.BOAT.getWidth() / 2.0;
--        double d1 = vec3.x() + (double)direction.getStepX() * d0;
--        double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
--        double d3 = vec3.z() + (double)direction.getStepZ() * d0;
-+        double d0 = 0.5625 + (double) EntityType.BOAT.getWidth() / 2.0;
-+        double d1 = vec3.x() + (double) direction.getStepX() * d0;
-+        double d2 = vec3.y() + (double) ((float) direction.getStepY() * 1.125F);
-+        double d3 = vec3.z() + (double) direction.getStepZ() * d0;
+@@ -35,23 +_,50 @@
+         double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
+         double d3 = vec3.z() + (double)direction.getStepZ() * d0;
          BlockPos blockpos = p_123375_.pos().relative(direction);
 +        // CraftBukkit start
 +        ItemStack itemstack1 = p_123376_.split(1);

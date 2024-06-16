@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/alchemy/Potions.java
++++ b/net/minecraft/world/item/alchemy/Potions.java
+@@ -6,6 +_,7 @@
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.effect.MobEffects;
++import net.minecraft.world.flag.FeatureFlags;
+ 
+ public class Potions {
+     public static final Holder<Potion> WATER = register("water", new Potion());

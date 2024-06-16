@@ -1,21 +1,13 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -1,11 +_,14 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.inventory;
  
 +import com.mohistmc.mohist.plugins.ban.bans.BanEnchantment;
  import com.mojang.datafixers.util.Pair;
  import java.util.List;
-+import java.util.Map;
- import net.minecraft.Util;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.registries.BuiltInRegistries;
-+import net.minecraft.nbt.CompoundTag;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvents;
-@@ -24,6 +_,17 @@
+ import java.util.Optional;
+@@ -30,6 +_,17 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.EnchantingTableBlock;
@@ -32,8 +24,8 @@
 +import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
  
  public class EnchantmentMenu extends AbstractContainerMenu {
-     static final ResourceLocation EMPTY_SLOT_LAPIS_LAZULI = new ResourceLocation("item/empty_slot_lapis_lazuli");
-@@ -33,6 +_,13 @@
+     static final ResourceLocation EMPTY_SLOT_LAPIS_LAZULI = ResourceLocation.withDefaultNamespace("item/empty_slot_lapis_lazuli");
+@@ -39,6 +_,13 @@
              super.setChanged();
              EnchantmentMenu.this.slotsChanged(this);
          }
@@ -47,7 +39,7 @@
      };
      private final ContainerLevelAccess access;
      private final RandomSource random = RandomSource.create();
-@@ -41,6 +_,11 @@
+@@ -47,6 +_,11 @@
      public final int[] enchantClue = new int[]{-1, -1, -1};
      public final int[] levelClue = new int[]{-1, -1, -1};
  
@@ -59,7 +51,7 @@
      public EnchantmentMenu(int p_39454_, Inventory p_39455_) {
          this(p_39454_, p_39455_, ContainerLevelAccess.NULL);
      }
-@@ -57,7 +_,7 @@
+@@ -63,7 +_,7 @@
          this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
              @Override
              public boolean mayPlace(ItemStack p_39517_) {
@@ -68,7 +60,7 @@
              }
  
              @Override
-@@ -86,31 +_,35 @@
+@@ -92,32 +_,37 @@
          this.addDataSlot(DataSlot.shared(this.levelClue, 0));
          this.addDataSlot(DataSlot.shared(this.levelClue, 1));
          this.addDataSlot(DataSlot.shared(this.levelClue, 2));
@@ -77,39 +69,39 @@
 +        // CraftBukkit end
      }
  
--    @Override
+     @Override
      public void slotsChanged(Container p_39461_) {
          if (p_39461_ == this.enchantSlots) {
              ItemStack itemstack = p_39461_.getItem(0);
 -            if (!itemstack.isEmpty() && itemstack.isEnchantable()) {
 +            if (!itemstack.isEmpty()) { // CraftBukkit - relax condition
-                 this.access.execute((p_327074_, p_327075_) -> {
+                 this.access.execute((p_341515_, p_341516_) -> {
+                     IdMap<Holder<Enchantment>> idmap = p_341515_.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap();
 -                    int j = 0;
 +                    float j = 0;
  
                      for (BlockPos blockpos : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
-                         if (EnchantingTableBlock.isValidBookShelf(p_327074_, p_327075_, blockpos)) {
+                         if (EnchantingTableBlock.isValidBookShelf(p_341515_, p_341516_, blockpos)) {
                              j++;
-+                            j += p_327074_.getBlockState(p_327075_.offset(blockpos)).getEnchantPowerBonus(p_327074_, p_327075_.offset(blockpos));
++                            j += p_341515_.getBlockState(p_341516_.offset(blockpos)).getEnchantPowerBonus(p_341515_, p_341516_.offset(blockpos));
                          }
                      }
  
--                    this.random.setSeed((long)this.enchantmentSeed.get());
-+                    this.random.setSeed((long) this.enchantmentSeed.get());
+                     this.random.setSeed((long)this.enchantmentSeed.get());
  
                      for (int k = 0; k < 3; k++) {
 -                        this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, j, itemstack);
-+                        this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, (int) j, itemstack);
++                        this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, (int)j, itemstack);
                          this.enchantClue[k] = -1;
                          this.levelClue[k] = -1;
                          if (this.costs[k] < k + 1) {
                              this.costs[k] = 0;
                          }
-+                        this.costs[k] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_327074_, p_327075_, k, (int) j, itemstack, costs[k]);
++                        this.costs[k] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_341515_, p_341516_, k, (int)j, itemstack, costs[k]);
                      }
  
                      for (int l = 0; l < 3; l++) {
-@@ -124,6 +_,41 @@
+@@ -131,6 +_,41 @@
                          }
                      }
  
@@ -151,19 +143,10 @@
                      this.broadcastChanges();
                  });
              } else {
-@@ -145,24 +_,51 @@
-             if ((itemstack1.isEmpty() || itemstack1.getCount() < i) && !p_39465_.hasInfiniteMaterials()) {
-                 return false;
-             } else if (this.costs[p_39466_] <= 0
--                || itemstack.isEmpty()
--                || (p_39465_.experienceLevel < i || p_39465_.experienceLevel < this.costs[p_39466_]) && !p_39465_.getAbilities().instabuild) {
-+                    || itemstack.isEmpty()
-+                    || (p_39465_.experienceLevel < i || p_39465_.experienceLevel < this.costs[p_39466_]) && !p_39465_.getAbilities().instabuild) {
-                 return false;
-             } else {
-                 this.access.execute((p_327081_, p_327082_) -> {
+@@ -159,25 +_,54 @@
+                 this.access.execute((p_341512_, p_341513_) -> {
                      ItemStack itemstack2 = itemstack;
-                     List<EnchantmentInstance> list = this.getEnchantmentList(p_327081_.enabledFeatures(), itemstack, p_39466_, this.costs[p_39466_]);
+                     List<EnchantmentInstance> list = this.getEnchantmentList(p_341512_.registryAccess(), itemstack, p_39466_, this.costs[p_39466_]);
 -                    if (!list.isEmpty()) {
 -                        p_39465_.onEnchantmentPerformed(itemstack, i);
 +                    // CraftBukkit start
@@ -185,7 +168,8 @@
 +                        }
 +                        // CraftBukkit end
                          if (itemstack.is(Items.BOOK)) {
-                             itemstack2 = itemstack.transmuteCopy(Items.ENCHANTED_BOOK, 1);
+-                            itemstack2 = itemstack.transmuteCopy(Items.ENCHANTED_BOOK);
++                            itemstack2 = itemstack.transmuteCopy(Items.ENCHANTED_BOOK, 1);
                              this.enchantSlots.setItem(0, itemstack2);
                          }
  
@@ -204,11 +188,16 @@
 +                        p_39465_.onEnchantmentPerformed(itemstack, i);
 +                        // CraftBukkit end
  
+-                        itemstack1.consume(i, p_39465_);
+-                        if (itemstack1.isEmpty()) {
+-                            this.enchantSlots.setItem(1, ItemStack.EMPTY);
 +                        // CraftBukkit - TODO: let plugins change this
-                         if (!p_39465_.hasInfiniteMaterials()) {
-                             itemstack1.shrink(i);
-                             if (itemstack1.isEmpty()) {
-@@ -172,7 +_,7 @@
++                        if (!p_39465_.hasInfiniteMaterials()) {
++                            itemstack1.shrink(i);
++                            if (itemstack1.isEmpty()) {
++                                this.enchantSlots.setItem(1, ItemStack.EMPTY);
++                            }
+                         }
  
                          p_39465_.awardStat(Stats.ENCHANT_ITEM);
                          if (p_39465_ instanceof ServerPlayer) {
@@ -217,16 +206,7 @@
                          }
  
                          this.enchantSlots.setChanged();
-@@ -190,7 +_,7 @@
-     }
- 
-     private List<EnchantmentInstance> getEnchantmentList(FeatureFlagSet p_330227_, ItemStack p_39472_, int p_39473_, int p_39474_) {
--        this.random.setSeed((long)(this.enchantmentSeed.get() + p_39473_));
-+        this.random.setSeed((long) (this.enchantmentSeed.get() + p_39473_));
-         List<EnchantmentInstance> list = EnchantmentHelper.selectEnchantment(p_330227_, this.random, p_39472_, p_39474_, false);
-         if (p_39472_.is(Items.BOOK) && list.size() > 1) {
-             list.remove(this.random.nextInt(list.size()));
-@@ -216,6 +_,7 @@
+@@ -226,6 +_,7 @@
  
      @Override
      public boolean stillValid(Player p_39463_) {
@@ -234,7 +214,7 @@
          return stillValid(this.access, p_39463_, Blocks.ENCHANTING_TABLE);
      }
  
-@@ -234,7 +_,7 @@
+@@ -244,7 +_,7 @@
                  if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                      return ItemStack.EMPTY;
                  }
@@ -243,7 +223,7 @@
                  if (!this.moveItemStackTo(itemstack1, 1, 2, true)) {
                      return ItemStack.EMPTY;
                  }
-@@ -263,4 +_,17 @@
+@@ -273,4 +_,17 @@
  
          return itemstack;
      }

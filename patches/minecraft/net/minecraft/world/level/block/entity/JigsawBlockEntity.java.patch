@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/block/entity/JigsawBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/JigsawBlockEntity.java
+@@ -27,9 +_,9 @@
+     public static final String SELECTION_PRIORITY = "selection_priority";
+     public static final String NAME = "name";
+     public static final String FINAL_STATE = "final_state";
+-    private ResourceLocation name = ResourceLocation.withDefaultNamespace("empty");
+-    private ResourceLocation target = ResourceLocation.withDefaultNamespace("empty");
+-    private ResourceKey<StructureTemplatePool> pool = ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.withDefaultNamespace("empty"));
++    private ResourceLocation name = new ResourceLocation("empty");
++    private ResourceLocation target = new ResourceLocation("empty");
++    private ResourceKey<StructureTemplatePool> pool = ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("empty"));
+     private JigsawBlockEntity.JointType joint = JigsawBlockEntity.JointType.ROLLABLE;
+     private String finalState = "minecraft:air";
+     private int placementPriority;
+@@ -110,9 +_,9 @@
+     @Override
+     protected void loadAdditional(CompoundTag p_331375_, HolderLookup.Provider p_332374_) {
+         super.loadAdditional(p_331375_, p_332374_);
+-        this.name = ResourceLocation.parse(p_331375_.getString("name"));
+-        this.target = ResourceLocation.parse(p_331375_.getString("target"));
+-        this.pool = ResourceKey.create(Registries.TEMPLATE_POOL, ResourceLocation.parse(p_331375_.getString("pool")));
++        this.name = new ResourceLocation(p_331375_.getString("name"));
++        this.target = new ResourceLocation(p_331375_.getString("target"));
++        this.pool = ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation(p_331375_.getString("pool")));
+         this.finalState = p_331375_.getString("final_state");
+         this.joint = JigsawBlockEntity.JointType.byName(p_331375_.getString("joint"))
+             .orElseGet(

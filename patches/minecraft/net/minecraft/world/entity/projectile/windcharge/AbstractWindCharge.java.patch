@@ -1,30 +1,24 @@
 --- a/net/minecraft/world/entity/projectile/windcharge/AbstractWindCharge.java
 +++ b/net/minecraft/world/entity/projectile/windcharge/AbstractWindCharge.java
-@@ -21,6 +_,7 @@
+@@ -23,7 +_,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
+-import net.minecraft.world.phys.Vec3;
 +import org.bukkit.event.entity.EntityRemoveEvent;
  
  public abstract class AbstractWindCharge extends AbstractHurtingProjectile implements ItemSupplier {
-     public static final AbstractWindCharge.WindChargeDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new AbstractWindCharge.WindChargeDamageCalculator();
-@@ -97,13 +_,14 @@
-     public void push(double p_328125_, double p_336037_, double p_328448_) {
-     }
- 
--    protected abstract void explode();
-+    public abstract void explode();
- 
-     @Override
-     protected void onHitBlock(BlockHitResult p_330277_) {
-         super.onHitBlock(p_330277_);
-         if (!this.level().isClientSide) {
-             this.explode();
+     public static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new SimpleExplosionDamageCalculator(
+@@ -113,6 +_,8 @@
+             Vec3 vec3 = Vec3.atLowerCornerOf(vec3i).multiply(0.25, 0.25, 0.25);
+             Vec3 vec31 = p_330277_.getLocation().add(vec3);
+             this.explode(vec31);
++
 +            this.putRemoveCause(EntityRemoveEvent.Cause.HIT); // CraftBukkit - add Bukkit remove cause
              this.discard();
          }
      }
-@@ -112,6 +_,7 @@
+@@ -121,6 +_,7 @@
      protected void onHit(HitResult p_328815_) {
          super.onHit(p_328815_);
          if (!this.level().isClientSide) {
@@ -32,10 +26,12 @@
              this.discard();
          }
      }
-@@ -146,6 +_,7 @@
+@@ -154,7 +_,8 @@
+     @Override
      public void tick() {
          if (!this.level().isClientSide && this.getBlockY() > this.level().getMaxBuildHeight() + 30) {
-             this.explode();
+-            this.explode(this.position());
++            this.explode();
 +            this.putRemoveCause(EntityRemoveEvent.Cause.OUT_OF_WORLD); // CraftBukkit - add Bukkit remove cause
              this.discard();
          } else {

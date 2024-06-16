@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Panda.java
 +++ b/net/minecraft/world/entity/animal/Panda.java
-@@ -57,6 +_,8 @@
+@@ -58,6 +_,8 @@
  import net.minecraft.world.entity.monster.Monster;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
@@ -9,7 +9,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.ServerLevelAccessor;
-@@ -69,6 +_,8 @@
+@@ -70,6 +_,8 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.Vec3;
@@ -18,7 +18,7 @@
  
  public class Panda extends Animal {
      private static final EntityDataAccessor<Integer> UNHAPPY_COUNTER = SynchedEntityData.defineId(Panda.class, EntityDataSerializers.INT);
-@@ -547,7 +_,8 @@
+@@ -552,7 +_,8 @@
  
      @Override
      protected void pickUpItem(ItemEntity p_29121_) {
@@ -28,7 +28,7 @@
              this.onItemPickup(p_29121_);
              ItemStack itemstack = p_29121_.getItem();
              this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
-@@ -882,7 +_,7 @@
+@@ -887,7 +_,7 @@
          @Override
          protected void alertOther(Mob p_29295_, LivingEntity p_29296_) {
              if (p_29295_ instanceof Panda && p_29295_.isAggressive()) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -6,9 +_,25 @@
+@@ -6,10 +_,25 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -10,8 +10,8 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
--    @Override
-+
+     private static final int DEFAULT_ACCURACY = 6;
+ 
 +    // CraftBukkit start // Mohist TODO super();
 +    private boolean dropper = true;
 +
@@ -23,11 +23,10 @@
 +        this.dropper = dropper;
 +    }
 +
-+	@Override
+     @Override
      public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
          ItemStack itemstack = this.execute(p_123391_, p_123392_);
-         this.playSound(p_123391_);
-@@ -20,9 +_,13 @@
+@@ -22,9 +_,13 @@
          Direction direction = p_301824_.state().getValue(DispenserBlock.FACING);
          Position position = DispenserBlock.getDispensePosition(p_301824_);
          ItemStack itemstack = p_123386_.split(1);
@@ -44,7 +43,7 @@
  
      public static void spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, Position p_123383_) {
          double d0 = p_123383_.x();
-@@ -43,6 +_,59 @@
+@@ -45,6 +_,59 @@
          );
          p_123379_.addFreshEntity(itementity);
      }
@@ -103,4 +102,4 @@
 +   // CraftBukkit end
  
      protected void playSound(BlockSource p_123384_) {
-         p_123384_.level().levelEvent(1000, p_123384_.pos(), 0);
+         playDefaultSound(p_123384_);

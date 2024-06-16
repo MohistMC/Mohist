@@ -1,8 +1,33 @@
 --- a/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-@@ -32,6 +_,10 @@
+@@ -1,7 +_,9 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.mojang.logging.LogUtils;
++import java.util.List;
+ import javax.annotation.Nullable;
++import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.Holder;
+@@ -13,8 +_,12 @@
+ import net.minecraft.nbt.NbtUtils;
+ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
++import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.EntitySelector;
++import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.Level;
+@@ -24,7 +_,12 @@
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import net.minecraft.world.level.levelgen.feature.Feature;
  import net.minecraft.world.level.levelgen.feature.configurations.EndGatewayConfiguration;
- import net.minecraft.world.phys.AABB;
++import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
@@ -11,7 +36,7 @@
  import org.slf4j.Logger;
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
-@@ -41,11 +_,11 @@
+@@ -34,11 +_,11 @@
      private static final int ATTENTION_INTERVAL = 2400;
      private static final int EVENT_COOLDOWN = 1;
      private static final int GATEWAY_HEIGHT_ABOVE_SURFACE = 10;
@@ -28,12 +53,108 @@
  
      public TheEndGatewayBlockEntity(BlockPos p_155813_, BlockState p_155814_) {
          super(BlockEntityType.END_GATEWAY, p_155813_, p_155814_);
-@@ -179,8 +_,33 @@
-                     entity = p_155832_.getRootVehicle();
-                 }
+@@ -72,19 +_,30 @@
+         }
+     }
  
--                entity.setPortalCooldown();
--                entity.teleportToWithTicket((double)blockpos1.getX() + 0.5, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5);
+-    public static void portalTick(Level p_344808_, BlockPos p_342267_, BlockState p_344200_, TheEndGatewayBlockEntity p_343419_) {
+-        boolean flag = p_343419_.isSpawning();
+-        boolean flag1 = p_343419_.isCoolingDown();
+-        p_343419_.age++;
++    public static void teleportTick(Level p_155845_, BlockPos p_155846_, BlockState p_155847_, TheEndGatewayBlockEntity p_155848_) {
++        boolean flag = p_155848_.isSpawning();
++        boolean flag1 = p_155848_.isCoolingDown();
++        p_155848_.age++;
+         if (flag1) {
+-            p_343419_.teleportCooldown--;
+-        } else if (p_343419_.age % 2400L == 0L) {
+-            triggerCooldown(p_344808_, p_342267_, p_344200_, p_343419_);
+-        }
+-
+-        if (flag != p_343419_.isSpawning() || flag1 != p_343419_.isCoolingDown()) {
+-            setChanged(p_344808_, p_342267_, p_344200_);
+-        }
++            p_155848_.teleportCooldown--;
++        } else {
++            List<Entity> list = p_155845_.getEntitiesOfClass(Entity.class, new AABB(p_155846_), TheEndGatewayBlockEntity::canEntityTeleport);
++            if (!list.isEmpty()) {
++                teleportEntity(p_155845_, p_155846_, p_155847_, list.get(p_155845_.random.nextInt(list.size())), p_155848_);
++            }
++
++            if (p_155848_.age % 2400L == 0L) {
++                triggerCooldown(p_155845_, p_155846_, p_155847_, p_155848_);
++            }
++        }
++
++        if (flag != p_155848_.isSpawning() || flag1 != p_155848_.isCoolingDown()) {
++            setChanged(p_155845_, p_155846_, p_155847_);
++        }
++    }
++
++    public static boolean canEntityTeleport(Entity p_59941_) {
++        return EntitySelector.NO_SPECTATORS.test(p_59941_) && !p_59941_.getRootVehicle().isOnPortalCooldown();
+     }
+ 
+     public boolean isSpawning() {
+@@ -112,7 +_,7 @@
+         return this.saveCustomOnly(p_332673_);
+     }
+ 
+-    public static void triggerCooldown(Level p_155850_, BlockPos p_155851_, BlockState p_155852_, TheEndGatewayBlockEntity p_155853_) {
++    private static void triggerCooldown(Level p_155850_, BlockPos p_155851_, BlockState p_155852_, TheEndGatewayBlockEntity p_155853_) {
+         if (!p_155850_.isClientSide) {
+             p_155853_.teleportCooldown = 40;
+             p_155850_.blockEvent(p_155851_, p_155852_.getBlock(), 1, 0);
+@@ -130,21 +_,67 @@
+         }
+     }
+ 
+-    @Nullable
+-    public Vec3 getPortalPosition(ServerLevel p_342945_, BlockPos p_345486_) {
+-        if (this.exitPortal == null && p_342945_.dimension() == Level.END) {
+-            BlockPos blockpos = findOrCreateValidTeleportPos(p_342945_, p_345486_);
+-            blockpos = blockpos.above(10);
+-            LOGGER.debug("Creating portal at {}", blockpos);
+-            spawnGatewayPortal(p_342945_, blockpos, EndGatewayConfiguration.knownExit(p_345486_, false));
+-            this.setExitPosition(blockpos, this.exactTeleport);
+-        }
+-
+-        if (this.exitPortal != null) {
+-            BlockPos blockpos1 = this.exactTeleport ? this.exitPortal : findExitPosition(p_342945_, this.exitPortal);
+-            return blockpos1.getBottomCenter();
+-        } else {
+-            return null;
++    public static void teleportEntity(Level p_155829_, BlockPos p_155830_, BlockState p_155831_, Entity p_155832_, TheEndGatewayBlockEntity p_155833_) {
++        if (p_155829_ instanceof ServerLevel && !p_155833_.isCoolingDown()) {
++            ServerLevel serverlevel = (ServerLevel)p_155829_;
++            p_155833_.teleportCooldown = 100;
++            if (p_155833_.exitPortal == null && p_155829_.dimension() == Level.END) {
++                BlockPos blockpos = findOrCreateValidTeleportPos(serverlevel, p_155830_);
++                blockpos = blockpos.above(10);
++                LOGGER.debug("Creating portal at {}", blockpos);
++                spawnGatewayPortal(serverlevel, blockpos, EndGatewayConfiguration.knownExit(p_155830_, false));
++                p_155833_.exitPortal = blockpos;
++            }
++
++            if (p_155833_.exitPortal != null) {
++                BlockPos blockpos1 = p_155833_.exactTeleport ? p_155833_.exitPortal : findExitPosition(p_155829_, p_155833_.exitPortal);
++                Entity entity;
++                if (p_155832_ instanceof ThrownEnderpearl) {
++                    Entity entity1 = ((ThrownEnderpearl)p_155832_).getOwner();
++                    if (entity1 instanceof ServerPlayer) {
++                        CriteriaTriggers.ENTER_BLOCK.trigger((ServerPlayer)entity1, p_155831_);
++                    }
++
++                    if (entity1 != null) {
++                        entity = entity1;
++                        p_155832_.discard();
++                    } else {
++                        entity = p_155832_;
++                    }
++                } else {
++                    entity = p_155832_.getRootVehicle();
++                }
++
 +            // CraftBukkit start - Fire PlayerTeleportEvent/EntityTeleportEvent
 +            if (entity instanceof ServerPlayer serverPlayer) {
 +               org.bukkit.craftbukkit.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
@@ -61,6 +182,16 @@
 +
 +            entity.setPortalCooldown();
 +            entity.teleportToWithTicket(teleEvent.getTo().getX(), teleEvent.getTo().getY(), teleEvent.getTo().getZ());
-             }
++            }
++
++            triggerCooldown(p_155829_, p_155830_, p_155831_, p_155833_);
+         }
+     }
  
-             triggerCooldown(p_155829_, p_155830_, p_155831_, p_155833_);
+@@ -271,6 +_,5 @@
+     public void setExitPosition(BlockPos p_59956_, boolean p_59957_) {
+         this.exactTeleport = p_59957_;
+         this.exitPortal = p_59956_;
+-        this.setChanged();
+     }
+ }

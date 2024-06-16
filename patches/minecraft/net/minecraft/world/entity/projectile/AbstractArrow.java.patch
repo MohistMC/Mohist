@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -31,6 +_,7 @@
- import net.minecraft.world.entity.MoverType;
- import net.minecraft.world.entity.SlotAccess;
- import net.minecraft.world.entity.ai.attributes.Attributes;
-+import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
+@@ -38,6 +_,7 @@
  import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
-@@ -45,6 +_,10 @@
++import net.minecraft.world.item.enchantment.Enchantments;
+ import net.minecraft.world.level.ClipContext;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+@@ -48,6 +_,10 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -19,11 +19,18 @@
  
  public abstract class AbstractArrow extends Projectile {
      private static final double ARROW_BASE_DAMAGE = 2.0;
-@@ -61,13 +_,14 @@
+@@ -55,6 +_,7 @@
+     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(AbstractArrow.class, EntityDataSerializers.BYTE);
+     private static final int FLAG_CRIT = 1;
+     private static final int FLAG_NOPHYSICS = 2;
++    private static final int FLAG_CROSSBOW = 4;
+     @Nullable
+     private BlockState lastState;
+     public boolean inGround;
+@@ -63,14 +_,16 @@
      public int shakeTime;
      public int life;
      private double baseDamage = 2.0;
--    public int knockback;
 +    private int knockback;
      private SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
      @Nullable
@@ -32,11 +39,13 @@
      private List<Entity> piercedAndKilledEntities;
 -    private ItemStack pickupItemStack = this.getDefaultPickupItem();
 +    public ItemStack pickupItemStack = this.getDefaultPickupItem();
+     @Nullable
+     private ItemStack firedFromWeapon = null;
 +    private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
  
      protected AbstractArrow(EntityType<? extends AbstractArrow> p_332730_, Level p_335646_) {
          super(p_332730_, p_335646_);
-@@ -167,7 +_,7 @@
+@@ -188,7 +_,7 @@
              this.shakeTime--;
          }
  
@@ -45,7 +54,7 @@
              this.clearFire();
          }
  
-@@ -203,11 +_,27 @@
+@@ -224,11 +_,27 @@
                      }
                  }
  
@@ -78,7 +87,7 @@
                      }
                  }
  
-@@ -218,6 +_,9 @@
+@@ -239,6 +_,9 @@
                  hitresult = null;
              }
  
@@ -88,7 +97,7 @@
              vec3 = this.getDeltaMovement();
              double d5 = vec3.x;
              double d6 = vec3.y;
-@@ -299,6 +_,7 @@
+@@ -320,6 +_,7 @@
      protected void tickDespawn() {
          this.life++;
          if (this.life >= 1200) {
@@ -96,7 +105,7 @@
              this.discard();
          }
      }
-@@ -329,6 +_,7 @@
+@@ -357,6 +_,7 @@
              }
  
              if (this.piercingIgnoreEntityIds.size() >= this.getPierceLevel() + 1) {
@@ -104,11 +113,11 @@
                  this.discard();
                  return;
              }
-@@ -355,7 +_,13 @@
+@@ -376,7 +_,13 @@
          boolean flag = entity.getType() == EntityType.ENDERMAN;
-         int k = entity.getRemainingFireTicks();
+         int i = entity.getRemainingFireTicks();
          if (this.isOnFire() && !flag) {
--            entity.igniteForSeconds(5);
+-            entity.igniteForSeconds(5.0F);
 +            // CraftBukkit start
 +            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
@@ -118,24 +127,8 @@
 +            // CraftBukkit end
          }
  
-         if (entity.hurt(damagesource, (float)i)) {
-@@ -401,6 +_,7 @@
- 
-             this.playSound(this.soundEvent, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
-             if (this.getPierceLevel() <= 0) {
-+                this.putRemoveCause(EntityRemoveEvent.Cause.HIT);
-                 this.discard();
-             }
-         } else {
-@@ -412,6 +_,7 @@
-                     this.spawnAtLocation(this.getPickupItem(), 0.1F);
-                 }
- 
-+                this.putRemoveCause(EntityRemoveEvent.Cause.HIT);
-                 this.discard();
-             }
-         }
-@@ -453,7 +_,7 @@
+         if (entity.hurt(damagesource, (float)j)) {
+@@ -504,7 +_,7 @@
  
      @Override
      protected boolean canHitEntity(Entity p_36743_) {
@@ -144,7 +137,7 @@
      }
  
      @Override
-@@ -515,8 +_,24 @@
+@@ -576,8 +_,24 @@
      @Override
      public void playerTouch(Player p_36766_) {
          if (!this.level().isClientSide && (this.inGround || this.isNoPhysics()) && this.shakeTime <= 0) {
@@ -170,3 +163,12 @@
                  this.discard();
              }
          }
+@@ -623,7 +_,7 @@
+         this.setFlag(1, p_36763_);
+     }
+ 
+-    private void setPierceLevel(byte p_36768_) {
++    public void setPierceLevel(byte p_36768_) {
+         this.entityData.set(PIERCE_LEVEL, p_36768_);
+     }
+ 

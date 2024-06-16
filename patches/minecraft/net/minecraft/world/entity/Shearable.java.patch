@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/Shearable.java
 +++ b/net/minecraft/world/entity/Shearable.java
-@@ -2,8 +_,15 @@
+@@ -2,8 +_,14 @@
  
  import net.minecraft.sounds.SoundSource;
  
 -public interface Shearable {
-+/** @deprecated Use {@link net.minecraftforge.common.IForgeShearable} */
 +public interface Shearable extends net.minecraftforge.common.IForgeShearable {
 +    /** @deprecated Use {@link net.minecraftforge.common.IForgeShearable#onSheared} */
      void shear(SoundSource p_21749_);

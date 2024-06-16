@@ -1,15 +1,91 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -88,8 +_,12 @@
+@@ -40,34 +_,28 @@
+ 
+     @Override
+     public CompletableFuture<ChunkEntities<Entity>> loadEntities(ChunkPos p_156551_) {
+-        if (this.emptyChunks.contains(p_156551_.toLong())) {
+-            return CompletableFuture.completedFuture(emptyChunk(p_156551_));
+-        } else {
+-            CompletableFuture<Optional<CompoundTag>> completablefuture = this.simpleRegionStorage.read(p_156551_);
+-            this.reportLoadFailureIfPresent(completablefuture, p_156551_);
+-            return completablefuture.thenApplyAsync(p_341886_ -> {
+-                if (p_341886_.isEmpty()) {
++        return this.emptyChunks.contains(p_156551_.toLong())
++            ? CompletableFuture.completedFuture(emptyChunk(p_156551_))
++            : this.simpleRegionStorage.read(p_156551_).thenApplyAsync(p_327420_ -> {
++                if (p_327420_.isEmpty()) {
+                     this.emptyChunks.add(p_156551_.toLong());
+                     return emptyChunk(p_156551_);
+                 } else {
+                     try {
+-                        ChunkPos chunkpos = readChunkPos(p_341886_.get());
++                        ChunkPos chunkpos = readChunkPos(p_327420_.get());
+                         if (!Objects.equals(p_156551_, chunkpos)) {
+                             LOGGER.error("Chunk file at {} is in the wrong location. (Expected {}, got {})", p_156551_, p_156551_, chunkpos);
+-                            this.level.getServer().reportMisplacedChunk(chunkpos, p_156551_, this.simpleRegionStorage.storageInfo());
+                         }
+                     } catch (Exception exception) {
+                         LOGGER.warn("Failed to parse chunk {} position info", p_156551_, exception);
+-                        this.level.getServer().reportChunkLoadFailure(exception, this.simpleRegionStorage.storageInfo(), p_156551_);
+                     }
+ 
+-                    CompoundTag compoundtag = this.simpleRegionStorage.upgradeChunkTag(p_341886_.get(), -1);
++                    CompoundTag compoundtag = this.simpleRegionStorage.upgradeChunkTag(p_327420_.get(), -1);
+                     ListTag listtag = compoundtag.getList("Entities", 10);
+                     List<Entity> list = EntityType.loadEntitiesRecursive(listtag, this.level).collect(ImmutableList.toImmutableList());
+                     return new ChunkEntities<>(p_156551_, list);
+                 }
+             }, this.entityDeserializerQueue::tell);
+-        }
+     }
+ 
+     private static ChunkPos readChunkPos(CompoundTag p_156571_) {
+@@ -88,38 +_,29 @@
+         ChunkPos chunkpos = p_156559_.getPos();
+         if (p_156559_.isEmpty()) {
+             if (this.emptyChunks.add(chunkpos.toLong())) {
+-                this.reportSaveFailureIfPresent(this.simpleRegionStorage.write(chunkpos, null), chunkpos);
++                this.simpleRegionStorage.write(chunkpos, null);
+             }
+         } else {
              ListTag listtag = new ListTag();
              p_156559_.getEntities().forEach(p_156567_ -> {
                  CompoundTag compoundtag1 = new CompoundTag();
 +                try {
                  if (p_156567_.save(compoundtag1)) {
                      listtag.add(compoundtag1);
-+                }
+                 }
 +                } catch (Exception e) {
 +                   LOGGER.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", p_156567_.getType(), e);
-                 }
++                }
              });
              CompoundTag compoundtag = NbtUtils.addCurrentDataVersion(new CompoundTag());
+             compoundtag.put("Entities", listtag);
+             writeChunkPos(compoundtag, chunkpos);
+-            this.reportSaveFailureIfPresent(this.simpleRegionStorage.write(chunkpos, compoundtag), chunkpos);
++            this.simpleRegionStorage.write(chunkpos, compoundtag).exceptionally(p_156554_ -> {
++                LOGGER.error("Failed to store chunk {}", chunkpos, p_156554_);
++                return null;
++            });
+             this.emptyChunks.remove(chunkpos.toLong());
+         }
+-    }
+-
+-    private void reportSaveFailureIfPresent(CompletableFuture<?> p_343321_, ChunkPos p_343781_) {
+-        p_343321_.exceptionally(p_341884_ -> {
+-            LOGGER.error("Failed to store entity chunk {}", p_343781_, p_341884_);
+-            this.level.getServer().reportChunkSaveFailure(p_341884_, this.simpleRegionStorage.storageInfo(), p_343781_);
+-            return null;
+-        });
+-    }
+-
+-    private void reportLoadFailureIfPresent(CompletableFuture<?> p_344653_, ChunkPos p_345292_) {
+-        p_344653_.exceptionally(p_341888_ -> {
+-            LOGGER.error("Failed to load entity chunk {}", p_345292_, p_341888_);
+-            this.level.getServer().reportChunkLoadFailure(p_341888_, this.simpleRegionStorage.storageInfo(), p_345292_);
+-            return null;
+-        });
+     }
+ 
+     @Override

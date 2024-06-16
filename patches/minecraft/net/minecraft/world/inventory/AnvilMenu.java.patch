@@ -1,21 +1,14 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -1,9 +_,9 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.inventory;
  
 +import com.mohistmc.mohist.MohistConfig;
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
  import javax.annotation.Nullable;
--import net.minecraft.core.BlockPos;
- import net.minecraft.core.Holder;
- import net.minecraft.core.component.DataComponents;
- import net.minecraft.network.chat.Component;
-@@ -17,9 +_,10 @@
- import net.minecraft.world.item.enchantment.Enchantment;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
- import net.minecraft.world.item.enchantment.ItemEnchantments;
--import net.minecraft.world.level.Level;
+@@ -20,6 +_,8 @@
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
@@ -122,6 +115,36 @@
                          return;
                      }
  
+@@ -172,17 +_,17 @@
+ 
+                     for (Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
+                         Holder<Enchantment> holder = entry.getKey();
+-                        int i2 = itemenchantments$mutable.getLevel(holder);
++                        Enchantment enchantment = holder.value();
++                        int i2 = itemenchantments$mutable.getLevel(enchantment);
+                         int j2 = entry.getIntValue();
+                         j2 = i2 == j2 ? j2 + 1 : Math.max(j2, i2);
+-                        Enchantment enchantment = holder.value();
+                         boolean flag1 = enchantment.canEnchant(itemstack);
+                         if (this.player.getAbilities().instabuild || itemstack.is(Items.ENCHANTED_BOOK)) {
+                             flag1 = true;
+                         }
+ 
+                         for (Holder<Enchantment> holder1 : itemenchantments$mutable.keySet()) {
+-                            if (!holder1.equals(holder) && !Enchantment.areCompatible(holder, holder1)) {
++                            if (!holder1.equals(holder) && !enchantment.isCompatibleWith(holder1.value())) {
+                                 flag1 = false;
+                                 i++;
+                             }
+@@ -196,7 +_,7 @@
+                                 j2 = enchantment.getMaxLevel();
+                             }
+ 
+-                            itemenchantments$mutable.set(holder, j2);
++                            itemenchantments$mutable.set(enchantment, j2);
+                             int l3 = enchantment.getAnvilCost();
+                             if (flag) {
+                                 l3 = Math.max(1, l3 / 2);
 @@ -210,8 +_,8 @@
                      }
  

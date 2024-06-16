@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
 +++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
-@@ -29,6 +_,8 @@
+@@ -30,6 +_,8 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -9,13 +9,10 @@
  
  public class ShulkerBullet extends Projectile {
      private static final double SPEED = 0.15;
-@@ -58,10 +_,21 @@
+@@ -59,6 +_,18 @@
          this.selectNextMoveDirection(p_37333_);
      }
  
--    @Override
--    public SoundSource getSoundSource() {
--        return SoundSource.HOSTILE;
 +    // CraftBukkit start
 +    public Entity getTarget() {
 +      return this.finalTarget;
@@ -25,16 +22,13 @@
 +        this.finalTarget = e;
 +        this.currentMoveDirection = Direction.UP;
 +        this.selectNextMoveDirection(Direction.Axis.X);
-     }
++    }
 +    // CraftBukkit end
 +
-+   public SoundSource getSoundSource() {
-+      return SoundSource.HOSTILE;
-+   }
- 
      @Override
-     protected void addAdditionalSaveData(CompoundTag p_37357_) {
-@@ -186,6 +_,7 @@
+     public SoundSource getSoundSource() {
+         return SoundSource.HOSTILE;
+@@ -187,6 +_,7 @@
      @Override
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
@@ -42,7 +36,7 @@
              this.discard();
          }
      }
-@@ -219,8 +_,8 @@
+@@ -220,8 +_,8 @@
              }
  
              HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
@@ -53,15 +47,15 @@
              }
          }
  
-@@ -294,6 +_,7 @@
-         if (flag) {
-             this.doEnchantDamageEffects(livingentity, entity);
+@@ -299,6 +_,7 @@
+             }
+ 
              if (entity instanceof LivingEntity livingentity1) {
 +                livingentity1.addEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
                  livingentity1.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200), MoreObjects.firstNonNull(entity1, this));
              }
          }
-@@ -311,9 +_,17 @@
+@@ -316,9 +_,17 @@
          this.level().gameEvent(GameEvent.ENTITY_DAMAGE, this.position(), GameEvent.Context.of(this));
      }
  
@@ -79,7 +73,7 @@
          this.destroy();
      }
  
-@@ -324,9 +_,15 @@
+@@ -329,9 +_,15 @@
  
      @Override
      public boolean hurt(DamageSource p_37338_, float p_37339_) {

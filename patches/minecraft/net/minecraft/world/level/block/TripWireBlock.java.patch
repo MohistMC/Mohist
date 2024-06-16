@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TripWireBlock.java
 +++ b/net/minecraft/world/level/block/TripWireBlock.java
-@@ -25,6 +_,8 @@
+@@ -25,11 +_,13 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -9,6 +9,13 @@
  
  public class TripWireBlock extends Block {
      public static final MapCodec<TripWireBlock> CODEC = RecordCodecBuilder.mapCodec(
+-        p_341834_ -> p_341834_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("hook").forGetter(p_312791_ -> p_312791_.hook), propertiesCodec())
+-                .apply(p_341834_, TripWireBlock::new)
++        p_312765_ -> p_312765_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("hook").forGetter(p_312791_ -> p_312791_.hook), propertiesCodec())
++                .apply(p_312765_, TripWireBlock::new)
+     );
+     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+     public static final BooleanProperty ATTACHED = BlockStateProperties.ATTACHED;
 @@ -104,7 +_,7 @@
  
      @Override

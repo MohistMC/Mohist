@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/StonecutterMenu.java
 +++ b/net/minecraft/world/inventory/StonecutterMenu.java
-@@ -16,6 +_,9 @@
+@@ -17,6 +_,9 @@
  import net.minecraft.world.item.crafting.StonecutterRecipe;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
@@ -10,7 +10,7 @@
  
  public class StonecutterMenu extends AbstractContainerMenu {
      public static final int INPUT_SLOT = 0;
-@@ -41,8 +_,30 @@
+@@ -42,8 +_,30 @@
              StonecutterMenu.this.slotsChanged(this);
              StonecutterMenu.this.slotUpdateListener.run();
          }
@@ -42,7 +42,7 @@
  
      public StonecutterMenu(int p_40294_, Inventory p_40295_) {
          this(p_40294_, p_40295_, ContainerLevelAccess.NULL);
-@@ -94,6 +_,7 @@
+@@ -95,6 +_,7 @@
          }
  
          this.addDataSlot(this.selectedRecipeIndex);
@@ -50,7 +50,7 @@
      }
  
      public int getSelectedRecipeIndex() {
-@@ -114,6 +_,7 @@
+@@ -115,6 +_,7 @@
  
      @Override
      public boolean stillValid(Player p_40307_) {

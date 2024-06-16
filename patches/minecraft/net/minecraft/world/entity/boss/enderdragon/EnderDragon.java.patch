@@ -8,10 +8,11 @@
  import net.minecraft.world.entity.EntitySelector;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.ExperienceOrb;
-@@ -36,8 +_,12 @@
+@@ -36,9 +_,12 @@
  import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
  import net.minecraft.world.entity.monster.Enemy;
  import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 +import net.minecraft.world.item.ItemStack;
 +import net.minecraft.world.level.Explosion;
  import net.minecraft.world.level.GameRules;
@@ -21,7 +22,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -46,64 +_,79 @@
+@@ -47,64 +_,79 @@
  import net.minecraft.world.level.pathfinder.BinaryHeap;
  import net.minecraft.world.level.pathfinder.Node;
  import net.minecraft.world.level.pathfinder.Path;
@@ -154,7 +155,7 @@
      }
  
      public void setDragonFight(EndDragonFight p_287736_) {
-@@ -171,8 +_,19 @@
+@@ -172,8 +_,19 @@
          return adouble;
      }
  
@@ -174,7 +175,7 @@
          this.processFlappingMovement();
          if (this.level().isClientSide) {
              this.setHealth(this.getHealth());
-@@ -399,9 +_,16 @@
+@@ -402,9 +_,16 @@
              if (this.nearestCrystal.isRemoved()) {
                  this.nearestCrystal = null;
              } else if (this.tickCount % 10 == 0 && this.getHealth() < this.getMaxHealth()) {
@@ -193,7 +194,7 @@
  
          if (this.random.nextInt(10) == 0) {
              List<EndCrystal> list = this.level().getEntitiesOfClass(EndCrystal.class, this.getBoundingBox().inflate(32.0));
-@@ -460,32 +_,82 @@
+@@ -468,32 +_,82 @@
          int j1 = Mth.floor(p_31140_.maxZ);
          boolean flag = false;
          boolean flag1 = false;
@@ -302,7 +303,7 @@
  
      public boolean hurt(EnderDragonPart p_31121_, DamageSource p_31122_, float p_31123_) {
          if (this.phaseManager.getCurrentPhase().getPhase() == EnderDragonPhase.DYING) {
-@@ -562,29 +_,49 @@
+@@ -570,29 +_,49 @@
          }
  
          if (this.level() instanceof ServerLevel) {
@@ -375,7 +376,7 @@
  
      public int findClosestNode() {
          if (this.nodes[0] == null) {
-@@ -908,6 +_,7 @@
+@@ -916,6 +_,7 @@
      @Override
      public void recreateFromPacket(ClientboundAddEntityPacket p_218825_) {
          super.recreateFromPacket(p_218825_);
@@ -383,7 +384,7 @@
          EnderDragonPart[] aenderdragonpart = this.getSubEntities();
  
          for (int i = 0; i < aenderdragonpart.length; i++) {
-@@ -923,5 +_,15 @@
+@@ -931,5 +_,15 @@
      @Override
      protected float sanitizeScale(float p_333905_) {
          return 1.0F;

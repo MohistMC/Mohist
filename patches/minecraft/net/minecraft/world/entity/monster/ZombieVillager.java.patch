@@ -17,7 +17,7 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.EquipmentSlot;
  import net.minecraft.world.entity.MobSpawnType;
-@@ -46,6 +_,9 @@
+@@ -48,6 +_,9 @@
  import net.minecraft.world.level.block.BedBlock;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
@@ -27,7 +27,7 @@
  import org.slf4j.Logger;
  
  public class ZombieVillager extends Zombie implements VillagerDataHolder {
-@@ -56,14 +_,15 @@
+@@ -58,14 +_,15 @@
      private static final int VILLAGER_CONVERSION_WAIT_MAX = 6000;
      private static final int MAX_SPECIAL_BLOCKS_COUNT = 14;
      private static final int SPECIAL_BLOCK_RADIUS = 4;
@@ -46,7 +46,7 @@
  
      public ZombieVillager(EntityType<? extends ZombieVillager> p_34368_, Level p_34369_) {
          super(p_34368_, p_34369_);
-@@ -132,13 +_,18 @@
+@@ -134,13 +_,18 @@
      public void tick() {
          if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
              int i = this.getConversionProgress();
@@ -66,7 +66,7 @@
      }
  
      @Override
-@@ -174,14 +_,16 @@
+@@ -176,14 +_,16 @@
          return this.getEntityData().get(DATA_CONVERTING_ID);
      }
  
@@ -91,12 +91,35 @@
  
      @Override
      public void handleEntityEvent(byte p_34372_) {
-@@ -204,18 +_,27 @@
+@@ -206,39 +_,57 @@
          }
      }
  
 -    private void finishConversion(ServerLevel p_34399_) {
 -        Villager villager = this.convertTo(EntityType.VILLAGER, false);
+-        if (villager != null) {
+-            for (EquipmentSlot equipmentslot : this.dropPreservedEquipment(p_341444_ -> !EnchantmentHelper.has(p_341444_, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE))) {
+-                SlotAccess slotaccess = villager.getSlot(equipmentslot.getIndex() + 300);
+-                slotaccess.set(this.getItemBySlot(equipmentslot));
+-            }
+-
+-            villager.setVillagerData(this.getVillagerData());
+-            if (this.gossips != null) {
+-                villager.setGossips(this.gossips);
+-            }
+-
+-            if (this.tradeOffers != null) {
+-                villager.setOffers(this.tradeOffers.copy());
+-            }
+-
+-            villager.setVillagerXp(this.villagerXp);
+-            villager.finalizeSpawn(p_34399_, p_34399_.getCurrentDifficultyAt(villager.blockPosition()), MobSpawnType.CONVERSION, null);
+-            villager.refreshBrain(p_34399_);
+-            if (this.conversionStarter != null) {
+-                Player player = p_34399_.getPlayerByUUID(this.conversionStarter);
+-                if (player instanceof ServerPlayer) {
+-                    CriteriaTriggers.CURED_ZOMBIE_VILLAGER.trigger((ServerPlayer)player, this, villager);
+-                    p_34399_.onReputationEvent(ReputationEventType.ZOMBIE_VILLAGER_CURED, player, villager);
 +   private void finishConversion(ServerLevel p_34399_) {
 +      // CraftBukkit start
 +      this.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED); // Mohist
@@ -106,16 +129,7 @@
 +         return;
 +      }
 +      // CraftBukkit end
- 
--        for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
--            ItemStack itemstack = this.getItemBySlot(equipmentslot);
--            if (!itemstack.isEmpty()) {
--                if (EnchantmentHelper.hasBindingCurse(itemstack)) {
--                    villager.getSlot(equipmentslot.getIndex() + 300).set(itemstack);
--                } else {
--                    double d0 = (double)this.getEquipmentDropChance(equipmentslot);
--                    if (d0 > 1.0) {
--                        this.spawnAtLocation(itemstack);
++
 +      for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
 +         ItemStack itemstack = this.getItemBySlot(equipmentslot);
 +         if (!itemstack.isEmpty()) {
@@ -127,13 +141,39 @@
 +                  this.forceDrops = true; // CraftBukkit
 +                  this.spawnAtLocation(itemstack);
 +                  this.forceDrops = false; // CraftBukkit
-                     }
++                    }
                  }
              }
-@@ -245,6 +_,7 @@
-         if (!this.isSilent()) {
-             p_34399_.levelEvent(null, 1027, this.blockPosition(), 0);
+-
+-            villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+-            if (!this.isSilent()) {
+-                p_34399_.levelEvent(null, 1027, this.blockPosition(), 0);
++        }
++
++        villager.setVillagerData(this.getVillagerData());
++        if (this.gossips != null) {
++            villager.setGossips(this.gossips);
++        }
++
++        if (this.tradeOffers != null) {
++            villager.setOffers(this.tradeOffers.copy());
++        }
++
++        villager.setVillagerXp(this.villagerXp);
++        villager.finalizeSpawn(p_34399_, p_34399_.getCurrentDifficultyAt(villager.blockPosition()), MobSpawnType.CONVERSION, null);
++        villager.refreshBrain(p_34399_);
++        if (this.conversionStarter != null) {
++            Player player = p_34399_.getPlayerByUUID(this.conversionStarter);
++            if (player instanceof ServerPlayer) {
++                CriteriaTriggers.CURED_ZOMBIE_VILLAGER.trigger((ServerPlayer)player, this, villager);
++                p_34399_.onReputationEvent(ReputationEventType.ZOMBIE_VILLAGER_CURED, player, villager);
+             }
          }
++
++        villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
++        if (!this.isSilent()) {
++            p_34399_.levelEvent(null, 1027, this.blockPosition(), 0);
++        }
 +        net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, villager);
      }
  

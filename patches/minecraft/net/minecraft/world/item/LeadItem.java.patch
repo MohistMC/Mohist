@@ -1,17 +1,22 @@
 --- a/net/minecraft/world/item/LeadItem.java
 +++ b/net/minecraft/world/item/LeadItem.java
-@@ -1,8 +_,10 @@
+@@ -1,12 +_,12 @@
  package net.minecraft.world.item;
  
  import java.util.List;
+-import java.util.function.Predicate;
 +import java.util.concurrent.atomic.AtomicReference;
  import net.minecraft.core.BlockPos;
  import net.minecraft.tags.BlockTags;
 +import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
- import net.minecraft.world.entity.Mob;
+-import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.Leashable;
++import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
-@@ -12,6 +_,9 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.context.UseOnContext;
+@@ -14,6 +_,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
@@ -21,7 +26,7 @@
  
  public class LeadItem extends Item {
      public LeadItem(Item.Properties p_42828_) {
-@@ -26,6 +_,7 @@
+@@ -28,6 +_,7 @@
          if (blockstate.is(BlockTags.FENCES)) {
              Player player = p_42834_.getPlayer();
              if (!level.isClientSide && player != null) {
@@ -29,7 +34,7 @@
                  bindPlayerMobs(player, level, blockpos);
              }
  
-@@ -35,6 +_,12 @@
+@@ -37,28 +_,60 @@
          }
      }
  
@@ -41,14 +46,17 @@
 +
      public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
          LeashFenceKnotEntity leashfenceknotentity = null;
-         double d0 = 7.0;
-@@ -43,13 +_,29 @@
-         int k = p_42832_.getZ();
-         AABB aabb = new AABB((double)i - 7.0, (double)j - 7.0, (double)k - 7.0, (double)i + 7.0, (double)j + 7.0, (double)k + 7.0);
-         List<Mob> list = p_42831_.getEntitiesOfClass(Mob.class, aabb, p_335530_ -> p_335530_.getLeashHolder() == p_42830_);
+-        List<Leashable> list = leashableInArea(p_42831_, p_42832_, p_341570_ -> p_341570_.getLeashHolder() == p_42830_);
 -
+-        for (Leashable leashable : list) {
++        double d0 = 7.0;
++        int i = p_42832_.getX();
++        int j = p_42832_.getY();
++        int k = p_42832_.getZ();
++        AABB aabb = new AABB((double)i - 7.0, (double)j - 7.0, (double)k - 7.0, (double)i + 7.0, (double)j + 7.0, (double)k + 7.0);
++        List<Mob> list = p_42831_.getEntitiesOfClass(Mob.class, aabb, p_335530_ -> p_335530_.getLeashHolder() == p_42830_);
 +        InteractionHand enumhand = mohist$bindPlayerMobs_hand.getAndSet(InteractionHand.MAIN_HAND);
-         for (Mob mob : list) {
++        for (Mob mob : list) {
              if (leashfenceknotentity == null) {
                  leashfenceknotentity = LeashFenceKnotEntity.getOrCreateKnot(p_42831_, p_42832_);
 +                // CraftBukkit start - fire HangingPlaceEvent
@@ -64,16 +72,17 @@
                  leashfenceknotentity.playPlacementSound();
              }
  
+-            leashable.setLeashedTo(leashfenceknotentity, true);
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, enumhand).isCancelled()) {
 +                continue;
 +            }
 +            // CraftBukkit end
 +
-             mob.setLeashedTo(leashfenceknotentity, true);
++            mob.setLeashedTo(leashfenceknotentity, true);
          }
  
-@@ -57,6 +_,11 @@
+         if (!list.isEmpty()) {
              p_42831_.gameEvent(GameEvent.BLOCK_ATTACH, p_42832_, GameEvent.Context.of(p_42830_));
              return InteractionResult.SUCCESS;
          } else {
@@ -85,3 +94,10 @@
              return InteractionResult.PASS;
          }
      }
+-
+-    public static List<Leashable> leashableInArea(Level p_342470_, BlockPos p_343183_, Predicate<Leashable> p_342293_) {
++	
++	public static List<Leashable> leashableInArea(Level p_342470_, BlockPos p_343183_, Predicate<Leashable> p_342293_) {
+         double d0 = 7.0;
+         int i = p_343183_.getX();
+         int j = p_343183_.getY();

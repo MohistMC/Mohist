@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.mojang.logging.LogUtils;
++import com.mojang.serialization.Dynamic;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import java.util.OptionalInt;
+@@ -12,7 +_,6 @@
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.NbtOps;
+ import net.minecraft.nbt.Tag;
+-import net.minecraft.resources.RegistryOps;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvent;
+@@ -83,11 +_,10 @@
+             this.warningLevel = p_327746_.getInt("warning_level");
+         }
+ 
+-        RegistryOps<Tag> registryops = p_335650_.createSerializationContext(NbtOps.INSTANCE);
+         if (p_327746_.contains("listener", 10)) {
+             VibrationSystem.Data.CODEC
+-                .parse(registryops, p_327746_.getCompound("listener"))
+-                .resultOrPartial(p_341844_ -> LOGGER.error("Failed to parse vibration listener for Sculk Shrieker: '{}'", p_341844_))
++                .parse(new Dynamic<>(NbtOps.INSTANCE, p_327746_.getCompound("listener")))
++                .resultOrPartial(LOGGER::error)
+                 .ifPresent(p_281147_ -> this.vibrationData = p_281147_);
+         }
+     }
+@@ -96,10 +_,9 @@
+     protected void saveAdditional(CompoundTag p_222878_, HolderLookup.Provider p_330845_) {
+         super.saveAdditional(p_222878_, p_330845_);
+         p_222878_.putInt("warning_level", this.warningLevel);
+-        RegistryOps<Tag> registryops = p_330845_.createSerializationContext(NbtOps.INSTANCE);
+         VibrationSystem.Data.CODEC
+-            .encodeStart(registryops, this.vibrationData)
+-            .resultOrPartial(p_341843_ -> LOGGER.error("Failed to encode vibration listener for Sculk Shrieker: '{}'", p_341843_))
++            .encodeStart(NbtOps.INSTANCE, this.vibrationData)
++            .resultOrPartial(LOGGER::error)
+             .ifPresent(p_222871_ -> p_222878_.put("listener", p_222871_));
+     }
+ 

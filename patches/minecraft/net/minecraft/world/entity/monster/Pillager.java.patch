@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Pillager.java
 +++ b/net/minecraft/world/entity/monster/Pillager.java
-@@ -48,7 +_,7 @@
+@@ -52,7 +_,7 @@
      private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Pillager.class, EntityDataSerializers.BOOLEAN);
      private static final int INVENTORY_SIZE = 5;
      private static final int SLOT_OFFSET = 300;
@@ -9,7 +9,7 @@
  
      public Pillager(EntityType<? extends Pillager> p_33262_, Level p_33263_) {
          super(p_33262_, p_33263_);
-@@ -112,7 +_,7 @@
+@@ -116,7 +_,7 @@
      public AbstractIllager.IllagerArmPose getArmPose() {
          if (this.isChargingCrossbow()) {
              return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;

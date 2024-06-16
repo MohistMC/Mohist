@@ -7,8 +7,11 @@
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
-@@ -11,8 +_,25 @@
- import net.minecraft.world.inventory.CraftingContainer;
+@@ -8,10 +_,28 @@
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
+ import net.minecraft.network.codec.StreamCodec;
++import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
@@ -18,7 +21,7 @@
 +import org.bukkit.inventory.RecipeChoice;
  
 -public class ShapedRecipe implements CraftingRecipe {
-+public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
++public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingInput> {
 +    static int MAX_WIDTH = 3;
 +    static int MAX_HEIGHT = 3;
 +    /**
@@ -34,7 +37,7 @@
      final ShapedRecipePattern pattern;
      final ItemStack result;
      final String group;
-@@ -31,6 +_,70 @@
+@@ -30,6 +_,70 @@
          this(p_272759_, p_273506_, p_310709_, p_272852_, true);
      }
  
@@ -105,7 +108,7 @@
      @Override
      public RecipeSerializer<?> getSerializer() {
          return RecipeSerializer.SHAPED_RECIPE;
-@@ -83,9 +_,19 @@
+@@ -82,9 +_,19 @@
      }
  
      @Override

@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/ChunkPos.java
++++ b/net/minecraft/world/level/ChunkPos.java
+@@ -153,11 +_,7 @@
+     }
+ 
+     public int getChessboardDistance(ChunkPos p_45595_) {
+-        return this.getChessboardDistance(p_45595_.x, p_45595_.z);
+-    }
+-
+-    public int getChessboardDistance(int p_343403_, int p_344625_) {
+-        return Math.max(Math.abs(this.x - p_343403_), Math.abs(this.z - p_344625_));
++        return Math.max(Math.abs(this.x - p_45595_.x), Math.abs(this.z - p_45595_.z));
+     }
+ 
+     public int distanceSquared(ChunkPos p_297557_) {

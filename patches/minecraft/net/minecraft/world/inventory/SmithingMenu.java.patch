@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/inventory/SmithingMenu.java
 +++ b/net/minecraft/world/inventory/SmithingMenu.java
-@@ -3,7 +_,6 @@
- import java.util.List;
- import java.util.OptionalInt;
- import javax.annotation.Nullable;
--import net.minecraft.core.BlockPos;
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
-@@ -13,6 +_,10 @@
+@@ -14,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +11,7 @@
  
  public class SmithingMenu extends ItemCombinerMenu {
      public static final int TEMPLATE_SLOT = 0;
-@@ -29,6 +_,10 @@
+@@ -30,6 +_,10 @@
      private RecipeHolder<SmithingRecipe> selectedRecipe;
      private final List<RecipeHolder<SmithingRecipe>> recipes;
  
@@ -30,46 +22,26 @@
      public SmithingMenu(int p_40245_, Inventory p_40246_) {
          this(p_40245_, p_40246_, ContainerLevelAccess.NULL);
      }
-@@ -81,21 +_,23 @@
+@@ -91,14 +_,16 @@
+         SmithingRecipeInput smithingrecipeinput = this.createRecipeInput();
+         List<RecipeHolder<SmithingRecipe>> list = this.level.getRecipeManager().getRecipesFor(RecipeType.SMITHING, smithingrecipeinput, this.level);
+         if (list.isEmpty()) {
+-            this.resultSlots.setItem(0, ItemStack.EMPTY);
++         	CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+         } else {
+             RecipeHolder<SmithingRecipe> recipeholder = list.get(0);
+             ItemStack itemstack = recipeholder.value().assemble(smithingrecipeinput, this.level.registryAccess());
+             if (itemstack.isItemEnabled(this.level.enabledFeatures())) {
+                 this.selectedRecipe = recipeholder;
+                 this.resultSlots.setRecipeUsed(recipeholder);
+-                this.resultSlots.setItem(0, itemstack);
++            	// CraftBukkit start
++            	CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
++            	// CraftBukkit end
+             }
          }
      }
- 
--    @Override
--    public void createResult() {
--        List<RecipeHolder<SmithingRecipe>> list = this.level.getRecipeManager().getRecipesFor(RecipeType.SMITHING, this.inputSlots, this.level);
--        if (list.isEmpty()) {
--            this.resultSlots.setItem(0, ItemStack.EMPTY);
--        } else {
--            RecipeHolder<SmithingRecipe> recipeholder = list.get(0);
--            ItemStack itemstack = recipeholder.value().assemble(this.inputSlots, this.level.registryAccess());
--            if (itemstack.isItemEnabled(this.level.enabledFeatures())) {
--                this.selectedRecipe = recipeholder;
--                this.resultSlots.setRecipeUsed(recipeholder);
--                this.resultSlots.setItem(0, itemstack);
--            }
--        }
--    }
-+   public void createResult() {
-+      List<RecipeHolder<SmithingRecipe>> list = this.level.getRecipeManager().getRecipesFor(RecipeType.SMITHING, this.inputSlots, this.level);
-+      if (list.isEmpty()) {
-+         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-+      } else {
-+         RecipeHolder<SmithingRecipe> recipeholder = list.get(0);
-+         ItemStack itemstack = recipeholder.value().assemble(this.inputSlots, this.level.registryAccess());
-+         if (itemstack.isItemEnabled(this.level.enabledFeatures())) {
-+            this.selectedRecipe = recipeholder;
-+            this.resultSlots.setRecipeUsed(recipeholder);
-+            // CraftBukkit start
-+            CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
-+            // CraftBukkit end
-+         }
-+      }
-+
-+   }
- 
-     @Override
-     public int getSlotToQuickMoveTo(ItemStack p_266739_) {
-@@ -129,4 +_,18 @@
+@@ -135,4 +_,18 @@
              .filter(p_296883_ -> !this.getSlot(p_296883_).hasItem())
              .findFirst();
      }

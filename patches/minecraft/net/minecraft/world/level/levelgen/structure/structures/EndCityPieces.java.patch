@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
++++ b/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
+@@ -372,7 +_,7 @@
+         }
+ 
+         private static ResourceLocation makeResourceLocation(String p_227503_) {
+-            return ResourceLocation.withDefaultNamespace("end_city/" + p_227503_);
++            return new ResourceLocation("end_city/" + p_227503_);
+         }
+ 
+         @Override

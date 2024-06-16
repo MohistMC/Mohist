@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/chunk/EmptyLevelChunk.java
++++ b/net/minecraft/world/level/chunk/EmptyLevelChunk.java
+@@ -71,11 +_,6 @@
+     }
+ 
+     @Override
+-    public boolean isSectionEmpty(int p_344147_) {
+-        return true;
+-    }
+-
+-    @Override
+     public FullChunkStatus getFullStatus() {
+         return FullChunkStatus.FULL;
+     }

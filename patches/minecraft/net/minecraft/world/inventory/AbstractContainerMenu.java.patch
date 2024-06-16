@@ -11,11 +11,8 @@
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
-@@ -17,9 +_,11 @@
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
- import net.minecraft.ReportedException;
--import net.minecraft.core.BlockPos;
+@@ -20,6 +_,9 @@
+ import net.minecraft.core.BlockPos;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.registries.BuiltInRegistries;
 +import net.minecraft.network.chat.Component;
@@ -24,11 +21,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -28,9 +_,16 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.flag.FeatureFlagSet;
- import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.level.Level;
+@@ -31,6 +_,14 @@
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
 +import net.minecraftforge.registries.ForgeRegistries;
@@ -91,26 +85,7 @@
      protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
          this.menuType = p_38851_;
          this.containerId = p_38852_;
-@@ -286,7 +_,7 @@
-             CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
-             CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
-             crashreportcategory.setDetail(
--                "Menu Type", () -> this.menuType != null ? BuiltInRegistries.MENU.getKey(this.menuType).toString() : "<no type>"
-+                    "Menu Type", () -> this.menuType != null ? BuiltInRegistries.MENU.getKey(this.menuType).toString() : "<no type>"
-             );
-             crashreportcategory.setDetail("Menu Class", () -> this.getClass().getCanonicalName());
-             crashreportcategory.setDetail("Slot Count", this.slots.size());
-@@ -318,14 +_,14 @@
-                 Slot slot = this.slots.get(p_150431_);
-                 ItemStack itemstack = this.getCarried();
-                 if (canItemQuickReplace(slot, itemstack, true)
--                    && slot.mayPlace(itemstack)
--                    && (this.quickcraftType == 2 || itemstack.getCount() > this.quickcraftSlots.size())
--                    && this.canDragTo(slot)) {
-+                        && slot.mayPlace(itemstack)
-+                        && (this.quickcraftType == 2 || itemstack.getCount() > this.quickcraftSlots.size())
-+                        && this.canDragTo(slot)) {
-                     this.quickcraftSlots.add(slot);
+@@ -325,7 +_,7 @@
                  }
              } else if (this.quickcraftStatus == 2) {
                  if (!this.quickcraftSlots.isEmpty()) {
@@ -204,69 +179,15 @@
                      } else {
                          p_150434_.drop(this.getCarried().split(1), true);
                      }
-@@ -401,38 +_,48 @@
+@@ -401,6 +_,7 @@
                  ItemStack itemstack10 = this.getCarried();
                  p_150434_.updateTutorialInventoryAction(itemstack10, slot7.getItem(), clickaction);
                  if (!this.tryItemClickBehaviourOverride(p_150434_, clickaction, slot7, itemstack9, itemstack10)) {
--                    if (itemstack9.isEmpty()) {
--                        if (!itemstack10.isEmpty()) {
--                            int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
--                            this.setCarried(slot7.safeInsert(itemstack10, i3));
--                        }
--                    } else if (slot7.mayPickup(p_150434_)) {
--                        if (itemstack10.isEmpty()) {
--                            int j3 = clickaction == ClickAction.PRIMARY ? itemstack9.getCount() : (itemstack9.getCount() + 1) / 2;
--                            Optional<ItemStack> optional1 = slot7.tryRemove(j3, Integer.MAX_VALUE, p_150434_);
--                            optional1.ifPresent(p_150421_ -> {
--                                this.setCarried(p_150421_);
--                                slot7.onTake(p_150434_, p_150421_);
--                            });
--                        } else if (slot7.mayPlace(itemstack10)) {
--                            if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
--                                int k3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
--                                this.setCarried(slot7.safeInsert(itemstack10, k3));
--                            } else if (itemstack10.getCount() <= slot7.getMaxStackSize(itemstack10)) {
--                                this.setCarried(itemstack9);
--                                slot7.setByPlayer(itemstack10);
--                            }
--                        } else if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
--                            Optional<ItemStack> optional = slot7.tryRemove(itemstack9.getCount(), itemstack10.getMaxStackSize() - itemstack10.getCount(), p_150434_);
--                            optional.ifPresent(p_150428_ -> {
--                                itemstack10.grow(p_150428_.getCount());
--                                slot7.onTake(p_150434_, p_150428_);
--                            });
--                        }
--                    }
 +                    if (!net.minecraftforge.event.ForgeEventFactory.onItemStackedOn(itemstack9, itemstack10, slot7, clickaction, p_150434_, createCarriedSlotAccess()))
-+                        if (itemstack9.isEmpty()) {
-+                            if (!itemstack10.isEmpty()) {
-+                                int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
-+                                this.setCarried(slot7.safeInsert(itemstack10, i3));
-+                            }
-+                        } else if (slot7.mayPickup(p_150434_)) {
-+                            if (itemstack10.isEmpty()) {
-+                                int j3 = clickaction == ClickAction.PRIMARY ? itemstack9.getCount() : (itemstack9.getCount() + 1) / 2;
-+                                Optional<ItemStack> optional1 = slot7.tryRemove(j3, Integer.MAX_VALUE, p_150434_);
-+                                optional1.ifPresent(p_150421_ -> {
-+                                    this.setCarried(p_150421_);
-+                                    slot7.onTake(p_150434_, p_150421_);
-+                                });
-+                            } else if (slot7.mayPlace(itemstack10)) {
-+                                if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
-+                                    int k3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
-+                                    this.setCarried(slot7.safeInsert(itemstack10, k3));
-+                                } else if (itemstack10.getCount() <= slot7.getMaxStackSize(itemstack10)) {
-+                                    this.setCarried(itemstack9);
-+                                    slot7.setByPlayer(itemstack10);
-+                                }
-+                            } else if (ItemStack.isSameItemSameComponents(itemstack9, itemstack10)) {
-+                                Optional<ItemStack> optional = slot7.tryRemove(itemstack9.getCount(), itemstack10.getMaxStackSize() - itemstack10.getCount(), p_150434_);
-+                                optional.ifPresent(p_150428_ -> {
-+                                    itemstack10.grow(p_150428_.getCount());
-+                                    slot7.onTake(p_150434_, p_150428_);
-+                                });
-+                            }
-+                        }
+                     if (itemstack9.isEmpty()) {
+                         if (!itemstack10.isEmpty()) {
+                             int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
+@@ -433,6 +_,15 @@
                  }
  
                  slot7.setChanged();
@@ -282,18 +203,7 @@
              }
          } else if (p_150433_ == ClickType.SWAP && (p_150432_ >= 0 && p_150432_ < 9 || p_150432_ == 40)) {
              ItemStack itemstack2 = inventory.getItem(p_150432_);
-@@ -508,8 +_,8 @@
-     private boolean tryItemClickBehaviourOverride(Player p_249615_, ClickAction p_250300_, Slot p_249384_, ItemStack p_251073_, ItemStack p_252026_) {
-         FeatureFlagSet featureflagset = p_249615_.level().enabledFeatures();
-         return p_252026_.isItemEnabled(featureflagset) && p_252026_.overrideStackedOnOther(p_249384_, p_250300_, p_249615_)
--            ? true
--            : p_251073_.isItemEnabled(featureflagset) && p_251073_.overrideOtherStackedOnMe(p_252026_, p_249384_, p_250300_, p_249615_, this.createCarriedSlotAccess());
-+                ? true
-+                : p_251073_.isItemEnabled(featureflagset) && p_251073_.overrideOtherStackedOnMe(p_252026_, p_249384_, p_250300_, p_249615_, this.createCarriedSlotAccess());
-     }
- 
-     private SlotAccess createCarriedSlotAccess() {
-@@ -535,19 +_,21 @@
+@@ -535,15 +_,17 @@
          if (p_38940_ instanceof ServerPlayer) {
              ItemStack itemstack = this.getCarried();
              if (!itemstack.isEmpty()) {
@@ -313,11 +223,6 @@
      }
  
      protected void clearContainer(Player p_150412_, Container p_150413_) {
--        if (!p_150412_.isAlive() || p_150412_ instanceof ServerPlayer && ((ServerPlayer)p_150412_).hasDisconnected()) {
-+        if (!p_150412_.isAlive() || p_150412_ instanceof ServerPlayer && ((ServerPlayer) p_150412_).hasDisconnected()) {
-             for (int j = 0; j < p_150413_.getContainerSize(); j++) {
-                 p_150412_.drop(p_150413_.removeItemNoUpdate(j), false);
-             }
 @@ -598,7 +_,7 @@
                  ItemStack itemstack = slot.getItem();
                  if (!itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
@@ -327,46 +232,6 @@
                      if (j <= k) {
                          p_38904_.setCount(0);
                          itemstack.setCount(j);
-@@ -677,13 +_,13 @@
-     public static boolean canItemQuickReplace(@Nullable Slot p_38900_, ItemStack p_38901_, boolean p_38902_) {
-         boolean flag = p_38900_ == null || !p_38900_.hasItem();
-         return !flag && ItemStack.isSameItemSameComponents(p_38901_, p_38900_.getItem())
--            ? p_38900_.getItem().getCount() + (p_38902_ ? 0 : p_38901_.getCount()) <= p_38901_.getMaxStackSize()
--            : flag;
-+                ? p_38900_.getItem().getCount() + (p_38902_ ? 0 : p_38901_.getCount()) <= p_38901_.getMaxStackSize()
-+                : flag;
-     }
- 
-     public static int getQuickCraftPlaceCount(Set<Slot> p_279393_, int p_279288_, ItemStack p_279172_) {
-         return switch (p_279288_) {
--            case 0 -> Mth.floor((float)p_279172_.getCount() / (float)p_279393_.size());
-+            case 0 -> Mth.floor((float) p_279172_.getCount() / (float) p_279393_.size());
-             case 1 -> 1;
-             case 2 -> p_279172_.getMaxStackSize();
-             default -> p_279172_.getCount();
-@@ -695,7 +_,7 @@
-     }
- 
-     public static int getRedstoneSignalFromBlockEntity(@Nullable BlockEntity p_38919_) {
--        return p_38919_ instanceof Container ? getRedstoneSignalFromContainer((Container)p_38919_) : 0;
-+        return p_38919_ instanceof Container ? getRedstoneSignalFromContainer((Container) p_38919_) : 0;
-     }
- 
-     public static int getRedstoneSignalFromContainer(@Nullable Container p_38939_) {
-@@ -707,11 +_,11 @@
-             for (int i = 0; i < p_38939_.getContainerSize(); i++) {
-                 ItemStack itemstack = p_38939_.getItem(i);
-                 if (!itemstack.isEmpty()) {
--                    f += (float)itemstack.getCount() / (float)p_38939_.getMaxStackSize(itemstack);
-+                    f += (float) itemstack.getCount() / (float) p_38939_.getMaxStackSize(itemstack);
-                 }
-             }
- 
--            f /= (float)p_38939_.getContainerSize();
-+            f /= (float) p_38939_.getContainerSize();
-             return Mth.lerpDiscrete(f, 0, 15);
-         }
-     }
 @@ -721,6 +_,11 @@
      }
  

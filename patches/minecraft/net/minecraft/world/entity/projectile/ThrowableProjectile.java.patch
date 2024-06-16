@@ -1,13 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/ThrowableProjectile.java
 +++ b/net/minecraft/world/entity/projectile/ThrowableProjectile.java
-@@ -60,8 +_,8 @@
-             }
+@@ -42,7 +_,7 @@
+     public void tick() {
+         super.tick();
+         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+-        if (hitresult.getType() != HitResult.Type.MISS) {
++        if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+             this.hitTargetOrDeflectSelf(hitresult);
          }
  
--        if (hitresult.getType() != HitResult.Type.MISS && !flag) {
--            this.hitTargetOrDeflectSelf(hitresult);
-+        if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-+            this.preHitTargetOrDeflectSelf(hitresult); // CraftBukkit - projectile hit event
-         }
- 
-         this.checkInsideBlocks();

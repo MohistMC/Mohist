@@ -1,6 +1,6 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
-@@ -18,6 +_,7 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.util.MemoryReserve;
  import org.apache.commons.io.IOUtils;
  import org.apache.commons.lang3.ArrayUtils;
@@ -8,7 +8,7 @@
  import org.slf4j.Logger;
  
  public class CrashReport {
-@@ -35,7 +_,8 @@
+@@ -34,7 +_,8 @@
      public CrashReport(String p_127509_, Throwable p_127510_) {
          this.title = p_127509_;
          this.exception = p_127510_;
@@ -18,7 +18,7 @@
  
      public String getTitle() {
          return this.title;
-@@ -59,14 +_,9 @@
+@@ -58,14 +_,9 @@
          if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
              p_127520_.append("-- Head --\n");
              p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
@@ -36,7 +36,7 @@
          }
  
          for (CrashReportCategory crashreportcategory : this.details) {
-@@ -74,6 +_,7 @@
+@@ -73,6 +_,7 @@
              p_127520_.append("\n\n");
          }
  
@@ -44,7 +44,7 @@
          this.systemReport.appendToCrashReportString(p_127520_);
      }
  
-@@ -93,18 +_,7 @@
+@@ -92,18 +_,7 @@
              throwable.setStackTrace(this.exception.getStackTrace());
          }
  
@@ -63,4 +63,4 @@
 +        return net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(throwable);
      }
  
-     public String getFriendlyReport() {
+     public String getFriendlyReport(ReportType p_343869_, List<String> p_342487_) {

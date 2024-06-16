@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -77,12 +_,15 @@
+@@ -18,6 +_,7 @@
+ import java.util.Set;
+ import java.util.Map.Entry;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.Executor;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
+@@ -76,12 +_,15 @@
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
  import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -18,7 +26,7 @@
  
      public ChunkGenerator(BiomeSource p_256133_) {
          this(p_256133_, p_223234_ -> p_223234_.value().getGenerationSettings());
-@@ -91,11 +_,16 @@
+@@ -90,11 +_,16 @@
      public ChunkGenerator(BiomeSource p_255838_, Function<Holder<Biome>, BiomeGenerationSettings> p_256216_) {
          this.biomeSource = p_255838_;
          this.generationSettingsGetter = p_256216_;
@@ -36,7 +44,18 @@
      public void validate() {
          this.featuresPerStep.get();
      }
-@@ -314,6 +_,31 @@
+@@ -109,7 +_,9 @@
+         return BuiltInRegistries.CHUNK_GENERATOR.getResourceKey(this.codec());
+     }
+ 
+-    public CompletableFuture<ChunkAccess> createBiomes(RandomState p_223160_, Blender p_223161_, StructureManager p_223162_, ChunkAccess p_223163_) {
++    public CompletableFuture<ChunkAccess> createBiomes(
++        Executor p_223159_, RandomState p_223160_, Blender p_223161_, StructureManager p_223162_, ChunkAccess p_223163_
++    ) {
+         return CompletableFuture.supplyAsync(Util.wrapThreadWithTaskName("init_biomes", () -> {
+             p_223163_.fillBiomesFromNoise(this.biomeSource, p_223160_.sampler());
+             return p_223163_;
+@@ -311,6 +_,31 @@
          }
      }
  
@@ -68,7 +87,7 @@
      public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
          ChunkPos chunkpos = p_223088_.getPos();
          if (!SharedConstants.debugVoidTerrain(chunkpos)) {
-@@ -547,6 +_,14 @@
+@@ -544,6 +_,14 @@
          Predicate<Holder<Biome>> predicate = holderset::contains;
          StructureStart structurestart = structure.generate(p_223107_, this, this.biomeSource, p_223108_, p_223109_, p_223110_, p_223112_, i, p_223111_, predicate);
          if (structurestart.isValid()) {
@@ -83,3 +102,14 @@
              p_223106_.setStartForStructure(p_223113_, structure, structurestart, p_223111_);
              return true;
          } else {
+@@ -591,7 +_,9 @@
+         }
+     }
+ 
+-    public abstract CompletableFuture<ChunkAccess> fillFromNoise(Blender p_223210_, RandomState p_223211_, StructureManager p_223212_, ChunkAccess p_223213_);
++    public abstract CompletableFuture<ChunkAccess> fillFromNoise(
++        Executor p_223209_, Blender p_223210_, RandomState p_223211_, StructureManager p_223212_, ChunkAccess p_223213_
++    );
+ 
+     public abstract int getSeaLevel();
+ 

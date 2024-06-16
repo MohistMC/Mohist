@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/SkullBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SkullBlockEntity.java
+@@ -143,7 +_,7 @@
+         }
+ 
+         if (p_335831_.contains("custom_name", 8)) {
+-            this.customName = parseCustomNameSafe(p_335831_.getString("custom_name"), p_329643_);
++            this.customName = Component.Serializer.fromJson(p_335831_.getString("custom_name"), p_329643_);
+         } else {
+             this.customName = null;
+         }

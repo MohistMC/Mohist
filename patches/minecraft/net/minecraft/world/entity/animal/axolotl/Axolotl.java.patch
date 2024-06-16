@@ -15,16 +15,7 @@
  import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.VariantHolder;
  import net.minecraft.world.entity.ai.Brain;
-@@ -66,7 +_,7 @@
- import org.joml.Vector3f;
- 
- public class Axolotl extends Animal implements LerpingModel, VariantHolder<Axolotl.Variant>, Bucketable {
--    public static final int TOTAL_PLAYDEAD_TIME = 200;
-+   public static final int TOTAL_PLAYDEAD_TIME = 200;
-     protected static final ImmutableList<? extends SensorType<? extends Sensor<? super Axolotl>>> SENSOR_TYPES = ImmutableList.of(
-         SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_ADULT, SensorType.HURT_BY, SensorType.AXOLOTL_ATTACKABLES, SensorType.AXOLOTL_TEMPTATIONS
-     );
-@@ -104,6 +_,13 @@
+@@ -105,6 +_,13 @@
      private final Map<String, Vector3f> modelRotationValues = Maps.newHashMap();
      private static final int REGEN_BUFF_BASE_DURATION = 100;
  
@@ -38,7 +29,7 @@
      public Axolotl(EntityType<? extends Axolotl> p_149105_, Level p_149106_) {
          super(p_149105_, p_149106_);
          this.setPathfindingMalus(PathType.WATER, 0.0F);
-@@ -202,7 +_,7 @@
+@@ -203,7 +_,7 @@
  
      @Override
      public int getMaxAirSupply() {

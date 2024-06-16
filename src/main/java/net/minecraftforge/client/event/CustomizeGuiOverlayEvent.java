@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fired when an overlay is about to be rendered to the screen to allow the user to modify it.
@@ -23,32 +23,27 @@ import java.util.ArrayList;
  * @see DebugText
  * @see Chat
  */
-public abstract class CustomizeGuiOverlayEvent extends Event
-{
+public abstract class CustomizeGuiOverlayEvent extends Event {
     private final Window window;
     private final GuiGraphics guiGraphics;
     private final float partialTick;
 
     @ApiStatus.Internal
-    protected CustomizeGuiOverlayEvent(Window window, GuiGraphics guiGraphics, float partialTick)
-    {
+    protected CustomizeGuiOverlayEvent(Window window, GuiGraphics guiGraphics, float partialTick) {
         this.window = window;
         this.guiGraphics = guiGraphics;
         this.partialTick = partialTick;
     }
 
-    public Window getWindow()
-    {
+    public Window getWindow() {
         return window;
     }
 
-    public GuiGraphics getGuiGraphics()
-    {
+    public GuiGraphics getGuiGraphics() {
         return guiGraphics;
     }
 
-    public float getPartialTick()
-    {
+    public float getPartialTick() {
         return partialTick;
     }
 
@@ -62,16 +57,14 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class BossEventProgress extends CustomizeGuiOverlayEvent
-    {
+    public static class BossEventProgress extends CustomizeGuiOverlayEvent {
         private final LerpingBossEvent bossEvent;
         private final int x;
         private final int y;
         private int increment;
 
         @ApiStatus.Internal
-        public BossEventProgress(Window window, GuiGraphics guiGraphics, float partialTick, LerpingBossEvent bossEvent, int x, int y, int increment)
-        {
+        public BossEventProgress(Window window, GuiGraphics guiGraphics, float partialTick, LerpingBossEvent bossEvent, int x, int y, int increment) {
             super(window, guiGraphics, partialTick);
             this.bossEvent = bossEvent;
             this.x = x;
@@ -82,32 +75,28 @@ public abstract class CustomizeGuiOverlayEvent extends Event
         /**
          * @return the boss health bar currently being rendered
          */
-        public LerpingBossEvent getBossEvent()
-        {
+        public LerpingBossEvent getBossEvent() {
             return bossEvent;
         }
 
         /**
          * {@return the X position of the boss health bar}
          */
-        public int getX()
-        {
+        public int getX() {
             return x;
         }
 
         /**
          * {@return the Y position of the boss health bar}
          */
-        public int getY()
-        {
+        public int getY() {
             return y;
         }
 
         /**
          * {@return the Y position increment before rendering the next boss health bar}
          */
-        public int getIncrement()
-        {
+        public int getIncrement() {
             return increment;
         }
 
@@ -116,8 +105,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
          *
          * @param increment the new Y position increment
          */
-        public void setIncrement(int increment)
-        {
+        public void setIncrement(int increment) {
             this.increment = increment;
         }
     }
@@ -131,33 +119,35 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class DebugText extends CustomizeGuiOverlayEvent
-    {
-        private final ArrayList<String> left;
-        private final ArrayList<String> right;
+    public static class DebugText extends CustomizeGuiOverlayEvent {
+        private final List<String> text;
+
+        private final Side side;
 
         @ApiStatus.Internal
-        public DebugText(Window window, GuiGraphics guiGraphics, float partialTick, ArrayList<String> left, ArrayList<String> right)
-        {
+        public DebugText(Window window, GuiGraphics guiGraphics, float partialTick, List<String> text, Side side) {
             super(window, guiGraphics, partialTick);
-            this.left = left;
-            this.right = right;
+            this.text = text;
+            this.side = side;
         }
 
         /**
-         * @return the modifiable list of text to render on the left side
+         * @return the modifiable list of text to render on the side
          */
-        public ArrayList<String> getLeft()
-        {
-            return left;
+        public List<String> getText() {
+            return this.text;
         }
 
         /**
-         * @return the modifiable list of text to render on the right side
+         * @return the side of the text getting rendered.
          */
-        public ArrayList<String> getRight()
-        {
-            return right;
+        public Side getSide() {
+            return this.side;
+        }
+
+        public enum Side {
+            Left,
+            Right
         }
     }
 
@@ -169,14 +159,12 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Chat extends CustomizeGuiOverlayEvent
-    {
+    public static class Chat extends CustomizeGuiOverlayEvent {
         private int posX;
         private int posY;
 
         @ApiStatus.Internal
-        public Chat(Window window, GuiGraphics guiGraphics, float partialTick, int posX, int posY)
-        {
+        public Chat(Window window, GuiGraphics guiGraphics, float partialTick, int posX, int posY) {
             super(window, guiGraphics, partialTick);
             this.setPosX(posX);
             this.setPosY(posY);
@@ -185,8 +173,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
         /**
          * @return the X position of the chat messages overlay
          */
-        public int getPosX()
-        {
+        public int getPosX() {
             return posX;
         }
 
@@ -195,16 +182,14 @@ public abstract class CustomizeGuiOverlayEvent extends Event
          *
          * @param posX the new X position
          */
-        public void setPosX(int posX)
-        {
+        public void setPosX(int posX) {
             this.posX = posX;
         }
 
         /**
          * @return the Y position of the chat messages overlay
          */
-        public int getPosY()
-        {
+        public int getPosY() {
             return posY;
         }
 
@@ -213,8 +198,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
          *
          * @param posY the new y position
          */
-        public void setPosY(int posY)
-        {
+        public void setPosY(int posY) {
             this.posY = posY;
         }
     }

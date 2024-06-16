@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/IronGolem.java
 +++ b/net/minecraft/world/entity/animal/IronGolem.java
-@@ -102,7 +_,7 @@
+@@ -103,7 +_,7 @@
      @Override
      protected void doPush(Entity p_28839_) {
          if (p_28839_ instanceof Enemy && !(p_28839_ instanceof Creeper) && this.getRandom().nextInt(20) == 0) {

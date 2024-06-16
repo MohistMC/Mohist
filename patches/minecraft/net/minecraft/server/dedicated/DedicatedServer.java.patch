@@ -9,7 +9,23 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-@@ -56,6 +_,12 @@
+@@ -10,7 +_,6 @@
+ import java.io.Writer;
+ import java.net.InetAddress;
+ import java.net.Proxy;
+-import java.net.URI;
+ import java.nio.charset.StandardCharsets;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+@@ -30,7 +_,6 @@
+ import net.minecraft.server.ConsoleInput;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.ServerInterface;
+-import net.minecraft.server.ServerLinks;
+ import net.minecraft.server.Services;
+ import net.minecraft.server.WorldStem;
+ import net.minecraft.server.gui.MinecraftServerGui;
+@@ -58,6 +_,12 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
@@ -22,7 +38,7 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -65,7 +_,7 @@
+@@ -67,7 +_,7 @@
      public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
      @Nullable
      private QueryThreadGs4 queryThreadGs4;
@@ -31,41 +47,26 @@
      @Nullable
      private RconThread rconThread;
      public DedicatedServerSettings settings;
-@@ -77,40 +_,76 @@
-     private RemoteSampleLogger tickTimeLogger;
+@@ -80,6 +_,8 @@
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
+     private final ServerLinks serverLinks;
 +    @Nullable
 +    private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
      public DedicatedServer(
--        Thread p_214789_,
--        LevelStorageSource.LevelStorageAccess p_214790_,
--        PackRepository p_214791_,
--        WorldStem p_214792_,
--        DedicatedServerSettings p_214793_,
--        DataFixer p_214794_,
--        Services p_214795_,
--        ChunkProgressListenerFactory p_214796_
-+            Thread p_214789_,
-+            LevelStorageSource.LevelStorageAccess p_214790_,
-+            PackRepository p_214791_,
-+            WorldStem p_214792_,
-+            DedicatedServerSettings p_214793_,
-+            DataFixer p_214794_,
-+            Services p_214795_,
-+            ChunkProgressListenerFactory p_214796_
+         Thread p_214789_,
+@@ -93,7 +_,6 @@
      ) {
          super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
          this.settings = p_214793_;
 -        this.rconConsoleSource = new RconConsoleSource(this);
          this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
+         this.serverLinks = createServerLinks(p_214793_);
      }
- 
--    @Override
-     public boolean initServer() throws IOException {
+@@ -103,18 +_,55 @@
          Thread thread = new Thread("Server console handler") {
--            @Override
+             @Override
              public void run() {
 +                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +                // CraftBukkit start
@@ -124,27 +125,16 @@
          thread.setDaemon(true);
          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
          thread.start();
-@@ -134,8 +_,8 @@
+@@ -138,7 +_,7 @@
          this.setMotd(dedicatedserverproperties.motd);
          super.setPlayerIdleTimeout(dedicatedserverproperties.playerIdleTimeout.get());
          this.setEnforceWhitelist(dedicatedserverproperties.enforceWhitelist);
 -        this.worldData.setGameType(dedicatedserverproperties.gamemode);
--        LOGGER.info("Default game type: {}", dedicatedserverproperties.gamemode);
 +        // this.worldData.setGameType(dedicatedserverproperties.gamemode); // CraftBukkit - moved to world loading
-+        LOGGER.info("Default game type: {}", (Object) dedicatedserverproperties.gamemode);
+         LOGGER.info("Default game type: {}", dedicatedserverproperties.gamemode);
          InetAddress inetaddress = null;
          if (!this.getLocalIp().isEmpty()) {
-             inetaddress = InetAddress.getByName(this.getLocalIp());
-@@ -161,7 +_,7 @@
-             LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-             LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
-             LOGGER.warn(
--                "While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose."
-+                    "While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose."
-             );
-             LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
-         }
-@@ -176,16 +_,31 @@
+@@ -180,16 +_,31 @@
              this.setPlayerList(new DedicatedPlayerList(this, this.registries(), this.playerDataStorage));
              this.debugSampleSubscriptionTracker = new DebugSampleSubscriptionTracker(this.getPlayerList());
              this.tickTimeLogger = new RemoteSampleLogger(TpsDebugDimensions.values().length, this.debugSampleSubscriptionTracker, RemoteDebugSampleType.TICK_TIME);
@@ -178,7 +168,7 @@
              }
  
              if (dedicatedserverproperties.enableQuery) {
-@@ -198,7 +_,7 @@
+@@ -202,7 +_,7 @@
                  this.rconThread = RconThread.create(this);
              }
  
@@ -187,7 +177,7 @@
                  Thread thread1 = new Thread(new ServerWatchdog(this));
                  thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
                  thread1.setName("Server Watchdog");
-@@ -211,7 +_,12 @@
+@@ -215,7 +_,12 @@
                  LOGGER.info("JMX monitoring enabled");
              }
  
@@ -201,7 +191,7 @@
          }
      }
  
-@@ -289,6 +_,13 @@
+@@ -293,6 +_,13 @@
          if (this.queryThreadGs4 != null) {
              this.queryThreadGs4.stop();
          }
@@ -215,7 +205,7 @@
      }
  
      @Override
-@@ -309,8 +_,18 @@
+@@ -313,8 +_,18 @@
      public void handleConsoleInputs() {
          while (!this.consoleInput.isEmpty()) {
              ConsoleInput consoleinput = this.consoleInput.remove(0);
@@ -235,20 +225,9 @@
      }
  
      @Override
-@@ -329,7 +_,7 @@
-     }
- 
-     public DedicatedPlayerList getPlayerList() {
--        return (DedicatedPlayerList)super.getPlayerList();
-+        return (DedicatedPlayerList) super.getPlayerList();
-     }
+@@ -444,8 +_,7 @@
  
      @Override
-@@ -438,10 +_,8 @@
-         return this.getProperties().networkCompressionThreshold;
-     }
- 
--    @Override
      public boolean enforceSecureProfile() {
 -        DedicatedServerProperties dedicatedserverproperties = this.getProperties();
 -        return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.canValidateProfileKeys();
@@ -256,11 +235,9 @@
      }
  
      @Override
-@@ -524,16 +_,50 @@
-         return this.getProperties().maxChainedNeighborUpdates;
-     }
+@@ -530,14 +_,50 @@
  
--    @Override
+     @Override
      public String getPluginNames() {
 -        return "";
 +        // CraftBukkit start - Whole method
@@ -288,7 +265,7 @@
 +        // CraftBukkit end
      }
  
--    @Override
+     @Override
      public String runCommand(String p_139644_) {
 -        this.rconConsoleSource.prepareForCommand();
 -        this.executeBlocking(() -> this.getCommands().performPrefixedCommand(this.rconConsoleSource.createCommandSourceStack(), p_139644_));
@@ -313,7 +290,7 @@
      }
  
      public void storeUsingWhiteList(boolean p_139689_) {
-@@ -542,7 +_,12 @@
+@@ -546,7 +_,12 @@
  
      @Override
      public void stopServer() {
@@ -326,10 +303,10 @@
          Util.shutdownExecutors();
          SkullBlockEntity.clear();
      }
-@@ -607,5 +_,16 @@
-     @Override
-     public boolean acceptsTransfers() {
-         return this.settings.getProperties().acceptsTransfers;
+@@ -636,5 +_,16 @@
+                 return Optional.empty();
+             }
+         }
 +    }
 +
 +

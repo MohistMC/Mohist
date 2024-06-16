@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/portal/PortalForcer.java
 +++ b/net/minecraft/world/level/portal/PortalForcer.java
-@@ -2,13 +_,15 @@
+@@ -2,27 +_,31 @@
  
  import java.util.Comparator;
  import java.util.Optional;
@@ -10,14 +10,18 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
 -import net.minecraft.core.Holder;
+-import net.minecraft.core.Vec3i;
  import net.minecraft.server.level.ServerLevel;
- import net.minecraft.server.level.TicketType;
++import net.minecraft.server.level.TicketType;
  import net.minecraft.util.Mth;
 +import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
  import net.minecraft.world.entity.ai.village.poi.PoiRecord;
  import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-@@ -19,8 +_,9 @@
++import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.NetherPortalBlock;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.levelgen.Heightmap;
@@ -26,39 +30,26 @@
 -public class PortalForcer {
 +public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {
      public static final int TICKET_RADIUS = 3;
-     private static final int SEARCH_RADIUS = 128;
-     private static final int CREATE_RADIUS = 16;
-@@ -40,136 +_,152 @@
+-    private static final int NETHER_PORTAL_RADIUS = 16;
+-    private static final int OVERWORLD_PORTAL_RADIUS = 128;
++    private static final int SEARCH_RADIUS = 128;
++    private static final int CREATE_RADIUS = 16;
+     private static final int FRAME_HEIGHT = 5;
+     private static final int FRAME_WIDTH = 4;
+     private static final int FRAME_BOX = 3;
+@@ -39,121 +_,152 @@
          this.level = p_77650_;
      }
  
--    public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
+-    public Optional<BlockPos> findClosestPortalPosition(BlockPos p_345495_, boolean p_345384_, WorldBorder p_344228_) {
 -        PoiManager poimanager = this.level.getPoiManager();
--        int i = p_192987_ ? 16 : 128;
--        poimanager.ensureLoadedAndValid(this.level, p_192986_, i);
--        Optional<PoiRecord> optional = poimanager.getInSquare(p_230634_ -> p_230634_.is(PoiTypes.NETHER_PORTAL), p_192986_, i, PoiManager.Occupancy.ANY)
--            .filter(p_192981_ -> p_192988_.isWithinBounds(p_192981_.getPos()))
--            .sorted(
--                Comparator.<PoiRecord>comparingDouble(p_192984_ -> p_192984_.getPos().distSqr(p_192986_))
--                    .thenComparingInt(p_192992_ -> p_192992_.getPos().getY())
--            )
--            .filter(p_192990_ -> this.level.getBlockState(p_192990_.getPos()).hasProperty(BlockStateProperties.HORIZONTAL_AXIS))
--            .findFirst();
--        return optional.map(
--            p_192975_ -> {
--                BlockPos blockpos = p_192975_.getPos();
--                this.level.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(blockpos), 3, blockpos);
--                BlockState blockstate = this.level.getBlockState(blockpos);
--                return BlockUtil.getLargestRectangleAround(
--                    blockpos,
--                    blockstate.getValue(BlockStateProperties.HORIZONTAL_AXIS),
--                    21,
--                    Direction.Axis.Y,
--                    21,
--                    p_192978_ -> this.level.getBlockState(p_192978_) == blockstate
--                );
--            }
--        );
+-        int i = p_345384_ ? 16 : 128;
+-        poimanager.ensureLoadedAndValid(this.level, p_345495_, i);
+-        return poimanager.getInSquare(p_230634_ -> p_230634_.is(PoiTypes.NETHER_PORTAL), p_345495_, i, PoiManager.Occupancy.ANY)
+-            .map(PoiRecord::getPos)
+-            .filter(p_344228_::isWithinBounds)
+-            .filter(p_341965_ -> this.level.getBlockState(p_341965_).hasProperty(BlockStateProperties.HORIZONTAL_AXIS))
+-            .min(Comparator.<BlockPos>comparingDouble(p_341964_ -> p_341964_.distSqr(p_345495_)).thenComparingInt(Vec3i::getY));
 -    }
 -
 -    public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_) {
@@ -69,17 +60,17 @@
 -        BlockPos blockpos1 = null;
 -        WorldBorder worldborder = this.level.getWorldBorder();
 -        int i = Math.min(this.level.getMaxBuildHeight(), this.level.getMinBuildHeight() + this.level.getLogicalHeight()) - 1;
+-        int j = 1;
 -        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_77667_.mutable();
 -
 -        for (BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.spiralAround(p_77667_, 16, Direction.EAST, Direction.SOUTH)) {
--            int j = Math.min(
+-            int k = Math.min(
 -                i, this.level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockpos$mutableblockpos1.getX(), blockpos$mutableblockpos1.getZ())
 -            );
--            int k = 1;
 -            if (worldborder.isWithinBounds(blockpos$mutableblockpos1) && worldborder.isWithinBounds(blockpos$mutableblockpos1.move(direction, 1))) {
 -                blockpos$mutableblockpos1.move(direction.getOpposite(), 1);
 -
--                for (int l = j; l >= this.level.getMinBuildHeight(); l--) {
+-                for (int l = k; l >= this.level.getMinBuildHeight(); l--) {
 -                    blockpos$mutableblockpos1.setY(l);
 -                    if (this.canPortalReplaceBlock(blockpos$mutableblockpos1)) {
 -                        int i1 = l;
@@ -125,11 +116,14 @@
 -                return Optional.empty();
 -            }
 -
--            blockpos = new BlockPos(p_77667_.getX(), Mth.clamp(p_77667_.getY(), k1, i2), p_77667_.getZ()).immutable();
+-            blockpos = new BlockPos(
+-                    p_77667_.getX() - direction.getStepX() * 1,
+-                    Mth.clamp(p_77667_.getY(), k1, i2),
+-                    p_77667_.getZ() - direction.getStepZ() * 1
+-                )
+-                .immutable();
+-            blockpos = worldborder.clampToBounds(blockpos);
 -            Direction direction1 = direction.getClockWise();
--            if (!worldborder.isWithinBounds(blockpos)) {
--                return Optional.empty();
--            }
 -
 -            for (int i3 = -1; i3 < 2; i3++) {
 -                for (int j3 = 0; j3 < 2; j3++) {

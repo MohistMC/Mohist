@@ -9,3 +9,16 @@
          float f = 0.0625F;
          float f1 = 0.375F;
          if (p_261599_ < 0.375F) {
+@@ -154,8 +_,11 @@
+         if (!p_262592_.isClientSide) {
+             p_262572_.awardStat(Stats.ITEM_USED.get(p_262587_.getItem()));
+             SoundEvent soundevent = p_262587_.is(Items.ENCHANTED_BOOK) ? SoundEvents.CHISELED_BOOKSHELF_INSERT_ENCHANTED : SoundEvents.CHISELED_BOOKSHELF_INSERT;
+-            p_262606_.setItem(p_262692_, p_262587_.consumeAndReturn(1, p_262572_));
++            p_262606_.setItem(p_262692_, p_262587_.split(1));
+             p_262592_.playSound(null, p_262669_, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
++            if (p_262572_.isCreative()) {
++                p_262587_.grow(1);
++            }
+         }
+     }
+ 

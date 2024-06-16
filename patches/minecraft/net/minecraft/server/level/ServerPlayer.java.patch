@@ -9,15 +9,19 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
-@@ -12,6 +_,7 @@
+@@ -11,8 +_,11 @@
+ import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
- import java.util.UUID;
++import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
- import net.minecraft.BlockUtil;
-@@ -40,7 +_,6 @@
++import net.minecraft.BlockUtil;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
+@@ -38,7 +_,6 @@
  import net.minecraft.network.chat.HoverEvent;
  import net.minecraft.network.chat.OutgoingChatMessage;
  import net.minecraft.network.chat.RemoteChatSession;
@@ -25,7 +29,15 @@
  import net.minecraft.network.protocol.Packet;
  import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
  import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-@@ -96,6 +_,7 @@
+@@ -52,6 +_,7 @@
+ import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundHorseScreenOpenPacket;
+ import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
++import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundMerchantOffersPacket;
+ import net.minecraft.network.protocol.game.ClientboundOpenBookPacket;
+ import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
+@@ -93,18 +_,17 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -33,7 +45,19 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.effect.MobEffects;
-@@ -122,10 +_,12 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntitySelector;
+ import net.minecraft.world.entity.EntityType;
+-import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.entity.HumanoidArm;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.NeutralMob;
+-import net.minecraft.world.entity.Pose;
+ import net.minecraft.world.entity.RelativeMovement;
+ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+@@ -121,1871 +_,2481 @@
  import net.minecraft.world.entity.projectile.AbstractArrow;
  import net.minecraft.world.entity.vehicle.AbstractMinecart;
  import net.minecraft.world.entity.vehicle.Boat;
@@ -46,23 +70,39 @@
  import net.minecraft.world.inventory.ResultSlot;
  import net.minecraft.world.inventory.Slot;
  import net.minecraft.world.item.ComplexItem;
-@@ -142,6 +_,7 @@
+-import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemCooldowns;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.ServerItemCooldowns;
+ import net.minecraft.world.item.WrittenBookItem;
+ import net.minecraft.world.item.crafting.RecipeHolder;
+-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+ import net.minecraft.world.item.trading.MerchantOffers;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.biome.BiomeManager;
- import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.block.BedBlock;
+-import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.Blocks;
 +import net.minecraft.world.level.block.ChestBlock;
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
- import net.minecraft.world.level.block.NetherPortalBlock;
+-import net.minecraft.world.level.block.RespawnAnchorBlock;
++import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -149,6 +_,7 @@
+ import net.minecraft.world.level.block.entity.CommandBlockEntity;
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.border.WorldBorder;
++import net.minecraft.world.level.border.WorldBorder;
 +import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.portal.PortalInfo;
+-import net.minecraft.world.level.portal.DimensionTransition;
++import net.minecraft.world.level.portal.PortalInfo;
  import net.minecraft.world.level.storage.LevelData;
-@@ -157,1762 +_,2442 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreAccess;
  import net.minecraft.world.scores.ScoreHolder;
@@ -102,10 +142,10 @@
 -    private static final int FLY_STAT_RECORDING_SPEED = 25;
 -    public static final double INTERACTION_DISTANCE_VERIFICATION_BUFFER = 1.0;
 -    private static final AttributeModifier CREATIVE_BLOCK_INTERACTION_RANGE_MODIFIER = new AttributeModifier(
--        UUID.fromString("736565d2-e1a7-403d-a3f8-1aeb3e302542"), "Creative block interaction range modifier", 0.5, AttributeModifier.Operation.ADD_VALUE
+-        ResourceLocation.withDefaultNamespace("creative_mode_block_range"), 0.5, AttributeModifier.Operation.ADD_VALUE
 -    );
 -    private static final AttributeModifier CREATIVE_ENTITY_INTERACTION_RANGE_MODIFIER = new AttributeModifier(
--        UUID.fromString("98491ef6-97b1-4584-ae82-71a8cc85cf73"), "Creative entity interaction range modifier", 2.0, AttributeModifier.Operation.ADD_VALUE
+-        ResourceLocation.withDefaultNamespace("creative_mode_entity_range"), 2.0, AttributeModifier.Operation.ADD_VALUE
 -    );
 -    public ServerGamePacketListenerImpl connection;
 -    public final MinecraftServer server;
@@ -129,7 +169,7 @@
 -    @Nullable
 -    private Entity camera;
 -    public boolean isChangingDimension;
--    private boolean seenCredits;
+-    public boolean seenCredits;
 -    private final ServerRecipeBook recipeBook = new ServerRecipeBook();
 -    @Nullable
 -    private Vec3 levitationStartPos;
@@ -157,6 +197,7 @@
 -    private WardenSpawnTracker wardenSpawnTracker = new WardenSpawnTracker(0, 0, 0);
 -    @Nullable
 -    private BlockPos raidOmenPosition;
+-    private Vec3 lastKnownClientMovement = Vec3.ZERO;
 -    private final ContainerSynchronizer containerSynchronizer = new ContainerSynchronizer() {
 -        @Override
 -        public void sendInitialData(AbstractContainerMenu p_143448_, NonNullList<ItemStack> p_143449_, ItemStack p_143450_, int[] p_143451_) {
@@ -215,16 +256,18 @@
 -        this.server = p_254143_;
 -        this.stats = p_254143_.getPlayerList().getPlayerStats(this);
 -        this.advancements = p_254143_.getPlayerList().getPlayerAdvancements(this);
--        this.fudgeSpawnLocation(p_254435_);
+-        this.moveTo(this.adjustSpawnLocation(p_254435_, p_254435_.getSharedSpawnPos()).getBottomCenter(), 0.0F, 0.0F);
 -        this.updateOptions(p_299301_);
 -        this.object = null;
 -    }
 -
--    private void fudgeSpawnLocation(ServerLevel p_9202_) {
--        BlockPos blockpos = p_9202_.getSharedSpawnPos();
--        if (p_9202_.dimensionType().hasSkyLight() && p_9202_.getServer().getWorldData().getGameType() != GameType.ADVENTURE) {
--            int i = Math.max(0, this.server.getSpawnRadius(p_9202_));
--            int j = Mth.floor(p_9202_.getWorldBorder().getDistanceToBorder((double)blockpos.getX(), (double)blockpos.getZ()));
+-    @Override
+-    public BlockPos adjustSpawnLocation(ServerLevel p_343805_, BlockPos p_344752_) {
+-        AABB aabb = this.getDimensions(Pose.STANDING).makeBoundingBox(Vec3.ZERO);
+-        BlockPos blockpos = p_344752_;
+-        if (p_343805_.dimensionType().hasSkyLight() && p_343805_.getServer().getWorldData().getGameType() != GameType.ADVENTURE) {
+-            int i = Math.max(0, this.server.getSpawnRadius(p_343805_));
+-            int j = Mth.floor(p_343805_.getWorldBorder().getDistanceToBorder((double)p_344752_.getX(), (double)p_344752_.getZ()));
 -            if (j < i) {
 -                i = j;
 -            }
@@ -243,21 +286,24 @@
 -                int i2 = (k1 + j1 * l1) % i1;
 -                int j2 = i2 % (i * 2 + 1);
 -                int k2 = i2 / (i * 2 + 1);
--                BlockPos blockpos1 = PlayerRespawnLogic.getOverworldRespawnPos(p_9202_, blockpos.getX() + j2 - i, blockpos.getZ() + k2 - i);
--                if (blockpos1 != null) {
--                    this.moveTo(blockpos1, 0.0F, 0.0F);
--                    if (p_9202_.noCollision(this)) {
--                        break;
--                    }
+-                blockpos = PlayerRespawnLogic.getOverworldRespawnPos(p_343805_, p_344752_.getX() + j2 - i, p_344752_.getZ() + k2 - i);
+-                if (blockpos != null && p_343805_.noCollision(this, aabb.move(blockpos.getBottomCenter()))) {
+-                    return blockpos;
 -                }
 -            }
--        } else {
--            this.moveTo(blockpos, 0.0F, 0.0F);
 -
--            while (!p_9202_.noCollision(this) && this.getY() < (double)(p_9202_.getMaxBuildHeight() - 1)) {
--                this.setPos(this.getX(), this.getY() + 1.0, this.getZ());
--            }
+-            blockpos = p_344752_;
 -        }
+-
+-        while (!p_343805_.noCollision(this, aabb.move(blockpos.getBottomCenter())) && blockpos.getY() < p_343805_.getMaxBuildHeight() - 1) {
+-            blockpos = blockpos.above();
+-        }
+-
+-        while (p_343805_.noCollision(this, aabb.move(blockpos.below().getBottomCenter())) && blockpos.getY() > p_343805_.getMinBuildHeight() + 1) {
+-            blockpos = blockpos.below();
+-        }
+-
+-        return blockpos;
 -    }
 -
 -    private int getCoprime(int p_9238_) {
@@ -684,7 +730,7 @@
 -    }
 -
 -    @Override
--    protected void onInsideBlock(BlockState p_9103_) {
+-    public void onInsideBlock(BlockState p_9103_) {
 -        CriteriaTriggers.ENTER_BLOCK.trigger(this, p_9103_);
 -    }
 -
@@ -834,7 +880,7 @@
 -    public void trackStartFallingPosition() {
 -        if (this.fallDistance > 0.0F && this.startingToFallPosition == null) {
 -            this.startingToFallPosition = this.position();
--            if (this.currentImpulseImpactPos != null) {
+-            if (this.currentImpulseImpactPos != null && this.currentImpulseImpactPos.y <= this.startingToFallPosition.y) {
 -                CriteriaTriggers.FALL_AFTER_EXPLOSION.trigger(this, this.currentImpulseImpactPos, this.currentExplosionCause);
 -            }
 -        }
@@ -1244,7 +1290,7 @@
 -        }
 -
 -        if (!this.isSpectator()) {
--            this.dropAllDeathLoot(p_9035_);
+-            this.dropAllDeathLoot(this.serverLevel(), p_9035_);
 -        }
 -
 -        this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
@@ -1483,104 +1529,206 @@
 -        return this.server.isPvpAllowed();
 -    }
 -
--    @Nullable
--    @Override
--    protected PortalInfo findDimensionEntryPoint(ServerLevel p_8998_) {
--        PortalInfo portalinfo = super.findDimensionEntryPoint(p_8998_);
--        if (portalinfo != null && this.level().dimension() == Level.OVERWORLD && p_8998_.dimension() == Level.END) {
--            Vec3 vec3 = portalinfo.pos.add(0.0, -1.0, 0.0);
--            return new PortalInfo(vec3, Vec3.ZERO, 90.0F, 0.0F);
+-    public DimensionTransition findRespawnPositionAndUseSpawnBlock(boolean p_342433_, DimensionTransition.PostDimensionTransition p_343860_) {
+-        BlockPos blockpos = this.getRespawnPosition();
+-        float f = this.getRespawnAngle();
+-        boolean flag = this.isRespawnForced();
+-        ServerLevel serverlevel = this.server.getLevel(this.getRespawnDimension());
+-        if (serverlevel != null && blockpos != null) {
+-            Optional<ServerPlayer.RespawnPosAngle> optional = findRespawnAndUseSpawnBlock(serverlevel, blockpos, f, flag, p_342433_);
+-            if (optional.isPresent()) {
+-                ServerPlayer.RespawnPosAngle serverplayer$respawnposangle = optional.get();
+-                return new DimensionTransition(
+-                    serverlevel, serverplayer$respawnposangle.position(), Vec3.ZERO, serverplayer$respawnposangle.yaw(), 0.0F, p_343860_
+-                );
+-            } else {
+-                return DimensionTransition.missingRespawnBlock(this.server.overworld(), this, p_343860_);
+-            }
 -        } else {
--            return portalinfo;
+-            return new DimensionTransition(this.server.overworld(), this, p_343860_);
+-        }
+-    }
+-
+-    private static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
+-        ServerLevel p_343173_, BlockPos p_345429_, float p_342316_, boolean p_345318_, boolean p_343357_
+-    ) {
+-        BlockState blockstate = p_343173_.getBlockState(p_345429_);
+-        Block block = blockstate.getBlock();
+-        if (block instanceof RespawnAnchorBlock
+-            && (p_345318_ || blockstate.getValue(RespawnAnchorBlock.CHARGE) > 0)
+-            && RespawnAnchorBlock.canSetSpawn(p_343173_)) {
+-            Optional<Vec3> optional = RespawnAnchorBlock.findStandUpPosition(EntityType.PLAYER, p_343173_, p_345429_);
+-            if (!p_345318_ && !p_343357_ && optional.isPresent()) {
+-                p_343173_.setBlock(
+-                    p_345429_, blockstate.setValue(RespawnAnchorBlock.CHARGE, Integer.valueOf(blockstate.getValue(RespawnAnchorBlock.CHARGE) - 1)), 3
+-                );
+-            }
+-
+-            return optional.map(p_341237_ -> ServerPlayer.RespawnPosAngle.of(p_341237_, p_345429_));
+-        } else if (block instanceof BedBlock && BedBlock.canSetSpawn(p_343173_)) {
+-            return BedBlock.findStandUpPosition(EntityType.PLAYER, p_343173_, p_345429_, blockstate.getValue(BedBlock.FACING), p_342316_)
+-                .map(p_341240_ -> ServerPlayer.RespawnPosAngle.of(p_341240_, p_345429_));
+-        } else if (!p_345318_) {
+-            return Optional.empty();
+-        } else {
+-            boolean flag = block.isPossibleToRespawnInThis(blockstate);
+-            BlockState blockstate1 = p_343173_.getBlockState(p_345429_.above());
+-            boolean flag1 = blockstate1.getBlock().isPossibleToRespawnInThis(blockstate1);
+-            return flag && flag1
+-                ? Optional.of(
+-                    new ServerPlayer.RespawnPosAngle(
+-                        new Vec3((double)p_345429_.getX() + 0.5, (double)p_345429_.getY() + 0.1, (double)p_345429_.getZ() + 0.5), p_342316_
+-                    )
+-                )
+-                : Optional.empty();
+-        }
+-    }
+-
+-    public void showEndCredits() {
+-        this.unRide();
+-        this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-        if (!this.wonGame) {
++         } else {
++            Entity entity = p_9037_.getEntity();
++            if (entity instanceof Player player && !this.canHarmPlayer(player)) {
++               return false;
++            }
++
++            if (entity instanceof AbstractArrow abstractarrow && abstractarrow.getOwner() instanceof Player player1 && !this.canHarmPlayer(player1)) {
++               return false;
++            }
++
++            return super.hurt(p_9037_, p_9038_);
++         }
++      }
++   }
++
++   @Override
++   public boolean canHarmPlayer(Player p_9064_) {
++      return !this.isPvpAllowed() ? false : super.canHarmPlayer(p_9064_);
++   }
++
++   private boolean isPvpAllowed() {
++      return this.level().pvpMode;
++   }
++
++   @Nullable
++   protected PortalInfo findDimensionEntryPoint(ServerLevel p_8998_) {
++      PortalInfo portalinfo = super.findDimensionEntryPoint(p_8998_);
++      p_8998_ = (portalinfo == null) ? p_8998_ : portalinfo.world; // CraftBukkit
++      if (portalinfo != null && this.level.getTypeKey() == LevelStem.OVERWORLD && p_8998_ != null && p_8998_.getTypeKey() == LevelStem.END) { // CraftBukkit
++         Vec3 vec3 = portalinfo.pos.add(0.0D, -1.0D, 0.0D);
++         PortalInfo newInfo = new PortalInfo(vec3, Vec3.ZERO, 90.0F, 0.0F); // CraftBukkit
++         newInfo.setWorld(p_8998_);
++         newInfo.setPortalEventInfo(portalinfo.portalEventInfo);
++         return newInfo; // CraftBukkit
++      } else {
++         return portalinfo;
++      }
++   }
++
++   // Mohsit start
++   public AtomicReference<TeleportCause> changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   public void changeDimensionCause(TeleportCause cause) {
++      this.changeDimensionCause.set(cause);
++   }
++   // Mohist end
++
++   @Nullable
++   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9180_.dimension())) return null;
++      if (this.isSleeping()) return this; // CraftBukkit - SPIGOT-3154
++      PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
++      if (portalinfo == null)
++         return null;
++      // CraftBukkit - start
++      Location enter = this.getBukkitEntity().getLocation();
++      Location exit = (server == null) ? null : new Location(p_9180_.getWorld(), portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, portalinfo.xRot);
++      final PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
++      Bukkit.getServer().getPluginManager().callEvent(tpEvent);
++      if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
++         return null;
++      }
++      // CraftBukkit end
++      this.isChangingDimension = true;
++      ServerLevel serverlevel = this.serverLevel();
++      ResourceKey<Level> resourcekey = serverlevel.dimension();
++      if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
++         this.isChangingDimension = true; // CraftBukkit - Moved down from above
++         this.unRide();
++         this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
++         if (!this.wonGame) {
+             this.wonGame = true;
+-            this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, 0.0F));
++            this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, this.seenCredits ? 0.0F : 1.0F));
+             this.seenCredits = true;
 -        }
 -    }
 -
 -    @Nullable
 -    @Override
--    public Entity changeDimension(ServerLevel p_9180_) {
--        this.isChangingDimension = true;
--        ServerLevel serverlevel = this.serverLevel();
--        ResourceKey<Level> resourcekey = serverlevel.dimension();
--        if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD) {
--            this.unRide();
--            this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
--            if (!this.wonGame) {
--                this.wonGame = true;
--                this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, this.seenCredits ? 0.0F : 1.0F));
--                this.seenCredits = true;
+-    public Entity changeDimension(DimensionTransition p_344993_) {
+-        if (this.isRemoved()) {
+-            return null;
+-        } else {
+-            if (p_344993_.missingRespawnBlock()) {
+-                this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
 -            }
 -
--            return this;
--        } else {
--            LevelData leveldata = p_9180_.getLevelData();
--            this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9180_), (byte)3));
--            this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
--            PlayerList playerlist = this.server.getPlayerList();
--            playerlist.sendPlayerPermissionLevel(this);
--            serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
--            this.unsetRemoved();
--            PortalInfo portalinfo = this.findDimensionEntryPoint(p_9180_);
--            if (portalinfo != null) {
--                serverlevel.getProfiler().push("moving");
--                if (resourcekey == Level.OVERWORLD && p_9180_.dimension() == Level.NETHER) {
--                    this.enteredNetherPosition = this.position();
--                } else if (p_9180_.dimension() == Level.END) {
--                    this.createEndPlatform(p_9180_, BlockPos.containing(portalinfo.pos));
--                }
--
--                serverlevel.getProfiler().pop();
--                serverlevel.getProfiler().push("placing");
--                this.setServerLevel(p_9180_);
+-            ServerLevel serverlevel = p_344993_.newLevel();
+-            ServerLevel serverlevel1 = this.serverLevel();
+-            ResourceKey<Level> resourcekey = serverlevel1.dimension();
+-            if (serverlevel.dimension() == resourcekey) {
 -                this.connection
--                    .teleport(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, portalinfo.xRot);
+-                    .teleport(
+-                        p_344993_.pos().x,
+-                        p_344993_.pos().y,
+-                        p_344993_.pos().z,
+-                        p_344993_.yRot(),
+-                        p_344993_.xRot()
+-                    );
 -                this.connection.resetPosition();
--                p_9180_.addDuringPortalTeleport(this);
--                serverlevel.getProfiler().pop();
--                this.triggerDimensionChangeTriggers(serverlevel);
--                this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
--                playerlist.sendLevelInfo(this, p_9180_);
--                playerlist.sendAllPlayerInfo(this);
--
--                for (MobEffectInstance mobeffectinstance : this.getActiveEffects()) {
--                    this.connection.send(new ClientboundUpdateMobEffectPacket(this.getId(), mobeffectinstance, false));
+-                p_344993_.postDimensionTransition().onTransition(this);
+-                return this;
+-            } else {
+-                this.isChangingDimension = true;
+-                LevelData leveldata = serverlevel.getLevelData();
+-                this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(serverlevel), (byte)3));
+-                this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
+-                PlayerList playerlist = this.server.getPlayerList();
+-                playerlist.sendPlayerPermissionLevel(this);
+-                serverlevel1.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-                this.unsetRemoved();
+-                serverlevel1.getProfiler().push("moving");
+-                if (resourcekey == Level.OVERWORLD && serverlevel.dimension() == Level.NETHER) {
+-                    this.enteredNetherPosition = this.position();
 -                }
 -
--                this.connection.send(new ClientboundLevelEventPacket(1032, BlockPos.ZERO, 0, false));
+-                serverlevel1.getProfiler().pop();
+-                serverlevel1.getProfiler().push("placing");
+-                this.setServerLevel(serverlevel);
+-                this.connection
+-                    .teleport(
+-                        p_344993_.pos().x,
+-                        p_344993_.pos().y,
+-                        p_344993_.pos().z,
+-                        p_344993_.yRot(),
+-                        p_344993_.xRot()
+-                    );
+-                this.connection.resetPosition();
+-                serverlevel.addDuringTeleport(this);
+-                serverlevel1.getProfiler().pop();
+-                this.triggerDimensionChangeTriggers(serverlevel1);
+-                this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
+-                playerlist.sendLevelInfo(this, serverlevel);
+-                playerlist.sendAllPlayerInfo(this);
+-                playerlist.sendActivePlayerEffects(this);
+-                p_344993_.postDimensionTransition().onTransition(this);
 -                this.lastSentExp = -1;
 -                this.lastSentHealth = -1.0F;
 -                this.lastSentFood = -1;
+-                return this;
 -            }
--
--            return this;
--        }
--    }
--
--    private void createEndPlatform(ServerLevel p_9007_, BlockPos p_9008_) {
--        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_9008_.mutable();
--
--        for (int i = -2; i <= 2; i++) {
--            for (int j = -2; j <= 2; j++) {
--                for (int k = -1; k < 3; k++) {
--                    BlockState blockstate = k == -1 ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState();
--                    p_9007_.setBlockAndUpdate(blockpos$mutableblockpos.set(p_9008_).move(j, k, i), blockstate);
--                }
--            }
--        }
--    }
--
--    @Override
--    protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
--        Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_);
--        if (optional.isPresent()) {
--            return optional;
--        } else {
--            Direction.Axis direction$axis = this.level().getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
--            Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis);
--            if (optional1.isEmpty()) {
--                LOGGER.error("Unable to create a portal, likely target out of worldborder");
--            }
--
--            return optional1;
 -        }
 -    }
 -
@@ -1714,9 +1862,9 @@
 -    }
 -
 -    @Override
--    protected void onChangedBlock(BlockPos p_9206_) {
+-    protected void onChangedBlock(ServerLevel p_345082_, BlockPos p_9206_) {
 -        if (!this.isSpectator()) {
--            super.onChangedBlock(p_9206_);
+-            super.onChangedBlock(p_345082_, p_9206_);
 -        }
 -    }
 -
@@ -1727,81 +1875,8 @@
 -            BlockState blockstate = this.level().getBlockState(blockpos);
 -            if (this.spawnExtraParticlesOnFall && p_289696_ && this.fallDistance > 0.0F) {
 -                Vec3 vec3 = blockpos.getCenter().add(0.0, 0.5, 0.0);
--                int i = (int)(50.0F * this.fallDistance);
+-                int i = (int)Mth.clamp(50.0F * this.fallDistance, 0.0F, 200.0F);
 -                this.serverLevel()
-+         } else {
-+            Entity entity = p_9037_.getEntity();
-+            if (entity instanceof Player player && !this.canHarmPlayer(player)) {
-+               return false;
-+            }
-+
-+            if (entity instanceof AbstractArrow abstractarrow && abstractarrow.getOwner() instanceof Player player1 && !this.canHarmPlayer(player1)) {
-+               return false;
-+            }
-+
-+            return super.hurt(p_9037_, p_9038_);
-+         }
-+      }
-+   }
-+
-+   @Override
-+   public boolean canHarmPlayer(Player p_9064_) {
-+      return !this.isPvpAllowed() ? false : super.canHarmPlayer(p_9064_);
-+   }
-+
-+   private boolean isPvpAllowed() {
-+      return this.level().pvpMode;
-+   }
-+
-+   @Nullable
-+   protected PortalInfo findDimensionEntryPoint(ServerLevel p_8998_) {
-+      PortalInfo portalinfo = super.findDimensionEntryPoint(p_8998_);
-+      p_8998_ = (portalinfo == null) ? p_8998_ : portalinfo.world; // CraftBukkit
-+      if (portalinfo != null && this.level.getTypeKey() == LevelStem.OVERWORLD && p_8998_ != null && p_8998_.getTypeKey() == LevelStem.END) { // CraftBukkit
-+         Vec3 vec3 = portalinfo.pos.add(0.0D, -1.0D, 0.0D);
-+         PortalInfo newInfo = new PortalInfo(vec3, Vec3.ZERO, 90.0F, 0.0F); // CraftBukkit
-+         newInfo.setWorld(p_8998_);
-+         newInfo.setPortalEventInfo(portalinfo.portalEventInfo);
-+         return newInfo; // CraftBukkit
-+      } else {
-+         return portalinfo;
-+      }
-+   }
-+
-+   // Mohsit start
-+   public AtomicReference<TeleportCause> changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
-+   public void changeDimensionCause(TeleportCause cause) {
-+      this.changeDimensionCause.set(cause);
-+   }
-+   // Mohist end
-+
-+   @Nullable
-+   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9180_.dimension())) return null;
-+      if (this.isSleeping()) return this; // CraftBukkit - SPIGOT-3154
-+      PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
-+      if (portalinfo == null)
-+         return null;
-+      // CraftBukkit - start
-+      Location enter = this.getBukkitEntity().getLocation();
-+      Location exit = (server == null) ? null : new Location(p_9180_.getWorld(), portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, portalinfo.xRot);
-+      final PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, changeDimensionCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN));
-+      Bukkit.getServer().getPluginManager().callEvent(tpEvent);
-+      if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
-+         return null;
-+      }
-+      // CraftBukkit end
-+      this.isChangingDimension = true;
-+      ServerLevel serverlevel = this.serverLevel();
-+      ResourceKey<Level> resourcekey = serverlevel.dimension();
-+      if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
-+         this.isChangingDimension = true; // CraftBukkit - Moved down from above
-+         this.unRide();
-+         this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
-+         if (!this.wonGame) {
-+            this.wonGame = true;
-+            this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, this.seenCredits ? 0.0F : 1.0F));
-+            this.seenCredits = true;
 +         }
 +
 +         return this;
@@ -2120,7 +2195,7 @@
 -        super.onExplosionHit(p_328773_);
 -        this.currentImpulseImpactPos = this.position();
 -        this.currentExplosionCause = p_328773_;
--        this.ignoreFallDamageFromCurrentImpulse = p_328773_ != null && p_328773_.getType() == EntityType.WIND_CHARGE;
+-        this.setIgnoreFallDamageFromCurrentImpulse(p_328773_ != null && p_328773_.getType() == EntityType.WIND_CHARGE);
 -    }
 -
 -    @Override
@@ -2262,8 +2337,9 @@
 -        }
 -
 -        this.nextContainerCounter();
--        this.connection.send(new ClientboundHorseScreenOpenPacket(this.containerCounter, p_9060_.getContainerSize(), p_9059_.getId()));
--        this.containerMenu = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_);
+-        int i = p_9059_.getInventoryColumns();
+-        this.connection.send(new ClientboundHorseScreenOpenPacket(this.containerCounter, i, p_9059_.getId()));
+-        this.containerMenu = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_, i);
 -        this.initMenu(this.containerMenu);
 -    }
 -
@@ -2488,15 +2564,22 @@
 -        this.chatSession = p_9016_.chatSession;
 -        this.gameMode.setGameModeForPlayer(p_9016_.gameMode.getGameModeForPlayer(), p_9016_.gameMode.getPreviousGameModeForPlayer());
 -        this.onUpdateAbilities();
+-        this.getAttributes().assignBaseValues(p_9016_.getAttributes());
+-        this.setHealth(this.getMaxHealth());
 -        if (p_9017_) {
 -            this.getInventory().replaceWith(p_9016_.getInventory());
 -            this.setHealth(p_9016_.getHealth());
 -            this.foodData = p_9016_.foodData;
+-
+-            for (MobEffectInstance mobeffectinstance : p_9016_.getActiveEffects()) {
+-                this.addEffect(new MobEffectInstance(mobeffectinstance));
+-            }
+-
 -            this.experienceLevel = p_9016_.experienceLevel;
 -            this.totalExperience = p_9016_.totalExperience;
 -            this.experienceProgress = p_9016_.experienceProgress;
 -            this.setScore(p_9016_.getScore());
--            this.portalEntrancePos = p_9016_.portalEntrancePos;
+-            this.portalProcess = p_9016_.portalProcess;
 -        } else if (this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || p_9016_.isSpectator()) {
 -            this.getInventory().replaceWith(p_9016_.getInventory());
 -            this.experienceLevel = p_9016_.experienceLevel;
@@ -2618,6 +2701,7 @@
 -    }
 -
 -    public boolean setGameMode(GameType p_143404_) {
+-        boolean flag = this.isSpectator();
 -        if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
 -            return false;
 -        } else {
@@ -2625,8 +2709,12 @@
 -            if (p_143404_ == GameType.SPECTATOR) {
 -                this.removeEntitiesOnShoulder();
 -                this.stopRiding();
+-                EnchantmentHelper.stopLocationBasedEffects(this);
 -            } else {
 -                this.setCamera(this);
+-                if (flag) {
+-                    EnchantmentHelper.runLocationChangedEffects(this.serverLevel(), this);
+-                }
 -            }
 -
 -            this.onUpdateAbilities();
@@ -3398,20 +3486,7 @@
 -        if (p_9000_ == this.level()) {
 -            this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
 -        } else {
--            ServerLevel serverlevel = this.serverLevel();
--            LevelData leveldata = p_9000_.getLevelData();
--            this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
--            this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
--            this.server.getPlayerList().sendPlayerPermissionLevel(this);
--            serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
--            this.unsetRemoved();
--            this.moveTo(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
--            this.setServerLevel(p_9000_);
--            p_9000_.addDuringCommandTeleport(this);
--            this.triggerDimensionChangeTriggers(serverlevel);
--            this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
--            this.server.getPlayerList().sendLevelInfo(this, p_9000_);
--            this.server.getPlayerList().sendAllPlayerInfo(this);
+-            this.changeDimension(new DimensionTransition(p_9000_, new Vec3(p_9001_, p_9002_, p_9003_), Vec3.ZERO, p_9004_, p_9005_, DimensionTransition.DO_NOTHING));
 -        }
 -    }
 -
@@ -3430,6 +3505,10 @@
 -
 -    public boolean isRespawnForced() {
 -        return this.respawnForced;
+-    }
+-
+-    public void copyRespawnPosition(ServerPlayer p_344968_) {
+-        this.setRespawnPosition(p_344968_.getRespawnDimension(), p_344968_.getRespawnPosition(), p_344968_.getRespawnAngle(), p_344968_.isRespawnForced(), false);
 -    }
 -
 -    public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
@@ -3809,18 +3888,17 @@
 -
 -    @Override
 -    public boolean startRiding(Entity p_277395_, boolean p_278062_) {
--        if (!super.startRiding(p_277395_, p_278062_)) {
--            return false;
--        } else {
+-        if (super.startRiding(p_277395_, p_278062_)) {
+-            this.setKnownMovement(Vec3.ZERO);
 -            p_277395_.positionRider(this);
 -            this.connection.teleport(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
 -            if (p_277395_ instanceof LivingEntity livingentity) {
--                for (MobEffectInstance mobeffectinstance : livingentity.getActiveEffects()) {
--                    this.connection.send(new ClientboundUpdateMobEffectPacket(p_277395_.getId(), mobeffectinstance, false));
--                }
+-                this.server.getPlayerList().sendActiveEffects(livingentity, this.connection);
 -            }
 -
 -            return true;
+-        } else {
+-            return false;
 -        }
 -    }
 -
@@ -3985,6 +4063,38 @@
 -    @Nullable
 -    public BlockPos getRaidOmenPosition() {
 -        return this.raidOmenPosition;
+-    }
+-
+-    @Override
+-    public Vec3 getKnownMovement() {
+-        Entity entity = this.getVehicle();
+-        return entity != null && entity.getControllingPassenger() != this ? entity.getKnownMovement() : this.lastKnownClientMovement;
+-    }
+-
+-    public void setKnownMovement(Vec3 p_342348_) {
+-        this.lastKnownClientMovement = p_342348_;
+-    }
+-
+-    @Override
+-    protected float getEnchantedDamage(Entity p_344113_, float p_344852_, DamageSource p_343579_) {
+-        return EnchantmentHelper.modifyDamage(this.serverLevel(), this.getWeaponItem(), p_344113_, p_343579_, p_344852_);
+-    }
+-
+-    @Override
+-    public void onEquippedItemBroken(Item p_344553_, EquipmentSlot p_343482_) {
+-        super.onEquippedItemBroken(p_344553_, p_343482_);
+-        this.awardStat(Stats.ITEM_BROKEN.get(p_344553_));
+-    }
+-
+-    static record RespawnPosAngle(Vec3 position, float yaw) {
+-        public static ServerPlayer.RespawnPosAngle of(Vec3 p_342971_, BlockPos p_343580_) {
+-            return new ServerPlayer.RespawnPosAngle(p_342971_, calculateLookAtYaw(p_342971_, p_343580_));
+-        }
+-
+-        private static float calculateLookAtYaw(Vec3 p_344384_, BlockPos p_344719_) {
+-            Vec3 vec3 = Vec3.atBottomCenterOf(p_344719_).subtract(p_344384_).normalize();
+-            return (float)Mth.wrapDegrees(Mth.atan2(vec3.z, vec3.x) * 180.0F / (float)Math.PI - 90.0);
+-        }
 -    }
 +         }
 +

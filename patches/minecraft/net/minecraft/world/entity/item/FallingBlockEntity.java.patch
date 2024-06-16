@@ -8,15 +8,23 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.CrashReportCategory;
-@@ -19,7 +_,6 @@
+@@ -17,11 +_,8 @@
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
  import net.minecraft.network.syncher.SynchedEntityData;
+-import net.minecraft.resources.ResourceKey;
+-import net.minecraft.server.level.ServerEntity;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.tags.BlockTags;
 -import net.minecraft.tags.FluidTags;
  import net.minecraft.util.Mth;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
-@@ -44,6 +_,8 @@
+@@ -43,10 +_,11 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.material.Fluids;
+-import net.minecraft.world.level.portal.DimensionTransition;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -25,7 +33,7 @@
  import org.slf4j.Logger;
  
  public class FallingBlockEntity extends Entity {
-@@ -51,10 +_,10 @@
+@@ -54,10 +_,10 @@
      private BlockState blockState = Blocks.SAND.defaultBlockState();
      public int time;
      public boolean dropItem = true;
@@ -39,8 +47,8 @@
 +   	public float fallDamagePerDistance;
      @Nullable
      public CompoundTag blockData;
-     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
-@@ -75,19 +_,24 @@
+     public boolean forceTickAfterTeleportToDuplicate;
+@@ -79,19 +_,24 @@
          this.setStartPos(this.blockPosition());
      }
  
@@ -78,8 +86,8 @@
      @Override
      public boolean isAttackable() {
          return false;
-@@ -133,7 +_,7 @@
-             if (!this.level().isClientSide) {
+@@ -138,7 +_,7 @@
+             if (!this.level().isClientSide && (this.isAlive() || this.forceTickAfterTeleportToDuplicate)) {
                  BlockPos blockpos = this.blockPosition();
                  boolean flag = this.blockState.getBlock() instanceof ConcretePowderBlock;
 -                boolean flag1 = flag && this.level().getFluidState(blockpos).is(FluidTags.WATER);
@@ -87,7 +95,7 @@
                  double d0 = this.getDeltaMovement().lengthSqr();
                  if (flag && d0 > 1.0) {
                      BlockHitResult blockhitresult = this.level()
-@@ -146,7 +_,7 @@
+@@ -151,7 +_,7 @@
                                  this
                              )
                          );
@@ -96,7 +104,7 @@
                          blockpos = blockhitresult.getBlockPos();
                          flag1 = true;
                      }
-@@ -166,6 +_,13 @@
+@@ -171,6 +_,13 @@
                                  if (this.blockState.hasProperty(BlockStateProperties.WATERLOGGED) && this.level().getFluidState(blockpos).getType() == Fluids.WATER) {
                                      this.blockState = this.blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.valueOf(true));
                                  }

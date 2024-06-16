@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -2,11 +_,12 @@
+@@ -2,7 +_,9 @@
  
  import com.google.common.collect.ImmutableSet;
  import com.google.common.collect.Sets;
@@ -10,10 +10,6 @@
  import com.mojang.serialization.Dynamic;
  import com.mojang.serialization.DynamicOps;
  import com.mojang.serialization.Lifecycle;
--import com.mojang.serialization.DataResult.Error;
- import java.util.HashSet;
- import java.util.Set;
- import java.util.UUID;
 @@ -16,6 +_,7 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
@@ -83,26 +79,6 @@
      }
  
      @Override
-@@ -230,8 +_,8 @@
-         NbtUtils.addCurrentDataVersion(p_78547_);
-         DynamicOps<Tag> dynamicops = p_78546_.createSerializationContext(NbtOps.INSTANCE);
-         WorldGenSettings.encode(dynamicops, this.worldOptions, p_78546_)
--            .resultOrPartial(Util.prefix("WorldGenSettings: ", LOGGER::error))
--            .ifPresent(p_78574_ -> p_78547_.put("WorldGenSettings", p_78574_));
-+                .resultOrPartial(Util.prefix("WorldGenSettings: ", LOGGER::error))
-+                .ifPresent(p_78574_ -> p_78547_.put("WorldGenSettings", p_78574_)); // Mohist TODO craftbukkit patch
-         p_78547_.putInt("GameType", this.settings.gameType().getId());
-         p_78547_.putInt("SpawnX", this.spawnPos.getX());
-         p_78547_.putInt("SpawnY", this.spawnPos.getY());
-@@ -251,7 +_,7 @@
-         p_78547_.putBoolean("allowCommands", this.settings.allowCommands());
-         p_78547_.putBoolean("initialized", this.initialized);
-         this.worldBorder.write(p_78547_);
--        p_78547_.putByte("Difficulty", (byte)this.settings.difficulty().getId());
-+        p_78547_.putByte("Difficulty", (byte) this.settings.difficulty().getId());
-         p_78547_.putBoolean("DifficultyLocked", this.difficultyLocked);
-         p_78547_.put("GameRules", this.settings.gameRules().createTag());
-         p_78547_.put("DragonFight", EndDragonFight.Data.CODEC.encodeStart(NbtOps.INSTANCE, this.endDragonFightData).getOrThrow());
 @@ -273,6 +_,14 @@
          if (this.wanderingTraderId != null) {
              p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);

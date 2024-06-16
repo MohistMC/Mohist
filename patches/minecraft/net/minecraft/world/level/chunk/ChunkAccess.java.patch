@@ -51,8 +51,14 @@
  
      private static void replaceMissingSections(Registry<Biome> p_281389_, LevelChunkSection[] p_282796_) {
          for (int i = 0; i < p_282796_.length; i++) {
-@@ -264,10 +_,11 @@
+@@ -262,26 +_,23 @@
+         return true;
+     }
  
+-    public boolean isSectionEmpty(int p_342699_) {
+-        return this.getSection(this.getSectionIndexFromSectionY(p_342699_)).hasOnlyAir();
+-    }
+-
      public void setUnsaved(boolean p_62094_) {
          this.unsaved = p_62094_;
 +        if (!p_62094_) this.persistentDataContainer.dirty(false); // CraftBukkit - SPIGOT-6814: chunk was saved, pdc is no longer dirty
@@ -63,8 +69,21 @@
 +      return this.unsaved || this.persistentDataContainer.dirty(); // CraftBukkit - SPIGOT-6814: chunk is unsaved if pdc was mutated
      }
  
-     public abstract ChunkStatus getStatus();
-@@ -311,23 +_,28 @@
+-    public abstract ChunkStatus getPersistedStatus();
++    public abstract ChunkStatus getStatus();
+ 
+     public ChunkStatus getHighestGeneratedStatus() {
+-        ChunkStatus chunkstatus = this.getPersistedStatus();
++        ChunkStatus chunkstatus = this.getStatus();
+         BelowZeroRetrogen belowzeroretrogen = this.getBelowZeroRetrogen();
+         if (belowzeroretrogen != null) {
+             ChunkStatus chunkstatus1 = belowzeroretrogen.targetStatus();
+-            return ChunkStatus.max(chunkstatus1, chunkstatus);
++            return chunkstatus1.isOrAfter(chunkstatus) ? chunkstatus1 : chunkstatus;
+         } else {
+             return chunkstatus;
+         }
+@@ -315,23 +_,28 @@
  
      @Override
      public final void findBlockLightSources(BiConsumer<BlockPos, BlockState> p_285269_) {
@@ -97,7 +116,7 @@
                              }
                          }
                      }
-@@ -472,4 +_,30 @@
+@@ -476,4 +_,30 @@
  
      public static record TicksToSave(SerializableTickContainer<Block> blocks, SerializableTickContainer<Fluid> fluids) {
      }

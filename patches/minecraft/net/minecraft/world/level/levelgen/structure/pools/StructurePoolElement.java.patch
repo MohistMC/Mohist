@@ -1,0 +1,60 @@
+--- a/net/minecraft/world/level/levelgen/structure/pools/StructurePoolElement.java
++++ b/net/minecraft/world/level/levelgen/structure/pools/StructurePoolElement.java
+@@ -4,7 +_,6 @@
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import java.util.List;
+-import java.util.Optional;
+ import java.util.function.Function;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+@@ -21,7 +_,6 @@
+ import net.minecraft.world.level.chunk.ChunkGenerator;
+ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+ import net.minecraft.world.level.levelgen.structure.BoundingBox;
+-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+@@ -60,7 +_,6 @@
+         Rotation p_227342_,
+         BoundingBox p_227343_,
+         RandomSource p_227344_,
+-        LiquidSettings p_342484_,
+         boolean p_227345_
+     );
+ 
+@@ -99,29 +_,19 @@
+     }
+ 
+     public static Function<StructureTemplatePool.Projection, LegacySinglePoolElement> legacy(String p_210508_) {
+-        return p_341936_ -> new LegacySinglePoolElement(Either.left(ResourceLocation.parse(p_210508_)), EMPTY, p_341936_, Optional.empty());
++        return p_255605_ -> new LegacySinglePoolElement(Either.left(new ResourceLocation(p_210508_)), EMPTY, p_255605_);
+     }
+ 
+     public static Function<StructureTemplatePool.Projection, LegacySinglePoolElement> legacy(String p_210513_, Holder<StructureProcessorList> p_210514_) {
+-        return p_341939_ -> new LegacySinglePoolElement(Either.left(ResourceLocation.parse(p_210513_)), p_210514_, p_341939_, Optional.empty());
++        return p_210537_ -> new LegacySinglePoolElement(Either.left(new ResourceLocation(p_210513_)), p_210514_, p_210537_);
+     }
+ 
+     public static Function<StructureTemplatePool.Projection, SinglePoolElement> single(String p_210527_) {
+-        return p_341951_ -> new SinglePoolElement(Either.left(ResourceLocation.parse(p_210527_)), EMPTY, p_341951_, Optional.empty());
++        return p_255603_ -> new SinglePoolElement(Either.left(new ResourceLocation(p_210527_)), EMPTY, p_255603_);
+     }
+ 
+     public static Function<StructureTemplatePool.Projection, SinglePoolElement> single(String p_210532_, Holder<StructureProcessorList> p_210533_) {
+-        return p_341949_ -> new SinglePoolElement(Either.left(ResourceLocation.parse(p_210532_)), p_210533_, p_341949_, Optional.empty());
+-    }
+-
+-    public static Function<StructureTemplatePool.Projection, SinglePoolElement> single(String p_342465_, LiquidSettings p_344698_) {
+-        return p_341946_ -> new SinglePoolElement(Either.left(ResourceLocation.parse(p_342465_)), EMPTY, p_341946_, Optional.of(p_344698_));
+-    }
+-
+-    public static Function<StructureTemplatePool.Projection, SinglePoolElement> single(
+-        String p_343039_, Holder<StructureProcessorList> p_343135_, LiquidSettings p_342378_
+-    ) {
+-        return p_341943_ -> new SinglePoolElement(Either.left(ResourceLocation.parse(p_343039_)), p_343135_, p_341943_, Optional.of(p_342378_));
++        return p_210518_ -> new SinglePoolElement(Either.left(new ResourceLocation(p_210532_)), p_210533_, p_210518_);
+     }
+ 
+     public static Function<StructureTemplatePool.Projection, FeaturePoolElement> feature(Holder<PlacedFeature> p_210503_) {

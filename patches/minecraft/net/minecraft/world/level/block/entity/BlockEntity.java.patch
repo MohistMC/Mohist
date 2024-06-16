@@ -37,7 +37,7 @@
  import org.slf4j.Logger;
  
 -public abstract class BlockEntity {
-+public abstract class BlockEntity extends CapabilityProvider<BlockEntity> implements IForgeBlockEntity {
++public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
      private static final Logger LOGGER = LogUtils.getLogger();
      private final BlockEntityType<?> type;
      @Nullable
@@ -59,100 +59,22 @@
      }
  
      public static BlockPos getPosFromTag(CompoundTag p_187473_) {
-@@ -60,53 +_,55 @@
-         return this.level != null;
+@@ -61,6 +_,7 @@
      }
  
--    protected void loadAdditional(CompoundTag p_331149_, HolderLookup.Provider p_333170_) {
-+    protected void loadAdditional(CompoundTag p_331149_, Provider p_333170_) {
-+        if (getCapabilities() != null && p_331149_.contains("ForgeCaps")) deserializeCaps(p_331149_.getCompound("ForgeCaps"));
+     protected void loadAdditional(CompoundTag p_331149_, HolderLookup.Provider p_333170_) {
++        if (getCapabilities() != null && p_331149_.contains("ForgeCaps")) deserializeCaps(p_333170_, p_331149_.getCompound("ForgeCaps"));
      }
  
--    public final void loadWithComponents(CompoundTag p_331756_, HolderLookup.Provider p_335164_) {
-+    public final void loadWithComponents(CompoundTag p_331756_, Provider p_335164_) {
-         this.loadAdditional(p_331756_, p_335164_);
--        BlockEntity.ComponentHelper.COMPONENTS_CODEC
-+        ComponentHelper.COMPONENTS_CODEC
-             .parse(p_335164_.createSerializationContext(NbtOps.INSTANCE), p_331756_)
-             .resultOrPartial(p_327293_ -> LOGGER.warn("Failed to load components: {}", p_327293_))
-             .ifPresent(p_327298_ -> this.components = p_327298_);
+     public final void loadWithComponents(CompoundTag p_331756_, HolderLookup.Provider p_335164_) {
+@@ -76,6 +_,7 @@
      }
  
--    public final void loadCustomOnly(CompoundTag p_333694_, HolderLookup.Provider p_332017_) {
-+    public final void loadCustomOnly(CompoundTag p_333694_, Provider p_332017_) {
-         this.loadAdditional(p_333694_, p_332017_);
+     protected void saveAdditional(CompoundTag p_187471_, HolderLookup.Provider p_327783_) {
++        if (getCapabilities() != null) p_187471_.put("ForgeCaps", serializeCaps(p_327783_));
      }
  
--    protected void saveAdditional(CompoundTag p_187471_, HolderLookup.Provider p_327783_) {
-+    protected void saveAdditional(CompoundTag p_187471_, Provider p_327783_) {
-+        if (getCapabilities() != null) p_187471_.put("ForgeCaps", serializeCaps());
-     }
- 
--    public final CompoundTag saveWithFullMetadata(HolderLookup.Provider p_331193_) {
-+    public final CompoundTag saveWithFullMetadata(Provider p_331193_) {
-         CompoundTag compoundtag = this.saveWithoutMetadata(p_331193_);
-         this.saveMetadata(compoundtag);
-         return compoundtag;
-     }
- 
--    public final CompoundTag saveWithId(HolderLookup.Provider p_332686_) {
-+    public final CompoundTag saveWithId(Provider p_332686_) {
-         CompoundTag compoundtag = this.saveWithoutMetadata(p_332686_);
-         this.saveId(compoundtag);
-         return compoundtag;
-     }
- 
--    public final CompoundTag saveWithoutMetadata(HolderLookup.Provider p_332372_) {
-+    public final CompoundTag saveWithoutMetadata(Provider p_332372_) {
-         CompoundTag compoundtag = new CompoundTag();
-         this.saveAdditional(compoundtag, p_332372_);
--        BlockEntity.ComponentHelper.COMPONENTS_CODEC
-+        ComponentHelper.COMPONENTS_CODEC
-             .encodeStart(p_332372_.createSerializationContext(NbtOps.INSTANCE), this.components)
-             .resultOrPartial(p_327292_ -> LOGGER.warn("Failed to save components: {}", p_327292_))
-             .ifPresent(p_327300_ -> compoundtag.merge((CompoundTag)p_327300_));
-         return compoundtag;
-     }
- 
--    public final CompoundTag saveCustomOnly(HolderLookup.Provider p_333091_) {
-+    public final CompoundTag saveCustomOnly(Provider p_333091_) {
-         CompoundTag compoundtag = new CompoundTag();
-         this.saveAdditional(compoundtag, p_333091_);
-         return compoundtag;
-     }
- 
--    public final CompoundTag saveCustomAndMetadata(HolderLookup.Provider p_334487_) {
-+    public final CompoundTag saveCustomAndMetadata(Provider p_334487_) {
-         CompoundTag compoundtag = this.saveCustomOnly(p_334487_);
-         this.saveMetadata(compoundtag);
-         return compoundtag;
-@@ -125,7 +_,7 @@
-         p_187469_.putString("id", BlockEntityType.getKey(p_187470_).toString());
-     }
- 
--    public void saveToItem(ItemStack p_187477_, HolderLookup.Provider p_336381_) {
-+    public void saveToItem(ItemStack p_187477_, Provider p_336381_) {
-         CompoundTag compoundtag = this.saveCustomOnly(p_336381_);
-         this.removeComponentsFromTag(compoundtag);
-         BlockItem.setBlockEntityData(p_187477_, this.getType(), compoundtag);
-@@ -140,7 +_,7 @@
-     }
- 
-     @Nullable
--    public static BlockEntity loadStatic(BlockPos p_155242_, BlockState p_155243_, CompoundTag p_155244_, HolderLookup.Provider p_336084_) {
-+    public static BlockEntity loadStatic(BlockPos p_155242_, BlockState p_155243_, CompoundTag p_155244_, Provider p_336084_) {
-         String s = p_155244_.getString("id");
-         ResourceLocation resourcelocation = ResourceLocation.tryParse(s);
-         if (resourcelocation == null) {
-@@ -195,7 +_,7 @@
-         return null;
-     }
- 
--    public CompoundTag getUpdateTag(HolderLookup.Provider p_329179_) {
-+    public CompoundTag getUpdateTag(Provider p_329179_) {
-         return new CompoundTag();
-     }
- 
+     public final CompoundTag saveWithFullMetadata(HolderLookup.Provider p_331193_) {
 @@ -205,6 +_,13 @@
  
      public void setRemoved() {
@@ -167,31 +89,10 @@
      }
  
      public void clearRemoved() {
-@@ -236,7 +_,7 @@
-         this.blockState = p_155251_;
-     }
- 
--    protected void applyImplicitComponents(BlockEntity.DataComponentInput p_330805_) {
-+    protected void applyImplicitComponents(DataComponentInput p_330805_) {
-     }
- 
-     public final void applyComponentsFromItemStack(ItemStack p_328941_) {
-@@ -247,7 +_,7 @@
-         final Set<DataComponentType<?>> set = new HashSet<>();
-         set.add(DataComponents.BLOCK_ENTITY_DATA);
-         final DataComponentMap datacomponentmap = PatchedDataComponentMap.fromPatch(p_335232_, p_331646_);
--        this.applyImplicitComponents(new BlockEntity.DataComponentInput() {
-+        this.applyImplicitComponents(new DataComponentInput() {
-             @Nullable
-             @Override
-             public <T> T get(DataComponentType<T> p_335233_) {
-@@ -263,9 +_,18 @@
+@@ -263,6 +_,15 @@
          });
          DataComponentPatch datacomponentpatch = p_331646_.forget(set::contains);
          this.components = datacomponentpatch.split().added();
--    }
--
--    protected void collectImplicitComponents(DataComponentMap.Builder p_328216_) {
 +        // CraftBukkit start
 +        set.remove(DataComponents.BLOCK_ENTITY_DATA); // Remove as never actually added by applyImplicitComponents
 +        this.set = set;
@@ -201,33 +102,9 @@
 +    public final Set<DataComponentType<?>> applyComponentsSet(DataComponentMap datacomponentmap, DataComponentPatch datacomponentpatch) {
 +        this.applyComponents(datacomponentmap, datacomponentpatch);
 +        return set;
-+    }
-+
-+    protected void collectImplicitComponents(Builder p_328216_) {
      }
  
-     @Deprecated
-@@ -273,7 +_,7 @@
-     }
- 
-     public final DataComponentMap collectComponents() {
--        DataComponentMap.Builder datacomponentmap$builder = DataComponentMap.builder();
-+        Builder datacomponentmap$builder = DataComponentMap.builder();
-         datacomponentmap$builder.addAll(this.components);
-         this.collectImplicitComponents(datacomponentmap$builder);
-         return datacomponentmap$builder.build();
-@@ -288,9 +_,9 @@
-     }
- 
-     @Nullable
--    public static Component parseCustomNameSafe(String p_336419_, HolderLookup.Provider p_336417_) {
-+    public static Component parseCustomNameSafe(String p_336419_, Provider p_336417_) {
-         try {
--            return Component.Serializer.fromJson(p_336419_, p_336417_);
-+            return Serializer.fromJson(p_336419_, p_336417_);
-         } catch (Exception exception) {
-             LOGGER.warn("Failed to parse custom name from string '{}', discarding", p_336419_, exception);
-             return null;
+     protected void collectImplicitComponents(DataComponentMap.Builder p_328216_) {
 @@ -310,4 +_,10 @@
  
          <T> T getOrDefault(DataComponentType<? extends T> p_330702_, T p_330858_);

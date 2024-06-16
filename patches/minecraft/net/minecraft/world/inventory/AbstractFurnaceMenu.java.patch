@@ -1,13 +1,19 @@
 --- a/net/minecraft/world/inventory/AbstractFurnaceMenu.java
 +++ b/net/minecraft/world/inventory/AbstractFurnaceMenu.java
-@@ -13,6 +_,8 @@
+@@ -8,11 +_,14 @@
+ import net.minecraft.world.entity.player.StackedContents;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
++import net.minecraft.world.item.crafting.Recipe;
+ import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.crafting.RecipeType;
+ import net.minecraft.world.item.crafting.SingleRecipeInput;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
- public abstract class AbstractFurnaceMenu extends RecipeBookMenu<Container> {
+ public abstract class AbstractFurnaceMenu extends RecipeBookMenu<SingleRecipeInput, AbstractCookingRecipe> {
      public static final int INGREDIENT_SLOT = 0;
 @@ -30,6 +_,22 @@
      private final RecipeType<? extends AbstractCookingRecipe> recipeType;

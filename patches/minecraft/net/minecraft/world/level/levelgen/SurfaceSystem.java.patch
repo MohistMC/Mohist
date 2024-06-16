@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/SurfaceSystem.java
++++ b/net/minecraft/world/level/levelgen/SurfaceSystem.java
+@@ -52,7 +_,7 @@
+         this.seaLevel = p_224639_;
+         this.noiseRandom = p_224640_;
+         this.clayBandsOffsetNoise = p_224637_.getOrCreateNoise(Noises.CLAY_BANDS_OFFSET);
+-        this.clayBands = generateBands(p_224640_.fromHashOf(ResourceLocation.withDefaultNamespace("clay_bands")));
++        this.clayBands = generateBands(p_224640_.fromHashOf(new ResourceLocation("clay_bands")));
+         this.surfaceNoise = p_224637_.getOrCreateNoise(Noises.SURFACE);
+         this.surfaceSecondaryNoise = p_224637_.getOrCreateNoise(Noises.SURFACE_SECONDARY);
+         this.badlandsPillarNoise = p_224637_.getOrCreateNoise(Noises.BADLANDS_PILLAR);

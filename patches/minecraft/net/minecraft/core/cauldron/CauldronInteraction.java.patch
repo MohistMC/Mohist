@@ -16,49 +16,81 @@
  
  public interface CauldronInteraction {
      Map<String, CauldronInteraction.InteractionMap> INTERACTIONS = new Object2ObjectArrayMap<>();
-@@ -64,10 +_,16 @@
+@@ -58,35 +_,53 @@
+             Blocks.POWDER_SNOW_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, Integer.valueOf(3)),
+             SoundEvents.BUCKET_EMPTY_POWDER_SNOW
+         );
+-    CauldronInteraction SHULKER_BOX = (p_340986_, p_340987_, p_340988_, p_340989_, p_340990_, p_340991_) -> {
+-        Block block = Block.byItem(p_340991_.getItem());
++    CauldronInteraction SHULKER_BOX = (p_325746_, p_325747_, p_325748_, p_325749_, p_325750_, p_325751_) -> {
++        Block block = Block.byItem(p_325751_.getItem());
+         if (!(block instanceof ShulkerBoxBlock)) {
              return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
          } else {
-             if (!p_325747_.isClientSide) {
+-            if (!p_340987_.isClientSide) {
+-                ItemStack itemstack = p_340991_.transmuteCopy(Blocks.SHULKER_BOX, 1);
+-                p_340989_.setItemInHand(p_340990_, ItemUtils.createFilledResult(p_340991_, p_340989_, itemstack, false));
+-                p_340989_.awardStat(Stats.CLEAN_SHULKER_BOX);
+-                LayeredCauldronBlock.lowerFillLevel(p_340986_, p_340987_, p_340988_);
+-            }
+-
+-            return ItemInteractionResult.sidedSuccess(p_340987_.isClientSide);
++            if (!p_325747_.isClientSide) {
 +            	// CraftBukkit start
 +            	if (!LayeredCauldronBlock.lowerFillLevel(p_325746_, p_325747_, p_325748_, p_325749_, CauldronLevelChangeEvent.ChangeReason.SHULKER_WASH)) {
 +                    return ItemInteractionResult.SUCCESS;
 +                }
 +            	// CraftBukkit end
 +
-                 p_325749_.setItemInHand(p_325750_, p_325751_.transmuteCopy(Blocks.SHULKER_BOX, 1));
-                 p_325749_.awardStat(Stats.CLEAN_SHULKER_BOX);
--                LayeredCauldronBlock.lowerFillLevel(p_325746_, p_325747_, p_325748_);
--            }
++                p_325749_.setItemInHand(p_325750_, p_325751_.transmuteCopy(Blocks.SHULKER_BOX, 1));
++                p_325749_.awardStat(Stats.CLEAN_SHULKER_BOX);
 +            	// LayeredCauldronBlock.lowerFillLevel(p_175662_, p_175663_, p_175664_); // CraftBukkit
 +         }
- 
-             return ItemInteractionResult.sidedSuccess(p_325747_.isClientSide);
++
++            return ItemInteractionResult.sidedSuccess(p_325747_.isClientSide);
          }
-@@ -78,6 +_,11 @@
+     };
+-    CauldronInteraction BANNER = (p_340992_, p_340993_, p_340994_, p_340995_, p_340996_, p_340997_) -> {
+-        BannerPatternLayers bannerpatternlayers = p_340997_.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
++    CauldronInteraction BANNER = (p_325764_, p_325765_, p_325766_, p_325767_, p_325768_, p_325769_) -> {
++        BannerPatternLayers bannerpatternlayers = p_325769_.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
+         if (bannerpatternlayers.layers().isEmpty()) {
              return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
          } else {
-             if (!p_325765_.isClientSide) {
+-            if (!p_340993_.isClientSide) {
+-                ItemStack itemstack = p_340997_.copyWithCount(1);
++            if (!p_325765_.isClientSide) {
 +            	// CraftBukkit start
 +            	if (!LayeredCauldronBlock.lowerFillLevel(p_325764_, p_325765_, p_325766_, p_325767_, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.BANNER_WASH)) {
 +                    return ItemInteractionResult.SUCCESS;
 +            	}
 +            	// CraftBukkit end
-                 ItemStack itemstack = p_325769_.copyWithCount(1);
++                ItemStack itemstack = p_325769_.copyWithCount(1);
                  itemstack.set(DataComponents.BANNER_PATTERNS, bannerpatternlayers.removeLast());
-                 p_325769_.consume(1, p_325767_);
-@@ -90,8 +_,8 @@
-                 }
- 
-                 p_325767_.awardStat(Stats.CLEAN_BANNER);
--                LayeredCauldronBlock.lowerFillLevel(p_325764_, p_325765_, p_325766_);
+-                p_340995_.setItemInHand(p_340996_, ItemUtils.createFilledResult(p_340997_, p_340995_, itemstack, false));
+-                p_340995_.awardStat(Stats.CLEAN_BANNER);
+-                LayeredCauldronBlock.lowerFillLevel(p_340992_, p_340993_, p_340994_);
 -            }
+-
+-            return ItemInteractionResult.sidedSuccess(p_340993_.isClientSide);
++                p_325769_.consume(1, p_325767_);
++                if (p_325769_.isEmpty()) {
++                    p_325767_.setItemInHand(p_325768_, itemstack);
++                } else if (p_325767_.getInventory().add(itemstack)) {
++                    p_325767_.inventoryMenu.sendAllDataToRemote();
++                } else {
++                    p_325767_.drop(itemstack, false);
++                }
++
++                p_325767_.awardStat(Stats.CLEAN_BANNER);
 +            	// LayeredCauldronBlock.lowerFillLevel(p_278890_, p_278891_, p_278892_); // CraftBukkit
 +         }
- 
-             return ItemInteractionResult.sidedSuccess(p_325765_.isClientSide);
++
++            return ItemInteractionResult.sidedSuccess(p_325765_.isClientSide);
          }
-@@ -103,9 +_,14 @@
+     };
+     CauldronInteraction DYED_ITEM = (p_325770_, p_325771_, p_325772_, p_325773_, p_325774_, p_325775_) -> {
+@@ -96,9 +_,14 @@
              return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
          } else {
              if (!p_325771_.isClientSide) {
@@ -75,7 +107,7 @@
              }
  
              return ItemInteractionResult.sidedSuccess(p_325771_.isClientSide);
-@@ -131,11 +_,16 @@
+@@ -124,11 +_,16 @@
              PotionContents potioncontents = p_175737_.get(DataComponents.POTION_CONTENTS);
              if (potioncontents != null && potioncontents.is(Potions.WATER)) {
                  if (!p_175733_.isClientSide) {
@@ -93,7 +125,7 @@
                      p_175733_.playSound(null, p_175734_, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                      p_175733_.gameEvent(null, GameEvent.FLUID_PLACE, p_175734_);
                  }
-@@ -163,11 +_,16 @@
+@@ -156,11 +_,16 @@
          );
          map1.put(Items.GLASS_BOTTLE, (p_325758_, p_325759_, p_325760_, p_325761_, p_325762_, p_325763_) -> {
              if (!p_325759_.isClientSide) {
@@ -111,7 +143,7 @@
                  p_325759_.playSound(null, p_325760_, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
                  p_325759_.gameEvent(null, GameEvent.FLUID_PICKUP, p_325760_);
              }
-@@ -181,10 +_,15 @@
+@@ -174,10 +_,15 @@
                  PotionContents potioncontents = p_175709_.get(DataComponents.POTION_CONTENTS);
                  if (potioncontents != null && potioncontents.is(Potions.WATER)) {
                      if (!p_175705_.isClientSide) {
@@ -128,7 +160,7 @@
                          p_175705_.playSound(null, p_175706_, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                          p_175705_.gameEvent(null, GameEvent.FLUID_PLACE, p_175706_);
                      }
-@@ -280,14 +_,19 @@
+@@ -273,14 +_,19 @@
              return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
          } else {
              if (!p_175637_.isClientSide) {
@@ -150,7 +182,7 @@
  
              return ItemInteractionResult.sidedSuccess(p_175637_.isClientSide);
          }
-@@ -296,12 +_,17 @@
+@@ -289,12 +_,17 @@
      static ItemInteractionResult emptyBucket(
          Level p_175619_, BlockPos p_175620_, Player p_175621_, InteractionHand p_175622_, ItemStack p_175623_, BlockState p_175624_, SoundEvent p_175625_
      ) {

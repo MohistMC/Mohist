@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/block/LecternBlock.java
++++ b/net/minecraft/world/level/block/LecternBlock.java
+@@ -16,7 +_,6 @@
+ import net.minecraft.world.ItemInteractionResult;
+ import net.minecraft.world.MenuProvider;
+ import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+@@ -159,10 +_,10 @@
+         return new LecternBlockEntity(p_153573_, p_153574_);
+     }
+ 
+-    public static boolean tryPlaceBook(@Nullable LivingEntity p_344930_, Level p_270604_, BlockPos p_270276_, BlockState p_270445_, ItemStack p_270458_) {
++    public static boolean tryPlaceBook(@Nullable Entity p_270350_, Level p_270604_, BlockPos p_270276_, BlockState p_270445_, ItemStack p_270458_) {
+         if (!p_270445_.getValue(HAS_BOOK)) {
+             if (!p_270604_.isClientSide) {
+-                placeBook(p_344930_, p_270604_, p_270276_, p_270445_, p_270458_);
++                placeBook(p_270350_, p_270604_, p_270276_, p_270445_, p_270458_);
+             }
+ 
+             return true;
+@@ -171,10 +_,10 @@
+         }
+     }
+ 
+-    private static void placeBook(@Nullable LivingEntity p_343476_, Level p_270065_, BlockPos p_270155_, BlockState p_270753_, ItemStack p_270173_) {
++    private static void placeBook(@Nullable Entity p_270891_, Level p_270065_, BlockPos p_270155_, BlockState p_270753_, ItemStack p_270173_) {
+         if (p_270065_.getBlockEntity(p_270155_) instanceof LecternBlockEntity lecternblockentity) {
+-            lecternblockentity.setBook(p_270173_.consumeAndReturn(1, p_343476_));
+-            resetBookState(p_343476_, p_270065_, p_270155_, p_270753_, true);
++            lecternblockentity.setBook(p_270173_.split(1));
++            resetBookState(p_270891_, p_270065_, p_270155_, p_270753_, true);
+             p_270065_.playSound(null, p_270155_, SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1.0F, 1.0F);
+         }
+     }

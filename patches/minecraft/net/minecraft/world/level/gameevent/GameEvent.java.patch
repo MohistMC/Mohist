@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/level/gameevent/GameEvent.java
++++ b/net/minecraft/world/level/gameevent/GameEvent.java
+@@ -1,12 +_,9 @@
+ package net.minecraft.world.level.gameevent;
+ 
+-import com.mojang.serialization.Codec;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.registries.BuiltInRegistries;
+-import net.minecraft.core.registries.Registries;
+-import net.minecraft.resources.RegistryFixedCodec;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.level.block.state.BlockState;
+@@ -74,7 +_,6 @@
+     public static final Holder.Reference<GameEvent> RESONATE_14 = register("resonate_14");
+     public static final Holder.Reference<GameEvent> RESONATE_15 = register("resonate_15");
+     public static final int DEFAULT_NOTIFICATION_RADIUS = 16;
+-    public static final Codec<Holder<GameEvent>> CODEC = RegistryFixedCodec.create(Registries.GAME_EVENT);
+ 
+     public static Holder<GameEvent> bootstrap(Registry<GameEvent> p_336256_) {
+         return BLOCK_ACTIVATE;
+@@ -85,7 +_,7 @@
+     }
+ 
+     private static Holder.Reference<GameEvent> register(String p_157825_, int p_157826_) {
+-        return Registry.registerForHolder(BuiltInRegistries.GAME_EVENT, ResourceLocation.withDefaultNamespace(p_157825_), new GameEvent(p_157826_));
++        return Registry.registerForHolder(BuiltInRegistries.GAME_EVENT, new ResourceLocation(p_157825_), new GameEvent(p_157826_));
+     }
+ 
+     public static record Context(@Nullable Entity sourceEntity, @Nullable BlockState affectedState) {

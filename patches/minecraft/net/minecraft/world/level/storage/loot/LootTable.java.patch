@@ -87,8 +87,8 @@
 +        this.getRandomItems(p_79149_).forEach(p_79150_);
      }
  
-     public ObjectArrayList<ItemStack> getRandomItems(LootParams p_287574_, long p_287773_) {
-@@ -117,7 +_,8 @@
+     public ObjectArrayList<ItemStack> getRandomItems(LootParams p_345012_, RandomSource p_344559_) {
+@@ -121,7 +_,8 @@
  
      private ObjectArrayList<ItemStack> getRandomItems(LootContext p_230923_) {
          ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
@@ -98,7 +98,7 @@
          return objectarraylist;
      }
  
-@@ -135,10 +_,27 @@
+@@ -139,10 +_,27 @@
          }
      }
  
@@ -127,7 +127,7 @@
          List<Integer> list = this.getAvailableSlots(p_287662_, randomsource);
          this.shuffleAndSplitItems(objectarraylist, list.size(), randomsource);
  
-@@ -206,6 +_,54 @@
+@@ -210,6 +_,54 @@
  
      public static LootTable.Builder lootTable() {
          return new LootTable.Builder();

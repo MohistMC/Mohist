@@ -32,12 +32,3 @@
      }
  
      public void setActiveChest(EnderChestBlockEntity p_40106_) {
-@@ -48,7 +_,7 @@
-             ItemStack itemstack = this.getItem(i);
-             if (!itemstack.isEmpty()) {
-                 CompoundTag compoundtag = new CompoundTag();
--                compoundtag.putByte("Slot", (byte)i);
-+                compoundtag.putByte("Slot", (byte) i);
-                 listtag.add(itemstack.save(p_335225_, compoundtag));
-             }
-         }

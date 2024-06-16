@@ -8,23 +8,86 @@
  import com.mojang.serialization.DynamicLike;
  import java.util.List;
  import net.minecraft.Util;
-@@ -9,6 +_,7 @@
+@@ -9,8 +_,8 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.ChunkPos;
 +import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.AABB;
+-import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
-@@ -27,6 +_,7 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+@@ -28,50 +_,43 @@
      int absoluteMaxSize = 29999984;
      private WorldBorder.BorderExtent extent = new WorldBorder.StaticBorderExtent(5.999997E7F);
      public static final WorldBorder.Settings DEFAULT_SETTINGS = new WorldBorder.Settings(0.0, 0.0, 0.2, 5.0, 5, 15, 5.999997E7F, 0L, 0.0);
 +   	public Level world; // CraftBukkit // Mohist fix create mod
  
      public boolean isWithinBounds(BlockPos p_61938_) {
-         return (double)(p_61938_.getX() + 1) > this.getMinX()
-@@ -162,6 +_,7 @@
+-        return this.isWithinBounds((double)p_61938_.getX(), (double)p_61938_.getZ());
+-    }
+-
+-    public boolean isWithinBounds(Vec3 p_343899_) {
+-        return this.isWithinBounds(p_343899_.x, p_343899_.z);
++        return (double)(p_61938_.getX() + 1) > this.getMinX()
++            && (double)p_61938_.getX() < this.getMaxX()
++            && (double)(p_61938_.getZ() + 1) > this.getMinZ()
++            && (double)p_61938_.getZ() < this.getMaxZ();
+     }
+ 
+     public boolean isWithinBounds(ChunkPos p_61928_) {
+-        return this.isWithinBounds((double)p_61928_.getMinBlockX(), (double)p_61928_.getMinBlockZ())
+-            && this.isWithinBounds((double)p_61928_.getMaxBlockX(), (double)p_61928_.getMaxBlockZ());
+-    }
+-
+-    public boolean isWithinBounds(AABB p_61936_) {
+-        return this.isWithinBounds(p_61936_.minX, p_61936_.minZ, p_61936_.maxX - 1.0E-5F, p_61936_.maxZ - 1.0E-5F);
+-    }
+-
+-    private boolean isWithinBounds(double p_342617_, double p_344821_, double p_344911_, double p_344145_) {
+-        return this.isWithinBounds(p_342617_, p_344821_) && this.isWithinBounds(p_344911_, p_344145_);
++        return (double)p_61928_.getMaxBlockX() > this.getMinX()
++            && (double)p_61928_.getMinBlockX() < this.getMaxX()
++            && (double)p_61928_.getMaxBlockZ() > this.getMinZ()
++            && (double)p_61928_.getMinBlockZ() < this.getMaxZ();
+     }
+ 
+     public boolean isWithinBounds(double p_156094_, double p_156095_) {
+-        return this.isWithinBounds(p_156094_, p_156095_, 0.0);
++        return p_156094_ > this.getMinX() && p_156094_ < this.getMaxX() && p_156095_ > this.getMinZ() && p_156095_ < this.getMaxZ();
+     }
+ 
+     public boolean isWithinBounds(double p_187563_, double p_187564_, double p_187565_) {
+-        return p_187563_ >= this.getMinX() - p_187565_
++        return p_187563_ > this.getMinX() - p_187565_
+             && p_187563_ < this.getMaxX() + p_187565_
+-            && p_187564_ >= this.getMinZ() - p_187565_
++            && p_187564_ > this.getMinZ() - p_187565_
+             && p_187564_ < this.getMaxZ() + p_187565_;
+     }
+ 
+-    public BlockPos clampToBounds(BlockPos p_342374_) {
+-        return this.clampToBounds((double)p_342374_.getX(), (double)p_342374_.getY(), (double)p_342374_.getZ());
+-    }
+-
+-    public BlockPos clampToBounds(Vec3 p_345328_) {
+-        return this.clampToBounds(p_345328_.x(), p_345328_.y(), p_345328_.z());
++    public boolean isWithinBounds(AABB p_61936_) {
++        return p_61936_.maxX > this.getMinX()
++            && p_61936_.minX < this.getMaxX()
++            && p_61936_.maxZ > this.getMinZ()
++            && p_61936_.minZ < this.getMaxZ();
+     }
+ 
+     public BlockPos clampToBounds(double p_187570_, double p_187571_, double p_187572_) {
+         return BlockPos.containing(
+-            Mth.clamp(p_187570_, this.getMinX(), this.getMaxX() - 1.0), p_187571_, Mth.clamp(p_187572_, this.getMinZ(), this.getMaxZ() - 1.0)
++            Mth.clamp(p_187570_, this.getMinX(), this.getMaxX()), p_187571_, Mth.clamp(p_187572_, this.getMinZ(), this.getMaxZ())
+         );
+     }
+ 
+@@ -171,6 +_,7 @@
      }
  
      public void addListener(BorderChangeListener p_61930_) {

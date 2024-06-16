@@ -71,7 +71,7 @@
                  } else {
                      itemstack.hurtAndBreak(1, p_32301_, getSlotForHand(p_32302_));
                  }
-@@ -231,20 +_,30 @@
+@@ -231,21 +_,30 @@
          }
      }
  
@@ -86,12 +86,14 @@
 +         if (!event.isCancelled()) {
              this.dead = true;
 -            this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionRadius * f, Level.ExplosionInteraction.MOB);
+-            this.spawnLingeringCloud();
+-            this.triggerOnDeathMobEffects(Entity.RemovalReason.KILLED);
 +            this.level().explode(this,  net.minecraft.world.level.Explosion.getDefaultDamageSource(this.level(), this).customEntityDamager(this.entityIgniter), null, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +            this.putRemoveCause(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
              this.discard();
-             this.spawnLingeringCloud();
 -        }
 -    }
++            this.spawnLingeringCloud();
 +         } else {
 +            swell = 0;
 +         }
@@ -108,7 +110,7 @@
              areaeffectcloud.setRadius(2.5F);
              areaeffectcloud.setRadiusOnUse(-0.5F);
              areaeffectcloud.setWaitTime(10);
-@@ -254,7 +_,7 @@
+@@ -255,7 +_,7 @@
              for (MobEffectInstance mobeffectinstance : collection) {
                  areaeffectcloud.addEffect(new MobEffectInstance(mobeffectinstance));
              }
@@ -117,7 +119,7 @@
              this.level().addFreshEntity(areaeffectcloud);
          }
      }
-@@ -263,9 +_,24 @@
+@@ -264,9 +_,24 @@
          return this.entityData.get(DATA_IS_IGNITED);
      }
  

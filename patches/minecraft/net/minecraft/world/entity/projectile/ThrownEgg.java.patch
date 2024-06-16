@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEgg.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEgg.java
-@@ -10,6 +_,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
 +import org.bukkit.event.entity.EntityRemoveEvent;
  
  public class ThrownEgg extends ThrowableItemProjectile {
-     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
-@@ -71,6 +_,7 @@
+     private static final EntityDimensions ZERO_SIZED_DIMENSIONS = EntityDimensions.fixed(0.0F, 0.0F);
+@@ -78,6 +_,7 @@
              }
  
              this.level().broadcastEntityEvent(this, (byte)3);

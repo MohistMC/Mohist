@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/level/block/LeverBlock.java
 +++ b/net/minecraft/world/level/block/LeverBlock.java
-@@ -8,6 +_,7 @@
+@@ -2,13 +_,13 @@
+ 
+ import com.mojang.serialization.MapCodec;
+ import java.util.function.BiConsumer;
+-import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.particles.DustParticleOptions;
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.util.RandomSource;
@@ -8,7 +15,7 @@
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-@@ -25,6 +_,8 @@
+@@ -26,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -17,10 +24,21 @@
  
  public class LeverBlock extends FaceAttachedHorizontalDirectionalBlock {
      public static final MapCodec<LeverBlock> CODEC = simpleCodec(LeverBlock::new);
-@@ -98,6 +_,20 @@
+@@ -92,38 +_,49 @@
+     @Override
+     protected InteractionResult useWithoutItem(BlockState p_54640_, Level p_54641_, BlockPos p_54642_, Player p_54643_, BlockHitResult p_54645_) {
+         if (p_54641_.isClientSide) {
+-            BlockState blockstate = p_54640_.cycle(POWERED);
+-            if (blockstate.getValue(POWERED)) {
+-                makeParticle(blockstate, p_54641_, p_54642_, 1.0F);
++            BlockState blockstate1 = p_54640_.cycle(POWERED);
++            if (blockstate1.getValue(POWERED)) {
++                makeParticle(blockstate1, p_54641_, p_54642_, 1.0F);
+             }
  
              return InteractionResult.SUCCESS;
          } else {
+-            this.pull(p_54640_, p_54641_, p_54642_, null);
 +         // CraftBukkit start - Interact Lever
 +         boolean powered = p_54640_.getValue(POWERED); // Old powered state
 +         org.bukkit.block.Block block = CraftBlock.at(p_54641_, p_54642_);
@@ -35,6 +53,38 @@
 +         }
 +         // CraftBukkit end
 +
-             BlockState blockstate = this.pull(p_54640_, p_54641_, p_54642_);
-             float f = blockstate.getValue(POWERED) ? 0.6F : 0.5F;
-             p_54641_.playSound(null, p_54642_, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
++            BlockState blockstate = this.pull(p_54640_, p_54641_, p_54642_);
++            float f = blockstate.getValue(POWERED) ? 0.6F : 0.5F;
++            p_54641_.playSound(null, p_54642_, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
++            p_54641_.gameEvent(p_54643_, blockstate.getValue(POWERED) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, p_54642_);
+             return InteractionResult.CONSUME;
+         }
+     }
+ 
+     @Override
+     protected void onExplosionHit(BlockState p_309641_, Level p_311735_, BlockPos p_310069_, Explosion p_312793_, BiConsumer<ItemStack, BlockPos> p_310075_) {
+-        if (p_312793_.canTriggerBlocks()) {
+-            this.pull(p_309641_, p_311735_, p_310069_, null);
++        if (p_312793_.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK && !p_311735_.isClientSide()) {
++            this.pull(p_309641_, p_311735_, p_310069_);
+         }
+ 
+         super.onExplosionHit(p_309641_, p_311735_, p_310069_, p_312793_, p_310075_);
+     }
+ 
+-    public void pull(BlockState p_54677_, Level p_54678_, BlockPos p_54679_, @Nullable Player p_343787_) {
++    public BlockState pull(BlockState p_54677_, Level p_54678_, BlockPos p_54679_) {
+         p_54677_ = p_54677_.cycle(POWERED);
+         p_54678_.setBlock(p_54679_, p_54677_, 3);
+         this.updateNeighbours(p_54677_, p_54678_, p_54679_);
+-        playSound(p_343787_, p_54678_, p_54679_, p_54677_);
+-        p_54678_.gameEvent(p_343787_, p_54677_.getValue(POWERED) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, p_54679_);
+-    }
+-
+-    protected static void playSound(@Nullable Player p_345484_, LevelAccessor p_343291_, BlockPos p_342537_, BlockState p_343757_) {
+-        float f = p_343757_.getValue(POWERED) ? 0.6F : 0.5F;
+-        p_343291_.playSound(p_345484_, p_342537_, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
++        return p_54677_;
+     }
+ 
+     private static void makeParticle(BlockState p_54658_, LevelAccessor p_54659_, BlockPos p_54660_, float p_54661_) {

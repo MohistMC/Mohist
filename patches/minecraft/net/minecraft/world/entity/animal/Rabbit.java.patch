@@ -1,15 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -52,7 +_,8 @@
- import net.minecraft.world.entity.monster.Monster;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.level.GameRules;
-+import net.minecraft.world.item.Items;
-+import net.minecraft.world.item.crafting.Ingredient;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
+@@ -26,6 +_,7 @@
+ import net.minecraft.world.DifficultyInstance;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.AgeableMob;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
 @@ -65,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.Path;
@@ -18,7 +16,7 @@
  
  public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
      public static final double STROLL_SPEED_MOD = 0.6;
-@@ -525,7 +_,7 @@
+@@ -527,7 +_,7 @@
          @Override
          public boolean canUse() {
              if (this.nextStartTick <= 0) {
@@ -27,7 +25,7 @@
                      return false;
                  }
  
-@@ -561,9 +_,19 @@
+@@ -563,9 +_,19 @@
                  if (this.canRaid && block instanceof CarrotBlock) {
                      int i = blockstate.getValue(CarrotBlock.AGE);
                      if (i == 0) {

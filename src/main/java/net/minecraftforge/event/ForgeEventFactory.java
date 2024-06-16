@@ -158,6 +158,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
@@ -815,14 +816,6 @@ public final class ForgeEventFactory {
         post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 
-    public static void onRenderTickStart(float timer) {
-        post(new TickEvent.RenderTickEvent.Pre(timer));
-    }
-
-    public static void onRenderTickEnd(float timer) {
-        post(new TickEvent.RenderTickEvent.Post(timer));
-    }
-
     public static void onPlayerPreTick(Player player) {
         post(new TickEvent.PlayerTickEvent.Pre(player));
     }
@@ -971,8 +964,8 @@ public final class ForgeEventFactory {
         return post(new LivingDeathEvent(entity, src));
     }
 
-    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
-        return post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
+    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, boolean recentlyHit) {
+        return post(new LivingDropsEvent(entity, source, drops, recentlyHit));
     }
 
     public static void onLeftClickEmpty(Player player) {
@@ -1110,5 +1103,9 @@ public final class ForgeEventFactory {
 
     public static GatherComponentsEvent.Item gatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
         return fire(new GatherComponentsEvent.Item(item, dataComponents));
+    }
+
+    public static LootingLevelEvent fireLootingLevel(LivingEntity target, @Nullable DamageSource cause, int level) {
+        return fire(new LootingLevelEvent(target, cause, level));
     }
 }

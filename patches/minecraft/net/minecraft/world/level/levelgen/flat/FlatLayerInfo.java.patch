@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/levelgen/flat/FlatLayerInfo.java
++++ b/net/minecraft/world/level/levelgen/flat/FlatLayerInfo.java
+@@ -11,11 +_,11 @@
+ 
+ public class FlatLayerInfo {
+     public static final Codec<FlatLayerInfo> CODEC = RecordCodecBuilder.create(
+-        p_341907_ -> p_341907_.group(
++        p_259009_ -> p_259009_.group(
+                     Codec.intRange(0, DimensionType.Y_SIZE).fieldOf("height").forGetter(FlatLayerInfo::getHeight),
+                     BuiltInRegistries.BLOCK.byNameCodec().fieldOf("block").orElse(Blocks.AIR).forGetter(p_161902_ -> p_161902_.getBlockState().getBlock())
+                 )
+-                .apply(p_341907_, FlatLayerInfo::new)
++                .apply(p_259009_, FlatLayerInfo::new)
+     );
+     private final Block block;
+     private final int height;

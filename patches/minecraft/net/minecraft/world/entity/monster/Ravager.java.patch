@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Ravager.java
 +++ b/net/minecraft/world/entity/monster/Ravager.java
-@@ -12,6 +_,7 @@
+@@ -13,6 +_,7 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
@@ -8,7 +8,7 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.Mob;
-@@ -39,6 +_,7 @@
+@@ -40,6 +_,7 @@
  import net.minecraft.world.level.pathfinder.PathType;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -16,7 +16,7 @@
  
  public class Ravager extends Raider {
      private static final Predicate<Entity> NO_RAVAGER_AND_ALIVE = p_33346_ -> p_33346_.isAlive() && !(p_33346_ instanceof Ravager);
-@@ -133,7 +_,7 @@
+@@ -134,7 +_,7 @@
                  this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(Mth.lerp(0.1, d1, d0));
              }
  
@@ -25,15 +25,15 @@
                  boolean flag = false;
                  AABB aabb = this.getBoundingBox().inflate(0.2);
  
-@@ -148,6 +_,11 @@
+@@ -149,6 +_,11 @@
                      BlockState blockstate = this.level().getBlockState(blockpos);
                      Block block = blockstate.getBlock();
                      if (block instanceof LeavesBlock) {
-+                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
-+                     continue;
-+                  }
-+                  // CraftBukkit end
++                  	// CraftBukkit start
++                  	if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                     	continue;
++                  	}
++                  	// CraftBukkit end
                          flag = this.level().destroyBlock(blockpos, true, this) || flag;
                      }
                  }

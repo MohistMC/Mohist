@@ -7,16 +7,18 @@
  import com.google.common.collect.ImmutableList;
  import com.google.common.collect.ImmutableMap;
  import com.google.common.collect.Lists;
-@@ -11,6 +_,8 @@
+@@ -11,8 +_,9 @@
  import java.util.Map;
  import java.util.Optional;
  import java.util.OptionalInt;
 +import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
+-import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
  import net.minecraft.Util;
-@@ -23,11 +_,9 @@
+ import net.minecraft.advancements.CriteriaTriggers;
+@@ -24,11 +_,9 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.NbtUtils;
@@ -28,6 +30,14 @@
  import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
+@@ -64,6 +_,7 @@
+ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.entity.HumanoidArm;
+ import net.minecraft.world.entity.LivingEntity;
++import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.MoverType;
+ import net.minecraft.world.entity.Pose;
+ import net.minecraft.world.entity.SlotAccess;
 @@ -72,7 +_,6 @@
  import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.entity.animal.Parrot;
@@ -36,7 +46,12 @@
  import net.minecraft.world.entity.decoration.ArmorStand;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
-@@ -84,12 +_,10 @@
+@@ -80,25 +_,24 @@
+ import net.minecraft.world.entity.projectile.Projectile;
+ import net.minecraft.world.entity.projectile.ProjectileDeflection;
+ import net.minecraft.world.food.FoodData;
+-import net.minecraft.world.food.FoodProperties;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ClickAction;
  import net.minecraft.world.inventory.InventoryMenu;
  import net.minecraft.world.inventory.PlayerEnderChestContainer;
@@ -47,9 +62,20 @@
  import net.minecraft.world.item.ProjectileWeaponItem;
 -import net.minecraft.world.item.SwordItem;
  import net.minecraft.world.item.crafting.RecipeHolder;
+-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -111,10 +_,24 @@
+ import net.minecraft.world.level.BaseCommandBlock;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.Level;
++import net.minecraft.world.level.block.BedBlock;
++import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.RespawnAnchorBlock;
+ import net.minecraft.world.level.block.entity.CommandBlockEntity;
+ import net.minecraft.world.level.block.entity.JigsawBlockEntity;
+ import net.minecraft.world.level.block.entity.SignBlockEntity;
+@@ -110,10 +_,24 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
@@ -107,10 +133,13 @@
      protected final float defaultFlySpeed = 0.02F;
      private int lastLevelUpTime;
      private final GameProfile gameProfile;
-@@ -190,6 +_,19 @@
+@@ -189,8 +_,20 @@
+     public Vec3 currentImpulseImpactPos;
      @Nullable
      public Entity currentExplosionCause;
-     public boolean ignoreFallDamageFromCurrentImpulse;
+-    private boolean ignoreFallDamageFromCurrentImpulse;
+-    private int currentImpulseContextResetGraceTime;
++    public boolean ignoreFallDamageFromCurrentImpulse;
 +    private final java.util.Collection<MutableComponent> prefixes = new java.util.LinkedList<>();
 +    private final java.util.Collection<MutableComponent> suffixes = new java.util.LinkedList<>();
 +    @Nullable private Pose forcedPose;
@@ -127,17 +156,22 @@
  
      public Player(Level p_250508_, BlockPos p_250289_, float p_251702_, GameProfile p_252153_) {
          super(EntityType.PLAYER, p_250508_);
-@@ -222,7 +_,8 @@
+@@ -223,11 +_,12 @@
              .add(Attributes.LUCK)
              .add(Attributes.BLOCK_INTERACTION_RANGE, 4.5)
              .add(Attributes.ENTITY_INTERACTION_RANGE, 3.0)
--            .add(Attributes.BLOCK_BREAK_SPEED);
+-            .add(Attributes.BLOCK_BREAK_SPEED)
+             .add(Attributes.SUBMERGED_MINING_SPEED)
+             .add(Attributes.SNEAKING_SPEED)
+             .add(Attributes.MINING_EFFICIENCY)
+-            .add(Attributes.SWEEPING_DAMAGE_RATIO);
++            .add(Attributes.SWEEPING_DAMAGE_RATIO)
 +            .add(Attributes.BLOCK_BREAK_SPEED)
 +            .add(Attributes.ATTACK_KNOCKBACK);
      }
  
      @Override
-@@ -238,6 +_,7 @@
+@@ -243,6 +_,7 @@
  
      @Override
      public void tick() {
@@ -145,7 +179,7 @@
          this.noPhysics = this.isSpectator();
          if (this.isSpectator()) {
              this.setOnGround(false);
-@@ -253,7 +_,7 @@
+@@ -258,7 +_,7 @@
                  this.sleepCounter = 100;
              }
  
@@ -154,15 +188,15 @@
                  this.stopSleepInBed(false, true);
              }
          } else if (this.sleepCounter > 0) {
-@@ -308,6 +_,7 @@
-         this.turtleHelmetTick();
-         this.cooldowns.tick();
-         this.updatePlayerPose();
+@@ -316,6 +_,7 @@
+         if (this.currentImpulseContextResetGraceTime > 0) {
+             this.currentImpulseContextResetGraceTime--;
+         }
 +        net.minecraftforge.event.ForgeEventFactory.onPlayerPostTick(this);
      }
  
      @Override
-@@ -335,6 +_,7 @@
+@@ -343,6 +_,7 @@
      private void turtleHelmetTick() {
          ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
          if (itemstack.is(Items.TURTLE_HELMET) && !this.isEyeInFluid(FluidTags.WATER)) {
@@ -170,7 +204,7 @@
              this.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 200, 0, false, false, true));
          }
      }
-@@ -387,6 +_,10 @@
+@@ -395,6 +_,10 @@
      }
  
      protected void updatePlayerPose() {
@@ -181,7 +215,19 @@
          if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
              Pose pose;
              if (this.isFallFlying()) {
-@@ -459,7 +_,7 @@
+@@ -429,6 +_,11 @@
+     }
+ 
+     @Override
++    public int getPortalWaitTime() {
++        return Math.max(1, this.level().getGameRules().getInt(this.abilities.invulnerable ? GameRules.RULE_PLAYERS_NETHER_PORTAL_CREATIVE_DELAY : GameRules.RULE_PLAYERS_NETHER_PORTAL_DEFAULT_DELAY));
++    }
++
++    @Override
+     protected SoundEvent getSwimSound() {
+         return SoundEvents.PLAYER_SWIM;
+     }
+@@ -462,7 +_,7 @@
      }
  
      @Override
@@ -190,7 +236,7 @@
          return 20;
      }
  
-@@ -487,8 +_,14 @@
+@@ -490,8 +_,14 @@
      public void rideTick() {
          if (!this.level().isClientSide && this.wantsToStopRiding() && this.isPassenger()) {
              this.stopRiding();
@@ -207,7 +253,7 @@
              super.rideTick();
              this.oBob = this.bob;
              this.bob = 0.0F;
-@@ -510,6 +_,8 @@
+@@ -513,6 +_,8 @@
  
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION)) {
              if (this.getHealth() < this.getMaxHealth() && this.tickCount % 20 == 0) {
@@ -216,15 +262,15 @@
                  this.heal(1.0F);
              }
  
-@@ -613,6 +_,7 @@
+@@ -628,6 +_,7 @@
  
      @Override
      public void die(DamageSource p_36152_) {
 +        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_36152_)) return;
          super.die(p_36152_);
          this.reapplyPosition();
-         if (!this.isSpectator()) {
-@@ -667,8 +_,17 @@
+         if (!this.isSpectator() && this.level() instanceof ServerLevel serverlevel) {
+@@ -682,8 +_,17 @@
  
      @Nullable
      public ItemEntity drop(ItemStack p_36177_, boolean p_36178_) {
@@ -243,7 +289,7 @@
  
      @Nullable
      public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_) {
-@@ -705,11 +_,43 @@
+@@ -720,11 +_,43 @@
                  );
              }
  
@@ -286,8 +332,8 @@
 +    public float getDestroySpeed(BlockState p_36282_, @Nullable BlockPos pos) {
          float f = this.inventory.getDestroySpeed(p_36282_);
          if (f > 1.0F) {
-             int i = EnchantmentHelper.getBlockEfficiency(this);
-@@ -741,11 +_,14 @@
+             f += (float)this.getAttributeValue(Attributes.MINING_EFFICIENCY);
+@@ -752,11 +_,14 @@
              f /= 5.0F;
          }
  
@@ -303,7 +349,7 @@
      }
  
      @Override
-@@ -844,6 +_,7 @@
+@@ -857,6 +_,7 @@
  
      @Override
      public boolean hurt(DamageSource p_36154_, float p_36155_) {
@@ -311,7 +357,7 @@
          if (this.isInvulnerableTo(p_36154_)) {
              return false;
          } else if (this.abilities.invulnerable && !p_36154_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-@@ -854,12 +_,12 @@
+@@ -867,12 +_,12 @@
                  return false;
              } else {
                  if (!this.level().isClientSide) {
@@ -326,7 +372,7 @@
                      }
  
                      if (this.level().getDifficulty() == Difficulty.EASY) {
-@@ -871,7 +_,13 @@
+@@ -884,7 +_,13 @@
                      }
                  }
  
@@ -341,7 +387,7 @@
              }
          }
      }
-@@ -879,7 +_,7 @@
+@@ -892,7 +_,7 @@
      @Override
      protected void blockUsingShield(LivingEntity p_36295_) {
          super.blockUsingShield(p_36295_);
@@ -350,7 +396,7 @@
              this.disableShield();
          }
      }
-@@ -890,13 +_,29 @@
+@@ -903,13 +_,29 @@
      }
  
      public boolean canHarmPlayer(Player p_36169_) {
@@ -386,7 +432,7 @@
      }
  
      @Override
-@@ -911,7 +_,7 @@
+@@ -924,7 +_,7 @@
  
      @Override
      protected void hurtCurrentlyUsedShield(float p_36383_) {
@@ -395,35 +441,10 @@
              if (!this.level().isClientSide) {
                  this.awardStat(Stats.ITEM_USED.get(this.useItem.getItem()));
              }
-@@ -934,31 +_,178 @@
+@@ -947,29 +_,181 @@
          }
      }
  
--    @Override
--    protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
--        if (!this.isInvulnerableTo(p_36312_)) {
--            p_36313_ = this.getDamageAfterArmorAbsorb(p_36312_, p_36313_);
--            p_36313_ = this.getDamageAfterMagicAbsorb(p_36312_, p_36313_);
--            float f1 = Math.max(p_36313_ - this.getAbsorptionAmount(), 0.0F);
--            this.setAbsorptionAmount(this.getAbsorptionAmount() - (p_36313_ - f1));
--            float f = p_36313_ - f1;
--            if (f > 0.0F && f < 3.4028235E37F) {
--                this.awardStat(Stats.DAMAGE_ABSORBED, Math.round(f * 10.0F));
--            }
--
--            if (f1 != 0.0F) {
--                this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
--                this.getCombatTracker().recordDamage(p_36312_, f1);
--                this.setHealth(this.getHealth() - f1);
--                if (f1 < 3.4028235E37F) {
--                    this.awardStat(Stats.DAMAGE_TAKEN, Math.round(f1 * 10.0F));
--                }
--
--                this.gameEvent(GameEvent.ENTITY_DAMAGE);
--            }
--        }
--    }
--
 +   protected boolean damageEntity0(DamageSource damagesource, float f) { // void -> boolean
 +      return super.damageEntity0(damagesource, f);
 +   }
@@ -597,9 +618,34 @@
 +      this.canDamage.set(false);
 +   }
      @Override
-     protected boolean onSoulSpeedBlock() {
-         return !this.abilities.flying && super.onSoulSpeedBlock();
-@@ -1004,6 +_,10 @@
+-    protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
+-        if (!this.isInvulnerableTo(p_36312_)) {
+-            p_36313_ = this.getDamageAfterArmorAbsorb(p_36312_, p_36313_);
+-            p_36313_ = this.getDamageAfterMagicAbsorb(p_36312_, p_36313_);
+-            float f1 = Math.max(p_36313_ - this.getAbsorptionAmount(), 0.0F);
+-            this.setAbsorptionAmount(this.getAbsorptionAmount() - (p_36313_ - f1));
+-            float f = p_36313_ - f1;
+-            if (f > 0.0F && f < 3.4028235E37F) {
+-                this.awardStat(Stats.DAMAGE_ABSORBED, Math.round(f * 10.0F));
+-            }
+-
+-            if (f1 != 0.0F) {
+-                this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
+-                this.getCombatTracker().recordDamage(p_36312_, f1);
+-                this.setHealth(this.getHealth() - f1);
+-                if (f1 < 3.4028235E37F) {
+-                    this.awardStat(Stats.DAMAGE_TAKEN, Math.round(f1 * 10.0F));
+-                }
+-
+-                this.gameEvent(GameEvent.ENTITY_DAMAGE);
+-            }
+-        }
++    protected boolean onSoulSpeedBlock() {
++        return !this.abilities.flying && super.onSoulSpeedBlock();
+     }
+ 
+     public boolean isTextFilteringEnabled() {
+@@ -1012,6 +_,10 @@
  
              return InteractionResult.PASS;
          } else {
@@ -610,7 +656,7 @@
              ItemStack itemstack = this.getItemInHand(p_36159_);
              ItemStack itemstack1 = itemstack.copy();
              InteractionResult interactionresult = p_36158_.interact(this, p_36159_);
-@@ -1012,6 +_,10 @@
+@@ -1020,6 +_,10 @@
                      itemstack.setCount(itemstack1.getCount());
                  }
  
@@ -621,7 +667,7 @@
                  return interactionresult;
              } else {
                  if (!itemstack.isEmpty() && p_36158_ instanceof LivingEntity) {
-@@ -1023,6 +_,7 @@
+@@ -1031,6 +_,7 @@
                      if (interactionresult1.consumesAction()) {
                          this.level().gameEvent(GameEvent.ENTITY_INTERACT, p_36158_.position(), GameEvent.Context.of(this));
                          if (itemstack.isEmpty() && !this.abilities.instabuild) {
@@ -629,197 +675,53 @@
                              this.setItemInHand(p_36159_, ItemStack.EMPTY);
                          }
  
-@@ -1122,21 +_,21 @@
+@@ -1130,6 +_,7 @@
      }
  
      public void attack(Entity p_36347_) {
 +        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_36347_)) return;
          if (p_36347_.isAttackable()) {
              if (!p_36347_.skipAttackInteraction(this)) {
--                float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-+                float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-                 float f1 = EnchantmentHelper.getDamageBonus(this.getMainHandItem(), p_36347_.getType());
-                 float f2 = this.getAttackStrengthScale(0.5F);
-                 f *= 0.2F + f2 * f2 * 0.8F;
-                 f1 *= f2;
--                this.resetAttackStrengthTicker();
-                 if (p_36347_.getType().is(EntityTypeTags.REDIRECTABLE_PROJECTILE) && p_36347_ instanceof Projectile projectile) {
-                     projectile.deflect(ProjectileDeflection.AIM_DEFLECT, this, this, true);
-                 } else {
-                     if (f > 0.0F || f1 > 0.0F) {
-                         boolean flag = f2 > 0.9F;
-                         boolean flag1 = false;
--                        int i = 0;
-+                        float i = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK); // Forge: Initialize this value to the attack knockback attribute of the player, which is by default 0
-                         i += EnchantmentHelper.getKnockbackBonus(this);
-                         if (this.isSprinting() && flag) {
-                             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, this.getSoundSource(), 1.0F, 1.0F);
-@@ -1146,16 +_,18 @@
- 
-                         f += this.getItemInHand(InteractionHand.MAIN_HAND).getItem().getAttackDamageBonus(this, f);
-                         boolean flag2 = flag
--                            && this.fallDistance > 0.0F
--                            && !this.onGround()
--                            && !this.onClimbable()
--                            && !this.isInWater()
--                            && !this.hasEffect(MobEffects.BLINDNESS)
--                            && !this.isPassenger()
--                            && p_36347_ instanceof LivingEntity
--                            && !this.isSprinting();
-+                                && this.fallDistance > 0.0F
-+                                && !this.onGround()
-+                                && !this.onClimbable()
-+                                && !this.isInWater()
-+                                && !this.hasEffect(MobEffects.BLINDNESS)
-+                                && !this.isPassenger()
-+                                && p_36347_ instanceof LivingEntity
-+                                && !this.isSprinting();
-+                        var hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, p_36347_, flag2, flag2 ? 1.5F : 1.0F);
-+                        flag2 = hitResult != null;
-                         if (flag2) {
--                            f *= 1.5F;
+                 float f = this.isAutoSpinAttack() ? this.autoSpinAttackDmg : (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+@@ -1167,8 +_,10 @@
+                         && !this.isPassenger()
+                         && p_36347_ instanceof LivingEntity
+                         && !this.isSprinting();
++                    var hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, p_36347_, flag1, flag1 ? 1.5F : 1.0F);
++                    flag1 = hitResult != null;
+                     if (flag1) {
+-                        f *= 1.5F;
 +                            f *= hitResult.getDamageModifier();
-                         }
+                     }
  
-                         f += f1;
-@@ -1163,7 +_,7 @@
-                         double d0 = (double)(this.walkDist - this.walkDistO);
-                         if (flag && !flag2 && !flag1 && this.onGround() && d0 < (double)this.getSpeed()) {
-                             ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
--                            if (itemstack.getItem() instanceof SwordItem) {
+                     float f3 = f + f1;
+@@ -1176,7 +_,7 @@
+                     double d0 = (double)(this.walkDist - this.walkDistO);
+                     if (flag4 && !flag1 && !flag && this.onGround() && d0 < (double)this.getSpeed()) {
+                         ItemStack itemstack1 = this.getItemInHand(InteractionHand.MAIN_HAND);
+-                        if (itemstack1.getItem() instanceof SwordItem) {
 +                            if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SWORD_SWEEP)) {
-                                 flag3 = true;
-                             }
+                             flag2 = true;
                          }
-@@ -1174,8 +_,15 @@
-                         if (p_36347_ instanceof LivingEntity) {
-                             f4 = ((LivingEntity)p_36347_).getHealth();
-                             if (j > 0 && !p_36347_.isOnFire()) {
--                                flag4 = true;
--                                p_36347_.igniteForSeconds(1);
-+                                // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_36347_.getBukkitEntity(), 1);
-+                                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
-+
-+                                if (!combustEvent.isCancelled()) {
-+                                    flag4 = true;
-+                                    p_36347_.igniteForSeconds(combustEvent.getDuration(), false);
-+                                }
-+                                // CraftBukkit end
-                             }
-                         }
+                     }
+@@ -1212,7 +_,7 @@
+                         if (flag2) {
+                             float f7 = 1.0F + (float)this.getAttributeValue(Attributes.SWEEPING_DAMAGE_RATIO) * f;
  
-@@ -1205,7 +_,7 @@
-                             if (flag3) {
-                                 float f3 = 1.0F + EnchantmentHelper.getSweepingDamageRatio(this) * f;
- 
--                                for (LivingEntity livingentity : this.level().getEntitiesOfClass(LivingEntity.class, p_36347_.getBoundingBox().inflate(1.0, 0.25, 1.0))) {
-+                                for (LivingEntity livingentity : this.level().getEntitiesOfClass(LivingEntity.class, this.getItemInHand(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
-                                     if (livingentity != this
-                                         && livingentity != p_36347_
-                                         && !this.isAlliedTo(livingentity)
-@@ -1226,9 +_,26 @@
-                             }
- 
-                             if (p_36347_ instanceof ServerPlayer && p_36347_.hurtMarked) {
--                                ((ServerPlayer)p_36347_).connection.send(new ClientboundSetEntityMotionPacket(p_36347_));
--                                p_36347_.hurtMarked = false;
--                                p_36347_.setDeltaMovement(vec3);
-+                                // CraftBukkit start - Add Velocity Event
-+                                boolean cancelled = false;
-+                                org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_36347_.getBukkitEntity();
-+                                org.bukkit.util.Vector velocity = CraftVector.toBukkit(vec3);
-+
-+                                PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
-+                                Bukkit.getPluginManager().callEvent(event);
-+
-+                                if (event.isCancelled()) {
-+                                    cancelled = true;
-+                                } else if (!velocity.equals(event.getVelocity())) {
-+                                    player.setVelocity(event.getVelocity());
-+                                }
-+
-+                                if (!cancelled) {
-+                                    ((ServerPlayer) p_36347_).connection.send(new ClientboundSetEntityMotionPacket(p_36347_));
-+                                    p_36347_.hurtMarked = false;
-+                                    p_36347_.setDeltaMovement(vec3);
-+                                }
-+                                // CraftBukkit end
-                             }
- 
-                             if (flag2) {
-@@ -1259,42 +_,58 @@
-                             EnchantmentHelper.doPostDamageEffects(this, p_36347_);
-                             ItemStack itemstack1 = this.getMainHandItem();
-                             Entity entity = p_36347_;
--                            if (p_36347_ instanceof EnderDragonPart) {
--                                entity = ((EnderDragonPart)p_36347_).parentMob;
-+                            if (p_36347_ instanceof net.minecraftforge.entity.PartEntity<?> part) {
-+                                entity = part.getParent();
-                             }
- 
-                             if (!this.level().isClientSide && !itemstack1.isEmpty() && entity instanceof LivingEntity) {
--                                itemstack1.hurtEnemy((LivingEntity)entity, this);
-+                                ItemStack copy = itemstack1.copy();
-+                                itemstack1.hurtEnemy((LivingEntity) entity, this);
-                                 if (itemstack1.isEmpty()) {
-+                                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, copy, InteractionHand.MAIN_HAND);
-                                     this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-                                 }
-                             }
- 
-                             if (p_36347_ instanceof LivingEntity) {
--                                float f5 = f4 - ((LivingEntity)p_36347_).getHealth();
-+                                float f5 = f4 - ((LivingEntity) p_36347_).getHealth();
-                                 this.awardStat(Stats.DAMAGE_DEALT, Math.round(f5 * 10.0F));
-                                 if (j > 0) {
--                                    p_36347_.igniteForSeconds(j * 4);
-+                                    // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                                    EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), j * 4);
-+                                    org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
-+
-+                                    if (!combustEvent.isCancelled()) {
-+                                        entity.igniteForSeconds(combustEvent.getDuration(), false);
-+                                    }
-+                                    // CraftBukkit end
-                                 }
- 
-                                 if (this.level() instanceof ServerLevel && f5 > 2.0F) {
--                                    int k = (int)((double)f5 * 0.5);
--                                    ((ServerLevel)this.level())
--                                        .sendParticles(
--                                            ParticleTypes.DAMAGE_INDICATOR, p_36347_.getX(), p_36347_.getY(0.5), p_36347_.getZ(), k, 0.1, 0.0, 0.1, 0.2
--                                        );
-+                                    int k = (int) ((double) f5 * 0.5);
-+                                    ((ServerLevel) this.level())
-+                                            .sendParticles(
-+                                                    ParticleTypes.DAMAGE_INDICATOR, p_36347_.getX(), p_36347_.getY(0.5), p_36347_.getZ(), k, 0.1, 0.0, 0.1, 0.2
-+                                            );
-                                 }
-                             }
- 
--                            this.causeFoodExhaustion(0.1F);
-+                            this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - EntityExhaustionEvent
-+                            this.causeFoodExhaustion(level().spigotConfig.combatExhaustion);
-                         } else {
--                            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0F, 1.0F);
-+                            this.level().playSound((Player) null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0F, 1.0F);
-                             if (flag4) {
-                                 p_36347_.clearFire();
-                             }
-+                            // CraftBukkit start - resync on cancelled event
-+                            if (this instanceof ServerPlayer) {
-+                                ((ServerPlayer) this).getBukkitEntity().updateInventory();
-+                            }
-+                            // CraftBukkit end
-                         }
+-                            for (LivingEntity livingentity2 : this.level().getEntitiesOfClass(LivingEntity.class, p_36347_.getBoundingBox().inflate(1.0, 0.25, 1.0))) {
++                                for (LivingEntity livingentity2 : this.level().getEntitiesOfClass(LivingEntity.class, this.getItemInHand(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
+                                 if (livingentity2 != this
+                                     && livingentity2 != p_36347_
+                                     && !this.isAlliedTo(livingentity2)
+@@ -1304,6 +_,7 @@
+                         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0F, 1.0F);
                      }
                  }
 +                this.resetAttackStrengthTicker(); // FORGE: Moved from beginning of attack() so that getAttackStrengthScale() returns an accurate value during all attack events
              }
          }
      }
-@@ -1305,7 +_,7 @@
+@@ -1318,7 +_,7 @@
      }
  
      public void disableShield() {
@@ -828,7 +730,7 @@
          this.stopUsingItem();
          this.level().broadcastEntityEvent(this, (byte)30);
      }
-@@ -1364,6 +_,12 @@
+@@ -1377,6 +_,12 @@
          return this.containerMenu != this.inventoryMenu;
      }
  
@@ -841,7 +743,7 @@
      public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_36203_) {
          this.startSleeping(p_36203_);
          this.sleepCounter = 0;
-@@ -1371,6 +_,7 @@
+@@ -1384,6 +_,7 @@
      }
  
      public void stopSleepInBed(boolean p_36226_, boolean p_36227_) {
@@ -849,16 +751,7 @@
          super.stopSleeping();
          if (this.level() instanceof ServerLevel && p_36227_) {
              ((ServerLevel)this.level()).updateSleepingPlayerList();
-@@ -1399,7 +_,7 @@
-         } else if (block instanceof BedBlock && BedBlock.canSetSpawn(p_36131_)) {
-             return BedBlock.findStandUpPosition(EntityType.PLAYER, p_36131_, p_36132_, blockstate.getValue(BedBlock.FACING), p_36133_);
-         } else if (!p_36134_) {
--            return Optional.empty();
-+            return blockstate.getRespawnPosition(EntityType.PLAYER, p_36131_, p_36132_, p_36133_, null);
-         } else {
-             boolean flag = block.isPossibleToRespawnInThis(blockstate);
-             BlockState blockstate1 = p_36131_.getBlockState(p_36132_.above());
-@@ -1455,14 +_,17 @@
+@@ -1442,14 +_,17 @@
  
      @Override
      public void jumpFromGround() {
@@ -884,7 +777,7 @@
  
      @Override
      public void travel(Vec3 p_36359_) {
-@@ -1483,7 +_,11 @@
+@@ -1470,7 +_,11 @@
              Vec3 vec31 = this.getDeltaMovement();
              this.setDeltaMovement(vec31.x, d2 * 0.6, vec31.z);
              this.resetFallDistance();
@@ -897,7 +790,7 @@
          } else {
              super.travel(p_36359_);
          }
-@@ -1510,6 +_,7 @@
+@@ -1497,6 +_,7 @@
      @Override
      public boolean causeFallDamage(float p_150093_, float p_150094_, DamageSource p_150095_) {
          if (this.abilities.mayfly) {
@@ -905,7 +798,7 @@
              return false;
          } else {
              if (p_150093_ >= 2.0F) {
-@@ -1529,7 +_,7 @@
+@@ -1528,7 +_,7 @@
      public boolean tryToStartFallFlying() {
          if (!this.onGround() && !this.isFallFlying() && !this.isInWater() && !this.hasEffect(MobEffects.LEVITATION)) {
              ItemStack itemstack = this.getItemBySlot(EquipmentSlot.CHEST);
@@ -914,7 +807,7 @@
                  this.startFallFlying();
                  return true;
              }
-@@ -1539,14 +_,25 @@
+@@ -1538,14 +_,25 @@
      }
  
      public void startFallFlying() {
@@ -948,7 +841,7 @@
      @Override
      protected void doWaterSplashEffect() {
          if (!this.isSpectator()) {
-@@ -1558,13 +_,13 @@
+@@ -1557,13 +_,13 @@
      protected void playStepSound(BlockPos p_282121_, BlockState p_282194_) {
          if (this.isInWater()) {
              this.waterSwimSound();
@@ -964,7 +857,7 @@
                  } else {
                      super.playStepSound(blockpos, blockstate);
                  }
-@@ -1595,6 +_,12 @@
+@@ -1594,6 +_,12 @@
      }
  
      public void giveExperiencePoints(int p_36291_) {
@@ -977,7 +870,7 @@
          this.increaseScore(p_36291_);
          this.experienceProgress = this.experienceProgress + (float)p_36291_ / (float)this.getXpNeededForNextLevel();
          this.totalExperience = Mth.clamp(this.totalExperience + p_36291_, 0, Integer.MAX_VALUE);
-@@ -1622,7 +_,7 @@
+@@ -1621,7 +_,7 @@
      }
  
      public void onEnchantmentPerformed(ItemStack p_36172_, int p_36173_) {
@@ -986,7 +879,7 @@
          if (this.experienceLevel < 0) {
              this.experienceLevel = 0;
              this.experienceProgress = 0.0F;
-@@ -1633,6 +_,12 @@
+@@ -1632,6 +_,12 @@
      }
  
      public void giveExperienceLevels(int p_36276_) {
@@ -999,7 +892,7 @@
          this.experienceLevel += p_36276_;
          if (this.experienceLevel < 0) {
              this.experienceLevel = 0;
-@@ -1658,10 +_,29 @@
+@@ -1657,10 +_,29 @@
      public void causeFoodExhaustion(float p_36400_) {
          if (!this.abilities.invulnerable) {
              if (!this.level().isClientSide) {
@@ -1030,7 +923,7 @@
  
      public Optional<WardenSpawnTracker> getWardenSpawnTracker() {
          return Optional.empty();
-@@ -1758,6 +_,15 @@
+@@ -1757,6 +_,15 @@
          }
      }
  
@@ -1046,7 +939,7 @@
      public boolean addItem(ItemStack p_36357_) {
          return this.inventory.add(p_36357_);
      }
-@@ -1795,14 +_,22 @@
+@@ -1794,26 +_,40 @@
  
      protected void removeEntitiesOnShoulder() {
          if (this.timeEntitySatOnShoulder + 20L < this.level().getGameTime()) {
@@ -1073,13 +966,17 @@
 +
 +   private void respawnEntityOnShoulder(CompoundTag p_36371_) {
          if (!this.level().isClientSide && !p_36371_.isEmpty()) {
-             EntityType.create(p_36371_, this.level()).ifPresent(p_327053_ -> {
-                 if (p_327053_ instanceof TamableAnimal) {
-@@ -1810,11 +_,17 @@
+-            EntityType.create(p_36371_, this.level()).ifPresent(p_341480_ -> {
+-                if (p_341480_ instanceof TamableAnimal) {
+-                    ((TamableAnimal)p_341480_).setOwnerUUID(this.uuid);
++            EntityType.create(p_36371_, this.level()).ifPresent(p_327053_ -> {
++                if (p_327053_ instanceof TamableAnimal) {
++                    ((TamableAnimal)p_327053_).setOwnerUUID(this.uuid);
                  }
  
-                 p_327053_.setPos(this.getX(), this.getY() + 0.7F, this.getZ());
--                ((ServerLevel)this.level()).addWithUUID(p_327053_);
+-                p_341480_.setPos(this.getX(), this.getY() + 0.7F, this.getZ());
+-                ((ServerLevel)this.level()).addWithUUID(p_341480_);
++                p_327053_.setPos(this.getX(), this.getY() + 0.7F, this.getZ());
 +            	boolean canAdd = ((ServerLevel)this.level()).addWithUUID(p_327053_);
 +            	spawnEntityFromShoulder.set(canAdd);
              });
@@ -1094,7 +991,7 @@
      @Override
      public abstract boolean isSpectator();
  
-@@ -1841,7 +_,13 @@
+@@ -1840,7 +_,13 @@
  
      @Override
      public Component getDisplayName() {
@@ -1109,7 +1006,7 @@
          return this.decorateDisplayNameComponent(mutablecomponent);
      }
  
-@@ -1937,7 +_,7 @@
+@@ -1936,7 +_,7 @@
          return this.entityData.get(DATA_SHOULDER_LEFT);
      }
  
@@ -1118,7 +1015,7 @@
          this.entityData.set(DATA_SHOULDER_LEFT, p_36363_);
      }
  
-@@ -1945,7 +_,7 @@
+@@ -1944,7 +_,7 @@
          return this.entityData.get(DATA_SHOULDER_RIGHT);
      }
  
@@ -1127,7 +1024,7 @@
          this.entityData.set(DATA_SHOULDER_RIGHT, p_36365_);
      }
  
-@@ -2002,18 +_,19 @@
+@@ -2001,18 +_,19 @@
              Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_36349_.getItem()).getSupportedHeldProjectiles();
              ItemStack itemstack = ProjectileWeaponItem.getHeldProjectile(this, predicate);
              if (!itemstack.isEmpty()) {
@@ -1150,7 +1047,7 @@
              }
          }
      }
-@@ -2147,6 +_,65 @@
+@@ -2173,6 +_,65 @@
          this.currentImpulseImpactPos = null;
          this.ignoreFallDamageFromCurrentImpulse = false;
      }

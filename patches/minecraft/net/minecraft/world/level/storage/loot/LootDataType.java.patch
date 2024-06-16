@@ -1,18 +1,19 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataType.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataType.java
-@@ -15,6 +_,8 @@
+@@ -14,6 +_,9 @@
+ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
  import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
  import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
- import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
++import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 +import org.bukkit.craftbukkit.CraftLootTable;
 +import org.bukkit.craftbukkit.util.CraftNamespacedKey;
  import org.slf4j.Logger;
  
- public record LootDataType<T>(ResourceKey<Registry<T>> registryKey, Codec<T> codec, String directory, LootDataType.Validator<T> validator) {
-@@ -34,7 +_,12 @@
-     public <V> Optional<T> deserialize(ResourceLocation p_279253_, DynamicOps<V> p_335939_, V p_327740_) {
+ public record LootDataType<T>(ResourceKey<Registry<T>> registryKey, Codec<T> codec, LootDataType.Validator<T> validator) {
+@@ -30,7 +_,12 @@
          DataResult<T> dataresult = this.codec.parse(p_335939_, p_327740_);
-         dataresult.error().ifPresent(p_327555_ -> LOGGER.error("Couldn't parse element {}:{} - {}", this.directory, p_279253_, p_327555_.message()));
+         dataresult.error()
+             .ifPresent(p_341974_ -> LOGGER.error("Couldn't parse element {}/{} - {}", this.registryKey.location(), p_279253_, p_341974_.message()));
 -        return dataresult.result();
 +        var ret = dataresult.result();
 +        if (ret.orElse(null) instanceof LootTable table) {
@@ -23,7 +24,7 @@
      }
  
      public static Stream<LootDataType<?>> values() {
-@@ -48,9 +_,12 @@
+@@ -44,9 +_,12 @@
      }
  
      private static LootDataType.Validator<LootTable> createLootTableValidator() {

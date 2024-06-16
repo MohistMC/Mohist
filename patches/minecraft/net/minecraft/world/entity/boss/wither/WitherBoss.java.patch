@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -10,10 +_,13 @@
+@@ -10,9 +_,11 @@
  import net.minecraft.core.particles.ParticleTypes;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
@@ -10,11 +10,9 @@
  import net.minecraft.network.syncher.SynchedEntityData;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.ServerBossEvent;
-+import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
-@@ -53,8 +_,13 @@
+@@ -54,8 +_,13 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
@@ -28,7 +26,7 @@
  
  public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob {
      private static final EntityDataAccessor<Integer> DATA_TARGET_A = SynchedEntityData.defineId(WitherBoss.class, EntityDataSerializers.INT);
-@@ -255,22 +_,45 @@
+@@ -256,22 +_,45 @@
          }
      }
  
@@ -90,15 +88,15 @@
          } else {
              super.customServerAiStep();
  
-@@ -301,6 +_,7 @@
+@@ -302,6 +_,7 @@
                          List<LivingEntity> list = this.level().getNearbyEntities(LivingEntity.class, TARGETING_CONDITIONS, this, this.getBoundingBox().inflate(20.0, 8.0, 20.0));
                          if (!list.isEmpty()) {
                              LivingEntity livingentity1 = list.get(this.random.nextInt(list.size()));
-+                     	if (CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
++                     		if (CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
                              this.setAlternativeTarget(i, livingentity1.getId());
                          }
                      }
-@@ -315,7 +_,7 @@
+@@ -316,7 +_,7 @@
  
              if (this.destroyBlocksTick > 0) {
                  this.destroyBlocksTick--;
@@ -107,7 +105,7 @@
                      boolean flag = false;
                      int l = Mth.floor(this.getBbWidth() / 2.0F + 1.0F);
                      int i1 = Mth.floor(this.getBbHeight());
-@@ -324,7 +_,12 @@
+@@ -325,7 +_,12 @@
                          this.getBlockX() - l, this.getBlockY(), this.getBlockZ() - l, this.getBlockX() + l, this.getBlockY() + i1, this.getBlockZ() + l
                      )) {
                          BlockState blockstate = this.level().getBlockState(blockpos);
@@ -121,7 +119,7 @@
                              flag = this.level().destroyBlock(blockpos, true, this) || flag;
                          }
                      }
-@@ -336,6 +_,7 @@
+@@ -337,6 +_,7 @@
              }
  
              if (this.tickCount % 20 == 0) {
@@ -129,7 +127,7 @@
                  this.heal(1.0F);
              }
  
-@@ -343,6 +_,10 @@
+@@ -344,6 +_,10 @@
          }
      }
  

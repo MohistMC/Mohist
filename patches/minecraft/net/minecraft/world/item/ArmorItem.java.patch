@@ -1,15 +1,21 @@
 --- a/net/minecraft/world/item/ArmorItem.java
 +++ b/net/minecraft/world/item/ArmorItem.java
-@@ -1,6 +_,8 @@
+@@ -1,9 +_,14 @@
  package net.minecraft.world.item;
  
  import com.google.common.base.Suppliers;
 +import com.google.common.collect.ImmutableMultimap;
 +import com.google.common.collect.Multimap;
  import com.mojang.serialization.Codec;
- import java.util.EnumMap;
++import java.util.EnumMap;
  import java.util.List;
-@@ -28,6 +_,9 @@
++import java.util.UUID;
+ import java.util.function.Supplier;
++import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.dispenser.BlockSource;
+@@ -26,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.AABB;
@@ -18,10 +24,10 @@
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
  
  public class ArmorItem extends Item implements Equipable {
-     private static final EnumMap<ArmorItem.Type, UUID> ARMOR_MODIFIER_UUID_PER_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), p_327095_ -> {
-@@ -57,7 +_,33 @@
+     public static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
+@@ -48,7 +_,33 @@
              LivingEntity livingentity = list.get(0);
-             EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(p_40400_);
+             EquipmentSlot equipmentslot = livingentity.getEquipmentSlotForItem(p_40400_);
              ItemStack itemstack = p_40400_.split(1);
 -            livingentity.setItemSlot(equipmentslot, itemstack);
 +         // CraftBukkit start

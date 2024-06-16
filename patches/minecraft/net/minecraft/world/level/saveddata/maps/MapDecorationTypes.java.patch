@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/saveddata/maps/MapDecorationTypes.java
++++ b/net/minecraft/world/level/saveddata/maps/MapDecorationTypes.java
+@@ -57,8 +_,8 @@
+     private static Holder<MapDecorationType> register(
+         String p_329296_, String p_330955_, boolean p_335378_, int p_330214_, boolean p_328908_, boolean p_332062_
+     ) {
+-        ResourceKey<MapDecorationType> resourcekey = ResourceKey.create(Registries.MAP_DECORATION_TYPE, ResourceLocation.withDefaultNamespace(p_329296_));
+-        MapDecorationType mapdecorationtype = new MapDecorationType(ResourceLocation.withDefaultNamespace(p_330955_), p_335378_, p_330214_, p_332062_, p_328908_);
++        ResourceKey<MapDecorationType> resourcekey = ResourceKey.create(Registries.MAP_DECORATION_TYPE, new ResourceLocation(p_329296_));
++        MapDecorationType mapdecorationtype = new MapDecorationType(new ResourceLocation(p_330955_), p_335378_, p_330214_, p_332062_, p_328908_);
+         return Registry.registerForHolder(BuiltInRegistries.MAP_DECORATION_TYPE, resourcekey, mapdecorationtype);
+     }
+ }

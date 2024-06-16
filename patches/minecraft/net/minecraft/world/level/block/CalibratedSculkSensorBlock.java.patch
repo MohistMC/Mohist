@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CalibratedSculkSensorBlock.java
++++ b/net/minecraft/world/level/block/CalibratedSculkSensorBlock.java
+@@ -45,7 +_,7 @@
+             ? createTickerHelper(
+                 p_277641_,
+                 BlockEntityType.CALIBRATED_SCULK_SENSOR,
+-                (p_341823_, p_341824_, p_341825_, p_341826_) -> VibrationSystem.Ticker.tick(p_341823_, p_341826_.getVibrationData(), p_341826_.getVibrationUser())
++                (p_327250_, p_327251_, p_327252_, p_327253_) -> VibrationSystem.Ticker.tick(p_327250_, p_327253_.getVibrationData(), p_327253_.getVibrationUser())
+             )
+             : null;
+     }

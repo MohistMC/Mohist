@@ -1,6 +1,22 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -21,6 +_,9 @@
+@@ -6,7 +_,6 @@
+ import net.minecraft.core.particles.DustParticleOptions;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.util.RandomSource;
+-import net.minecraft.util.valueproviders.UniformInt;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.ItemInteractionResult;
+ import net.minecraft.world.entity.Entity;
+@@ -14,12 +_,17 @@
+ import net.minecraft.world.item.BlockItem;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.BlockPlaceContext;
++import net.minecraft.world.item.enchantment.EnchantmentHelper;
++import net.minecraft.world.item.enchantment.Enchantments;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
@@ -10,7 +26,7 @@
  
  public class RedStoneOreBlock extends Block {
      public static final MapCodec<RedStoneOreBlock> CODEC = simpleCodec(RedStoneOreBlock::new);
-@@ -38,18 +_,31 @@
+@@ -37,18 +_,31 @@
  
      @Override
      protected void attack(BlockState p_55467_, Level p_55468_, BlockPos p_55469_, Player p_55470_) {
@@ -47,7 +63,7 @@
  
      @Override
      protected ItemInteractionResult useItemOn(
-@@ -58,7 +_,7 @@
+@@ -57,7 +_,7 @@
          if (p_334994_.isClientSide) {
              spawnParticles(p_334994_, p_336118_);
          } else {
@@ -56,7 +72,7 @@
          }
  
          return p_331692_.getItem() instanceof BlockItem && new BlockPlaceContext(p_329891_, p_331867_, p_331692_, p_329149_).canPlace()
-@@ -66,12 +_,18 @@
+@@ -65,12 +_,18 @@
              : ItemInteractionResult.SUCCESS;
      }
  
@@ -81,7 +97,7 @@
  
      @Override
      protected boolean isRandomlyTicking(BlockState p_55486_) {
-@@ -81,20 +_,26 @@
+@@ -80,19 +_,26 @@
      @Override
      protected void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
          if (p_221918_.getValue(LIT)) {
@@ -101,10 +117,11 @@
      @Override
      protected void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
          super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
--        if (p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) {
+-        if (p_221911_) {
+-            this.tryDropExperience(p_221908_, p_221909_, p_221910_, UniformInt.of(1, 5));
 +        if (false && p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) { // Forge: moved to getExpDrop
-             int i = 1 + p_221908_.random.nextInt(5);
-             this.popExperience(p_221908_, p_221909_, i);
++            int i = 1 + p_221908_.random.nextInt(5);
++            this.popExperience(p_221908_, p_221909_, i);
          }
      }
  
@@ -113,7 +130,7 @@
      public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
          if (p_221913_.getValue(LIT)) {
              spawnParticles(p_221914_, p_221915_);
-@@ -129,4 +_,10 @@
+@@ -127,4 +_,10 @@
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55484_) {
          p_55484_.add(LIT);
      }

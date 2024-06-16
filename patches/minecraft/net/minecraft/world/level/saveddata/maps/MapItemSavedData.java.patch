@@ -22,10 +22,11 @@
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
-@@ -49,21 +_,28 @@
+@@ -49,22 +_,28 @@
      private static final int HALF_MAP_SIZE = 64;
      public static final int MAX_SCALE = 4;
      public static final int TRACKED_DECORATION_LIMIT = 256;
+-    private static final String FRAME_PREFIX = "frame-";
 -    public int centerX;
 -    public int centerZ;
 -    public ResourceKey<Level> dimension;
@@ -63,7 +64,7 @@
      public static SavedData.Factory<MapItemSavedData> factory() {
          return new SavedData.Factory<>(() -> {
              throw new IllegalStateException("Should never create an empty map saved data");
-@@ -81,6 +_,11 @@
+@@ -82,6 +_,11 @@
          this.unlimitedTracking = p_164772_;
          this.locked = p_164773_;
          this.setDirty();
@@ -75,7 +76,56 @@
      }
  
      public static MapItemSavedData createFresh(
-@@ -385,7 +_,7 @@
+@@ -142,7 +_,7 @@
+                 mapitemsaveddata.addDecoration(
+                     MapDecorationTypes.FRAME,
+                     null,
+-                    getFrameKey(mapframe.getEntityId()),
++                    "frame-" + mapframe.getEntityId(),
+                     (double)mapframe.getPos().getX(),
+                     (double)mapframe.getPos().getZ(),
+                     (double)mapframe.getRotation(),
+@@ -244,14 +_,14 @@
+             BlockPos blockpos = itemframe.getPos();
+             MapFrame mapframe1 = this.frameMarkers.get(MapFrame.frameId(blockpos));
+             if (mapframe1 != null && itemframe.getId() != mapframe1.getEntityId() && this.frameMarkers.containsKey(mapframe1.getId())) {
+-                this.removeDecoration(getFrameKey(mapframe1.getEntityId()));
++                this.removeDecoration("frame-" + mapframe1.getEntityId());
+             }
+ 
+             MapFrame mapframe = new MapFrame(blockpos, itemframe.getDirection().get2DDataValue() * 90, itemframe.getId());
+             this.addDecoration(
+                 MapDecorationTypes.FRAME,
+                 p_77919_.level(),
+-                getFrameKey(itemframe.getId()),
++                "frame-" + itemframe.getId(),
+                 (double)blockpos.getX(),
+                 (double)blockpos.getZ(),
+                 (double)(itemframe.getDirection().get2DDataValue() * 90),
+@@ -264,15 +_,15 @@
+         if (!this.decorations.keySet().containsAll(mapdecorations.decorations().keySet())) {
+             mapdecorations.decorations()
+                 .forEach(
+-                    (p_341967_, p_341968_) -> {
+-                        if (!this.decorations.containsKey(p_341967_)) {
++                    (p_327528_, p_327529_) -> {
++                        if (!this.decorations.containsKey(p_327528_)) {
+                             this.addDecoration(
+-                                p_341968_.type(),
++                                p_327529_.type(),
+                                 p_77919_.level(),
+-                                p_341967_,
+-                                p_341968_.x(),
+-                                p_341968_.z(),
+-                                (double)p_341968_.rotation(),
++                                p_327528_,
++                                p_327529_.x(),
++                                p_327529_.z(),
++                                (double)p_327529_.rotation(),
+                                 null
+                             );
+                         }
+@@ -386,7 +_,7 @@
          }
      }
  
@@ -84,7 +134,27 @@
          this.setDirty();
          this.carriedBy.forEach(MapItemSavedData.HoldingPlayer::markDecorationsDirty);
      }
-@@ -547,7 +_,6 @@
+@@ -450,7 +_,7 @@
+     }
+ 
+     public void removedFromFrame(BlockPos p_77948_, int p_77949_) {
+-        this.removeDecoration(getFrameKey(p_77949_));
++        this.removeDecoration("frame-" + p_77949_);
+         this.frameMarkers.remove(MapFrame.frameId(p_77948_));
+     }
+ 
+@@ -500,10 +_,6 @@
+         return this.trackedDecorationCount >= p_181313_;
+     }
+ 
+-    private static String getFrameKey(int p_342097_) {
+-        return "frame-" + p_342097_;
+-    }
+-
+     public class HoldingPlayer {
+         public final Player player;
+         private boolean dirtyData = true;
+@@ -552,7 +_,6 @@
              } else {
                  collection = null;
              }

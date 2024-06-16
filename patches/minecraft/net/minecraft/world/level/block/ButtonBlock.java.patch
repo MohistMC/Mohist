@@ -26,10 +26,11 @@
  
  public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
      public static final MapCodec<ButtonBlock> CODEC = RecordCodecBuilder.mapCodec(
-@@ -113,6 +_,19 @@
+@@ -113,26 +_,39 @@
          if (p_329418_.getValue(POWERED)) {
              return InteractionResult.CONSUME;
          } else {
+-            this.press(p_329418_, p_334611_, p_332004_, p_330636_);
 +            // CraftBukkit start
 +            boolean powered = p_329418_.getValue(POWERED);
 +            org.bukkit.block.Block block = CraftBlock.at(p_334611_, p_332004_);
@@ -43,9 +44,34 @@
 +                return InteractionResult.SUCCESS;
 +            }
 +            // CraftBukkit end
-             this.press(p_329418_, p_334611_, p_332004_);
-             this.playSound(p_330636_, p_334611_, p_332004_, true);
-             p_334611_.gameEvent(p_330636_, GameEvent.BLOCK_ACTIVATE, p_332004_);
++            this.press(p_329418_, p_334611_, p_332004_);
++            this.playSound(p_330636_, p_334611_, p_332004_, true);
++            p_334611_.gameEvent(p_330636_, GameEvent.BLOCK_ACTIVATE, p_332004_);
+             return InteractionResult.sidedSuccess(p_334611_.isClientSide);
+         }
+     }
+ 
+     @Override
+     protected void onExplosionHit(BlockState p_310762_, Level p_312485_, BlockPos p_312982_, Explosion p_311820_, BiConsumer<ItemStack, BlockPos> p_312672_) {
+-        if (p_311820_.canTriggerBlocks() && !p_310762_.getValue(POWERED)) {
+-            this.press(p_310762_, p_312485_, p_312982_, null);
++        if (p_311820_.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK && !p_312485_.isClientSide() && !p_310762_.getValue(POWERED)) {
++            this.press(p_310762_, p_312485_, p_312982_);
+         }
+ 
+         super.onExplosionHit(p_310762_, p_312485_, p_312982_, p_311820_, p_312672_);
+     }
+ 
+-    public void press(BlockState p_51117_, Level p_51118_, BlockPos p_51119_, @Nullable Player p_343045_) {
++    public void press(BlockState p_51117_, Level p_51118_, BlockPos p_51119_) {
+         p_51118_.setBlock(p_51119_, p_51117_.setValue(POWERED, Boolean.valueOf(true)), 3);
+         this.updateNeighbours(p_51117_, p_51118_, p_51119_);
+         p_51118_.scheduleTick(p_51119_, this, this.ticksToStayPressed);
+-        this.playSound(p_343045_, p_51118_, p_51119_, true);
+-        p_51118_.gameEvent(p_343045_, GameEvent.BLOCK_ACTIVATE, p_51119_);
+     }
+ 
+     protected void playSound(@Nullable Player p_51068_, LevelAccessor p_51069_, BlockPos p_51070_, boolean p_51071_) {
 @@ -189,7 +_,33 @@
              : null;
          boolean flag = abstractarrow != null;

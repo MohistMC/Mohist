@@ -174,7 +174,33 @@
          }
      }
  
-@@ -389,9 +_,14 @@
+@@ -374,24 +_,7 @@
+     @Override
+     public void setBlockEntity(BlockEntity p_156374_) {
+         BlockPos blockpos = p_156374_.getBlockPos();
+-        BlockState blockstate = this.getBlockState(blockpos);
+-        if (!blockstate.hasBlockEntity()) {
+-            LOGGER.warn("Trying to set block entity {} at position {}, but state {} does not allow it", p_156374_, blockpos, blockstate);
+-        } else {
+-            BlockState blockstate1 = p_156374_.getBlockState();
+-            if (blockstate != blockstate1) {
+-                if (!p_156374_.getType().isValid(blockstate)) {
+-                    LOGGER.warn("Trying to set block entity {} at position {}, but state {} does not allow it", p_156374_, blockpos, blockstate);
+-                    return;
+-                }
+-
+-                if (blockstate.getBlock() != blockstate1.getBlock()) {
+-                    LOGGER.warn("Block state mismatch on block entity {} in position {}, {} != {}, updating", p_156374_, blockpos, blockstate, blockstate1);
+-                }
+-
+-                p_156374_.setBlockState(blockstate);
+-            }
+-
++        if (this.getBlockState(blockpos).hasBlockEntity()) {
+             p_156374_.setLevel(this.level);
+             p_156374_.clearRemoved();
+             BlockEntity blockentity = this.blockEntities.put(blockpos.immutable(), p_156374_);
+@@ -406,9 +_,14 @@
      public CompoundTag getBlockEntityNbtForSaving(BlockPos p_62932_, HolderLookup.Provider p_329605_) {
          BlockEntity blockentity = this.getBlockEntity(p_62932_);
          if (blockentity != null && !blockentity.isRemoved()) {
@@ -189,7 +215,7 @@
          } else {
              CompoundTag compoundtag = this.pendingBlockEntities.get(p_62932_);
              if (compoundtag != null) {
-@@ -407,6 +_,12 @@
+@@ -424,6 +_,12 @@
      public void removeBlockEntity(BlockPos p_62919_) {
          if (this.isInLevel()) {
              BlockEntity blockentity = this.blockEntities.remove(p_62919_);
@@ -202,7 +228,7 @@
              if (blockentity != null) {
                  if (this.level instanceof ServerLevel serverlevel) {
                      this.removeGameEventListener(blockentity, serverlevel);
-@@ -449,7 +_,61 @@
+@@ -466,7 +_,61 @@
          }
      }
  
@@ -265,7 +291,7 @@
          return false;
      }
  
-@@ -471,7 +_,7 @@
+@@ -488,7 +_,7 @@
          p_187974_.accept((p_327409_, p_327410_, p_327411_) -> {
              BlockEntity blockentity = this.getBlockEntity(p_327409_, LevelChunk.EntityCreationType.IMMEDIATE);
              if (blockentity != null && p_327411_ != null && blockentity.getType() == p_327410_) {
@@ -274,7 +300,16 @@
              }
          });
      }
-@@ -579,6 +_,7 @@
+@@ -583,7 +_,7 @@
+     }
+ 
+     @Override
+-    public ChunkStatus getPersistedStatus() {
++    public ChunkStatus getStatus() {
+         return ChunkStatus.FULL;
+     }
+ 
+@@ -596,6 +_,7 @@
      }
  
      public void clearAllBlockEntities() {
@@ -282,7 +317,7 @@
          this.blockEntities.values().forEach(BlockEntity::setRemoved);
          this.blockEntities.clear();
          this.tickersInLevel.values().forEach(p_187966_ -> p_187966_.rebind(NULL_TICKER));
-@@ -586,6 +_,7 @@
+@@ -603,6 +_,7 @@
      }
  
      public void registerAllBlockEntitiesAfterLevelLoad() {
@@ -290,7 +325,7 @@
          this.blockEntities.values().forEach(p_187988_ -> {
              if (this.level instanceof ServerLevel serverlevel) {
                  this.addGameEventListener(p_187988_, serverlevel);
-@@ -637,6 +_,34 @@
+@@ -654,6 +_,34 @@
          return new LevelChunk.BoundTickingBlockEntity<>(p_156376_, p_156377_);
      }
  
@@ -325,7 +360,7 @@
      class BoundTickingBlockEntity<T extends BlockEntity> implements TickingBlockEntity {
          private final T blockEntity;
          private final BlockEntityTicker<T> ticker;
-@@ -654,6 +_,7 @@
+@@ -671,6 +_,7 @@
                  if (LevelChunk.this.isTicking(blockpos)) {
                      try {
                          ProfilerFiller profilerfiller = LevelChunk.this.level.getProfiler();
@@ -333,7 +368,7 @@
                          profilerfiller.push(this::getType);
                          BlockState blockstate = LevelChunk.this.getBlockState(blockpos);
                          if (this.blockEntity.getType().isValid(blockstate)) {
-@@ -675,6 +_,11 @@
+@@ -692,6 +_,11 @@
                          CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking block entity");
                          CrashReportCategory crashreportcategory = crashreport.addCategory("Block entity being ticked");
                          this.blockEntity.fillCrashReportCategory(crashreportcategory);
@@ -345,7 +380,7 @@
                          throw new ReportedException(crashreport);
                      }
                  }
-@@ -748,5 +_,32 @@
+@@ -765,5 +_,32 @@
          public String toString() {
              return this.ticker + " <wrapped>";
          }

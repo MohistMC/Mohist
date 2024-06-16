@@ -1,23 +1,36 @@
 --- a/net/minecraft/world/level/block/LightningRodBlock.java
 +++ b/net/minecraft/world/level/block/LightningRodBlock.java
-@@ -14,6 +_,7 @@
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.LightningBolt;
+@@ -5,9 +_,18 @@
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.sounds.SoundEvents;
++import net.minecraft.sounds.SoundSource;
+ import net.minecraft.util.ParticleUtils;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.valueproviders.UniformInt;
++import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.EntityType;
++import net.minecraft.world.entity.LightningBolt;
 +import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.Projectile;
- import net.minecraft.world.entity.projectile.ThrownTrident;
++import net.minecraft.world.entity.projectile.Projectile;
++import net.minecraft.world.entity.projectile.ThrownTrident;
  import net.minecraft.world.item.context.BlockPlaceContext;
-@@ -30,6 +_,8 @@
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
+@@ -20,6 +_,10 @@
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.material.Fluids;
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.Vec3;
++import net.minecraft.world.phys.BlockHitResult;
++import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class LightningRodBlock extends RodBlock implements SimpleWaterloggedBlock {
      public static final MapCodec<LightningRodBlock> CODEC = simpleCodec(LightningRodBlock::new);
-@@ -84,7 +_,19 @@
+@@ -74,7 +_,19 @@
          return p_153748_.getValue(POWERED) && p_153748_.getValue(FACING) == p_153751_ ? 15 : 0;
      }
  
@@ -38,3 +51,28 @@
          p_153762_.setBlock(p_153763_, p_153761_.setValue(POWERED, Boolean.valueOf(true)), 3);
          this.updateNeighbours(p_153761_, p_153762_, p_153763_);
          p_153762_.scheduleTick(p_153763_, this, 8);
+@@ -116,6 +_,24 @@
+         if (!p_153753_.is(p_153756_.getBlock())) {
+             if (p_153753_.getValue(POWERED) && !p_153754_.getBlockTicks().hasScheduledTick(p_153755_, this)) {
+                 p_153754_.setBlock(p_153755_, p_153753_.setValue(POWERED, Boolean.valueOf(false)), 18);
++            }
++        }
++    }
++
++    @Override
++    protected void onProjectileHit(Level p_153713_, BlockState p_153714_, BlockHitResult p_153715_, Projectile p_153716_) {
++        if (p_153713_.isThundering() && p_153716_ instanceof ThrownTrident && ((ThrownTrident)p_153716_).isChanneling()) {
++            BlockPos blockpos = p_153715_.getBlockPos();
++            if (p_153713_.canSeeSky(blockpos)) {
++                LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(p_153713_);
++                if (lightningbolt != null) {
++                    lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos.above()));
++                    Entity entity = p_153716_.getOwner();
++                    lightningbolt.setCause(entity instanceof ServerPlayer ? (ServerPlayer)entity : null);
++                    p_153713_.addFreshEntity(lightningbolt);
++                }
++
++                p_153713_.playSound(null, blockpos, SoundEvents.TRIDENT_THUNDER, SoundSource.WEATHER, 5.0F, 1.0F);
+             }
+         }
+     }

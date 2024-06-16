@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
-@@ -11,6 +_,7 @@
+@@ -12,6 +_,7 @@
  import java.util.List;
  import java.util.UUID;
  import java.util.concurrent.CompletableFuture;
@@ -8,7 +8,7 @@
  import java.util.function.BiConsumer;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
-@@ -194,8 +_,12 @@
+@@ -195,8 +_,12 @@
          };
      }
  
@@ -22,7 +22,7 @@
          this.suggestions = this::suggestSelector;
          if (!this.reader.canRead()) {
              throw ERROR_MISSING_SELECTOR_TYPE.createWithContext(this.reader);
-@@ -453,6 +_,11 @@
+@@ -472,6 +_,11 @@
              }
  
              this.reader.skip();
@@ -34,7 +34,7 @@
              this.parseSelector();
          } else {
              this.parseNameOrUUID();
-@@ -462,12 +_,20 @@
+@@ -481,6 +_,13 @@
          return this.getSelector();
      }
  
@@ -48,9 +48,10 @@
      private static void fillSelectorSuggestions(SuggestionsBuilder p_121248_) {
          p_121248_.suggest("@p", Component.translatable("argument.entity.selector.nearestPlayer"));
          p_121248_.suggest("@a", Component.translatable("argument.entity.selector.allPlayers"));
-         p_121248_.suggest("@r", Component.translatable("argument.entity.selector.randomPlayer"));
+@@ -488,6 +_,7 @@
          p_121248_.suggest("@s", Component.translatable("argument.entity.selector.self"));
          p_121248_.suggest("@e", Component.translatable("argument.entity.selector.allEntities"));
+         p_121248_.suggest("@n", Component.translatable("argument.entity.selector.nearestEntity"));
 +        net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_121248_);
      }
  

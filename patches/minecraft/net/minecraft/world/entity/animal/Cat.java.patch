@@ -1,14 +1,23 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
-@@ -31,6 +_,7 @@
+@@ -30,6 +_,8 @@
+ import net.minecraft.world.InteractionResult;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.AgeableMob;
- import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.Entity;
 +import net.minecraft.world.entity.EntityDimensions;
  import net.minecraft.world.entity.EntitySelector;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.LivingEntity;
-@@ -64,6 +_,8 @@
+@@ -51,6 +_,7 @@
+ import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
+ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+ import net.minecraft.world.entity.ai.goal.OcelotAttackGoal;
++import net.minecraft.world.entity.ai.goal.PanicGoal;
+ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+ import net.minecraft.world.entity.ai.goal.TemptGoal;
+ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+@@ -62,6 +_,8 @@
  import net.minecraft.world.item.DyeItem;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
@@ -17,7 +26,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.block.BedBlock;
-@@ -74,6 +_,7 @@
+@@ -72,6 +_,7 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
@@ -25,7 +34,7 @@
  
  public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVariant>> {
      public static final double TEMPT_SPEED_MOD = 0.6;
-@@ -152,7 +_,7 @@
+@@ -150,7 +_,7 @@
          return DyeColor.byId(this.entityData.get(DATA_COLLAR_COLOR));
      }
  
@@ -34,7 +43,7 @@
          this.entityData.set(DATA_COLLAR_COLOR, p_28132_.getId());
      }
  
-@@ -379,9 +_,9 @@
+@@ -368,9 +_,9 @@
                      }
                  } else if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
                      if (!this.level().isClientSide()) {
@@ -45,7 +54,7 @@
                      }
  
                      return InteractionResult.sidedSuccess(this.level().isClientSide());
-@@ -441,7 +_,7 @@
+@@ -430,7 +_,7 @@
      }
  
      private void tryToTame(Player p_333297_) {
@@ -54,7 +63,7 @@
              this.tame(p_333297_);
              this.setOrderedToSit(true);
              this.level().broadcastEntityEvent(this, (byte)7);
-@@ -579,20 +_,19 @@
+@@ -568,20 +_,19 @@
                  .withParameter(LootContextParams.THIS_ENTITY, this.cat)
                  .create(LootContextParamSets.GIFT);
  

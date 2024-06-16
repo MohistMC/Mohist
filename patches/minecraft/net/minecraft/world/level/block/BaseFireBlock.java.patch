@@ -1,77 +1,32 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -123,35 +_,42 @@
- 
-     protected abstract boolean canBurn(BlockState p_49284_);
- 
--    @Override
--    protected void entityInside(BlockState p_49260_, Level p_49261_, BlockPos p_49262_, Entity p_49263_) {
--        if (!p_49263_.fireImmune()) {
--            p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);
--            if (p_49263_.getRemainingFireTicks() == 0) {
--                p_49263_.igniteForSeconds(8);
--            }
--        }
--
--        p_49263_.hurt(p_49261_.damageSources().inFire(), this.fireDamage);
--        super.entityInside(p_49260_, p_49261_, p_49262_, p_49263_);
--    }
--
--    @Override
--    protected void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_) {
--        if (!p_49282_.is(p_49279_.getBlock())) {
--            if (inPortalDimension(p_49280_)) {
--                Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);
--                if (optional.isPresent()) {
--                    optional.get().createPortalBlocks();
--                    return;
--                }
--            }
--
--            if (!p_49279_.canSurvive(p_49280_, p_49281_)) {
--                p_49280_.removeBlock(p_49281_, false);
--            }
--        }
--    }
-+   public void entityInside(BlockState p_49260_, Level p_49261_, BlockPos p_49262_, Entity p_49263_) {
-+      if (!p_49263_.fireImmune()) {
-+         p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);
-+         if (p_49263_.getRemainingFireTicks() == 0) {
+@@ -128,9 +_,16 @@
+         if (!p_49263_.fireImmune()) {
+             p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);
+             if (p_49263_.getRemainingFireTicks() == 0) {
+-                p_49263_.igniteForSeconds(8.0F);
 +            // CraftBukkit start
 +            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_49261_, p_49262_), p_49263_.getBukkitEntity(), 8);
 +            p_49261_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
 +               p_49263_.igniteForSeconds(event.getDuration(), false);
-+            }
+             }
+-        }
 +            // CraftBukkit end
 +         }
 +      }
-+
-+      p_49263_.hurt(p_49261_.damageSources().inFire(), this.fireDamage);
-+      super.entityInside(p_49260_, p_49261_, p_49262_, p_49263_);
-+   }
-+
-+   public void onPlace(BlockState p_49279_, Level p_49280_, BlockPos p_49281_, BlockState p_49282_, boolean p_49283_) {
-+      if (!p_49282_.is(p_49279_.getBlock())) {
-+         if (inPortalDimension(p_49280_)) {
-+            Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);
-+            optional = net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_49280_, p_49281_, optional);
-+            if (optional.isPresent()) {
-+               optional.get().createPortalBlocks();
-+               return;
-+            }
-+         }
-+
-+         if (!p_49279_.canSurvive(p_49280_, p_49281_)) {
-+            fireExtinguished(p_49280_, p_49281_);
-+         }
-+
-+      }
-+   }
  
-     private static boolean inPortalDimension(Level p_49249_) {
-         return p_49249_.dimension() == Level.OVERWORLD || p_49249_.dimension() == Level.NETHER;
+         p_49263_.hurt(p_49261_.damageSources().inFire(), this.fireDamage);
+         super.entityInside(p_49260_, p_49261_, p_49262_, p_49263_);
+@@ -141,6 +_,7 @@
+         if (!p_49282_.is(p_49279_.getBlock())) {
+             if (inPortalDimension(p_49280_)) {
+                 Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);
++                optional = net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_49280_, p_49281_, optional);
+                 if (optional.isPresent()) {
+                     optional.get().createPortalBlocks();
+                     return;
 @@ -183,7 +_,7 @@
              boolean flag = false;
  

@@ -14,13 +14,10 @@
  import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
-@@ -66,7 +_,15 @@
-     static final TargetingConditions SWIM_WITH_PLAYER_TARGETING = TargetingConditions.forNonCombat().range(10.0).ignoreLineOfSight();
-     public static final int TOTAL_AIR_SUPPLY = 4800;
+@@ -68,6 +_,14 @@
      private static final int TOTAL_MOISTNESS_LEVEL = 2400;
--    public static final Predicate<ItemEntity> ALLOWED_ITEMS = p_326971_ -> !p_326971_.hasPickUpDelay() && p_326971_.isAlive() && p_326971_.isInWater();
-+	public static final Predicate<ItemEntity> ALLOWED_ITEMS = p_326971_ -> !p_326971_.hasPickUpDelay() && p_326971_.isAlive() && p_326971_.isInWater();
-+
+     public static final Predicate<ItemEntity> ALLOWED_ITEMS = p_341413_ -> !p_341413_.hasPickUpDelay() && p_341413_.isAlive() && p_341413_.isInWater();
+ 
 +
 +   // CraftBukkit start - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
 +   @Override
@@ -28,10 +25,11 @@
 +      return TOTAL_AIR_SUPPLY;
 +   }
 +   // CraftBukkit end
- 
++
      public Dolphin(EntityType<? extends Dolphin> p_28316_, Level p_28317_) {
          super(p_28316_, p_28317_);
-@@ -179,7 +_,7 @@
+         this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.02F, 0.1F, true);
+@@ -173,7 +_,7 @@
  
      @Override
      public int getMaxAirSupply() {
@@ -40,16 +38,16 @@
      }
  
      @Override
-@@ -213,6 +_,12 @@
+@@ -207,6 +_,12 @@
          if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) {
              ItemStack itemstack = p_28357_.getItem();
              if (this.canHoldItem(itemstack)) {
-+            // CraftBukkit start - call EntityPickupItemEvent
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
-+               return;
-+            }
-+            itemstack = p_28357_.getItem(); // update ItemStack from event
-+            // CraftBukkit end
++            	// CraftBukkit start - call EntityPickupItemEvent
++            	if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
++               		return;
++            	}
++            	itemstack = p_28357_.getItem(); // update ItemStack from event
++            	// CraftBukkit end
                  this.onItemPickup(p_28357_);
                  this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
                  this.setGuaranteedDrop(EquipmentSlot.MAINHAND);

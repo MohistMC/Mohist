@@ -7,13 +7,9 @@
 +import net.minecraft.core.RegistryAccess;
 +import net.minecraft.core.RegistrySynchronization;
  import net.minecraft.network.Connection;
+ import net.minecraft.network.DisconnectionDetails;
  import net.minecraft.network.RegistryFriendlyByteBuf;
- import net.minecraft.network.TickablePacketListener;
-@@ -14,9 +_,11 @@
- import net.minecraft.network.protocol.PacketUtils;
- import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
- import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
-+import net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket;
+@@ -19,6 +_,7 @@
  import net.minecraft.network.protocol.common.ServerboundClientInformationPacket;
  import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
  import net.minecraft.network.protocol.common.custom.BrandPayload;
@@ -21,7 +17,7 @@
  import net.minecraft.network.protocol.configuration.ClientboundUpdateEnabledFeaturesPacket;
  import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
  import net.minecraft.network.protocol.configuration.ServerboundFinishConfigurationPacket;
-@@ -32,12 +_,14 @@
+@@ -35,12 +_,14 @@
  import net.minecraft.server.packs.PackResources;
  import net.minecraft.server.packs.repository.KnownPack;
  import net.minecraft.server.players.PlayerList;
@@ -36,7 +32,7 @@
      private final GameProfile gameProfile;
      private final Queue<ConfigurationTask> configurationTasks = new ConcurrentLinkedQueue<>();
      @Nullable
-@@ -45,11 +_,13 @@
+@@ -48,11 +_,13 @@
      private ClientInformation clientInformation;
      @Nullable
      private SynchronizeRegistriesTask synchronizeRegistriesTask;
@@ -52,13 +48,18 @@
      }
  
      @Override
-@@ -68,13 +_,18 @@
+@@ -71,18 +_,23 @@
          return this.connection.isConnected();
      }
  
 -    public void startConfiguration() {
 +    public void vanillaStart() {
          this.send(new ClientboundCustomPayloadPacket(new BrandPayload(this.server.getServerModName())));
+         ServerLinks serverlinks = this.server.serverLinks();
+         if (!serverlinks.isEmpty()) {
+             this.send(new ClientboundServerLinksPacket(serverlinks.untrust()));
+         }
+ 
 +        this.send(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.REGISTRY.toNames(this.server.getWorldData().enabledFeatures())));
 +    }
 +
@@ -73,7 +74,7 @@
          this.addOptionalTasks();
          this.configurationTasks.add(new JoinWorldTask());
          this.startNextTask();
-@@ -126,16 +_,16 @@
+@@ -134,13 +_,13 @@
                  return;
              }
  
@@ -88,12 +89,8 @@
 +            ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player); // CraftBukkit
              playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation));
          } catch (Exception exception) {
--            LOGGER.error("Couldn't place player in world", (Throwable)exception);
-+            LOGGER.error("Couldn't place player in world", (Throwable) exception);
-             this.connection.send(new ClientboundDisconnectPacket(DISCONNECT_REASON_INVALID_DATA));
-             this.connection.disconnect(DISCONNECT_REASON_INVALID_DATA);
-         }
-@@ -153,7 +_,7 @@
+             LOGGER.error("Couldn't place player in world", (Throwable)exception);
+@@ -161,7 +_,7 @@
              ConfigurationTask configurationtask = this.configurationTasks.poll();
              if (configurationtask != null) {
                  this.currentTask = configurationtask;

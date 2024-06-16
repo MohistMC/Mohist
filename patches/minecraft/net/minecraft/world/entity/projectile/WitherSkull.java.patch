@@ -1,15 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/WitherSkull.java
 +++ b/net/minecraft/world/entity/projectile/WitherSkull.java
-@@ -20,6 +_,8 @@
+@@ -22,7 +_,8 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
+-import net.minecraft.world.phys.Vec3;
 +import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class WitherSkull extends AbstractHurtingProjectile {
      private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WitherSkull.class, EntityDataSerializers.BOOLEAN);
-@@ -44,7 +_,7 @@
+@@ -47,7 +_,7 @@
  
      @Override
      public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
@@ -18,15 +19,15 @@
      }
  
      @Override
-@@ -59,6 +_,7 @@
+@@ -63,6 +_,7 @@
                      if (entity.isAlive()) {
-                         this.doEnchantDamageEffects(livingentity, entity);
+                         EnchantmentHelper.doPostAttackEffects(serverlevel, entity, damagesource);
                      } else {
 +                        livingentity.heal$regainReason(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
                          livingentity.heal(5.0F);
                      }
                  }
-@@ -75,7 +_,8 @@
+@@ -79,7 +_,8 @@
                  }
  
                  if (i > 0) {
@@ -36,7 +37,7 @@
                  }
              }
          }
-@@ -85,10 +_,19 @@
+@@ -89,10 +_,19 @@
      protected void onHit(HitResult p_37628_) {
          super.onHit(p_37628_);
          if (!this.level().isClientSide) {

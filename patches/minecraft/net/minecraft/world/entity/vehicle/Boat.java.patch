@@ -8,7 +8,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityDimensions;
  import net.minecraft.world.entity.EntitySelector;
-@@ -50,8 +_,16 @@
+@@ -51,8 +_,16 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -21,14 +21,14 @@
 +import org.bukkit.event.vehicle.VehicleMoveEvent;
 +import org.joml.Vector3f;
  
--public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
-+public class Boat extends VehicleEntity implements VariantHolder<Boat.Type>, net.minecraftforge.common.extensions.IForgeBoat {
+-public class Boat extends VehicleEntity implements Leashable, VariantHolder<Boat.Type> {
++public class Boat extends VehicleEntity implements Leashable, VariantHolder<Boat.Type>, net.minecraftforge.common.extensions.IForgeBoat {
      private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
-@@ -87,6 +_,14 @@
-     private float bubbleAngle;
-     private float bubbleAngleO;
+@@ -90,6 +_,14 @@
+     @Nullable
+     private Leashable.LeashData leashData;
  
 +   // CraftBukkit start
 +   // PAIL: Some of these haven't worked since a few updates, and since 1.9 they are less and less applicable.
@@ -41,7 +41,16 @@
      public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
          super(p_38290_, p_38291_);
          this.blocksBuilding = true;
-@@ -158,9 +_,55 @@
+@@ -137,7 +_,7 @@
+     }
+ 
+     @Override
+-    public Vec3 getRelativePortalPosition(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
++    protected Vec3 getRelativePortalPosition(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
+         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_38335_, p_38336_));
+     }
+ 
+@@ -161,9 +_,55 @@
                  0.0, this.getVariant() == Boat.Type.BAMBOO ? (double)(p_299244_.height() * 0.8888889F) : (double)(p_299244_.height() / 3.0F), (double)f
              )
              .yRot(-this.getYRot() * (float) (Math.PI / 180.0));
@@ -100,7 +109,7 @@
      public void onAboveBubbleCol(boolean p_38381_) {
          if (!this.level().isClientSide) {
              this.isAboveBubbleColumn = true;
-@@ -192,13 +_,34 @@
+@@ -195,13 +_,34 @@
      @Override
      public void push(Entity p_38373_) {
          if (p_38373_ instanceof Boat) {
@@ -140,7 +149,7 @@
  
      @Override
      public Item getDropItem() {
-@@ -267,7 +_,8 @@
+@@ -270,7 +_,8 @@
          return this.getDirection().getClockWise();
      }
  
@@ -150,7 +159,7 @@
      public void tick() {
          this.oldStatus = this.status;
          this.status = this.getStatus();
-@@ -307,6 +_,22 @@
+@@ -310,6 +_,22 @@
              this.setDeltaMovement(Vec3.ZERO);
          }
  
@@ -173,7 +182,7 @@
          this.tickBubbleColumn();
  
          for (int i = 0; i <= 1; i++) {
-@@ -471,7 +_,7 @@
+@@ -498,7 +_,7 @@
                  for (int i2 = i1; i2 < j1; i2++) {
                      blockpos$mutableblockpos.set(l1, k1, i2);
                      FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -182,7 +191,7 @@
                          f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
                      }
  
-@@ -517,7 +_,7 @@
+@@ -544,7 +_,7 @@
                                      voxelshape,
                                      BooleanOp.AND
                                  )) {
@@ -191,7 +200,7 @@
                                  k1++;
                              }
                          }
-@@ -546,7 +_,7 @@
+@@ -573,7 +_,7 @@
                  for (int i2 = i1; i2 < j1; i2++) {
                      blockpos$mutableblockpos.set(k1, l1, i2);
                      FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -200,7 +209,7 @@
                          float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
                          this.waterLevel = Math.max((double)f, this.waterLevel);
                          flag |= aabb.minY < (double)f;
-@@ -576,7 +_,7 @@
+@@ -603,7 +_,7 @@
                  for (int i2 = i1; i2 < j1; i2++) {
                      blockpos$mutableblockpos.set(k1, l1, i2);
                      FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -209,7 +218,7 @@
                          && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
                          if (!fluidstate.isSource()) {
                              return Boat.Status.UNDER_FLOWING_WATER;
-@@ -780,6 +_,11 @@
+@@ -825,6 +_,11 @@
  
                      this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
                      if (!this.level().isClientSide && !this.isRemoved()) {
@@ -221,7 +230,7 @@
                          this.kill();
                          if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                              for (int i = 0; i < 3; i++) {
-@@ -789,12 +_,13 @@
+@@ -834,12 +_,13 @@
                              for (int j = 0; j < 2; j++) {
                                  this.spawnAtLocation(Items.STICK);
                              }
@@ -236,7 +245,7 @@
                  this.fallDistance -= (float)p_38307_;
              }
          }
-@@ -826,7 +_,7 @@
+@@ -871,7 +_,7 @@
  
      @Override
      protected boolean canAddPassenger(Entity p_38390_) {
@@ -245,7 +254,7 @@
      }
  
      protected int getMaxPassengers() {
-@@ -859,6 +_,16 @@
+@@ -904,6 +_,16 @@
      @Override
      public ItemStack getPickResult() {
          return new ItemStack(this.getDropItem());

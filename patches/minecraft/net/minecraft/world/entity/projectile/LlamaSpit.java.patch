@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/LlamaSpit.java
 +++ b/net/minecraft/world/entity/projectile/LlamaSpit.java
-@@ -13,6 +_,7 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -8,7 +8,7 @@
  
  public class LlamaSpit extends Projectile {
      public LlamaSpit(EntityType<? extends LlamaSpit> p_37224_, Level p_37225_) {
-@@ -39,15 +_,18 @@
+@@ -43,15 +_,18 @@
          super.tick();
          Vec3 vec3 = this.getDeltaMovement();
          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
@@ -28,7 +28,7 @@
              this.discard();
          } else {
              this.setDeltaMovement(vec3.scale(0.99F));
-@@ -68,6 +_,7 @@
+@@ -76,6 +_,7 @@
      protected void onHitBlock(BlockHitResult p_37239_) {
          super.onHitBlock(p_37239_);
          if (!this.level().isClientSide) {

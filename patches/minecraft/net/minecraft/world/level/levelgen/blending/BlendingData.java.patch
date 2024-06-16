@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/blending/BlendingData.java
++++ b/net/minecraft/world/level/levelgen/blending/BlendingData.java
+@@ -102,7 +_,7 @@
+     public static BlendingData getOrUpdateBlendingData(WorldGenRegion p_190305_, int p_190306_, int p_190307_) {
+         ChunkAccess chunkaccess = p_190305_.getChunk(p_190306_, p_190307_);
+         BlendingData blendingdata = chunkaccess.getBlendingData();
+-        if (blendingdata != null && !chunkaccess.getHighestGeneratedStatus().isBefore(ChunkStatus.BIOMES)) {
++        if (blendingdata != null && chunkaccess.getHighestGeneratedStatus().isOrAfter(ChunkStatus.BIOMES)) {
+             blendingdata.calculateData(chunkaccess, sideByGenerationAge(p_190305_, p_190306_, p_190307_, false));
+             return blendingdata;
+         } else {

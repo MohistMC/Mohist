@@ -13,7 +13,7 @@
  import java.util.function.IntFunction;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
-@@ -35,10 +_,12 @@
+@@ -35,12 +_,13 @@
  import net.minecraft.world.effect.MobEffects;
  import net.minecraft.world.entity.AgeableMob;
  import net.minecraft.world.entity.Entity;
@@ -24,9 +24,18 @@
  import net.minecraft.world.entity.PathfinderMob;
 +import net.minecraft.world.entity.Pose;
  import net.minecraft.world.entity.SpawnGroupData;
+-import net.minecraft.world.entity.TamableAnimal;
  import net.minecraft.world.entity.VariantHolder;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-@@ -56,7 +_,9 @@
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+@@ -50,13 +_,16 @@
+ import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
+ import net.minecraft.world.entity.ai.goal.LandOnOwnersShoulderGoal;
+ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
++import net.minecraft.world.entity.ai.goal.PanicGoal;
+ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
+ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
  import net.minecraft.world.entity.ai.navigation.PathNavigation;
  import net.minecraft.world.entity.ai.util.LandRandomPos;
  import net.minecraft.world.entity.player.Player;
@@ -44,7 +53,7 @@
  
  public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot.Variant>, FlyingAnimal {
      private static final EntityDataAccessor<Integer> DATA_VARIANT_ID = SynchedEntityData.defineId(Parrot.class, EntityDataSerializers.INT);
-@@ -253,7 +_,7 @@
+@@ -257,7 +_,7 @@
              }
  
              if (!this.level().isClientSide) {
@@ -53,7 +62,7 @@
                      this.tame(p_29414_);
                      this.level().broadcastEntityEvent(this, (byte)7);
                  } else {
-@@ -372,9 +_,9 @@
+@@ -371,9 +_,9 @@
      }
  
      @Override
@@ -66,7 +75,7 @@
  
      @Override
      protected void doPush(Entity p_29367_) {
-@@ -388,13 +_,16 @@
+@@ -387,13 +_,16 @@
          if (this.isInvulnerableTo(p_29378_)) {
              return false;
          } else {

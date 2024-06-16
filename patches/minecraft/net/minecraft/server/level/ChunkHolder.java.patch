@@ -1,45 +1,65 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -1,11 +_,13 @@
+@@ -1,12 +_,17 @@
  package net.minecraft.server.level;
  
 +import com.mojang.datafixers.util.Either;
- import com.mojang.datafixers.util.Pair;
++import com.mojang.datafixers.util.Pair;
  import it.unimi.dsi.fastutil.shorts.ShortOpenHashSet;
  import it.unimi.dsi.fastutil.shorts.ShortSet;
- import java.util.ArrayList;
++import java.util.ArrayList;
  import java.util.BitSet;
  import java.util.List;
 +import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionStage;
  import java.util.concurrent.Executor;
-@@ -21,6 +_,7 @@
++import java.util.concurrent.atomic.AtomicReferenceArray;
+ import java.util.function.IntConsumer;
+ import java.util.function.IntSupplier;
+ import javax.annotation.Nullable;
+@@ -17,6 +_,8 @@
+ import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
- import net.minecraft.util.DebugBuffer;
++import net.minecraft.util.DebugBuffer;
 +import net.minecraft.util.Mth;
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelHeightAccessor;
-@@ -40,7 +_,7 @@
-     public static final CompletableFuture<ChunkResult<ChunkAccess>> UNLOADED_CHUNK_FUTURE = CompletableFuture.completedFuture(UNLOADED_CHUNK);
+@@ -24,19 +_,21 @@
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.ChunkAccess;
++import net.minecraft.world.level.chunk.ImposterProtoChunk;
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import net.minecraft.world.level.chunk.LevelChunkSection;
++import net.minecraft.world.level.chunk.ProtoChunk;
+ import net.minecraft.world.level.chunk.status.ChunkStatus;
+ import net.minecraft.world.level.lighting.LevelLightEngine;
+ 
+ public class ChunkHolder extends GenerationChunkHolder {
      public static final ChunkResult<LevelChunk> UNLOADED_LEVEL_CHUNK = ChunkResult.error("Unloaded level chunk");
-     public static final ChunkResult<ChunkAccess> NOT_DONE_YET = ChunkResult.error("Not done yet");
 -    public static final CompletableFuture<ChunkResult<LevelChunk>> UNLOADED_LEVEL_CHUNK_FUTURE = CompletableFuture.completedFuture(UNLOADED_LEVEL_CHUNK);
 +    private static final CompletableFuture<ChunkResult<LevelChunk>> UNLOADED_LEVEL_CHUNK_FUTURE = CompletableFuture.completedFuture(UNLOADED_LEVEL_CHUNK);
-     private static final List<ChunkStatus> CHUNK_STATUSES = ChunkStatus.getStatusList();
-     private final AtomicReferenceArray<CompletableFuture<ChunkResult<ChunkAccess>>> futures = new AtomicReferenceArray<>(CHUNK_STATUSES.size());
      private final LevelHeightAccessor levelHeightAccessor;
-@@ -64,6 +_,7 @@
-     private boolean wasAccessibleSinceLastSave;
-     private CompletableFuture<Void> pendingFullStateConfirmation = CompletableFuture.completedFuture(null);
+     private volatile CompletableFuture<ChunkResult<LevelChunk>> fullChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
+     private volatile CompletableFuture<ChunkResult<LevelChunk>> tickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
+     private volatile CompletableFuture<ChunkResult<LevelChunk>> entityTickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
+-    public int oldTicketLevel;
++    private int oldTicketLevel;
+     private int ticketLevel;
+     private int queueLevel;
+     private boolean hasChangedSections;
+@@ -50,6 +_,7 @@
+     private CompletableFuture<?> pendingFullStateConfirmation = CompletableFuture.completedFuture(null);
      private CompletableFuture<?> sendSync = CompletableFuture.completedFuture(null);
+     private CompletableFuture<?> saveSync = CompletableFuture.completedFuture(null);
 +    LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.
  
      public ChunkHolder(
          ChunkPos p_142986_,
-@@ -85,6 +_,20 @@
+@@ -71,6 +_,29 @@
          this.changedBlocksPerSection = new ShortSet[p_142988_.getSectionsCount()];
      }
  
@@ -57,13 +77,32 @@
 +    }
 +    // CraftBukkit end
 +
-     public CompletableFuture<ChunkResult<ChunkAccess>> getFutureIfPresentUnchecked(ChunkStatus p_331856_) {
-         CompletableFuture<ChunkResult<ChunkAccess>> completablefuture = this.futures.get(p_331856_.getIndex());
-         return completablefuture == null ? UNLOADED_CHUNK_FUTURE : completablefuture;
-@@ -348,6 +_,29 @@
-         boolean flag1 = ChunkLevel.isLoaded(this.ticketLevel);
++    public CompletableFuture<ChunkResult<ChunkAccess>> getFutureIfPresentUnchecked(ChunkStatus p_331856_) {
++        CompletableFuture<ChunkResult<ChunkAccess>> completablefuture = this.futures.get(p_331856_.getIndex());
++        return completablefuture == null ? UNLOADED_CHUNK_FUTURE : completablefuture;
++    }
++
++    public CompletableFuture<ChunkResult<ChunkAccess>> getFutureIfPresent(ChunkStatus p_330273_) {
++        return ChunkLevel.generationStatus(this.ticketLevel).isOrAfter(p_330273_) ? this.getFutureIfPresentUnchecked(p_330273_) : UNLOADED_CHUNK_FUTURE;
++    }
++
+     public CompletableFuture<ChunkResult<LevelChunk>> getTickingChunkFuture() {
+         return this.tickingChunkFuture;
+     }
+@@ -254,48 +_,86 @@
+     }
+ 
+     protected void updateFutures(ChunkMap p_143004_, Executor p_143005_) {
++        ChunkStatus chunkstatus = ChunkLevel.generationStatus(this.oldTicketLevel);
++        ChunkStatus chunkstatus1 = ChunkLevel.generationStatus(this.ticketLevel);
++        boolean flag = ChunkLevel.isLoaded(this.oldTicketLevel);
++        boolean flag1 = ChunkLevel.isLoaded(this.ticketLevel);
          FullChunkStatus fullchunkstatus = ChunkLevel.fullStatus(this.oldTicketLevel);
          FullChunkStatus fullchunkstatus1 = ChunkLevel.fullStatus(this.ticketLevel);
+-        boolean flag = fullchunkstatus.isOrAfter(FullChunkStatus.FULL);
+-        boolean flag1 = fullchunkstatus1.isOrAfter(FullChunkStatus.FULL);
+-        this.wasAccessibleSinceLastSave |= flag1;
+-        if (!flag && flag1) {
 +        // CraftBukkit start
 +        // ChunkUnloadEvent: Called before the chunk is unloaded: isChunkLoaded is still true and chunk can still be modified by plugins.
 +        if (fullchunkstatus.isOrAfter(FullChunkStatus.FULL) && !fullchunkstatus1.isOrAfter(FullChunkStatus.FULL)) {
@@ -87,10 +126,73 @@
 +            p_143004_.callbackExecutor.run();
 +        }
 +        // CraftBukkit end
-         if (flag) {
-             ChunkResult<ChunkAccess> chunkresult = ChunkResult.error(() -> "Unloaded ticket level " + this.pos);
++        if (flag) {
++            ChunkResult<ChunkAccess> chunkresult = ChunkResult.error(() -> "Unloaded ticket level " + this.pos);
++
++            for (int i = flag1 ? chunkstatus1.getIndex() + 1 : 0; i <= chunkstatus.getIndex(); i++) {
++                CompletableFuture<ChunkResult<ChunkAccess>> completablefuture = this.futures.get(i);
++                if (completablefuture == null) {
++                    this.futures.set(i, CompletableFuture.completedFuture(chunkresult));
++                }
++            }
++        }
++
++        boolean flag5 = fullchunkstatus.isOrAfter(FullChunkStatus.FULL);
++        boolean flag6 = fullchunkstatus1.isOrAfter(FullChunkStatus.FULL);
++        this.wasAccessibleSinceLastSave |= flag6;
++        if (!flag5 && flag6) {
+             this.fullChunkFuture = p_143004_.prepareAccessibleChunk(this);
+             this.scheduleFullChunkPromotion(p_143004_, this.fullChunkFuture, p_143005_, FullChunkStatus.FULL);
+-            this.addSaveDependency(this.fullChunkFuture);
++            this.updateChunkToSave(this.fullChunkFuture, "full");
+         }
  
-@@ -409,7 +_,26 @@
+-        if (flag && !flag1) {
++        if (flag5 && !flag6) {
+             this.fullChunkFuture.complete(UNLOADED_LEVEL_CHUNK);
+             this.fullChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
+         }
+ 
+-        boolean flag2 = fullchunkstatus.isOrAfter(FullChunkStatus.BLOCK_TICKING);
+-        boolean flag3 = fullchunkstatus1.isOrAfter(FullChunkStatus.BLOCK_TICKING);
+-        if (!flag2 && flag3) {
++        boolean flag7 = fullchunkstatus.isOrAfter(FullChunkStatus.BLOCK_TICKING);
++        boolean flag2 = fullchunkstatus1.isOrAfter(FullChunkStatus.BLOCK_TICKING);
++        if (!flag7 && flag2) {
+             this.tickingChunkFuture = p_143004_.prepareTickingChunk(this);
+             this.scheduleFullChunkPromotion(p_143004_, this.tickingChunkFuture, p_143005_, FullChunkStatus.BLOCK_TICKING);
+-            this.addSaveDependency(this.tickingChunkFuture);
++            this.updateChunkToSave(this.tickingChunkFuture, "ticking");
+         }
+ 
+-        if (flag2 && !flag3) {
++        if (flag7 && !flag2) {
+             this.tickingChunkFuture.complete(UNLOADED_LEVEL_CHUNK);
+             this.tickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
+         }
+ 
+-        boolean flag4 = fullchunkstatus.isOrAfter(FullChunkStatus.ENTITY_TICKING);
+-        boolean flag5 = fullchunkstatus1.isOrAfter(FullChunkStatus.ENTITY_TICKING);
+-        if (!flag4 && flag5) {
++        boolean flag3 = fullchunkstatus.isOrAfter(FullChunkStatus.ENTITY_TICKING);
++        boolean flag4 = fullchunkstatus1.isOrAfter(FullChunkStatus.ENTITY_TICKING);
++        if (!flag3 && flag4) {
+             if (this.entityTickingChunkFuture != UNLOADED_LEVEL_CHUNK_FUTURE) {
+                 throw (IllegalStateException)Util.pauseInIde(new IllegalStateException());
+             }
+ 
+             this.entityTickingChunkFuture = p_143004_.prepareEntityTickingChunk(this);
+             this.scheduleFullChunkPromotion(p_143004_, this.entityTickingChunkFuture, p_143005_, FullChunkStatus.ENTITY_TICKING);
+-            this.addSaveDependency(this.entityTickingChunkFuture);
++            this.updateChunkToSave(this.entityTickingChunkFuture, "entity ticking");
+         }
+ 
+-        if (flag4 && !flag5) {
++        if (flag3 && !flag4) {
+             this.entityTickingChunkFuture.complete(UNLOADED_LEVEL_CHUNK);
+             this.entityTickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
+         }
+@@ -306,7 +_,26 @@
  
          this.onLevelChange.onLevelChange(this.pos, this::getQueueLevel, this.ticketLevel, this::setQueueLevel);
          this.oldTicketLevel = this.ticketLevel;

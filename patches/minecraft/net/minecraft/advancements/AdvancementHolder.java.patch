@@ -8,19 +8,6 @@
  
  public record AdvancementHolder(ResourceLocation id, Advancement value) {
      public static final StreamCodec<RegistryFriendlyByteBuf, AdvancementHolder> STREAM_CODEC = StreamCodec.composite(
-@@ -21,9 +_,9 @@
-                 return true;
-             }
- 
--            return false;
--        }
--    }
-+         return false;
-+      }
-+   }
- 
-     @Override
-     public int hashCode() {
 @@ -34,4 +_,10 @@
      public String toString() {
          return this.id.toString();

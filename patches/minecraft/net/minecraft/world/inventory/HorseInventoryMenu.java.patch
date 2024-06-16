@@ -26,7 +26,7 @@
 +      	return bukkitEntity = new CraftInventoryView(player.player.getBukkitEntity(), horseContainer.getOwner().getInventory(), this);
 +   	}
 +
-     public HorseInventoryMenu(int p_39656_, Inventory p_39657_, Container p_39658_, final AbstractHorse p_39659_) {
+     public HorseInventoryMenu(int p_39656_, Inventory p_39657_, Container p_39658_, final AbstractHorse p_39659_, int p_342974_) {
          super(null, p_39656_);
 +      	player = p_39657_;
 +      	// CraftBukkit end

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/Noises.java
++++ b/net/minecraft/world/level/levelgen/Noises.java
+@@ -70,7 +_,7 @@
+     public static final ResourceKey<NormalNoise.NoiseParameters> NETHER_STATE_SELECTOR = createKey("nether_state_selector");
+ 
+     private static ResourceKey<NormalNoise.NoiseParameters> createKey(String p_189310_) {
+-        return ResourceKey.create(Registries.NOISE, ResourceLocation.withDefaultNamespace(p_189310_));
++        return ResourceKey.create(Registries.NOISE, new ResourceLocation(p_189310_));
+     }
+ 
+     public static NormalNoise instantiate(

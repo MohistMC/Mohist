@@ -1,22 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -35,6 +_,7 @@
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityDimensions;
- import net.minecraft.world.entity.EntityType;
-+import net.minecraft.world.entity.EquipmentSlot;
- import net.minecraft.world.entity.HasCustomInventoryScreen;
- import net.minecraft.world.entity.HumanoidArm;
- import net.minecraft.world.entity.LivingEntity;
-@@ -65,6 +_,7 @@
- import net.minecraft.world.entity.vehicle.DismountHelper;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
-+import net.minecraft.world.item.crafting.Ingredient;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.ServerLevelAccessor;
-@@ -76,6 +_,9 @@
+@@ -78,6 +_,9 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.ticks.ContainerSingleItem;
@@ -26,7 +10,7 @@
  
  public abstract class AbstractHorse extends Animal implements ContainerListener, HasCustomInventoryScreen, OwnableEntity, PlayerRideableJumping, Saddleable {
      public static final int EQUIPMENT_SLOT_OFFSET = 400;
-@@ -141,6 +_,7 @@
+@@ -143,6 +_,7 @@
              return p_335622_.getVehicle() == AbstractHorse.this || p_335622_.canInteractWithEntity(AbstractHorse.this, 4.0);
          }
      };
@@ -34,7 +18,7 @@
  
      protected AbstractHorse(EntityType<? extends AbstractHorse> p_30531_, Level p_30532_) {
          super(p_30531_, p_30532_);
-@@ -299,6 +_,11 @@
+@@ -303,6 +_,11 @@
  
      @Override
      public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
@@ -46,8 +30,8 @@
          if (p_149499_ > 1.0F) {
              this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
          }
-@@ -323,9 +_,9 @@
-         return 1;
+@@ -331,9 +_,9 @@
+         return p_345108_ * 3 + 1;
      }
  
 -    protected void createInventory() {
@@ -59,7 +43,7 @@
          if (simplecontainer != null) {
              simplecontainer.removeListener(this);
              int i = Math.min(simplecontainer.getContainerSize(), this.inventory.getContainerSize());
-@@ -340,6 +_,7 @@
+@@ -348,6 +_,7 @@
  
          this.inventory.addListener(this);
          this.syncSaddleToClients();
@@ -67,7 +51,7 @@
      }
  
      protected void syncSaddleToClients() {
-@@ -385,9 +_,9 @@
+@@ -393,9 +_,9 @@
      protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
          if (!p_30585_.liquid()) {
              BlockState blockstate = this.level().getBlockState(p_30584_.above());
@@ -79,7 +63,7 @@
              }
  
              if (this.isVehicle() && this.canGallop) {
-@@ -433,7 +_,7 @@
+@@ -441,7 +_,7 @@
      }
  
      public int getMaxTemper() {
@@ -88,7 +72,7 @@
      }
  
      @Override
-@@ -505,7 +_,7 @@
+@@ -513,7 +_,7 @@
          }
  
          if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {
@@ -97,7 +81,7 @@
              flag = true;
          }
  
-@@ -576,7 +_,7 @@
+@@ -584,7 +_,7 @@
          super.aiStep();
          if (!this.level().isClientSide && this.isAlive()) {
              if (this.random.nextInt(900) == 0 && this.deathTime == 0) {
@@ -106,7 +90,7 @@
              }
  
              if (this.canEatGrass()) {
-@@ -810,6 +_,7 @@
+@@ -818,6 +_,7 @@
              float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
              this.setDeltaMovement(this.getDeltaMovement().add((double)(-0.4F * f * p_248808_), 0.0, (double)(0.4F * f1 * p_248808_)));
          }
@@ -114,7 +98,7 @@
      }
  
      protected void playJumpSound() {
-@@ -826,6 +_,7 @@
+@@ -834,6 +_,7 @@
          if (this.getOwnerUUID() != null) {
              p_30589_.putUUID("Owner", this.getOwnerUUID());
          }
@@ -122,7 +106,7 @@
  
          if (!this.inventory.getItem(0).isEmpty()) {
              p_30589_.put("SaddleItem", this.inventory.getItem(0).save(this.registryAccess()));
-@@ -850,6 +_,11 @@
+@@ -858,6 +_,11 @@
          if (uuid != null) {
              this.setOwnerUUID(uuid);
          }
@@ -134,7 +118,7 @@
  
          if (p_30565_.contains("SaddleItem", 10)) {
              ItemStack itemstack = ItemStack.parse(this.registryAccess(), p_30565_.getCompound("SaddleItem")).orElse(ItemStack.EMPTY);
-@@ -947,6 +_,17 @@
+@@ -955,6 +_,17 @@
  
      @Override
      public void handleStartJump(int p_30574_) {
@@ -152,7 +136,7 @@
          this.allowStandSliding = true;
          this.standIfPossible();
          this.playJumpSound();
-@@ -1126,5 +_,25 @@
+@@ -1134,6 +_,26 @@
  
      public final Container getBodyArmorAccess() {
          return this.bodyArmorAccess;
@@ -177,4 +161,5 @@
 +           oldHandler.invalidate();
 +        }
      }
- }
+ 
+     public int getInventoryColumns() {

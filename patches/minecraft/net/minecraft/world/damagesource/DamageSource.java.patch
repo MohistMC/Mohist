@@ -105,24 +105,3 @@
      @Override
      public String toString() {
          return "DamageSource (" + this.type().msgId() + ")";
-@@ -77,8 +_,8 @@
-             Component component = this.causingEntity == null ? this.directEntity.getDisplayName() : this.causingEntity.getDisplayName();
-             ItemStack itemstack = this.causingEntity instanceof LivingEntity livingentity ? livingentity.getMainHandItem() : ItemStack.EMPTY;
-             return !itemstack.isEmpty() && itemstack.has(DataComponents.CUSTOM_NAME)
--                ? Component.translatable(s + ".item", p_19343_.getDisplayName(), component, itemstack.getDisplayName())
--                : Component.translatable(s, p_19343_.getDisplayName(), component);
-+                    ? Component.translatable(s + ".item", p_19343_.getDisplayName(), component, itemstack.getDisplayName())
-+                    : Component.translatable(s, p_19343_.getDisplayName(), component);
-         }
-     }
- 
-@@ -89,7 +_,8 @@
-     public boolean scalesWithDifficulty() {
-         return switch (this.type().scaling()) {
-             case NEVER -> false;
--            case WHEN_CAUSED_BY_LIVING_NON_PLAYER -> this.causingEntity instanceof LivingEntity && !(this.causingEntity instanceof Player);
-+            case WHEN_CAUSED_BY_LIVING_NON_PLAYER ->
-+                    this.causingEntity instanceof LivingEntity && !(this.causingEntity instanceof Player);
-             case ALWAYS -> true;
-         };
-     }

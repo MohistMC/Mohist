@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
-@@ -20,6 +_,9 @@
+@@ -19,6 +_,9 @@
  import net.minecraft.world.item.armortrim.TrimPattern;
  import net.minecraft.world.item.armortrim.TrimPatterns;
  import net.minecraft.world.level.Level;
@@ -10,7 +10,7 @@
  
  public class SmithingTrimRecipe implements SmithingRecipe {
      final Ingredient template;
-@@ -92,8 +_,15 @@
+@@ -89,8 +_,15 @@
  
      @Override
      public boolean isIncomplete() {

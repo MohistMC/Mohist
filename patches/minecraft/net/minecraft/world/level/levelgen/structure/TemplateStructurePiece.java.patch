@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/structure/TemplateStructurePiece.java
++++ b/net/minecraft/world/level/levelgen/structure/TemplateStructurePiece.java
+@@ -64,7 +_,7 @@
+     }
+ 
+     protected ResourceLocation makeTemplateLocation() {
+-        return ResourceLocation.parse(this.templateName);
++        return new ResourceLocation(this.templateName);
+     }
+ 
+     @Override

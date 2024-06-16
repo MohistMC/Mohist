@@ -13,7 +13,7 @@
  
  public class EndCrystal extends Entity {
      private static final EntityDataAccessor<Optional<BlockPos>> DATA_BEAM_TARGET = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
-@@ -52,7 +_,11 @@
+@@ -54,7 +_,11 @@
          if (this.level() instanceof ServerLevel) {
              BlockPos blockpos = this.blockPosition();
              if (((ServerLevel)this.level()).getDragonFight() != null && this.level().getBlockState(blockpos).isAir()) {
@@ -26,7 +26,7 @@
              }
          }
      }
-@@ -87,12 +_,23 @@
+@@ -89,12 +_,23 @@
              return false;
          } else {
              if (!this.isRemoved() && !this.level().isClientSide) {

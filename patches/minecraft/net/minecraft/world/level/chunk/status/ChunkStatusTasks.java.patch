@@ -1,0 +1,233 @@
+--- a/net/minecraft/world/level/chunk/status/ChunkStatusTasks.java
++++ b/net/minecraft/world/level/chunk/status/ChunkStatusTasks.java
+@@ -3,18 +_,11 @@
+ import java.util.EnumSet;
+ import java.util.List;
+ import java.util.concurrent.CompletableFuture;
+-import net.minecraft.nbt.CompoundTag;
+-import net.minecraft.server.level.ChunkTaskPriorityQueueSorter;
+-import net.minecraft.server.level.GenerationChunkHolder;
++import java.util.concurrent.Executor;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ThreadedLevelLightEngine;
+ import net.minecraft.server.level.WorldGenRegion;
+-import net.minecraft.util.StaticCache2D;
+-import net.minecraft.world.entity.EntityType;
+-import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.chunk.ChunkAccess;
+-import net.minecraft.world.level.chunk.ImposterProtoChunk;
+-import net.minecraft.world.level.chunk.LevelChunk;
+ import net.minecraft.world.level.chunk.ProtoChunk;
+ import net.minecraft.world.level.levelgen.BelowZeroRetrogen;
+ import net.minecraft.world.level.levelgen.GenerationStep;
+@@ -23,17 +_,21 @@
+ 
+ public class ChunkStatusTasks {
+     private static boolean isLighted(ChunkAccess p_332575_) {
+-        return p_332575_.getPersistedStatus().isOrAfter(ChunkStatus.LIGHT) && p_332575_.isLightCorrect();
++        return p_332575_.getStatus().isOrAfter(ChunkStatus.LIGHT) && p_332575_.isLightCorrect();
+     }
+ 
+-    static CompletableFuture<ChunkAccess> passThrough(
+-        WorldGenContext p_342543_, ChunkStep p_342704_, StaticCache2D<GenerationChunkHolder> p_343141_, ChunkAccess p_342339_
++    static CompletableFuture<ChunkAccess> generateEmpty(
++        WorldGenContext p_327738_, ChunkStatus p_333908_, Executor p_334944_, ToFullChunk p_336366_, List<ChunkAccess> p_329997_, ChunkAccess p_334414_
+     ) {
+-        return CompletableFuture.completedFuture(p_342339_);
++        return CompletableFuture.completedFuture(p_334414_);
++    }
++
++    static CompletableFuture<ChunkAccess> loadPassThrough(WorldGenContext p_328698_, ChunkStatus p_333721_, ToFullChunk p_331952_, ChunkAccess p_336233_) {
++        return CompletableFuture.completedFuture(p_336233_);
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateStructureStarts(
+-        WorldGenContext p_333948_, ChunkStep p_345432_, StaticCache2D<GenerationChunkHolder> p_344447_, ChunkAccess p_332160_
++        WorldGenContext p_333948_, ChunkStatus p_331528_, Executor p_332991_, ToFullChunk p_332908_, List<ChunkAccess> p_331472_, ChunkAccess p_332160_
+     ) {
+         ServerLevel serverlevel = p_333948_.level();
+         if (serverlevel.getServer().getWorldData().worldGenOptions().generateStructures()) {
+@@ -45,38 +_,40 @@
+         return CompletableFuture.completedFuture(p_332160_);
+     }
+ 
+-    static CompletableFuture<ChunkAccess> loadStructureStarts(
+-        WorldGenContext p_330330_, ChunkStep p_342490_, StaticCache2D<GenerationChunkHolder> p_344800_, ChunkAccess p_335780_
+-    ) {
++    static CompletableFuture<ChunkAccess> loadStructureStarts(WorldGenContext p_330330_, ChunkStatus p_327952_, ToFullChunk p_333344_, ChunkAccess p_335780_) {
+         p_330330_.level().onStructureStartsAvailable(p_335780_);
+         return CompletableFuture.completedFuture(p_335780_);
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateStructureReferences(
+-        WorldGenContext p_334657_, ChunkStep p_342928_, StaticCache2D<GenerationChunkHolder> p_343099_, ChunkAccess p_335107_
++        WorldGenContext p_334657_, ChunkStatus p_335796_, Executor p_328245_, ToFullChunk p_334727_, List<ChunkAccess> p_328000_, ChunkAccess p_335107_
+     ) {
+         ServerLevel serverlevel = p_334657_.level();
+-        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_343099_, p_342928_, p_335107_);
++        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_328000_, p_335796_, -1);
+         p_334657_.generator().createReferences(worldgenregion, serverlevel.structureManager().forWorldGenRegion(worldgenregion), p_335107_);
+         return CompletableFuture.completedFuture(p_335107_);
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateBiomes(
+-        WorldGenContext p_334080_, ChunkStep p_342859_, StaticCache2D<GenerationChunkHolder> p_342349_, ChunkAccess p_329246_
++        WorldGenContext p_334080_, ChunkStatus p_334258_, Executor p_330763_, ToFullChunk p_332437_, List<ChunkAccess> p_328972_, ChunkAccess p_329246_
+     ) {
+         ServerLevel serverlevel = p_334080_.level();
+-        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_342349_, p_342859_, p_329246_);
++        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_328972_, p_334258_, -1);
+         return p_334080_.generator()
+-            .createBiomes(serverlevel.getChunkSource().randomState(), Blender.of(worldgenregion), serverlevel.structureManager().forWorldGenRegion(worldgenregion), p_329246_);
++            .createBiomes(
++                p_330763_, serverlevel.getChunkSource().randomState(), Blender.of(worldgenregion), serverlevel.structureManager().forWorldGenRegion(worldgenregion), p_329246_
++            );
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateNoise(
+-        WorldGenContext p_336010_, ChunkStep p_343333_, StaticCache2D<GenerationChunkHolder> p_343063_, ChunkAccess p_331391_
++        WorldGenContext p_336010_, ChunkStatus p_330181_, Executor p_335460_, ToFullChunk p_329890_, List<ChunkAccess> p_329399_, ChunkAccess p_331391_
+     ) {
+         ServerLevel serverlevel = p_336010_.level();
+-        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_343063_, p_343333_, p_331391_);
++        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_329399_, p_330181_, 0);
+         return p_336010_.generator()
+-            .fillFromNoise(Blender.of(worldgenregion), serverlevel.getChunkSource().randomState(), serverlevel.structureManager().forWorldGenRegion(worldgenregion), p_331391_)
++            .fillFromNoise(
++                p_335460_, Blender.of(worldgenregion), serverlevel.getChunkSource().randomState(), serverlevel.structureManager().forWorldGenRegion(worldgenregion), p_331391_
++            )
+             .thenApply(p_328030_ -> {
+                 if (p_328030_ instanceof ProtoChunk protochunk) {
+                     BelowZeroRetrogen belowzeroretrogen = protochunk.getBelowZeroRetrogen();
+@@ -93,19 +_,19 @@
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateSurface(
+-        WorldGenContext p_331242_, ChunkStep p_345412_, StaticCache2D<GenerationChunkHolder> p_345033_, ChunkAccess p_329153_
++        WorldGenContext p_331242_, ChunkStatus p_334030_, Executor p_330927_, ToFullChunk p_333532_, List<ChunkAccess> p_330810_, ChunkAccess p_329153_
+     ) {
+         ServerLevel serverlevel = p_331242_.level();
+-        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_345033_, p_345412_, p_329153_);
++        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_330810_, p_334030_, 0);
+         p_331242_.generator().buildSurface(worldgenregion, serverlevel.structureManager().forWorldGenRegion(worldgenregion), serverlevel.getChunkSource().randomState(), p_329153_);
+         return CompletableFuture.completedFuture(p_329153_);
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateCarvers(
+-        WorldGenContext p_334842_, ChunkStep p_345337_, StaticCache2D<GenerationChunkHolder> p_343660_, ChunkAccess p_334473_
++        WorldGenContext p_334842_, ChunkStatus p_336206_, Executor p_332025_, ToFullChunk p_330438_, List<ChunkAccess> p_328596_, ChunkAccess p_334473_
+     ) {
+         ServerLevel serverlevel = p_334842_.level();
+-        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_343660_, p_345337_, p_334473_);
++        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_328596_, p_336206_, 0);
+         if (p_334473_ instanceof ProtoChunk protochunk) {
+             Blender.addAroundOldChunksCarvingMaskFilter(worldgenregion, protochunk);
+         }
+@@ -124,74 +_,68 @@
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateFeatures(
+-        WorldGenContext p_330189_, ChunkStep p_344410_, StaticCache2D<GenerationChunkHolder> p_344248_, ChunkAccess p_332579_
++        WorldGenContext p_330189_, ChunkStatus p_329895_, Executor p_330502_, ToFullChunk p_329017_, List<ChunkAccess> p_329119_, ChunkAccess p_332579_
+     ) {
+         ServerLevel serverlevel = p_330189_.level();
+         Heightmap.primeHeightmaps(
+             p_332579_,
+             EnumSet.of(Heightmap.Types.MOTION_BLOCKING, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Heightmap.Types.OCEAN_FLOOR, Heightmap.Types.WORLD_SURFACE)
+         );
+-        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_344248_, p_344410_, p_332579_);
++        WorldGenRegion worldgenregion = new WorldGenRegion(serverlevel, p_329119_, p_329895_, 1);
+         p_330189_.generator().applyBiomeDecoration(worldgenregion, p_332579_, serverlevel.structureManager().forWorldGenRegion(worldgenregion));
+         Blender.generateBorderTicks(worldgenregion, p_332579_);
+         return CompletableFuture.completedFuture(p_332579_);
+     }
+ 
+-    static CompletableFuture<ChunkAccess> initializeLight(
+-        WorldGenContext p_344706_, ChunkStep p_344577_, StaticCache2D<GenerationChunkHolder> p_344841_, ChunkAccess p_334426_
++    static CompletableFuture<ChunkAccess> generateInitializeLight(
++        WorldGenContext p_332413_, ChunkStatus p_328122_, Executor p_328770_, ToFullChunk p_328410_, List<ChunkAccess> p_329168_, ChunkAccess p_330555_
+     ) {
+-        ThreadedLevelLightEngine threadedlevellightengine = p_344706_.lightEngine();
++        return initializeLight(p_332413_.lightEngine(), p_330555_);
++    }
++
++    static CompletableFuture<ChunkAccess> loadInitializeLight(WorldGenContext p_330395_, ChunkStatus p_332979_, ToFullChunk p_334794_, ChunkAccess p_333299_) {
++        return initializeLight(p_330395_.lightEngine(), p_333299_);
++    }
++
++    private static CompletableFuture<ChunkAccess> initializeLight(ThreadedLevelLightEngine p_330346_, ChunkAccess p_334426_) {
+         p_334426_.initializeLightSources();
+-        ((ProtoChunk)p_334426_).setLightEngine(threadedlevellightengine);
++        ((ProtoChunk)p_334426_).setLightEngine(p_330346_);
+         boolean flag = isLighted(p_334426_);
+-        return threadedlevellightengine.initializeLight(p_334426_, flag);
++        return p_330346_.initializeLight(p_334426_, flag);
+     }
+ 
+-    static CompletableFuture<ChunkAccess> light(
+-        WorldGenContext p_342217_, ChunkStep p_343464_, StaticCache2D<GenerationChunkHolder> p_342591_, ChunkAccess p_342577_
++    static CompletableFuture<ChunkAccess> generateLight(
++        WorldGenContext p_329903_, ChunkStatus p_331038_, Executor p_327805_, ToFullChunk p_329744_, List<ChunkAccess> p_333018_, ChunkAccess p_328729_
+     ) {
+-        boolean flag = isLighted(p_342577_);
+-        return p_342217_.lightEngine().lightChunk(p_342577_, flag);
++        return lightChunk(p_329903_.lightEngine(), p_328729_);
++    }
++
++    static CompletableFuture<ChunkAccess> loadLight(WorldGenContext p_331792_, ChunkStatus p_329237_, ToFullChunk p_329001_, ChunkAccess p_328388_) {
++        return lightChunk(p_331792_.lightEngine(), p_328388_);
++    }
++
++    private static CompletableFuture<ChunkAccess> lightChunk(ThreadedLevelLightEngine p_332619_, ChunkAccess p_329146_) {
++        boolean flag = isLighted(p_329146_);
++        return p_332619_.lightChunk(p_329146_, flag);
+     }
+ 
+     static CompletableFuture<ChunkAccess> generateSpawn(
+-        WorldGenContext p_329644_, ChunkStep p_343242_, StaticCache2D<GenerationChunkHolder> p_344209_, ChunkAccess p_329794_
++        WorldGenContext p_329644_, ChunkStatus p_333967_, Executor p_334858_, ToFullChunk p_331727_, List<ChunkAccess> p_333311_, ChunkAccess p_329794_
+     ) {
+         if (!p_329794_.isUpgrading()) {
+-            p_329644_.generator().spawnOriginalMobs(new WorldGenRegion(p_329644_.level(), p_344209_, p_343242_, p_329794_));
++            p_329644_.generator().spawnOriginalMobs(new WorldGenRegion(p_329644_.level(), p_333311_, p_333967_, -1));
+         }
+ 
+         return CompletableFuture.completedFuture(p_329794_);
+     }
+ 
+-    static CompletableFuture<ChunkAccess> full(
+-        WorldGenContext p_342042_, ChunkStep p_345156_, StaticCache2D<GenerationChunkHolder> p_344754_, ChunkAccess p_342195_
++    static CompletableFuture<ChunkAccess> generateFull(
++        WorldGenContext p_329930_, ChunkStatus p_329028_, Executor p_331683_, ToFullChunk p_335663_, List<ChunkAccess> p_334524_, ChunkAccess p_334958_
+     ) {
+-        ChunkPos chunkpos = p_342195_.getPos();
+-        GenerationChunkHolder generationchunkholder = p_344754_.get(chunkpos.x, chunkpos.z);
+-        return CompletableFuture.supplyAsync(() -> {
+-            ProtoChunk protochunk = (ProtoChunk)p_342195_;
+-            ServerLevel serverlevel = p_342042_.level();
+-            LevelChunk levelchunk;
+-            if (protochunk instanceof ImposterProtoChunk) {
+-                levelchunk = ((ImposterProtoChunk)protochunk).getWrapped();
+-            } else {
+-                levelchunk = new LevelChunk(serverlevel, protochunk, p_341875_ -> postLoadProtoChunk(serverlevel, protochunk.getEntities()));
+-                generationchunkholder.replaceProtoChunk(new ImposterProtoChunk(levelchunk, false));
+-            }
+-
+-            levelchunk.setFullStatus(generationchunkholder::getFullStatus);
+-            levelchunk.runPostLoad();
+-            levelchunk.setLoaded(true);
+-            levelchunk.registerAllBlockEntitiesAfterLevelLoad();
+-            levelchunk.registerTickContainerInLevel(serverlevel);
+-            return levelchunk;
+-        }, p_341879_ -> p_342042_.mainThreadMailBox().tell(ChunkTaskPriorityQueueSorter.message(p_341879_, chunkpos.toLong(), generationchunkholder::getTicketLevel)));
++        return p_335663_.apply(p_334958_);
+     }
+ 
+-    private static void postLoadProtoChunk(ServerLevel p_344060_, List<CompoundTag> p_343849_) {
+-        if (!p_343849_.isEmpty()) {
+-            p_344060_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_343849_, p_344060_));
+-        }
++    static CompletableFuture<ChunkAccess> loadFull(WorldGenContext p_330808_, ChunkStatus p_330720_, ToFullChunk p_328107_, ChunkAccess p_335635_) {
++        return p_328107_.apply(p_335635_);
+     }
+ }

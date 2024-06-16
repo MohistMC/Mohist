@@ -17,7 +17,7 @@
  import net.minecraft.world.level.DataPackConfig;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.WorldDataConfiguration;
-@@ -101,7 +_,8 @@
+@@ -102,7 +_,8 @@
      public final boolean logIPs = this.get("log-ips", true);
      private final DedicatedServerProperties.WorldDimensionData worldDimensionData;
      public final WorldOptions worldOptions;
@@ -27,7 +27,7 @@
  
      public DedicatedServerProperties(Properties p_180926_) {
          super(p_180926_);
-@@ -203,7 +_,7 @@
+@@ -204,7 +_,7 @@
          return this.worldDimensionData.create(p_250466_);
      }
  

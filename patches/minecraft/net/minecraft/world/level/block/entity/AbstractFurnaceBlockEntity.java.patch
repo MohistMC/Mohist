@@ -14,7 +14,22 @@
  import javax.annotation.Nullable;
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
-@@ -45,6 +_,18 @@
+@@ -23,6 +_,7 @@
+ import net.minecraft.tags.ItemTags;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.Mth;
++import net.minecraft.world.Container;
+ import net.minecraft.world.ContainerHelper;
+ import net.minecraft.world.WorldlyContainer;
+ import net.minecraft.world.entity.ExperienceOrb;
+@@ -38,13 +_,24 @@
+ import net.minecraft.world.item.crafting.RecipeHolder;
+ import net.minecraft.world.item.crafting.RecipeManager;
+ import net.minecraft.world.item.crafting.RecipeType;
+-import net.minecraft.world.item.crafting.SingleRecipeInput;
+ import net.minecraft.world.level.ItemLike;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.AbstractFurnaceBlock;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
@@ -53,8 +68,8 @@
 @@ -108,18 +_,23 @@
      };
      private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-     private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
-+   protected static BlockPos worldPosition$mohist;
+     private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> quickCheck;
++    protected static BlockPos worldPosition$mohist;
  
      protected AbstractFurnaceBlockEntity(
          BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_
@@ -100,7 +115,7 @@
          ContainerHelper.saveAllItems(p_187452_, this.items, p_330192_);
          CompoundTag compoundtag = new CompoundTag();
          this.recipesUsed.forEach((p_187449_, p_187450_) -> compoundtag.putInt(p_187449_.toString(), p_187450_));
-@@ -268,30 +_,55 @@
+@@ -269,30 +_,55 @@
              }
  
              int i = p_155017_.getMaxStackSize();
@@ -180,7 +195,7 @@
  
                      flag1 = true;
                  }
-@@ -313,9 +_,9 @@
+@@ -314,9 +_,9 @@
          }
      }
  
@@ -188,11 +203,11 @@
 +    private boolean canBurn(RegistryAccess p_266924_, @Nullable RecipeHolder<?> p_299207_, NonNullList<ItemStack> p_155007_, int p_155008_) {
          if (!p_155007_.get(0).isEmpty() && p_299207_ != null) {
 -            ItemStack itemstack = p_299207_.value().getResultItem(p_266924_);
-+            ItemStack itemstack = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299207_).value().assemble(this, p_266924_);
++            ItemStack itemstack = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<SingleRecipeInput>>)p_299207_).value().assemble(new SingleRecipeInput(this.getItem(0)), p_266924_);
              if (itemstack.isEmpty()) {
                  return false;
              } else {
-@@ -325,9 +_,9 @@
+@@ -326,9 +_,9 @@
                  } else if (!ItemStack.isSameItemSameComponents(itemstack1, itemstack)) {
                      return false;
                  } else {
@@ -204,25 +219,22 @@
                  }
              }
          } else {
-@@ -335,16 +_,41 @@
+@@ -336,16 +_,41 @@
          }
      }
  
 -    private static boolean burn(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
--        if (p_299450_ != null && canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
--            ItemStack itemstack = p_267073_.get(0);
--            ItemStack itemstack1 = p_299450_.value().getResultItem(p_266740_);
--            ItemStack itemstack2 = p_267073_.get(2);
 +   // Mohist start - Fix compatibility with ImprovableSkills mod
 +   public static AtomicReference<Level> burn$world  = new AtomicReference<>(null);
 +   public static AtomicReference<BlockPos> burn$blockposition  = new AtomicReference<>(null);
 +   // Mohist end
 +
 +   private boolean burn(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
-+      if (p_299450_ != null && this.canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
-+         ItemStack itemstack = p_267073_.get(0);
-+         ItemStack itemstack1 = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299450_).value().assemble(this, p_266740_);
-+         ItemStack itemstack2 = p_267073_.get(2);
+         if (p_299450_ != null && canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
+             ItemStack itemstack = p_267073_.get(0);
+-            ItemStack itemstack1 = p_299450_.value().getResultItem(p_266740_);
++            ItemStack itemstack1 = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<SingleRecipeInput>>)p_299450_).value().assemble(new SingleRecipeInput(this.getItem(0)), p_266740_);
+             ItemStack itemstack2 = p_267073_.get(2);
 +
 +         // CraftBukkit start - fire FurnaceSmeltEvent
 +         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
@@ -254,7 +266,7 @@
  
              if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !p_267073_.get(1).isEmpty() && p_267073_.get(1).is(Items.BUCKET)) {
                  p_267073_.set(1, new ItemStack(Items.WATER_BUCKET));
-@@ -362,7 +_,7 @@
+@@ -363,7 +_,7 @@
              return 0;
          } else {
              Item item = p_58343_.getItem();
@@ -263,7 +275,7 @@
          }
      }
  
-@@ -371,7 +_,7 @@
+@@ -373,7 +_,7 @@
      }
  
      public static boolean isFuel(ItemStack p_58400_) {
@@ -272,7 +284,7 @@
      }
  
      @Override
-@@ -429,7 +_,7 @@
+@@ -431,7 +_,7 @@
              return true;
          } else {
              ItemStack itemstack = this.items.get(1);
@@ -281,7 +293,7 @@
          }
      }
  
-@@ -451,18 +_,24 @@
+@@ -453,18 +_,24 @@
      public void awardUsedRecipes(Player p_58396_, List<ItemStack> p_282202_) {
      }
  
@@ -318,7 +330,7 @@
  
      public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
          List<RecipeHolder<?>> list = Lists.newArrayList();
-@@ -484,6 +_,17 @@
+@@ -486,6 +_,17 @@
              i++;
          }
  
@@ -336,7 +348,7 @@
          ExperienceOrb.award(p_154999_, p_155000_, i);
      }
  
-@@ -493,4 +_,67 @@
+@@ -495,4 +_,67 @@
              p_58342_.accountStack(itemstack);
          }
      }

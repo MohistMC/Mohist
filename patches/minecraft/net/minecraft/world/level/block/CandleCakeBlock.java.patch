@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/CandleCakeBlock.java
++++ b/net/minecraft/world/level/block/CandleCakeBlock.java
+@@ -33,8 +_,8 @@
+ 
+ public class CandleCakeBlock extends AbstractCandleBlock {
+     public static final MapCodec<CandleCakeBlock> CODEC = RecordCodecBuilder.mapCodec(
+-        p_341827_ -> p_341827_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("candle").forGetter(p_327254_ -> p_327254_.candleBlock), propertiesCodec())
+-                .apply(p_341827_, CandleCakeBlock::new)
++        p_309279_ -> p_309279_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("candle").forGetter(p_327254_ -> p_327254_.candleBlock), propertiesCodec())
++                .apply(p_309279_, CandleCakeBlock::new)
+     );
+     public static final BooleanProperty LIT = AbstractCandleBlock.LIT;
+     protected static final float AABB_OFFSET = 1.0F;

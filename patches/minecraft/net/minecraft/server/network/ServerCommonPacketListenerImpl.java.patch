@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -2,12 +_,16 @@
+@@ -2,7 +_,10 @@
  
  import com.mojang.authlib.GameProfile;
  import com.mojang.logging.LogUtils;
@@ -11,13 +11,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
- import net.minecraft.Util;
- import net.minecraft.network.Connection;
-+import net.minecraft.network.ConnectionProtocol;
- import net.minecraft.network.PacketSendListener;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.protocol.Packet;
-@@ -19,20 +_,32 @@
+@@ -20,20 +_,32 @@
  import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
  import net.minecraft.network.protocol.common.ServerboundPongPacket;
  import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
@@ -52,7 +46,7 @@
      private final boolean transferred;
      private long keepAliveTime;
      private boolean keepAlivePending;
-@@ -42,12 +_,41 @@
+@@ -43,12 +_,41 @@
      private int latency;
      private volatile boolean suspendFlushingOnServerThread = false;
  
@@ -95,7 +89,7 @@
      }
  
      private void close() {
-@@ -67,8 +_,9 @@
+@@ -68,8 +_,9 @@
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket p_299975_) {
@@ -106,7 +100,7 @@
              this.latency = (this.latency * 3 + i) / 4;
              this.keepAlivePending = false;
          } else if (!this.isSingleplayerOwner()) {
-@@ -80,10 +_,66 @@
+@@ -81,10 +_,66 @@
      public void handlePong(ServerboundPongPacket p_299461_) {
      }
  
@@ -175,7 +169,7 @@
      @Override
      public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
          PacketUtils.ensureRunningOnSameThread(p_300656_, this, this.server);
-@@ -91,6 +_,7 @@
+@@ -92,6 +_,7 @@
              LOGGER.info("Disconnecting {} due to resource pack {} rejection", this.playerProfile().getName(), p_300656_.id());
              this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
          }
@@ -183,7 +177,7 @@
      }
  
      @Override
-@@ -101,7 +_,7 @@
+@@ -102,7 +_,7 @@
      protected void keepConnectionAlive() {
          this.server.getProfiler().push("keepAlive");
          long i = Util.getMillis();
@@ -192,7 +186,7 @@
              if (this.keepAlivePending) {
                  this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
              } else if (this.checkIfClosed(i)) {
-@@ -141,6 +_,13 @@
+@@ -142,6 +_,13 @@
      }
  
      public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
@@ -206,16 +200,20 @@
          if (p_300325_.isTerminal()) {
              this.close();
          }
-@@ -157,10 +_,62 @@
+@@ -158,15 +_,62 @@
          }
      }
  
 +    // CraftBukkit start
 +    @Deprecated
      public void disconnect(Component p_299122_) {
--        this.connection.send(new ClientboundDisconnectPacket(p_299122_), PacketSendListener.thenRun(() -> this.connection.disconnect(p_299122_)));
+-        this.disconnect(new DisconnectionDetails(p_299122_));
 +        disconnect(CraftChatMessage.fromComponent(p_299122_));
-+    }
+     }
+-
+-    public void disconnect(DisconnectionDetails p_345473_) {
+-        this.connection
+-            .send(new ClientboundDisconnectPacket(p_345473_.reason()), PacketSendListener.thenRun(() -> this.connection.disconnect(p_345473_)));
 +    // CraftBukkit end
 +
 +    public void disconnect(String s) {
@@ -271,7 +269,7 @@
      }
  
      protected boolean isSingleplayerOwner() {
-@@ -180,5 +_,9 @@
+@@ -186,5 +_,9 @@
  
      protected CommonListenerCookie createCookie(ClientInformation p_297318_) {
          return new CommonListenerCookie(this.playerProfile(), this.latency, p_297318_, this.transferred);

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/ShulkerBoxBlock.java
++++ b/net/minecraft/world/level/block/ShulkerBoxBlock.java
+@@ -71,7 +_,7 @@
+         p_258974_.put(Direction.DOWN, DOWN_OPEN_AABB);
+     });
+     public static final EnumProperty<Direction> FACING = DirectionalBlock.FACING;
+-    public static final ResourceLocation CONTENTS = ResourceLocation.withDefaultNamespace("contents");
++    public static final ResourceLocation CONTENTS = new ResourceLocation("contents");
+     @Nullable
+     public final DyeColor color;
+ 

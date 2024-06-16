@@ -1,0 +1,72 @@
+--- a/net/minecraft/world/level/chunk/storage/ChunkStorage.java
++++ b/net/minecraft/world/level/chunk/storage/ChunkStorage.java
+@@ -45,29 +_,29 @@
+         Optional<ResourceKey<MapCodec<? extends ChunkGenerator>>> p_188292_
+     ) {
+         int i = getVersion(p_188291_);
+-        if (i == SharedConstants.getCurrentVersion().getDataVersion().getVersion()) {
+-            return p_188291_;
+-        } else {
+-            try {
+-                if (i < 1493) {
+-                    p_188291_ = DataFixTypes.CHUNK.update(this.fixerUpper, p_188291_, i, 1493);
+-                    if (p_188291_.getCompound("Level").getBoolean("hasLegacyStructureData")) {
+-                        LegacyStructureDataHandler legacystructuredatahandler = this.getLegacyStructureHandler(p_188289_, p_188290_);
+-                        p_188291_ = legacystructuredatahandler.updateFromLegacy(p_188291_);
+-                    }
++
++        try {
++            if (i < 1493) {
++                p_188291_ = DataFixTypes.CHUNK.update(this.fixerUpper, p_188291_, i, 1493);
++                if (p_188291_.getCompound("Level").getBoolean("hasLegacyStructureData")) {
++                    LegacyStructureDataHandler legacystructuredatahandler = this.getLegacyStructureHandler(p_188289_, p_188290_);
++                    p_188291_ = legacystructuredatahandler.updateFromLegacy(p_188291_);
+                 }
++            }
+ 
+-                injectDatafixingContext(p_188291_, p_188289_, p_188292_);
+-                p_188291_ = DataFixTypes.CHUNK.updateToCurrentVersion(this.fixerUpper, p_188291_, Math.max(1493, i));
+-                removeDatafixingContext(p_188291_);
++            injectDatafixingContext(p_188291_, p_188289_, p_188292_);
++            p_188291_ = DataFixTypes.CHUNK.updateToCurrentVersion(this.fixerUpper, p_188291_, Math.max(1493, i));
++            if (i < SharedConstants.getCurrentVersion().getDataVersion().getVersion()) {
+                 NbtUtils.addCurrentDataVersion(p_188291_);
+-                return p_188291_;
+-            } catch (Exception exception) {
+-                CrashReport crashreport = CrashReport.forThrowable(exception, "Updated chunk");
+-                CrashReportCategory crashreportcategory = crashreport.addCategory("Updated chunk details");
+-                crashreportcategory.setDetail("Data version", i);
+-                throw new ReportedException(crashreport);
+             }
++
++            p_188291_.remove("__context");
++            return p_188291_;
++        } catch (Exception exception) {
++            CrashReport crashreport = CrashReport.forThrowable(exception, "Updated chunk");
++            CrashReportCategory crashreportcategory = crashreport.addCategory("Updated chunk details");
++            crashreportcategory.setDetail("Data version", i);
++            throw new ReportedException(crashreport);
+         }
+     }
+ 
+@@ -92,10 +_,6 @@
+         p_196919_.put("__context", compoundtag);
+     }
+ 
+-    private static void removeDatafixingContext(CompoundTag p_342096_) {
+-        p_342096_.remove("__context");
+-    }
+-
+     public static int getVersion(CompoundTag p_63506_) {
+         return NbtUtils.getDataVersion(p_63506_, -1);
+     }
+@@ -126,9 +_,5 @@
+ 
+     public ChunkScanAccess chunkScanner() {
+         return this.worker;
+-    }
+-
+-    protected RegionStorageInfo storageInfo() {
+-        return this.worker.storageInfo();
+     }
+ }

@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/ai/behavior/InteractWithDoor.java
 +++ b/net/minecraft/world/entity/ai/behavior/InteractWithDoor.java
 @@ -59,6 +_,13 @@
-                                     if (blockstate.is(BlockTags.WOODEN_DOORS, p_201959_ -> p_201959_.getBlock() instanceof DoorBlock)) {
+                                     if (blockstate.is(BlockTags.MOB_INTERACTABLE_DOORS, p_201959_ -> p_201959_.getBlock() instanceof DoorBlock)) {
                                          DoorBlock doorblock = (DoorBlock)blockstate.getBlock();
                                          if (!doorblock.isOpen(blockstate)) {
 +                                            // CraftBukkit start - entities opening doors
@@ -15,7 +15,7 @@
                                          }
  
 @@ -70,6 +_,13 @@
-                                     if (blockstate1.is(BlockTags.WOODEN_DOORS, p_201957_ -> p_201957_.getBlock() instanceof DoorBlock)) {
+                                     if (blockstate1.is(BlockTags.MOB_INTERACTABLE_DOORS, p_201957_ -> p_201957_.getBlock() instanceof DoorBlock)) {
                                          DoorBlock doorblock1 = (DoorBlock)blockstate1.getBlock();
                                          if (!doorblock1.isOpen(blockstate1)) {
 +                                            // CraftBukkit start - entities opening doors

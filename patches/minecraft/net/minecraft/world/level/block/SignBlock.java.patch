@@ -17,7 +17,19 @@
  
  public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
      public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-@@ -126,7 +_,8 @@
+@@ -92,7 +_,10 @@
+                         signblockentity.executeClickCommandsIfPresent(p_330127_, p_334341_, p_330848_, flag1);
+                         p_330127_.awardStat(Stats.ITEM_USED.get(p_333491_.getItem()));
+                         p_334341_.gameEvent(GameEvent.BLOCK_CHANGE, signblockentity.getBlockPos(), GameEvent.Context.of(p_330127_, signblockentity.getBlockState()));
+-                        p_333491_.consume(1, p_330127_);
++                        if (!p_330127_.isCreative()) {
++                            p_333491_.shrink(1);
++                        }
++
+                         return ItemInteractionResult.SUCCESS;
+                     } else {
+                         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+@@ -123,7 +_,8 @@
              } else if (flag) {
                  return InteractionResult.SUCCESS;
              } else if (!this.otherPlayerIsEditingSign(p_328842_, signblockentity) && p_328842_.mayBuild() && this.hasEditableText(p_328842_, signblockentity, flag1)) {
@@ -27,7 +39,7 @@
                  return InteractionResult.SUCCESS;
              } else {
                  return InteractionResult.PASS;
-@@ -168,10 +_,19 @@
+@@ -165,10 +_,19 @@
          return woodtype;
      }
  

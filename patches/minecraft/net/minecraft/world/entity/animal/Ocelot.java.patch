@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/animal/Ocelot.java
 +++ b/net/minecraft/world/entity/animal/Ocelot.java
-@@ -64,11 +_,11 @@
+@@ -20,6 +_,7 @@
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.AgeableMob;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntitySelector;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+@@ -63,11 +_,11 @@
          this.reassessTrustingGoals();
      }
  
@@ -14,7 +22,7 @@
          this.entityData.set(DATA_TRUSTING, p_29046_);
          this.reassessTrustingGoals();
      }
-@@ -170,7 +_,7 @@
+@@ -160,7 +_,7 @@
          if ((this.temptGoal == null || this.temptGoal.isRunning()) && !this.isTrusting() && this.isFood(itemstack) && p_29021_.distanceToSqr(this) < 9.0) {
              this.usePlayerItem(p_29021_, p_29022_, itemstack);
              if (!this.level().isClientSide) {

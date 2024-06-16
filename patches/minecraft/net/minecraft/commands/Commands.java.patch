@@ -19,7 +19,15 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
-@@ -137,6 +_,8 @@
+@@ -97,6 +_,7 @@
+ import net.minecraft.server.commands.RandomCommand;
+ import net.minecraft.server.commands.RecipeCommand;
+ import net.minecraft.server.commands.ReloadCommand;
++import net.minecraft.server.commands.ResetChunksCommand;
+ import net.minecraft.server.commands.ReturnCommand;
+ import net.minecraft.server.commands.RideCommand;
+ import net.minecraft.server.commands.SaveAllCommand;
+@@ -136,6 +_,8 @@
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
  import net.minecraft.world.level.GameRules;
@@ -28,16 +36,16 @@
  import org.slf4j.Logger;
  
  public class Commands {
-@@ -215,7 +_,7 @@
+@@ -214,7 +_,7 @@
              JfrCommand.register(this.dispatcher);
          }
  
 -        if (SharedConstants.IS_RUNNING_IN_IDE) {
 +        if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
              TestCommand.register(this.dispatcher);
-             ResetChunksCommand.register(this.dispatcher);
              RaidCommand.register(this.dispatcher, p_230944_);
-@@ -250,27 +_,91 @@
+             DebugPathCommand.register(this.dispatcher);
+@@ -248,27 +_,91 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
@@ -135,7 +143,7 @@
              if (contextchain != null) {
                  executeCommandInContext(
                      commandsourcestack,
-@@ -305,6 +_,11 @@
+@@ -303,6 +_,11 @@
          }
      }
  
@@ -147,7 +155,7 @@
      @Nullable
      private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_311671_, String p_312044_, CommandSourceStack p_310074_) {
          try {
-@@ -357,13 +_,42 @@
+@@ -355,13 +_,42 @@
          }
      }
  
@@ -197,7 +205,7 @@
  
      private void fillUsableCommands(
          CommandNode<CommandSourceStack> p_82113_,
-@@ -372,6 +_,7 @@
+@@ -370,6 +_,7 @@
          Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> p_82116_
      ) {
          for (CommandNode<CommandSourceStack> commandnode : p_82113_.getChildren()) {

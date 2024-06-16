@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DecoratedPotBlock.java
 +++ b/net/minecraft/world/level/block/DecoratedPotBlock.java
-@@ -239,6 +_,11 @@
+@@ -240,6 +_,11 @@
      protected void onProjectileHit(Level p_310477_, BlockState p_309479_, BlockHitResult p_309542_, Projectile p_309867_) {
          BlockPos blockpos = p_309542_.getBlockPos();
          if (!p_310477_.isClientSide && p_309867_.mayInteract(p_310477_, blockpos) && p_309867_.mayBreak(p_310477_)) {

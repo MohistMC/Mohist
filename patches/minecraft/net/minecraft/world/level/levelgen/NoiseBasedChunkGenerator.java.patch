@@ -1,0 +1,67 @@
+--- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
++++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
+@@ -11,6 +_,7 @@
+ import java.util.OptionalInt;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.Executor;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
+@@ -74,7 +_,9 @@
+     }
+ 
+     @Override
+-    public CompletableFuture<ChunkAccess> createBiomes(RandomState p_224299_, Blender p_224300_, StructureManager p_224301_, ChunkAccess p_224302_) {
++    public CompletableFuture<ChunkAccess> createBiomes(
++        Executor p_224298_, RandomState p_224299_, Blender p_224300_, StructureManager p_224301_, ChunkAccess p_224302_
++    ) {
+         return CompletableFuture.supplyAsync(Util.wrapThreadWithTaskName("init_biomes", () -> {
+             this.doCreateBiomes(p_224300_, p_224299_, p_224301_, p_224302_);
+             return p_224302_;
+@@ -307,12 +_,16 @@
+     }
+ 
+     @Override
+-    public CompletableFuture<ChunkAccess> fillFromNoise(Blender p_224313_, RandomState p_224314_, StructureManager p_224315_, ChunkAccess p_224316_) {
++    public CompletableFuture<ChunkAccess> fillFromNoise(
++        Executor p_224312_, Blender p_224313_, RandomState p_224314_, StructureManager p_224315_, ChunkAccess p_224316_
++    ) {
+         NoiseSettings noisesettings = this.settings.value().noiseSettings().clampToHeightAccessor(p_224316_.getHeightAccessorForGeneration());
+         int i = noisesettings.minY();
+         int j = Mth.floorDiv(i, noisesettings.getCellHeight());
+         int k = Mth.floorDiv(noisesettings.height(), noisesettings.getCellHeight());
+-        return k <= 0 ? CompletableFuture.completedFuture(p_224316_) : CompletableFuture.supplyAsync(Util.wrapThreadWithTaskName("wgen_fill_noise", () -> {
++        if (k <= 0) {
++            return CompletableFuture.completedFuture(p_224316_);
++        } else {
+             int l = p_224316_.getSectionIndex(k * noisesettings.getCellHeight() - 1 + i);
+             int i1 = p_224316_.getSectionIndex(i);
+             Set<LevelChunkSection> set = Sets.newHashSet();
+@@ -323,17 +_,15 @@
+                 set.add(levelchunksection);
+             }
+ 
+-            ChunkAccess chunkaccess;
+-            try {
+-                chunkaccess = this.doFill(p_224313_, p_224315_, p_224314_, p_224316_, j, k);
+-            } finally {
+-                for (LevelChunkSection levelchunksection1 : set) {
+-                    levelchunksection1.release();
+-                }
+-            }
+-
+-            return chunkaccess;
+-        }), Util.backgroundExecutor());
++            return CompletableFuture.supplyAsync(
++                    Util.wrapThreadWithTaskName("wgen_fill_noise", () -> this.doFill(p_224313_, p_224315_, p_224314_, p_224316_, j, k)), Util.backgroundExecutor()
++                )
++                .whenCompleteAsync((p_224309_, p_224310_) -> {
++                    for (LevelChunkSection levelchunksection1 : set) {
++                        levelchunksection1.release();
++                    }
++                }, p_224312_);
++        }
+     }
+ 
+     private ChunkAccess doFill(Blender p_224285_, StructureManager p_224286_, RandomState p_224287_, ChunkAccess p_224288_, int p_224289_, int p_224290_) {

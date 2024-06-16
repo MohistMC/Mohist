@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/item/HangingEntityItem.java
 +++ b/net/minecraft/world/item/HangingEntityItem.java
-@@ -21,6 +_,8 @@
+@@ -11,6 +_,7 @@
+ import net.minecraft.nbt.NbtOps;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceKey;
++import net.minecraft.util.Mth;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.decoration.GlowItemFrame;
+@@ -22,6 +_,8 @@
  import net.minecraft.world.item.context.UseOnContext;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -9,7 +17,7 @@
  
  public class HangingEntityItem extends Item {
      private static final Component TOOLTIP_RANDOM_VARIANT = Component.translatable("painting.random").withStyle(ChatFormatting.GRAY);
-@@ -67,6 +_,19 @@
+@@ -68,6 +_,19 @@
  
              if (hangingentity.survives()) {
                  if (!level.isClientSide) {

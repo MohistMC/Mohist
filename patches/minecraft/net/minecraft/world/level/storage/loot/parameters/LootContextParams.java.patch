@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/storage/loot/parameters/LootContextParams.java
 +++ b/net/minecraft/world/level/storage/loot/parameters/LootContextParams.java
-@@ -20,6 +_,7 @@
-     public static final LootContextParam<BlockEntity> BLOCK_ENTITY = create("block_entity");
-     public static final LootContextParam<ItemStack> TOOL = create("tool");
-     public static final LootContextParam<Float> EXPLOSION_RADIUS = create("explosion_radius");
-+   	public static final LootContextParam<Integer> LOOTING_MOD = new LootContextParam<>(new ResourceLocation("bukkit:looting_mod")); // CraftBukkit
+@@ -23,6 +_,8 @@
+     public static final LootContextParam<Integer> ENCHANTMENT_LEVEL = create("enchantment_level");
+     public static final LootContextParam<Boolean> ENCHANTMENT_ACTIVE = create("enchantment_active");
  
++   	public static final LootContextParam<Integer> LOOTING_MOD = new LootContextParam<>(new ResourceLocation("bukkit:looting_mod")); // CraftBukkit
++
      private static <T> LootContextParam<T> create(String p_81467_) {
-         return new LootContextParam<>(new ResourceLocation(p_81467_));
+         return new LootContextParam<>(ResourceLocation.withDefaultNamespace(p_81467_));
+     }

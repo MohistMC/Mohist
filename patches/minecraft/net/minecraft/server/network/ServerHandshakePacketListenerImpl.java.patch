@@ -1,19 +1,20 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -1,8 +_,12 @@
+@@ -1,9 +_,13 @@
  package net.minecraft.server.network;
  
 +import java.net.InetAddress;
 +import java.util.HashMap;
  import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
+ import net.minecraft.network.DisconnectionDetails;
  import net.minecraft.network.chat.Component;
 +import net.minecraft.network.chat.MutableComponent;
 +import net.minecraft.network.protocol.handshake.ClientIntent;
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
  import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-@@ -12,17 +_,28 @@
+@@ -13,17 +_,28 @@
  import net.minecraft.server.MinecraftServer;
  
  public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
@@ -49,7 +50,7 @@
          switch (p_9975_.intention()) {
              case LOGIN:
                  this.beginLogin(p_9975_, false);
-@@ -31,7 +_,7 @@
+@@ -32,7 +_,7 @@
                  ServerStatus serverstatus = this.server.getStatus();
                  this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
                  if (this.server.repliesToStatus() && serverstatus != null) {
@@ -58,7 +59,7 @@
                  } else {
                      this.connection.disconnect(IGNORE_STATUS_REASON);
                  }
-@@ -51,29 +_,90 @@
+@@ -52,22 +_,83 @@
          }
      }
  
@@ -77,15 +78,6 @@
 -        } else {
 -            this.connection.setupInboundProtocol(LoginProtocols.SERVERBOUND, new ServerLoginPacketListenerImpl(this.server, this.connection, p_332714_));
 -        }
--    }
--
--    @Override
--    public void onDisconnect(Component p_9973_) {
--    }
--
--    @Override
--    public boolean isAcceptingMessages() {
--        return this.connection.isConnected();
 -    }
 +   private void beginLogin(ClientIntentionPacket packet, boolean transfer) {
 +      this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
@@ -164,13 +156,6 @@
 +      }
 +
 +   }
-+
-+   @Override
-+   public void onDisconnect(Component p_9973_) {
-+   }
-+
-+   @Override
-+   public boolean isAcceptingMessages() {
-+      return this.connection.isConnected();
-+   }
- }
+ 
+     @Override
+     public void onDisconnect(DisconnectionDetails p_344131_) {

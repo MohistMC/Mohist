@@ -1,14 +1,5 @@
 --- a/net/minecraft/commands/CommandSource.java
 +++ b/net/minecraft/commands/CommandSource.java
-@@ -3,7 +_,7 @@
- import net.minecraft.network.chat.Component;
- 
- public interface CommandSource {
--    CommandSource NULL = new CommandSource() {
-+   CommandSource NULL = new CommandSource() {
-         @Override
-         public void sendSystemMessage(Component p_230799_) {
-         }
 @@ -22,7 +_,14 @@
          public boolean shouldInformAdmins() {
              return false;

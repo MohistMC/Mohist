@@ -119,14 +119,16 @@
      public int getFreeSlot() {
          for (int i = 0; i < this.items.size(); i++) {
              if (this.items.get(i).isEmpty()) {
-@@ -109,10 +_,10 @@
+@@ -108,11 +_,11 @@
+     public int findSlotMatchingUnusedItem(ItemStack p_36044_) {
          for (int i = 0; i < this.items.size(); i++) {
              ItemStack itemstack = this.items.get(i);
-             if (!this.items.get(i).isEmpty()
--                && ItemStack.isSameItemSameComponents(p_36044_, this.items.get(i))
--                && !this.items.get(i).isDamaged()
+-            if (!itemstack.isEmpty()
+-                && ItemStack.isSameItemSameComponents(p_36044_, itemstack)
+-                && !itemstack.isDamaged()
 -                && !itemstack.isEnchanted()
 -                && !itemstack.has(DataComponents.CUSTOM_NAME)) {
++            if (!this.items.get(i).isEmpty()
 +                    && ItemStack.isSameItemSameComponents(p_36044_, this.items.get(i))
 +                    && !this.items.get(i).isDamaged()
 +                    && !itemstack.isEnchanted()
@@ -176,39 +178,3 @@
                  crashreportcategory.setDetail("Item ID", Item.getId(p_36042_.getItem()));
                  crashreportcategory.setDetail("Item data", p_36042_.getDamageValue());
                  crashreportcategory.setDetail("Item name", () -> p_36042_.getHoverName().getString());
-@@ -291,7 +_,7 @@
- 
-             int j = p_150077_.getMaxStackSize() - this.getItem(i).getCount();
-             if (this.add(i, p_150077_.split(j)) && p_150078_ && this.player instanceof ServerPlayer) {
--                ((ServerPlayer)this.player).connection.send(new ClientboundContainerSetSlotPacket(-2, 0, i, this.getItem(i)));
-+                ((ServerPlayer) this.player).connection.send(new ClientboundContainerSetSlotPacket(-2, 0, i, this.getItem(i)));
-             }
-         }
-     }
-@@ -371,7 +_,7 @@
-         for (int i = 0; i < this.items.size(); i++) {
-             if (!this.items.get(i).isEmpty()) {
-                 CompoundTag compoundtag = new CompoundTag();
--                compoundtag.putByte("Slot", (byte)i);
-+                compoundtag.putByte("Slot", (byte) i);
-                 p_36027_.add(this.items.get(i).save(this.player.registryAccess(), compoundtag));
-             }
-         }
-@@ -379,7 +_,7 @@
-         for (int j = 0; j < this.armor.size(); j++) {
-             if (!this.armor.get(j).isEmpty()) {
-                 CompoundTag compoundtag1 = new CompoundTag();
--                compoundtag1.putByte("Slot", (byte)(j + 100));
-+                compoundtag1.putByte("Slot", (byte) (j + 100));
-                 p_36027_.add(this.armor.get(j).save(this.player.registryAccess(), compoundtag1));
-             }
-         }
-@@ -387,7 +_,7 @@
-         for (int k = 0; k < this.offhand.size(); k++) {
-             if (!this.offhand.get(k).isEmpty()) {
-                 CompoundTag compoundtag2 = new CompoundTag();
--                compoundtag2.putByte("Slot", (byte)(k + 150));
-+                compoundtag2.putByte("Slot", (byte) (k + 150));
-                 p_36027_.add(this.offhand.get(k).save(this.player.registryAccess(), compoundtag2));
-             }
-         }

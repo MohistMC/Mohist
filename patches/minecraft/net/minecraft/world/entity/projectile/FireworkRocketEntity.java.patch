@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -27,15 +_,17 @@
+@@ -29,15 +_,17 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -25,15 +25,7 @@
  
      public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_37027_, Level p_37028_) {
          super(p_37027_, p_37028_);
-@@ -77,7 +_,6 @@
-         this.setOwner(p_37052_);
-     }
- 
--    @Override
-     protected void defineSynchedData(SynchedEntityData.Builder p_332895_) {
-         p_332895_.define(DATA_ID_FIREWORKS_ITEM, getDefaultItem());
-         p_332895_.define(DATA_ATTACHED_TO_TARGET, OptionalInt.empty());
-@@ -143,7 +_,7 @@
+@@ -145,7 +_,7 @@
  
          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
          if (!this.noPhysics) {
@@ -42,7 +34,7 @@
              this.hasImpulse = true;
          }
  
-@@ -167,35 +_,47 @@
+@@ -169,35 +_,47 @@
          }
  
          if (!this.level().isClientSide && this.life > this.lifetime) {
@@ -110,7 +102,7 @@
  
      private boolean hasExplosion() {
          return !this.getExplosions().isEmpty();
-@@ -300,5 +_,12 @@
+@@ -302,6 +_,13 @@
  
      private static ItemStack getDefaultItem() {
          return new ItemStack(Items.FIREWORK_ROCKET);
@@ -122,4 +114,5 @@
 +            super.onHit(result);
 +        }
      }
- }
+ 
+     @Override

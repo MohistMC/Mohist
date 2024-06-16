@@ -23,7 +23,7 @@
  
  public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
      private static final int CONTAINER_SIZE = 27;
-@@ -163,8 +_,54 @@
+@@ -170,8 +_,54 @@
          return this.isChestVehicleStillValid(p_219896_);
      }
  
@@ -80,7 +80,7 @@
      public AbstractContainerMenu createMenu(int p_219910_, Inventory p_219911_, Player p_219912_) {
          if (this.lootTable != null && p_219912_.isSpectator()) {
              return null;
-@@ -212,5 +_,27 @@
+@@ -219,5 +_,27 @@
      @Override
      public void stopOpen(Player p_270286_) {
          this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));

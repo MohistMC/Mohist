@@ -1,0 +1,79 @@
+--- a/net/minecraft/world/level/levelgen/structure/pools/SinglePoolElement.java
++++ b/net/minecraft/world/level/levelgen/structure/pools/SinglePoolElement.java
+@@ -31,7 +_,6 @@
+ import net.minecraft.world.level.levelgen.structure.BoundingBox;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.JigsawReplacementProcessor;
+-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+@@ -43,11 +_,10 @@
+         SinglePoolElement::encodeTemplate, ResourceLocation.CODEC.map(Either::left)
+     );
+     public static final MapCodec<SinglePoolElement> CODEC = RecordCodecBuilder.mapCodec(
+-        p_341933_ -> p_341933_.group(templateCodec(), processorsCodec(), projectionCodec(), overrideLiquidSettingsCodec()).apply(p_341933_, SinglePoolElement::new)
++        p_210429_ -> p_210429_.group(templateCodec(), processorsCodec(), projectionCodec()).apply(p_210429_, SinglePoolElement::new)
+     );
+     protected final Either<ResourceLocation, StructureTemplate> template;
+     protected final Holder<StructureProcessorList> processors;
+-    protected final Optional<LiquidSettings> overrideLiquidSettings;
+ 
+     private static <T> DataResult<T> encodeTemplate(Either<ResourceLocation, StructureTemplate> p_210425_, DynamicOps<T> p_210426_, T p_210427_) {
+         Optional<ResourceLocation> optional = p_210425_.left();
+@@ -60,24 +_,16 @@
+         return StructureProcessorType.LIST_CODEC.fieldOf("processors").forGetter(p_210464_ -> p_210464_.processors);
+     }
+ 
+-    protected static <E extends SinglePoolElement> RecordCodecBuilder<E, Optional<LiquidSettings>> overrideLiquidSettingsCodec() {
+-        return LiquidSettings.CODEC.optionalFieldOf("override_liquid_settings").forGetter(p_341934_ -> p_341934_.overrideLiquidSettings);
+-    }
+-
+     protected static <E extends SinglePoolElement> RecordCodecBuilder<E, Either<ResourceLocation, StructureTemplate>> templateCodec() {
+         return TEMPLATE_CODEC.fieldOf("location").forGetter(p_210431_ -> p_210431_.template);
+     }
+ 
+     protected SinglePoolElement(
+-        Either<ResourceLocation, StructureTemplate> p_210415_,
+-        Holder<StructureProcessorList> p_210416_,
+-        StructureTemplatePool.Projection p_210417_,
+-        Optional<LiquidSettings> p_344439_
++        Either<ResourceLocation, StructureTemplate> p_210415_, Holder<StructureProcessorList> p_210416_, StructureTemplatePool.Projection p_210417_
+     ) {
+         super(p_210417_);
+         this.template = p_210415_;
+         this.processors = p_210416_;
+-        this.overrideLiquidSettings = p_344439_;
+     }
+ 
+     @Override
+@@ -150,11 +_,10 @@
+         Rotation p_227308_,
+         BoundingBox p_227309_,
+         RandomSource p_227310_,
+-        LiquidSettings p_342078_,
+         boolean p_227311_
+     ) {
+         StructureTemplate structuretemplate = this.getTemplate(p_227302_);
+-        StructurePlaceSettings structureplacesettings = this.getSettings(p_227308_, p_227309_, p_342078_, p_227311_);
++        StructurePlaceSettings structureplacesettings = this.getSettings(p_227308_, p_227309_, p_227311_);
+         if (!structuretemplate.placeInWorld(p_227303_, p_227306_, p_227307_, structureplacesettings, p_227310_, 18)) {
+             return false;
+         } else {
+@@ -168,7 +_,7 @@
+         }
+     }
+ 
+-    protected StructurePlaceSettings getSettings(Rotation p_210421_, BoundingBox p_210422_, LiquidSettings p_345518_, boolean p_210423_) {
++    protected StructurePlaceSettings getSettings(Rotation p_210421_, BoundingBox p_210422_, boolean p_210423_) {
+         StructurePlaceSettings structureplacesettings = new StructurePlaceSettings();
+         structureplacesettings.setBoundingBox(p_210422_);
+         structureplacesettings.setRotation(p_210421_);
+@@ -176,7 +_,6 @@
+         structureplacesettings.setIgnoreEntities(false);
+         structureplacesettings.addProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK);
+         structureplacesettings.setFinalizeEntities(true);
+-        structureplacesettings.setLiquidSettings(this.overrideLiquidSettings.orElse(p_345518_));
+         if (!p_210423_) {
+             structureplacesettings.addProcessor(JigsawReplacementProcessor.INSTANCE);
+         }

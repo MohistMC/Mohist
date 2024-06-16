@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/CoralFanBlock.java
 +++ b/net/minecraft/world/level/block/CoralFanBlock.java
-@@ -22,7 +_,7 @@
-     @Override
-     public MapCodec<CoralFanBlock> codec() {
-         return CODEC;
--    }
-+   }
- 
-     public CoralFanBlock(Block p_52151_, BlockBehaviour.Properties p_52152_) {
-         super(p_52152_);
 @@ -37,6 +_,11 @@
      @Override
      protected void tick(BlockState p_221025_, ServerLevel p_221026_, BlockPos p_221027_, RandomSource p_221028_) {

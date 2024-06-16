@@ -8,7 +8,12 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -22,13 +_,16 @@
+@@ -17,17 +_,21 @@
+ import net.minecraft.world.level.block.NetherPortalBlock;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
++import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -26,7 +31,7 @@
      private static final float SAFE_TRAVEL_MAX_ENTITY_XY = 4.0F;
      private static final double SAFE_TRAVEL_MAX_VERTICAL_DELTA = 1.0;
      private final LevelAccessor level;
-@@ -39,6 +_,7 @@
+@@ -38,6 +_,7 @@
      private BlockPos bottomLeft;
      private int height;
      private final int width;
@@ -34,7 +39,7 @@
  
      public static Optional<PortalShape> findEmptyPortalShape(LevelAccessor p_77709_, BlockPos p_77710_, Direction.Axis p_77711_) {
          return findPortalShape(p_77709_, p_77710_, p_77727_ -> p_77727_.isValid() && p_77727_.numPortalBlocks == 0, p_77711_);
-@@ -55,6 +_,7 @@
+@@ -54,6 +_,7 @@
      }
  
      public PortalShape(LevelAccessor p_77695_, BlockPos p_77696_, Direction.Axis p_77697_) {
@@ -42,7 +47,7 @@
          this.level = p_77695_;
          this.axis = p_77697_;
          this.rightDir = p_77697_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
-@@ -89,24 +_,26 @@
+@@ -88,24 +_,26 @@
          return i >= 2 && i <= 21 ? i : 0;
      }
  
@@ -87,7 +92,7 @@
  
          return 0;
      }
-@@ -123,6 +_,7 @@
+@@ -122,6 +_,7 @@
              if (!FRAME.test(this.level.getBlockState(blockpos$mutableblockpos), this.level, blockpos$mutableblockpos)) {
                  return false;
              }
@@ -95,7 +100,7 @@
          }
  
          return true;
-@@ -151,10 +_,14 @@
+@@ -150,10 +_,14 @@
                      this.numPortalBlocks++;
                  }
              }
@@ -113,7 +118,7 @@
  
      private static boolean isEmpty(BlockState p_77718_) {
          return p_77718_.isAir() || p_77718_.is(BlockTags.FIRE) || p_77718_.is(Blocks.NETHER_PORTAL);
-@@ -164,11 +_,31 @@
+@@ -163,11 +_,31 @@
          return this.bottomLeft != null && this.width >= 2 && this.width <= 21 && this.height >= 3 && this.height <= 21;
      }
  
@@ -150,22 +155,38 @@
  
      public boolean isComplete() {
          return this.isValid() && this.numPortalBlocks == this.width * this.height;
-@@ -199,6 +_,8 @@
+@@ -198,7 +_,46 @@
          return new Vec3(d2, d5, d4);
      }
  
+-    public static Vec3 findCollisionFreePosition(Vec3 p_260315_, ServerLevel p_259704_, Entity p_259626_, EntityDimensions p_259816_) {
 +   private static AtomicReference<CraftPortalEvent> mohist$portalInfo = new AtomicReference<>(null);
 +
-     public static PortalInfo createPortalInfo(
-         ServerLevel p_259301_,
-         BlockUtil.FoundRectangle p_259931_,
-@@ -224,9 +_,17 @@
-         Vec3 vec31 = new Vec3(
-             (double)blockpos.getX() + (flag ? d2 : d4), (double)blockpos.getY() + d3, (double)blockpos.getZ() + (flag ? d4 : d2)
-         );
--        Vec3 vec32 = findCollisionFreePosition(vec31, p_259301_, p_259166_, entitydimensions);
--        return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
--    }
++    public static PortalInfo createPortalInfo(
++        ServerLevel p_259301_,
++        BlockUtil.FoundRectangle p_259931_,
++        Direction.Axis p_259901_,
++        Vec3 p_259630_,
++        Entity p_259166_,
++        Vec3 p_260043_,
++        float p_259853_,
++        float p_259667_
++    ) {
++        BlockPos blockpos = p_259931_.minCorner;
++        BlockState blockstate = p_259301_.getBlockState(blockpos);
++        Direction.Axis direction$axis = blockstate.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS).orElse(Direction.Axis.X);
++        double d0 = (double)p_259931_.axis1Size;
++        double d1 = (double)p_259931_.axis2Size;
++        EntityDimensions entitydimensions = p_259166_.getDimensions(p_259166_.getPose());
++        int i = p_259901_ == direction$axis ? 0 : 90;
++        Vec3 vec3 = p_259901_ == direction$axis ? p_260043_ : new Vec3(p_260043_.z, p_260043_.y, -p_260043_.x);
++        double d2 = (double)entitydimensions.width() / 2.0 + (d0 - (double)entitydimensions.width()) * p_259630_.x();
++        double d3 = (d1 - (double)entitydimensions.height()) * p_259630_.y();
++        double d4 = 0.5 + p_259630_.z();
++        boolean flag = direction$axis == Direction.Axis.X;
++        Vec3 vec31 = new Vec3(
++            (double)blockpos.getX() + (flag ? d2 : d4), (double)blockpos.getY() + d3, (double)blockpos.getZ() + (flag ? d4 : d2)
++        );
 +      Vec3 vec32 = findCollisionFreePosition(vec31, p_259301_, p_259166_, entitydimensions);
 +      PortalInfo portalInfo = new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
 +      portalInfo.setWorld(p_259301_);
@@ -177,6 +198,8 @@
 +      mohist$portalInfo.set(portalEventInfo);
 +      return createPortalInfo(pLevel, pPortalPos, pAxis, pRelativePos, pEntity, pVelocity, pYRot, pXRot);
 +   }
- 
-     private static Vec3 findCollisionFreePosition(Vec3 p_260315_, ServerLevel p_259704_, Entity p_259626_, EntityDimensions p_259816_) {
++
++    private static Vec3 findCollisionFreePosition(Vec3 p_260315_, ServerLevel p_259704_, Entity p_259626_, EntityDimensions p_259816_) {
          if (!(p_259816_.width() > 4.0F) && !(p_259816_.height() > 4.0F)) {
+             double d0 = (double)p_259816_.height() / 2.0;
+             Vec3 vec3 = p_260315_.add(0.0, d0, 0.0);

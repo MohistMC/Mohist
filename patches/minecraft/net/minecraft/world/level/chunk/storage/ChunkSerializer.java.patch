@@ -9,7 +9,20 @@
          Block.BLOCK_STATE_REGISTRY, BlockState.CODEC, PalettedContainer.Strategy.SECTION_STATES, Blocks.AIR.defaultBlockState()
      );
      private static final Logger LOGGER = LogUtils.getLogger();
-@@ -182,6 +_,9 @@
+@@ -82,11 +_,10 @@
+     public static final String BLOCK_LIGHT_TAG = "BlockLight";
+     public static final String SKY_LIGHT_TAG = "SkyLight";
+ 
+-    public static ProtoChunk read(ServerLevel p_188231_, PoiManager p_188232_, RegionStorageInfo p_345127_, ChunkPos p_188233_, CompoundTag p_188234_) {
++    public static ProtoChunk read(ServerLevel p_188231_, PoiManager p_188232_, ChunkPos p_188233_, CompoundTag p_188234_) {
+         ChunkPos chunkpos = new ChunkPos(p_188234_.getInt("xPos"), p_188234_.getInt("zPos"));
+         if (!Objects.equals(p_188233_, chunkpos)) {
+             LOGGER.error("Chunk file at {} is in the wrong location; relocating. (Expected {}, got {})", p_188233_, p_188233_, chunkpos);
+-            p_188231_.getServer().reportMisplacedChunk(chunkpos, p_188233_, p_345127_);
+         }
+ 
+         UpgradeData upgradedata = p_188234_.contains("UpgradeData", 10)
+@@ -183,6 +_,9 @@
                  postLoadChunk(p_188231_, p_188234_),
                  blendingdata
              );
@@ -19,7 +32,25 @@
          } else {
              ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.load(
                  p_188234_.getList("block_ticks", 10), p_258992_ -> BuiltInRegistries.BLOCK.getOptional(ResourceLocation.tryParse(p_258992_)), p_188233_
-@@ -240,6 +_,7 @@
+@@ -203,7 +_,7 @@
+             }
+ 
+             ChunkStatus chunkstatus = ChunkStatus.byName(p_188234_.getString("Status"));
+-            protochunk.setPersistedStatus(chunkstatus);
++            protochunk.setStatus(chunkstatus);
+             if (chunkstatus.isOrAfter(ChunkStatus.INITIALIZE_LIGHT)) {
+                 protochunk.setLightEngine(levellightengine);
+             }
+@@ -213,7 +_,7 @@
+         CompoundTag compoundtag2 = p_188234_.getCompound("Heightmaps");
+         EnumSet<Heightmap.Types> enumset = EnumSet.noneOf(Heightmap.Types.class);
+ 
+-        for (Heightmap.Types heightmap$types : chunkaccess.getPersistedStatus().heightmapsAfter()) {
++        for (Heightmap.Types heightmap$types : chunkaccess.getStatus().heightmapsAfter()) {
+             String s = heightmap$types.getSerializationKey();
+             if (compoundtag2.contains(s, 12)) {
+                 chunkaccess.setHeightmap(heightmap$types, compoundtag2.getLongArray(s));
+@@ -241,6 +_,7 @@
          }
  
          if (chunktype == ChunkType.LEVELCHUNK) {
@@ -27,7 +58,7 @@
              return new ImposterProtoChunk((LevelChunk)chunkaccess, false);
          } else {
              ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
-@@ -263,6 +_,7 @@
+@@ -264,12 +_,13 @@
                  protochunk1.setCarvingMask(generationstep$carving, new CarvingMask(compoundtag4.getLongArray(s1), chunkaccess.getMinBuildHeight()));
              }
  
@@ -35,11 +66,35 @@
              return protochunk1;
          }
      }
-@@ -372,6 +_,14 @@
-             }
+ 
+     private static void logErrors(ChunkPos p_188240_, int p_188241_, String p_188242_) {
+-        LOGGER.error("Recoverable errors when loading section [{}, {}, {}]: {}", p_188240_.x, p_188241_, p_188240_.z, p_188242_);
++        LOGGER.error("Recoverable errors when loading section [" + p_188240_.x + ", " + p_188241_ + ", " + p_188240_.z + "]: " + p_188242_);
+     }
+ 
+     private static Codec<PalettedContainerRO<Holder<Biome>>> makeBiomeCodec(Registry<Biome> p_188261_) {
+@@ -286,7 +_,7 @@
+         compoundtag.putInt("zPos", chunkpos.z);
+         compoundtag.putLong("LastUpdate", p_63455_.getGameTime());
+         compoundtag.putLong("InhabitedTime", p_63456_.getInhabitedTime());
+-        compoundtag.putString("Status", BuiltInRegistries.CHUNK_STATUS.getKey(p_63456_.getPersistedStatus()).toString());
++        compoundtag.putString("Status", BuiltInRegistries.CHUNK_STATUS.getKey(p_63456_.getStatus()).toString());
+         BlendingData blendingdata = p_63456_.getBlendingData();
+         if (blendingdata != null) {
+             BlendingData.CODEC
+@@ -358,7 +_,7 @@
+         }
+ 
+         compoundtag.put("block_entities", listtag1);
+-        if (p_63456_.getPersistedStatus().getChunkType() == ChunkType.PROTOCHUNK) {
++        if (p_63456_.getStatus().getChunkType() == ChunkType.PROTOCHUNK) {
+             ProtoChunk protochunk = (ProtoChunk)p_63456_;
+             ListTag listtag2 = new ListTag();
+             listtag2.addAll(protochunk.getEntities());
+@@ -374,13 +_,21 @@
  
              compoundtag.put("CarvingMasks", compoundtag4);
-+        }
+         }
 +        else if (p_63456_ instanceof LevelChunk levelChunk){
 +            try {
 +                final CompoundTag capTag = levelChunk.writeCapsToNBT();
@@ -47,6 +102,15 @@
 +            } catch (Exception exception) {
 +                LOGGER.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
 +            }
-         }
++        }
  
          saveTicks(p_63455_, compoundtag, p_63456_.getTicksForSerialization());
+         compoundtag.put("PostProcessing", packOffsets(p_63456_.getPostProcessing()));
+         CompoundTag compoundtag2 = new CompoundTag();
+ 
+         for (Entry<Heightmap.Types, Heightmap> entry : p_63456_.getHeightmaps()) {
+-            if (p_63456_.getPersistedStatus().heightmapsAfter().contains(entry.getKey())) {
++            if (p_63456_.getStatus().heightmapsAfter().contains(entry.getKey())) {
+                 compoundtag2.put(entry.getKey().getSerializationKey(), new LongArrayTag(entry.getValue().getRawData()));
+             }
+         }

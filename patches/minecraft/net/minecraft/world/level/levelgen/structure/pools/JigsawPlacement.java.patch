@@ -1,0 +1,136 @@
+--- a/net/minecraft/world/level/levelgen/structure/pools/JigsawPlacement.java
++++ b/net/minecraft/world/level/levelgen/structure/pools/JigsawPlacement.java
+@@ -34,8 +_,6 @@
+ import net.minecraft.world.level.levelgen.structure.StructurePiece;
+ import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+ import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
+-import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
+-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+ import net.minecraft.world.phys.AABB;
+@@ -57,9 +_,7 @@
+         boolean p_227244_,
+         Optional<Heightmap.Types> p_227245_,
+         int p_227246_,
+-        PoolAliasLookup p_312146_,
+-        DimensionPadding p_342449_,
+-        LiquidSettings p_344414_
++        PoolAliasLookup p_312146_
+     ) {
+         RegistryAccess registryaccess = p_227239_.registryAccess();
+         ChunkGenerator chunkgenerator = p_227239_.chunkGenerator();
+@@ -101,8 +_,7 @@
+                 blockpos1,
+                 structurepoolelement.getGroundLevelDelta(),
+                 rotation,
+-                structurepoolelement.getBoundingBox(structuretemplatemanager, blockpos1, rotation),
+-                p_344414_
++                structurepoolelement.getBoundingBox(structuretemplatemanager, blockpos1, rotation)
+             );
+             BoundingBox boundingbox = poolelementstructurepiece.getBoundingBox();
+             int i = (boundingbox.maxX() + boundingbox.minX()) / 2;
+@@ -120,16 +_,16 @@
+             return Optional.of(
+                 new Structure.GenerationStub(
+                     new BlockPos(i, i1, j),
+-                    p_341930_ -> {
++                    p_309345_ -> {
+                         List<PoolElementStructurePiece> list = Lists.newArrayList();
+                         list.add(poolelementstructurepiece);
+                         if (p_227242_ > 0) {
+                             AABB aabb = new AABB(
+                                 (double)(i - p_227246_),
+-                                (double)Math.max(i1 - p_227246_, levelheightaccessor.getMinBuildHeight() + p_342449_.bottom()),
++                                (double)(i1 - p_227246_),
+                                 (double)(j - p_227246_),
+                                 (double)(i + p_227246_ + 1),
+-                                (double)Math.min(i1 + p_227246_ + 1, levelheightaccessor.getMaxBuildHeight() - p_342449_.top()),
++                                (double)(i1 + p_227246_ + 1),
+                                 (double)(j + p_227246_ + 1)
+                             );
+                             VoxelShape voxelshape = Shapes.join(Shapes.create(aabb), Shapes.create(AABB.of(boundingbox)), BooleanOp.ONLY_FIRST);
+@@ -145,10 +_,9 @@
+                                 poolelementstructurepiece,
+                                 list,
+                                 voxelshape,
+-                                p_312146_,
+-                                p_344414_
++                                p_312146_
+                             );
+-                            list.forEach(p_341930_::addPiece);
++                            list.forEach(p_309345_::addPiece);
+                         }
+                     }
+                 )
+@@ -193,11 +_,10 @@
+         PoolElementStructurePiece p_227219_,
+         List<PoolElementStructurePiece> p_227220_,
+         VoxelShape p_227221_,
+-        PoolAliasLookup p_312553_,
+-        LiquidSettings p_343434_
++        PoolAliasLookup p_312553_
+     ) {
+         JigsawPlacement.Placer jigsawplacement$placer = new JigsawPlacement.Placer(p_227218_, p_227212_, p_227214_, p_227215_, p_227220_, p_227217_);
+-        jigsawplacement$placer.tryPlacingChildren(p_227219_, new MutableObject<>(p_227221_), 0, p_227213_, p_227216_, p_227211_, p_312553_, p_343434_);
++        jigsawplacement$placer.tryPlacingChildren(p_227219_, new MutableObject<>(p_227221_), 0, p_227213_, p_227216_, p_227211_, p_312553_);
+ 
+         while (jigsawplacement$placer.placing.hasNext()) {
+             JigsawPlacement.PieceState jigsawplacement$piecestate = jigsawplacement$placer.placing.next();
+@@ -208,8 +_,7 @@
+                 p_227213_,
+                 p_227216_,
+                 p_227211_,
+-                p_312553_,
+-                p_343434_
++                p_312553_
+             );
+         }
+     }
+@@ -233,17 +_,7 @@
+             p_227255_ -> true
+         );
+         Optional<Structure.GenerationStub> optional = addPieces(
+-            structure$generationcontext,
+-            p_227205_,
+-            Optional.of(p_227206_),
+-            p_227207_,
+-            p_227208_,
+-            false,
+-            Optional.empty(),
+-            128,
+-            PoolAliasLookup.EMPTY,
+-            JigsawStructure.DEFAULT_DIMENSION_PADDING,
+-            JigsawStructure.DEFAULT_LIQUID_SETTINGS
++            structure$generationcontext, p_227205_, Optional.of(p_227206_), p_227207_, p_227208_, false, Optional.empty(), 128, PoolAliasLookup.EMPTY
+         );
+         if (optional.isPresent()) {
+             StructurePiecesBuilder structurepiecesbuilder = optional.get().getPiecesBuilder();
+@@ -295,8 +_,7 @@
+             boolean p_227268_,
+             LevelHeightAccessor p_227269_,
+             RandomState p_227270_,
+-            PoolAliasLookup p_311045_,
+-            LiquidSettings p_344945_
++            PoolAliasLookup p_311045_
+         ) {
+             StructurePoolElement structurepoolelement = p_227265_.getElement();
+             BlockPos blockpos = p_227265_.getPosition();
+@@ -442,7 +_,7 @@
+                                                 }
+ 
+                                                 PoolElementStructurePiece poolelementstructurepiece = new PoolElementStructurePiece(
+-                                                    this.structureTemplateManager, structurepoolelement1, blockpos5, l2, rotation1, boundingbox3, p_344945_
++                                                    this.structureTemplateManager, structurepoolelement1, blockpos5, l2, rotation1, boundingbox3
+                                                 );
+                                                 int i3;
+                                                 if (flag) {
+@@ -495,7 +_,7 @@
+ 
+         private static ResourceKey<StructureTemplatePool> readPoolKey(StructureTemplate.StructureBlockInfo p_309775_, PoolAliasLookup p_310642_) {
+             CompoundTag compoundtag = Objects.requireNonNull(p_309775_.nbt(), () -> p_309775_ + " nbt was null");
+-            ResourceKey<StructureTemplatePool> resourcekey = Pools.parseKey(compoundtag.getString("pool"));
++            ResourceKey<StructureTemplatePool> resourcekey = Pools.createKey(compoundtag.getString("pool"));
+             return p_310642_.lookup(resourcekey);
+         }
+     }

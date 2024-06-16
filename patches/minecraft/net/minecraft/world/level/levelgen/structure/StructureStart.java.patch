@@ -12,6 +12,15 @@
  
      public StructureStart(Structure p_226846_, ChunkPos p_226847_, int p_226848_, PiecesContainer p_226849_) {
          this.structure = p_226846_;
+@@ -44,7 +_,7 @@
+             return INVALID_START;
+         } else {
+             Registry<Structure> registry = p_226858_.registryAccess().registryOrThrow(Registries.STRUCTURE);
+-            Structure structure = registry.get(ResourceLocation.parse(s));
++            Structure structure = registry.get(new ResourceLocation(s));
+             if (structure == null) {
+                 LOGGER.error("Unknown stucture id: {}", s);
+                 return null;
 @@ -99,7 +_,15 @@
  
      public CompoundTag createTag(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {

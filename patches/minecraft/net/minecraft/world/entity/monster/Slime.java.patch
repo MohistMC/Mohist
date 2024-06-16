@@ -8,7 +8,7 @@
  import java.util.EnumSet;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
-@@ -42,6 +_,10 @@
+@@ -44,6 +_,10 @@
  import net.minecraft.world.level.WorldGenLevel;
  import net.minecraft.world.level.levelgen.WorldgenRandom;
  import net.minecraft.world.phys.Vec3;
@@ -19,7 +19,7 @@
  
  public class Slime extends Mob implements Enemy {
      private static final EntityDataAccessor<Integer> ID_SIZE = SynchedEntityData.defineId(Slime.class, EntityDataSerializers.INT);
-@@ -139,13 +_,15 @@
+@@ -141,13 +_,15 @@
              float f = this.getDimensions(this.getPose()).width() * 2.0F;
              float f1 = f / 2.0F;
  
@@ -42,7 +42,7 @@
  
              this.playSound(this.getSquishSound(), this.getSoundVolume(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
              this.targetSquish = -0.5F;
-@@ -157,6 +_,12 @@
+@@ -159,6 +_,12 @@
          this.decreaseSquish();
      }
  
@@ -55,7 +55,7 @@
      protected void decreaseSquish() {
          this.targetSquish *= 0.6F;
      }
-@@ -193,38 +_,58 @@
+@@ -195,38 +_,58 @@
          return (EntityType<? extends Slime>)super.getType();
      }
  

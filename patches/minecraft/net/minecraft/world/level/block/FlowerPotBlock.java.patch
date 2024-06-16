@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
+@@ -29,8 +_,8 @@
+ 
+ public class FlowerPotBlock extends Block {
+     public static final MapCodec<FlowerPotBlock> CODEC = RecordCodecBuilder.mapCodec(
+-        p_341830_ -> p_341830_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("potted").forGetter(p_310137_ -> p_310137_.potted), propertiesCodec())
+-                .apply(p_341830_, FlowerPotBlock::new)
++        p_310555_ -> p_310555_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("potted").forGetter(p_310137_ -> p_310137_.potted), propertiesCodec())
++                .apply(p_310555_, FlowerPotBlock::new)
+     );
+     private static final Map<Block, Block> POTTED_BY_CONTENT = Maps.newHashMap();
+     public static final float AABB_SIZE = 3.0F;
 @@ -43,9 +_,31 @@
      }
  

@@ -1,23 +1,16 @@
 --- a/net/minecraft/world/inventory/InventoryMenu.java
 +++ b/net/minecraft/world/inventory/InventoryMenu.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.inventory;
- 
- import com.mojang.datafixers.util.Pair;
-+import net.minecraft.network.chat.Component;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.world.Container;
- import net.minecraft.world.entity.EquipmentSlot;
-@@ -12,6 +_,8 @@
- import net.minecraft.world.item.crafting.Recipe;
+@@ -12,6 +_,9 @@
+ import net.minecraft.world.item.crafting.CraftingInput;
+ import net.minecraft.world.item.crafting.CraftingRecipe;
  import net.minecraft.world.item.crafting.RecipeHolder;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
++import net.minecraft.world.item.enchantment.EnchantmentHelper;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
- public class InventoryMenu extends RecipeBookMenu<CraftingContainer> {
+ public class InventoryMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
      public static final int CONTAINER_ID = 0;
-@@ -39,11 +_,29 @@
+@@ -41,11 +_,29 @@
      private final ResultContainer resultSlots = new ResultContainer();
      public final boolean active;
      private final Player owner;
@@ -47,12 +40,3 @@
          this.addSlot(new ResultSlot(p_39706_.player, this.craftSlots, this.resultSlots, 0, 154, 28));
  
          for (int i = 0; i < 2; i++) {
-@@ -68,7 +_,7 @@
- 
-                 @Override
-                 public boolean mayPlace(ItemStack p_39746_) {
--                    return equipmentslot == Mob.getEquipmentSlotForItem(p_39746_);
-+                    return p_39746_.canEquip(equipmentslot, owner);
-                 }
- 
-                 @Override

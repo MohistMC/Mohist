@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/levelgen/feature/stateproviders/RandomizedIntStateProvider.java
++++ b/net/minecraft/world/level/levelgen/feature/stateproviders/RandomizedIntStateProvider.java
+@@ -58,18 +_,12 @@
+     public BlockState getState(RandomSource p_225919_, BlockPos p_225920_) {
+         BlockState blockstate = this.source.getState(p_225919_, p_225920_);
+         if (this.property == null || !blockstate.hasProperty(this.property)) {
+-            IntegerProperty integerproperty = findProperty(blockstate, this.propertyName);
+-            if (integerproperty == null) {
+-                return blockstate;
+-            }
+-
+-            this.property = integerproperty;
++            this.property = findProperty(blockstate, this.propertyName);
+         }
+ 
+         return blockstate.setValue(this.property, Integer.valueOf(this.values.sample(p_225919_)));
+     }
+ 
+-    @Nullable
+     private static IntegerProperty findProperty(BlockState p_161571_, String p_161572_) {
+         Collection<Property<?>> collection = p_161571_.getProperties();
+         Optional<IntegerProperty> optional = collection.stream()
+@@ -77,6 +_,6 @@
+             .filter(p_161588_ -> p_161588_ instanceof IntegerProperty)
+             .map(p_161574_ -> (IntegerProperty)p_161574_)
+             .findAny();
+-        return optional.orElse(null);
++        return optional.orElseThrow(() -> new IllegalArgumentException("Illegal property: " + p_161572_));
+     }
+ }

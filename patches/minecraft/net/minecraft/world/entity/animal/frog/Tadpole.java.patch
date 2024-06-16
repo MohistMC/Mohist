@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/animal/frog/Tadpole.java
 +++ b/net/minecraft/world/entity/animal/frog/Tadpole.java
+@@ -40,8 +_,8 @@
+ public class Tadpole extends AbstractFish {
+     @VisibleForTesting
+     public static int ticksToBeFrog = Math.abs(-24000);
+-    public static final float HITBOX_WIDTH = 0.4F;
+-    public static final float HITBOX_HEIGHT = 0.3F;
++    public static float HITBOX_WIDTH = 0.4F;
++    public static float HITBOX_HEIGHT = 0.3F;
+     public int age;
+     protected static final ImmutableList<SensorType<? extends Sensor<? super Tadpole>>> SENSOR_TYPES = ImmutableList.of(
+         SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY, SensorType.FROG_TEMPTATIONS
 @@ -225,6 +_,7 @@
  
      private void ageUp() {
@@ -8,10 +19,11 @@
              Frog frog = EntityType.FROG.create(this.level());
              if (frog != null) {
                  frog.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-@@ -236,8 +_,16 @@
+@@ -236,9 +_,16 @@
                  }
  
                  frog.setPersistenceRequired();
+-                frog.fudgePositionAfterSizeChange(this.getDimensions(this.getPose()));
 -                this.playSound(SoundEvents.TADPOLE_GROW_UP, 0.15F, 1.0F);
 +            	// CraftBukkit start
 +            	if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTransformEvent(this, frog, org.bukkit.event.entity.EntityTransformEvent.TransformReason.METAMORPHOSIS).isCancelled()) {

@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/level/levelgen/structure/pieces/PiecesContainer.java
++++ b/net/minecraft/world/level/levelgen/structure/pieces/PiecesContainer.java
+@@ -18,12 +_,12 @@
+ 
+ public record PiecesContainer(List<StructurePiece> pieces) {
+     private static final Logger LOGGER = LogUtils.getLogger();
+-    private static final ResourceLocation JIGSAW_RENAME = ResourceLocation.withDefaultNamespace("jigsaw");
++    private static final ResourceLocation JIGSAW_RENAME = new ResourceLocation("jigsaw");
+     private static final Map<ResourceLocation, ResourceLocation> RENAMES = ImmutableMap.<ResourceLocation, ResourceLocation>builder()
+-        .put(ResourceLocation.withDefaultNamespace("nvi"), JIGSAW_RENAME)
+-        .put(ResourceLocation.withDefaultNamespace("pcp"), JIGSAW_RENAME)
+-        .put(ResourceLocation.withDefaultNamespace("bastionremnant"), JIGSAW_RENAME)
+-        .put(ResourceLocation.withDefaultNamespace("runtime"), JIGSAW_RENAME)
++        .put(new ResourceLocation("nvi"), JIGSAW_RENAME)
++        .put(new ResourceLocation("pcp"), JIGSAW_RENAME)
++        .put(new ResourceLocation("bastionremnant"), JIGSAW_RENAME)
++        .put(new ResourceLocation("runtime"), JIGSAW_RENAME)
+         .build();
+ 
+     public PiecesContainer(final List<StructurePiece> pieces) {
+@@ -60,7 +_,7 @@
+         for (int i = 0; i < p_192754_.size(); i++) {
+             CompoundTag compoundtag = p_192754_.getCompound(i);
+             String s = compoundtag.getString("id").toLowerCase(Locale.ROOT);
+-            ResourceLocation resourcelocation = ResourceLocation.parse(s);
++            ResourceLocation resourcelocation = new ResourceLocation(s);
+             ResourceLocation resourcelocation1 = RENAMES.getOrDefault(resourcelocation, resourcelocation);
+             StructurePieceType structurepiecetype = BuiltInRegistries.STRUCTURE_PIECE.get(resourcelocation1);
+             if (structurepiecetype == null) {

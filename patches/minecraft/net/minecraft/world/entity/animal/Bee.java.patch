@@ -14,15 +14,7 @@
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-@@ -65,6 +_,7 @@
- import net.minecraft.world.entity.ai.village.poi.PoiRecord;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.item.crafting.Ingredient;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelReader;
- import net.minecraft.world.level.block.Block;
-@@ -118,7 +_,7 @@
+@@ -119,7 +_,7 @@
      private float rollAmountO;
      private int timeSinceSting;
      int ticksWithoutNectarSinceExitingHive;
@@ -31,7 +23,7 @@
      private int numCropsGrownSincePollination;
      private static final int COOLDOWN_BEFORE_LOCATING_NEW_HIVE = 200;
      int remainingCooldownBeforeLocatingNewHive;
-@@ -127,7 +_,8 @@
+@@ -128,7 +_,8 @@
      @Nullable
      BlockPos savedFlowerPos;
      @Nullable
@@ -41,20 +33,7 @@
      Bee.BeePollinateGoal beePollinateGoal;
      Bee.BeeGoToHiveGoal goToHiveGoal;
      private Bee.BeeGoToKnownFlowerGoal goToKnownFlowerGoal;
-@@ -152,9 +_,9 @@
-     }
- 
-     @Override
--    public float getWalkTargetValue(BlockPos p_27788_, LevelReader p_27789_) {
--        return p_27789_.getBlockState(p_27788_).isAir() ? 10.0F : 0.0F;
--    }
-+   public float getWalkTargetValue(BlockPos p_27788_, LevelReader p_27789_) {
-+      return p_27789_.getBlockState(p_27788_).isAir() ? 10.0F : 0.0F;
-+   }
- 
-     @Override
-     protected void registerGoals() {
-@@ -178,16 +_,22 @@
+@@ -179,16 +_,22 @@
          this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));
      }
  
@@ -87,7 +66,7 @@
  
          p_27823_.putBoolean("HasNectar", this.hasNectar());
          p_27823_.putBoolean("HasStung", this.hasStung());
-@@ -486,7 +_,7 @@
+@@ -491,7 +_,7 @@
              return false;
          } else {
              BlockEntity blockentity = this.level().getBlockEntity(this.hivePos);
@@ -96,7 +75,7 @@
          }
      }
  
-@@ -494,7 +_,7 @@
+@@ -499,7 +_,7 @@
          return this.getFlag(8);
      }
  
@@ -105,7 +84,7 @@
          if (p_27920_) {
              this.resetTicksWithoutNectarSinceExitingHive();
          }
-@@ -506,7 +_,7 @@
+@@ -511,7 +_,7 @@
          return this.getFlag(4);
      }
  
@@ -114,7 +93,7 @@
          this.setFlag(4, p_27926_);
      }
  
-@@ -626,24 +_,36 @@
+@@ -631,24 +_,36 @@
          if (this.isInvulnerableTo(p_27762_)) {
              return false;
          } else {
@@ -163,7 +142,7 @@
      boolean closerThan(BlockPos p_27817_, int p_27818_) {
          return p_27817_.closerThan(this.blockPosition(), (double)p_27818_);
      }
-@@ -962,7 +_,7 @@
+@@ -967,7 +_,7 @@
                              ((BonemealableBlock)blockstate.getBlock()).performBonemeal((ServerLevel)Bee.this.level(), Bee.this.random, blockpos, blockstate);
                          }
  
@@ -172,7 +151,7 @@
                              Bee.this.level().levelEvent(2011, blockpos, 15);
                              Bee.this.level().setBlockAndUpdate(blockpos, blockstate1);
                              Bee.this.incrementNumCropsGrownSincePollination();
-@@ -986,7 +_,7 @@
+@@ -991,7 +_,7 @@
          @Override
          protected void alertOther(Mob p_28035_, LivingEntity p_28036_) {
              if (p_28035_ instanceof Bee && this.mob.hasLineOfSight(p_28036_)) {

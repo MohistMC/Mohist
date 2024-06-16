@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/behavior/TryLaySpawnOnWaterNearLand.java
 +++ b/net/minecraft/world/entity/ai/behavior/TryLaySpawnOnWaterNearLand.java
-@@ -2,20 +_,19 @@
+@@ -2,13 +_,12 @@
  
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
@@ -15,14 +15,6 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.material.Fluids;
- 
- public class TryLaySpawnOnWaterNearLand {
--    public static BehaviorControl<LivingEntity> create(Block p_259207_) {
-+   public static BehaviorControl<LivingEntity> create(Block p_259207_) {
-         return BehaviorBuilder.create(
-             p_259781_ -> p_259781_.group(
-                         p_259781_.absent(MemoryModuleType.ATTACK_TARGET),
 @@ -35,6 +_,12 @@
                                              BlockPos blockpos2 = blockpos1.above();
                                              if (p_269881_.getBlockState(blockpos2).isAir()) {

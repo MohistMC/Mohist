@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/npc/AbstractVillager.java
 +++ b/net/minecraft/world/entity/npc/AbstractVillager.java
-@@ -22,8 +_,10 @@
+@@ -12,6 +_,7 @@
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+@@ -21,8 +_,10 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.AgeableMob;
  import net.minecraft.world.entity.Entity;
@@ -12,7 +20,7 @@
  import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.player.Player;
 @@ -36,6 +_,7 @@
- import net.minecraft.world.level.pathfinder.PathType;
+ import net.minecraft.world.level.portal.DimensionTransition;
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.inventory.CraftMerchant;
@@ -37,7 +45,7 @@
  
      public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
          super(p_35267_, p_35268_);
-@@ -123,6 +_,8 @@
+@@ -127,6 +_,8 @@
          if (this.tradingPlayer instanceof ServerPlayer) {
              CriteriaTriggers.TRADE.trigger((ServerPlayer)this.tradingPlayer, this, p_35274_.getResult());
          }
@@ -46,15 +54,3 @@
      }
  
      protected abstract void rewardTradeXp(MerchantOffer p_35299_);
-@@ -179,9 +_,9 @@
- 
-     @Nullable
-     @Override
--    public Entity changeDimension(ServerLevel p_35295_) {
-+    public Entity changeDimension(ServerLevel p_35295_, net.minecraftforge.common.util.ITeleporter teleporter) {
-         this.stopTrading();
--        return super.changeDimension(p_35295_);
-+        return super.changeDimension(p_35295_, teleporter);
-     }
- 
-     protected void stopTrading() {

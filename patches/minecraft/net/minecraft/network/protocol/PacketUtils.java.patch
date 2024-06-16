@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/protocol/PacketUtils.java
 +++ b/net/minecraft/network/protocol/PacketUtils.java
-@@ -7,6 +_,7 @@
+@@ -8,6 +_,7 @@
  import net.minecraft.network.PacketListener;
  import net.minecraft.server.RunningOnDifferentThreadException;
  import net.minecraft.server.level.ServerLevel;
@@ -8,7 +8,7 @@
  import net.minecraft.util.thread.BlockableEventLoop;
  import org.slf4j.Logger;
  
-@@ -20,6 +_,7 @@
+@@ -21,6 +_,7 @@
      public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> p_131364_, T p_131365_, BlockableEventLoop<?> p_131366_) throws RunningOnDifferentThreadException {
          if (!p_131366_.isSameThread()) {
              p_131366_.executeIfPossible(() -> {

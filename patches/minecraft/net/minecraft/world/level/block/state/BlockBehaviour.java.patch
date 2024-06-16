@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -87,7 +_,7 @@
+@@ -9,6 +_,7 @@
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Locale;
++import java.util.Optional;
+ import java.util.function.BiConsumer;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+@@ -86,7 +_,7 @@
      protected static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{
          Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP
      };
@@ -9,7 +17,7 @@
      protected final float explosionResistance;
      protected final boolean isRandomlyTicking;
      protected final SoundType soundType;
-@@ -97,6 +_,7 @@
+@@ -96,6 +_,7 @@
      protected final boolean dynamicShape;
      protected final FeatureFlagSet requiredFeatures;
      protected final BlockBehaviour.Properties properties;
@@ -17,7 +25,7 @@
      @Nullable
      protected ResourceKey<LootTable> drops;
  
-@@ -112,6 +_,18 @@
+@@ -111,6 +_,18 @@
          this.dynamicShape = p_60452_.dynamicShape;
          this.requiredFeatures = p_60452_.requiredFeatures;
          this.properties = p_60452_;
@@ -36,7 +44,7 @@
      }
  
      public BlockBehaviour.Properties properties() {
-@@ -160,7 +_,7 @@
+@@ -159,7 +_,7 @@
      }
  
      protected void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
@@ -45,7 +53,7 @@
              p_60516_.removeBlockEntity(p_60517_);
          }
      }
-@@ -169,7 +_,7 @@
+@@ -168,7 +_,7 @@
          if (!p_310712_.isAir() && p_312709_.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
              Block block = p_310712_.getBlock();
              boolean flag = p_312709_.getIndirectSourceEntity() instanceof Player;
@@ -54,7 +62,7 @@
                  BlockEntity blockentity = p_310712_.hasBlockEntity() ? p_311693_.getBlockEntity(p_311490_) : null;
                  LootParams.Builder lootparams$builder = new LootParams.Builder(serverlevel)
                      .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(p_311490_))
-@@ -184,8 +_,7 @@
+@@ -183,8 +_,7 @@
                  p_310712_.getDrops(lootparams$builder).forEach(p_309419_ -> p_311277_.accept(p_309419_, p_311490_));
              }
  
@@ -64,7 +72,7 @@
          }
      }
  
-@@ -336,12 +_,15 @@
+@@ -335,12 +_,15 @@
          if (f == -1.0F) {
              return 0.0F;
          } else {
@@ -82,7 +90,7 @@
      }
  
      protected void attack(BlockState p_60499_, Level p_60500_, BlockPos p_60501_, Player p_60502_) {
-@@ -360,8 +_,7 @@
+@@ -359,8 +_,7 @@
  
      public final ResourceKey<LootTable> getLootTable() {
          if (this.drops == null) {
@@ -92,7 +100,7 @@
          }
  
          return this.drops;
-@@ -378,6 +_,7 @@
+@@ -377,6 +_,7 @@
          return this.isRandomlyTicking;
      }
  
@@ -100,7 +108,7 @@
      protected SoundType getSoundType(BlockState p_328629_) {
          return this.soundType;
      }
-@@ -394,6 +_,10 @@
+@@ -393,6 +_,10 @@
          return this.properties.destroyTime;
      }
  
@@ -111,7 +119,7 @@
      public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
          private final int lightEmission;
          private final boolean useShapeForLightOcclusion;
-@@ -405,7 +_,7 @@
+@@ -404,7 +_,7 @@
          private boolean legacySolid;
          private final PushReaction pushReaction;
          private final MapColor mapColor;
@@ -120,6 +128,16 @@
          private final boolean requiresCorrectToolForDrops;
          private final boolean canOcclude;
          private final BlockBehaviour.StatePredicate isRedstoneConductor;
+@@ -412,8 +_,7 @@
+         private final BlockBehaviour.StatePredicate isViewBlocking;
+         private final BlockBehaviour.StatePredicate hasPostProcess;
+         private final BlockBehaviour.StatePredicate emissiveRendering;
+-        @Nullable
+-        private final BlockBehaviour.OffsetFunction offsetFunction;
++        private final Optional<BlockBehaviour.OffsetFunction> offsetFunction;
+         private final boolean spawnTerrainParticles;
+         private final NoteBlockInstrument instrument;
+         private final boolean replaceable;
 @@ -523,12 +_,14 @@
              return this.useShapeForLightOcclusion;
          }
@@ -158,7 +176,22 @@
              return this.pushReaction;
          }
  
-@@ -959,10 +_,11 @@
+@@ -654,12 +_,11 @@
+         }
+ 
+         public Vec3 getOffset(BlockGetter p_60825_, BlockPos p_60826_) {
+-            BlockBehaviour.OffsetFunction blockbehaviour$offsetfunction = this.offsetFunction;
+-            return blockbehaviour$offsetfunction != null ? blockbehaviour$offsetfunction.evaluate(this.asState(), p_60825_, p_60826_) : Vec3.ZERO;
++            return this.offsetFunction.<Vec3>map(p_273089_ -> p_273089_.evaluate(this.asState(), p_60825_, p_60826_)).orElse(Vec3.ZERO);
+         }
+ 
+         public boolean hasOffsetFunction() {
+-            return this.offsetFunction != null;
++            return this.offsetFunction.isPresent();
+         }
+ 
+         public boolean triggerEvent(Level p_60678_, BlockPos p_60679_, int p_60680_, int p_60681_) {
+@@ -960,10 +_,11 @@
          boolean spawnTerrainParticles = true;
          NoteBlockInstrument instrument = NoteBlockInstrument.HARP;
          boolean replaceable;
@@ -171,18 +204,84 @@
          BlockBehaviour.StatePredicate isRedstoneConductor = (p_284888_, p_284889_, p_284890_) -> p_284888_.isCollisionShapeFullBlock(p_284889_, p_284890_);
          BlockBehaviour.StatePredicate isSuffocating = (p_284885_, p_284886_, p_284887_) -> p_284885_.blocksMotion() && p_284885_.isCollisionShapeFullBlock(p_284886_, p_284887_);
          BlockBehaviour.StatePredicate isViewBlocking = this.isSuffocating;
-@@ -1102,8 +_,14 @@
+@@ -971,8 +_,7 @@
+         BlockBehaviour.StatePredicate emissiveRendering = (p_60931_, p_60932_, p_60933_) -> false;
+         boolean dynamicShape;
+         FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
+-        @Nullable
+-        BlockBehaviour.OffsetFunction offsetFunction;
++        Optional<BlockBehaviour.OffsetFunction> offsetFunction = Optional.empty();
+ 
+         private Properties() {
+         }
+@@ -1104,11 +_,17 @@
              return this;
          }
  
 +        @Deprecated // FORGE: Use the variant that takes a Supplier below
          public BlockBehaviour.Properties dropsLike(Block p_60917_) {
              this.drops = p_60917_.getLootTable();
+             return this;
+         }
+ 
++        public BlockBehaviour.Properties lootFrom(java.util.function.Supplier<? extends Block> blockIn) {
++            this.lootTableSupplier = () -> blockIn.get().getLootTable();
 +            return this;
 +        }
 +
-+        public BlockBehaviour.Properties lootFrom(java.util.function.Supplier<? extends Block> blockIn) {
-+            this.lootTableSupplier = () -> blockIn.get().getLootTable();
+         public BlockBehaviour.Properties ignitedByLava() {
+             this.ignitedByLava = true;
+             return this;
+@@ -1186,26 +_,32 @@
+         }
+ 
+         public BlockBehaviour.Properties offsetType(BlockBehaviour.OffsetType p_222980_) {
+-            this.offsetFunction = switch (p_222980_) {
+-                case NONE -> null;
+-                case XZ -> (p_272565_, p_272566_, p_272567_) -> {
+-                Block block = p_272565_.getBlock();
+-                long i = Mth.getSeed(p_272567_.getX(), 0, p_272567_.getZ());
+-                float f = block.getMaxHorizontalOffset();
+-                double d0 = Mth.clamp(((double)((float)(i & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
+-                double d1 = Mth.clamp(((double)((float)(i >> 8 & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
+-                return new Vec3(d0, 0.0, d1);
+-            };
+-                case XYZ -> (p_272562_, p_272563_, p_272564_) -> {
+-                Block block = p_272562_.getBlock();
+-                long i = Mth.getSeed(p_272564_.getX(), 0, p_272564_.getZ());
+-                double d0 = ((double)((float)(i >> 4 & 15L) / 15.0F) - 1.0) * (double)block.getMaxVerticalOffset();
+-                float f = block.getMaxHorizontalOffset();
+-                double d1 = Mth.clamp(((double)((float)(i & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
+-                double d2 = Mth.clamp(((double)((float)(i >> 8 & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
+-                return new Vec3(d1, d0, d2);
+-            };
+-            };
++            switch (p_222980_) {
++                case XZ:
++                    this.offsetFunction = Optional.of((p_272565_, p_272566_, p_272567_) -> {
++                        Block block = p_272565_.getBlock();
++                        long i = Mth.getSeed(p_272567_.getX(), 0, p_272567_.getZ());
++                        float f = block.getMaxHorizontalOffset();
++                        double d0 = Mth.clamp(((double)((float)(i & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
++                        double d1 = Mth.clamp(((double)((float)(i >> 8 & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
++                        return new Vec3(d0, 0.0, d1);
++                    });
++                    break;
++                case XYZ:
++                    this.offsetFunction = Optional.of((p_272562_, p_272563_, p_272564_) -> {
++                        Block block = p_272562_.getBlock();
++                        long i = Mth.getSeed(p_272564_.getX(), 0, p_272564_.getZ());
++                        double d0 = ((double)((float)(i >> 4 & 15L) / 15.0F) - 1.0) * (double)block.getMaxVerticalOffset();
++                        float f = block.getMaxHorizontalOffset();
++                        double d1 = Mth.clamp(((double)((float)(i & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
++                        double d2 = Mth.clamp(((double)((float)(i >> 8 & 15L) / 15.0F) - 0.5) * 0.5, (double)(-f), (double)f);
++                        return new Vec3(d1, d0, d2);
++                    });
++                    break;
++                default:
++                    this.offsetFunction = Optional.empty();
++            }
++
              return this;
          }
  

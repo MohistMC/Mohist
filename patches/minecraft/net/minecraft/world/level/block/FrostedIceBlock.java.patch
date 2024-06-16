@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/FrostedIceBlock.java
++++ b/net/minecraft/world/level/block/FrostedIceBlock.java
+@@ -34,8 +_,8 @@
+     }
+ 
+     @Override
+-    public void onPlace(BlockState p_342717_, Level p_343709_, BlockPos p_344929_, BlockState p_344499_, boolean p_344789_) {
+-        p_343709_.scheduleTick(p_344929_, this, Mth.nextInt(p_343709_.getRandom(), 60, 120));
++    protected void randomTick(BlockState p_221238_, ServerLevel p_221239_, BlockPos p_221240_, RandomSource p_221241_) {
++        this.tick(p_221238_, p_221239_, p_221240_, p_221241_);
+     }
+ 
+     @Override

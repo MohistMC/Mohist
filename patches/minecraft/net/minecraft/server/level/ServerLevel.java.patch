@@ -33,7 +33,7 @@
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
  import java.util.function.Predicate;
-@@ -118,6 +_,7 @@
+@@ -119,6 +_,7 @@
  import net.minecraft.world.level.StructureManager;
  import net.minecraft.world.level.WorldGenLevel;
  import net.minecraft.world.level.biome.Biome;
@@ -41,7 +41,7 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.SnowLayerBlock;
-@@ -131,6 +_,7 @@
+@@ -132,6 +_,7 @@
  import net.minecraft.world.level.chunk.storage.RegionStorageInfo;
  import net.minecraft.world.level.chunk.storage.SimpleRegionStorage;
  import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
@@ -49,7 +49,7 @@
  import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.entity.EntityPersistentStorage;
-@@ -142,7 +_,9 @@
+@@ -143,7 +_,9 @@
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.gameevent.GameEventDispatcher;
@@ -59,7 +59,7 @@
  import net.minecraft.world.level.levelgen.structure.BoundingBox;
  import net.minecraft.world.level.levelgen.structure.Structure;
  import net.minecraft.world.level.levelgen.structure.StructureCheck;
-@@ -154,8 +_,10 @@
+@@ -155,8 +_,10 @@
  import net.minecraft.world.level.saveddata.maps.MapId;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -70,7 +70,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -163,6 +_,17 @@
+@@ -164,6 +_,17 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -88,7 +88,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -198,11 +_,27 @@
+@@ -199,11 +_,27 @@
      private final List<CustomSpawner> customSpawners;
      @Nullable
      private EndDragonFight dragonFight;
@@ -117,7 +117,7 @@
  
      public ServerLevel(
          MinecraftServer p_214999_,
-@@ -219,11 +_,43 @@
+@@ -220,11 +_,43 @@
          @Nullable RandomSequences p_288977_
      ) {
          super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates());
@@ -161,7 +161,7 @@
          boolean flag = p_214999_.forceSynchronousWrites();
          DataFixer datafixer = p_214999_.getFixerUpper();
          EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(
-@@ -285,6 +_,14 @@
+@@ -286,6 +_,14 @@
          this.sleepStatus = new SleepStatus();
          this.gameEventDispatcher = new GameEventDispatcher(this);
          this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences"));
@@ -176,7 +176,7 @@
      }
  
      @Deprecated
-@@ -321,15 +_,22 @@
+@@ -322,15 +_,22 @@
              profilerfiller.popPush("weather");
              this.advanceWeatherCycle();
          }
@@ -203,7 +203,7 @@
              if (this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && this.isRaining()) {
                  this.resetWeatherCycle();
              }
-@@ -364,7 +_,8 @@
+@@ -365,7 +_,8 @@
  
          this.handlingTick = false;
          profilerfiller.pop();
@@ -213,7 +213,7 @@
          if (flag1) {
              this.resetEmptyTime();
          }
-@@ -395,6 +_,7 @@
+@@ -396,6 +_,7 @@
                                  p_308944_.stopRiding();
                              }
  
@@ -221,7 +221,7 @@
                              profilerfiller.push("tick");
                              this.guardEntityTick(this::tickNonPassenger, p_308944_);
                              profilerfiller.pop();
-@@ -455,19 +_,20 @@
+@@ -456,7 +_,7 @@
          int j = chunkpos.getMinBlockZ();
          ProfilerFiller profilerfiller = this.getProfiler();
          profilerfiller.push("thunder");
@@ -230,13 +230,7 @@
              BlockPos blockpos = this.findLightningTargetAround(this.getBlockRandomPos(i, 0, j, 15));
              if (this.isRainingAt(blockpos)) {
                  DifficultyInstance difficultyinstance = this.getCurrentDifficultyAt(blockpos);
-                 boolean flag1 = this.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)
--                    && this.random.nextDouble() < (double)difficultyinstance.getEffectiveDifficulty() * 0.01
--                    && !this.getBlockState(blockpos.below()).is(Blocks.LIGHTNING_ROD);
-+                        && this.random.nextDouble() < (double) difficultyinstance.getEffectiveDifficulty() * 0.01
-+                        && !this.getBlockState(blockpos.below()).is(Blocks.LIGHTNING_ROD);
-                 if (flag1) {
-                     SkeletonHorse skeletonhorse = EntityType.SKELETON_HORSE.create(this);
+@@ -468,7 +_,8 @@
                      if (skeletonhorse != null) {
                          skeletonhorse.setTrap(true);
                          skeletonhorse.setAge(0);
@@ -246,7 +240,7 @@
                          this.addFreshEntity(skeletonhorse);
                      }
                  }
-@@ -476,7 +_,7 @@
+@@ -477,7 +_,7 @@
                  if (lightningbolt != null) {
                      lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
                      lightningbolt.setVisualOnly(flag1);
@@ -255,7 +249,7 @@
                  }
              }
          }
-@@ -526,8 +_,9 @@
+@@ -527,8 +_,9 @@
          BlockPos blockpos = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, p_300602_);
          BlockPos blockpos1 = blockpos.below();
          Biome biome = this.getBiome(blockpos).value();
@@ -266,7 +260,7 @@
          }
  
          if (this.isRaining()) {
-@@ -539,10 +_,10 @@
+@@ -540,10 +_,10 @@
                      if (j < Math.min(i, 8)) {
                          BlockState blockstate1 = blockstate.setValue(SnowLayerBlock.LAYERS, Integer.valueOf(j + 1));
                          Block.pushEntitiesUp(blockstate, blockstate1, this, blockpos);
@@ -279,7 +273,7 @@
                  }
              }
  
-@@ -701,17 +_,28 @@
+@@ -702,17 +_,28 @@
                  this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.START_RAINING, 0.0F));
              }
  
@@ -312,7 +306,7 @@
      }
  
      public void resetEmptyTime() {
-@@ -738,12 +_,15 @@
+@@ -739,12 +_,15 @@
          p_8648_.tickCount++;
          this.getProfiler().push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_8648_.getType()).toString());
          profilerfiller.incrementCounter("tickNonPassenger");
@@ -328,7 +322,7 @@
      }
  
      private void tickPassenger(Entity p_8663_, Entity p_8664_) {
-@@ -755,7 +_,9 @@
+@@ -756,7 +_,9 @@
              ProfilerFiller profilerfiller = this.getProfiler();
              profilerfiller.push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_8664_.getType()).toString());
              profilerfiller.incrementCounter("tickPassenger");
@@ -338,7 +332,7 @@
              profilerfiller.pop();
  
              for (Entity entity : p_8664_.getPassengers()) {
-@@ -772,6 +_,7 @@
+@@ -773,6 +_,7 @@
      public void save(@Nullable ProgressListener p_8644_, boolean p_8645_, boolean p_8646_) {
          ServerChunkCache serverchunkcache = this.getChunkSource();
          if (!p_8646_) {
@@ -346,7 +340,7 @@
              if (p_8644_ != null) {
                  p_8644_.progressStartNoAbort(Component.translatable("menu.savingLevel"));
              }
-@@ -787,12 +_,13 @@
+@@ -788,12 +_,13 @@
              } else {
                  this.entityManager.autoSave();
              }
@@ -361,7 +355,7 @@
          }
  
          this.getChunkSource().getDataStorage().save();
-@@ -859,10 +_,28 @@
+@@ -860,7 +_,20 @@
          return this.addEntity(p_8848_);
      }
  
@@ -379,7 +373,11 @@
 +        // since it is only an implementation detail, that a new entity is created when
 +        // they are traveling between worlds.
 +        p_143335_.spawnReason(null); // Mohist
-         this.addEntity(p_143335_);
+         if (p_143335_ instanceof ServerPlayer serverplayer) {
+             this.addPlayer(serverplayer);
+         } else {
+@@ -868,6 +_,19 @@
+         }
      }
  
 +    public void addDuringTeleport(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
@@ -387,10 +385,18 @@
 +    }
 +    // CraftBukkit end
 +
-     public void addDuringCommandTeleport(ServerPlayer p_8623_) {
-         this.addPlayer(p_8623_);
++    public void addDuringCommandTeleport(ServerPlayer p_8623_) {
++        this.addPlayer(p_8623_);
++    }
++
++    public void addDuringPortalTeleport(ServerPlayer p_8818_) {
++        this.addPlayer(p_8818_);
++    }
++
+     public void addNewPlayer(ServerPlayer p_8835_) {
+         this.addPlayer(p_8835_);
      }
-@@ -880,25 +_,45 @@
+@@ -877,6 +_,7 @@
      }
  
      private void addPlayer(ServerPlayer p_8854_) {
@@ -398,9 +404,8 @@
          Entity entity = this.getEntities().get(p_8854_.getUUID());
          if (entity != null) {
              LOGGER.warn("Force-added player with duplicate UUID {}", p_8854_.getUUID());
-             entity.unRide();
--            this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
-+            this.removePlayerImmediately((ServerPlayer) entity, Entity.RemovalReason.DISCARDED);
+@@ -884,18 +_,37 @@
+             this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
          }
  
 -        this.entityManager.addNewEntity(p_8854_);
@@ -440,7 +445,7 @@
      public boolean tryAddFreshEntityWithPassengers(Entity p_8861_) {
          if (p_8861_.getSelfAndPassengers().map(Entity::getUUID).anyMatch(this.entityManager::isLoaded)) {
              return false;
-@@ -908,7 +_,25 @@
+@@ -905,7 +_,25 @@
          }
      }
  
@@ -466,7 +471,7 @@
          p_8713_.clearAllBlockEntities();
          p_8713_.unregisterTickContainerFromLevel(this);
      }
-@@ -917,13 +_,40 @@
+@@ -914,13 +_,40 @@
          p_143262_.remove(p_143263_);
      }
  
@@ -510,28 +515,9 @@
                  if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0) {
                      serverplayer.connection.send(new ClientboundBlockDestructionPacket(p_8612_, p_8613_, p_8614_));
                  }
-@@ -933,16 +_,22 @@
- 
-     @Override
-     public void playSeededSound(
--        @Nullable Player p_263330_,
--        double p_263393_,
--        double p_263369_,
--        double p_263354_,
--        Holder<SoundEvent> p_263412_,
--        SoundSource p_263338_,
--        float p_263352_,
--        float p_263390_,
--        long p_263403_
-+            @Nullable Player p_263330_,
-+            double p_263393_,
-+            double p_263369_,
-+            double p_263354_,
-+            Holder<SoundEvent> p_263412_,
-+            SoundSource p_263338_,
-+            float p_263352_,
-+            float p_263390_,
-+            long p_263403_
+@@ -940,6 +_,12 @@
+         float p_263390_,
+         long p_263403_
      ) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_263393_, p_263369_, p_263354_, p_263412_, p_263338_, p_263352_, p_263390_);
 +        if (event.isCanceled() || event.getSound() == null) return;
@@ -542,12 +528,9 @@
          this.server
              .getPlayerList()
              .broadcast(
-@@ -958,8 +_,14 @@
- 
-     @Override
+@@ -957,6 +_,12 @@
      public void playSeededSound(
--        @Nullable Player p_263545_, Entity p_263544_, Holder<SoundEvent> p_263491_, SoundSource p_263542_, float p_263530_, float p_263520_, long p_263490_
-+            @Nullable Player p_263545_, Entity p_263544_, Holder<SoundEvent> p_263491_, SoundSource p_263542_, float p_263530_, float p_263520_, long p_263490_
+         @Nullable Player p_263545_, Entity p_263544_, Holder<SoundEvent> p_263491_, SoundSource p_263542_, float p_263530_, float p_263520_, long p_263490_
      ) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_263544_, p_263491_, p_263542_, p_263530_, p_263520_);
 +        if (event.isCanceled() || event.getSound() == null) return;
@@ -558,7 +541,7 @@
          this.server
              .getPlayerList()
              .broadcast(
-@@ -1003,6 +_,7 @@
+@@ -1000,6 +_,7 @@
  
      @Override
      public void gameEvent(Holder<GameEvent> p_334475_, Vec3 p_215042_, GameEvent.Context p_215043_) {
@@ -566,7 +549,7 @@
          this.gameEventDispatcher.post(p_334475_, p_215042_, p_215043_);
      }
  
-@@ -1041,11 +_,17 @@
+@@ -1038,11 +_,17 @@
  
      @Override
      public void updateNeighborsAt(BlockPos p_215045_, Block p_215046_) {
@@ -579,17 +562,14 @@
 +        java.util.EnumSet<Direction> directions = java.util.EnumSet.allOf(Direction.class);
 +        directions.remove(p_215054_);
 +        if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_215052_, this.getBlockState(p_215052_), directions, false).isCanceled()) {
-+            return;
++           return;
 +        }
          this.neighborUpdater.updateNeighborsAtExceptFromFacing(p_215052_, p_215053_, p_215054_);
      }
  
-@@ -1089,8 +_,13 @@
-         Holder<SoundEvent> p_333158_
-     ) {
+@@ -1088,6 +_,11 @@
          Explosion explosion = this.explode(
--            p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false, p_310962_, p_310322_, p_333158_
-+                p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false, p_310962_, p_310322_, p_333158_
+             p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false, p_310962_, p_310322_, p_333158_
          );
 +        // CraftBukkit start
 +        if (explosion.wasCanceled) {
@@ -599,7 +579,7 @@
          if (!explosion.interactsWithBlocks()) {
              explosion.clearToBlow();
          }
-@@ -1216,6 +_,23 @@
+@@ -1213,6 +_,23 @@
          return this.sendParticles(p_8625_, p_8627_, p_8628_, p_8629_, p_8630_, packet);
      }
  
@@ -623,7 +603,7 @@
      private boolean sendParticles(ServerPlayer p_8637_, boolean p_8638_, double p_8639_, double p_8640_, double p_8641_, Packet<?> p_8642_) {
          if (p_8637_.level() != this) {
              return false;
-@@ -1250,7 +_,7 @@
+@@ -1247,7 +_,7 @@
  
      @Nullable
      public BlockPos findNearestMapStructure(TagKey<Structure> p_215012_, BlockPos p_215013_, int p_215014_, boolean p_215015_) {
@@ -632,7 +612,7 @@
              return null;
          } else {
              Optional<HolderSet.Named<Structure>> optional = this.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(p_215012_);
-@@ -1293,11 +_,22 @@
+@@ -1290,11 +_,22 @@
      @Nullable
      @Override
      public MapItemSavedData getMapData(MapId p_330550_) {
@@ -656,16 +636,7 @@
          this.getServer().overworld().getDataStorage().set(p_331590_.key(), p_143306_);
      }
  
-@@ -1328,7 +_,7 @@
- 
-     public LongSet getForcedChunks() {
-         ForcedChunksSavedData forcedchunkssaveddata = this.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
--        return (LongSet)(forcedchunkssaveddata != null ? LongSets.unmodifiable(forcedchunkssaveddata.getChunks()) : LongSets.EMPTY_SET);
-+        return (LongSet) (forcedchunkssaveddata != null ? LongSets.unmodifiable(forcedchunkssaveddata.getChunks()) : LongSets.EMPTY_SET);
-     }
- 
-     public boolean setChunkForced(int p_8603_, int p_8604_, boolean p_8605_) {
-@@ -1509,6 +_,11 @@
+@@ -1506,6 +_,11 @@
      @Override
      public void blockUpdated(BlockPos p_8743_, Block p_8744_) {
          if (!this.isDebug()) {
@@ -677,7 +648,7 @@
              this.updateNeighborsAt(p_8743_, p_8744_);
          }
      }
-@@ -1528,12 +_,12 @@
+@@ -1525,12 +_,12 @@
      }
  
      public boolean isFlat() {
@@ -692,7 +663,7 @@
      }
  
      @Nullable
-@@ -1582,14 +_,40 @@
+@@ -1579,6 +_,41 @@
          }
      }
  
@@ -700,14 +671,11 @@
 +    // Mohist start
 +    public static AtomicReference<Entity> entityAtomicReference = new AtomicReference<>(null);
 +
-     public static void makeObsidianPlatform(ServerLevel p_8618_) {
-         BlockPos blockpos = END_SPAWN_POINT;
-         int i = blockpos.getX();
-         int j = blockpos.getY() - 2;
-         int k = blockpos.getZ();
--        BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach(p_207578_ -> p_8618_.setBlockAndUpdate(p_207578_, Blocks.AIR.defaultBlockState()));
--        BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach(p_184101_ -> p_8618_.setBlockAndUpdate(p_184101_, Blocks.OBSIDIAN.defaultBlockState()));
--    }
++    public static void makeObsidianPlatform(ServerLevel p_8618_) {
++        BlockPos blockpos = END_SPAWN_POINT;
++        int i = blockpos.getX();
++        int j = blockpos.getY() - 2;
++        int k = blockpos.getZ();
 +
 +        // CraftBukkit start
 +        org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_8618_);
@@ -733,10 +701,11 @@
 +        makeObsidianPlatform(worldserver);
 +    }
 +    // Mohist end
- 
++
      @Override
      public LevelEntityGetter<Entity> getEntities() {
-@@ -1672,6 +_,11 @@
+         return this.entityManager.getEntityGetter();
+@@ -1660,6 +_,11 @@
          return crashreportcategory;
      }
  
@@ -748,15 +717,7 @@
      final class EntityCallbacks implements LevelCallback<Entity> {
          public void onCreated(Entity p_143355_) {
          }
-@@ -1699,23 +_,44 @@
-                 if (ServerLevel.this.isUpdatingNavigations) {
-                     String s = "onTrackingStart called during navigation iteration";
-                     Util.logAndPauseIfInIde(
--                        "onTrackingStart called during navigation iteration", new IllegalStateException("onTrackingStart called during navigation iteration")
-+                            "onTrackingStart called during navigation iteration", new IllegalStateException("onTrackingStart called during navigation iteration")
-                     );
-                 }
- 
+@@ -1694,16 +_,37 @@
                  ServerLevel.this.navigatingMobs.add(mob);
              }
  
@@ -796,15 +757,7 @@
              ServerLevel.this.getChunkSource().removeEntity(p_143375_);
              if (p_143375_ instanceof ServerPlayer serverplayer) {
                  ServerLevel.this.players.remove(serverplayer);
-@@ -1726,20 +_,31 @@
-                 if (ServerLevel.this.isUpdatingNavigations) {
-                     String s = "onTrackingStart called during navigation iteration";
-                     Util.logAndPauseIfInIde(
--                        "onTrackingStart called during navigation iteration", new IllegalStateException("onTrackingStart called during navigation iteration")
-+                            "onTrackingStart called during navigation iteration", new IllegalStateException("onTrackingStart called during navigation iteration")
-                     );
-                 }
- 
+@@ -1721,13 +_,24 @@
                  ServerLevel.this.navigatingMobs.remove(mob);
              }
  

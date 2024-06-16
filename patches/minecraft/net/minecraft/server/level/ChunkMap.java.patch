@@ -1,14 +1,20 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -6,6 +_,7 @@
+@@ -6,9 +_,13 @@
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
  import com.google.common.collect.ImmutableList.Builder;
 +import com.google.common.util.concurrent.AtomicDouble;
- import com.google.gson.JsonElement;
++import com.google.gson.JsonElement;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
-@@ -40,6 +_,7 @@
+ import com.mojang.logging.LogUtils;
++import com.mojang.serialization.DataResult;
++import com.mojang.serialization.JsonOps;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.Long2ByteMap;
+@@ -37,6 +_,7 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
  import java.util.concurrent.Executor;
@@ -16,28 +22,52 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
-@@ -98,6 +_,7 @@
+@@ -50,6 +_,7 @@
+ import net.minecraft.Util;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.core.SectionPos;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.core.registries.Registries;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.NbtException;
+@@ -60,7 +_,6 @@
+ import net.minecraft.server.network.ServerPlayerConnection;
+ import net.minecraft.util.CsvOutput;
+ import net.minecraft.util.Mth;
+-import net.minecraft.util.StaticCache2D;
+ import net.minecraft.util.profiling.ProfilerFiller;
+ import net.minecraft.util.thread.BlockableEventLoop;
+ import net.minecraft.util.thread.ProcessorHandle;
+@@ -80,7 +_,6 @@
+ import net.minecraft.world.level.chunk.ProtoChunk;
+ import net.minecraft.world.level.chunk.UpgradeData;
+ import net.minecraft.world.level.chunk.status.ChunkStatus;
+-import net.minecraft.world.level.chunk.status.ChunkStep;
+ import net.minecraft.world.level.chunk.status.ChunkType;
+ import net.minecraft.world.level.chunk.status.WorldGenContext;
+ import net.minecraft.world.level.chunk.storage.ChunkSerializer;
+@@ -96,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.mutable.MutableBoolean;
 +import org.bukkit.craftbukkit.generator.CustomChunkGenerator;
  import org.slf4j.Logger;
  
- public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -111,35 +_,56 @@
+ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider, GeneratingChunkMap {
+@@ -111,34 +_,56 @@
      public static final int MIN_VIEW_DISTANCE = 2;
      public static final int MAX_VIEW_DISTANCE = 32;
      public static final int FORCED_TICKET_LEVEL = ChunkLevel.byStatus(FullChunkStatus.ENTITY_TICKING);
 -    public final Long2ObjectLinkedOpenHashMap<ChunkHolder> updatingChunkMap = new Long2ObjectLinkedOpenHashMap<>();
+-    public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> visibleChunkMap = this.updatingChunkMap.clone();
 +    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> updatingChunkMap = new Long2ObjectLinkedOpenHashMap<>();
-     public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> visibleChunkMap = this.updatingChunkMap.clone();
++    private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> visibleChunkMap = this.updatingChunkMap.clone();
      private final Long2ObjectLinkedOpenHashMap<ChunkHolder> pendingUnloads = new Long2ObjectLinkedOpenHashMap<>();
-     private final LongSet entitiesInLevel = new LongOpenHashSet();
+     private final List<ChunkGenerationTask> pendingGenerationTasks = new ArrayList<>();
 -    public final ServerLevel level;
 +    final ServerLevel level;
      private final ThreadedLevelLightEngine lightEngine;
      private final BlockableEventLoop<Runnable> mainThreadExecutor;
--    public ChunkGenerator generator;
 +    private ChunkGenerator generator;
      private final RandomState randomState;
      private final ChunkGeneratorStructureState chunkGeneratorState;
@@ -64,7 +94,7 @@
      private final Long2LongMap chunkSaveCooldowns = new Long2LongOpenHashMap();
      private final Queue<Runnable> unloadQueue = Queues.newConcurrentLinkedQueue();
 -    private int serverViewDistance;
--    private WorldGenContext worldGenContext;
+-    private final WorldGenContext worldGenContext;
 +   	public int serverViewDistance;
 +	private WorldGenContext worldGenContext;
 +
@@ -91,10 +121,11 @@
  
      public ChunkMap(
          ServerLevel p_214836_,
-@@ -166,9 +_,16 @@
+@@ -164,9 +_,17 @@
+         Path path = p_214837_.getDimensionPath(p_214836_.dimension());
          this.storageName = path.getFileName().toString();
          this.level = p_214836_;
-         this.generator = p_214843_;
++        this.generator = p_214843_;
 +
          RegistryAccess registryaccess = p_214836_.registryAccess();
          long i = p_214836_.getSeed();
@@ -109,7 +140,7 @@
              this.randomState = RandomState.create(noisebasedchunkgenerator.generatorSettings().value(), registryaccess.lookupOrThrow(Registries.NOISE), i);
          } else {
              this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), registryaccess.lookupOrThrow(Registries.NOISE), i);
-@@ -413,6 +_,7 @@
+@@ -388,6 +_,7 @@
                  this.modified = true;
              }
  
@@ -117,64 +148,24 @@
              return p_140179_;
          }
      }
-@@ -521,6 +_,7 @@
-                 if (this.pendingUnloads.remove(p_140182_, p_140183_) && p_203002_ != null) {
-                     if (p_203002_ instanceof LevelChunk) {
-                         ((LevelChunk)p_203002_).setLoaded(false);
-+                        net.minecraftforge.event.ForgeEventFactory.onChunkUnload(p_203002_);
+@@ -498,6 +_,7 @@
+                 if (this.pendingUnloads.remove(p_140182_, p_140183_) && chunkaccess != null) {
+                     if (chunkaccess instanceof LevelChunk levelchunk) {
+                         levelchunk.setLoaded(false);
++                        net.minecraftforge.event.ForgeEventFactory.onChunkUnload(chunkaccess);
                      }
  
-                     this.save(p_203002_);
-@@ -697,8 +_,23 @@
- 
-     private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
-         if (!p_143066_.isEmpty()) {
--            p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_));
-+            // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+            p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter((entity) -> {
-+                boolean needsRemoval = false;
-+                net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+                if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+                    entity.discard();
-+                    needsRemoval = true;
-+                }
-+                if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+                    entity.discard();
-+                    needsRemoval = true;
-+                }
-+                return !needsRemoval;
-+            }));
-+            // CraftBukkit end
-         }
-+
-     }
- 
-     private CompletableFuture<ChunkAccess> protoChunkToFullChunk(ChunkHolder p_140384_, ChunkAccess p_328123_) {
-@@ -717,8 +_,14 @@
-             levelchunk.runPostLoad();
-             if (this.entitiesInLevel.add(chunkpos.toLong())) {
-                 levelchunk.setLoaded(true);
-+                try {
-+                    p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
-                 levelchunk.registerAllBlockEntitiesAfterLevelLoad();
-                 levelchunk.registerTickContainerInLevel(this.level);
-+                    net.minecraftforge.event.ForgeEventFactory.onChunkLoad(levelchunk, !(protochunk instanceof ImposterProtoChunk));
-+                } finally {
-+                    p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
-+                }
-             }
- 
-             return levelchunk;
-@@ -818,6 +_,7 @@
+                     this.save(chunkaccess);
+@@ -744,6 +_,7 @@
  
                  this.level.getProfiler().incrementCounter("chunkSave");
                  CompoundTag compoundtag = ChunkSerializer.write(this.level, p_140259_);
 +                net.minecraftforge.event.ForgeEventFactory.onChunkDataSave(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.level, compoundtag);
-                 this.write(chunkpos, compoundtag).exceptionallyAsync(p_326408_ -> {
-                     this.level.getServer().reportChunkSaveFailure(chunkpos);
+                 this.write(chunkpos, compoundtag).exceptionally(p_341222_ -> {
+                     this.level.getServer().reportChunkSaveFailure(p_341222_, this.storageInfo(), chunkpos);
                      return null;
-@@ -977,11 +_,26 @@
-         return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
+@@ -902,11 +_,26 @@
+         return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator().getTypeNameForDataFixer());
      }
  
 +    // Mohist start - fix mixin
@@ -200,7 +191,7 @@
                  if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_)) {
                      return true;
                  }
-@@ -1008,14 +_,22 @@
+@@ -933,14 +_,22 @@
          }
      }
  
@@ -224,7 +215,7 @@
  
      private boolean skipPlayer(ServerPlayer p_140330_) {
          return p_140330_.isSpectator() && !this.level.getGameRules().getBoolean(GameRules.RULE_SPECTATORSGENERATECHUNKS);
-@@ -1136,9 +_,10 @@
+@@ -1061,9 +_,10 @@
      }
  
      protected void addEntity(Entity p_140200_) {
@@ -236,7 +227,7 @@
              if (i != 0) {
                  int j = entitytype.updateInterval();
                  if (this.entityMap.containsKey(p_140200_.getId())) {
-@@ -1297,7 +_,7 @@
+@@ -1222,7 +_,7 @@
          public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
          public TrackedEntity(final Entity p_140478_, final int p_140479_, final int p_140480_, final boolean p_140481_) {
@@ -245,7 +236,7 @@
              this.entity = p_140478_;
              this.range = p_140479_;
              this.lastSectionPos = SectionPos.of(p_140478_);
-@@ -1348,6 +_,12 @@
+@@ -1273,6 +_,12 @@
                  boolean flag = d1 <= d2
                      && this.entity.broadcastToPlayer(p_140498_)
                      && ChunkMap.this.isChunkTracked(p_140498_, this.entity.chunkPosition().x, this.entity.chunkPosition().z);

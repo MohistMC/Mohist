@@ -1,19 +1,28 @@
 --- a/net/minecraft/world/entity/monster/Illusioner.java
 +++ b/net/minecraft/world/entity/monster/Illusioner.java
-@@ -172,8 +_,11 @@
+@@ -2,7 +_,6 @@
+ 
+ import javax.annotation.Nullable;
+ import net.minecraft.core.particles.ParticleTypes;
+-import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.world.Difficulty;
+@@ -173,9 +_,12 @@
  
      @Override
      public void performRangedAttack(LivingEntity p_32918_, float p_32919_) {
--        ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
-+        ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
-         AbstractArrow abstractarrow = ProjectileUtil.getMobArrow(this, itemstack, p_32919_);
+-        ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
++        ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
+         ItemStack itemstack1 = this.getProjectile(itemstack);
+         AbstractArrow abstractarrow = ProjectileUtil.getMobArrow(this, itemstack1, p_32919_, itemstack);
 +        if (this.getMainHandItem().getItem() instanceof net.minecraft.world.item.BowItem bow) {
 +           abstractarrow = bow.customArrow(abstractarrow);
 +        }
          double d0 = p_32918_.getX() - this.getX();
          double d1 = p_32918_.getY(0.3333333333333333) - abstractarrow.getY();
          double d2 = p_32918_.getZ() - this.getZ();
-@@ -261,7 +_,7 @@
+@@ -263,7 +_,7 @@
  
          @Override
          protected void performSpellCasting() {

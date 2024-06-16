@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/ZombifiedPiglin.java
 +++ b/net/minecraft/world/entity/monster/ZombifiedPiglin.java
-@@ -13,6 +_,7 @@
+@@ -14,6 +_,7 @@
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.DifficultyInstance;
  import net.minecraft.world.damagesource.DamageSource;
@@ -8,7 +8,7 @@
  import net.minecraft.world.entity.EntityDimensions;
  import net.minecraft.world.entity.EntitySelector;
  import net.minecraft.world.entity.EntityType;
-@@ -39,6 +_,7 @@
+@@ -40,6 +_,7 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.pathfinder.PathType;
  import net.minecraft.world.phys.AABB;
@@ -16,7 +16,7 @@
  
  public class ZombifiedPiglin extends Zombie implements NeutralMob {
      private static final EntityDimensions BABY_DIMENSIONS = EntityType.ZOMBIFIED_PIGLIN.getDimensions().scale(0.5F).withEyeHeight(0.97F);
-@@ -163,10 +_,31 @@
+@@ -164,10 +_,31 @@
          super.setTarget(p_34478_);
      }
  

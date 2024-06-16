@@ -1,25 +1,20 @@
 --- a/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
 +++ b/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
-@@ -12,16 +_,18 @@
-     );
-     private final InteractionHand hand;
+@@ -14,6 +_,7 @@
      private final int sequence;
+     private final float yRot;
+     private final float xRot;
 +   	public long timestamp; // Spigot
  
-     public ServerboundUseItemPacket(InteractionHand p_238011_, int p_238012_) {
+     public ServerboundUseItemPacket(InteractionHand p_238011_, int p_238012_, float p_342904_, float p_343639_) {
          this.hand = p_238011_;
-         this.sequence = p_238012_;
+@@ -22,7 +_,8 @@
+         this.xRot = p_343639_;
      }
  
 -    private ServerboundUseItemPacket(FriendlyByteBuf p_179798_) {
--        this.hand = p_179798_.readEnum(InteractionHand.class);
--        this.sequence = p_179798_.readVarInt();
--    }
 +   public ServerboundUseItemPacket(FriendlyByteBuf p_179798_) {
 +      this.timestamp = System.currentTimeMillis(); // Spigot
-+      this.hand = p_179798_.readEnum(InteractionHand.class);
-+      this.sequence = p_179798_.readVarInt();
-+   }
- 
-     private void write(FriendlyByteBuf p_134719_) {
-         p_134719_.writeEnum(this.hand);
+         this.hand = p_179798_.readEnum(InteractionHand.class);
+         this.sequence = p_179798_.readVarInt();
+         this.yRot = p_179798_.readFloat();

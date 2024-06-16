@@ -83,7 +83,7 @@
 -            p_155413_.destroyTargetUUID = null;
 -        } else if (p_155413_.destroyTarget == null) {
 -            List<LivingEntity> list = p_155409_.getEntitiesOfClass(
--                LivingEntity.class, getDestroyRangeAABB(p_155410_), p_327309_ -> p_327309_ instanceof Enemy && p_327309_.isInWaterOrRain()
+-                LivingEntity.class, getDestroyRangeAABB(p_155410_), p_341840_ -> p_341840_ instanceof Enemy && p_341840_.isInWaterOrRain()
 -            );
 -            if (!list.isEmpty()) {
 -                p_155413_.destroyTarget = list.get(p_155409_.random.nextInt(list.size()));

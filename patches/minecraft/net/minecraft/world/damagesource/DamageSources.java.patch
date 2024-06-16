@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/damagesource/DamageSources.java
 +++ b/net/minecraft/world/damagesource/DamageSources.java
-@@ -40,9 +_,15 @@
+@@ -41,9 +_,15 @@
      private final DamageSource stalagmite;
      private final DamageSource outsideBorder;
      private final DamageSource genericKill;
@@ -16,9 +16,9 @@
 +      	this.poison = this.source(DamageTypes.MAGIC).poison();
 +      	// CraftBukkit end
          this.inFire = this.source(DamageTypes.IN_FIRE);
+         this.campfire = this.source(DamageTypes.CAMPFIRE);
          this.lightningBolt = this.source(DamageTypes.LIGHTNING_BOLT);
-         this.onFire = this.source(DamageTypes.ON_FIRE);
-@@ -80,6 +_,16 @@
+@@ -82,6 +_,16 @@
          return new DamageSource(this.damageTypes.getHolderOrThrow(p_270076_), p_270656_, p_270242_);
      }
  
@@ -35,7 +35,7 @@
      public DamageSource inFire() {
          return this.inFire;
      }
-@@ -241,7 +_,13 @@
+@@ -247,7 +_,13 @@
      }
  
      public DamageSource explosion(@Nullable Entity p_271016_, @Nullable Entity p_270814_) {
@@ -50,14 +50,3 @@
      }
  
      public DamageSource sonicBoom(Entity p_270401_) {
-@@ -250,6 +_,10 @@
- 
-     public DamageSource badRespawnPointExplosion(Vec3 p_270175_) {
-         return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), p_270175_);
-+    }
-+
-+    public DamageSource badRespawnPointExplosion(Vec3 vec3d, org.bukkit.block.BlockState blockState) {
-+        return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), vec3d).directBlockState(blockState);
-     }
- 
-     public DamageSource outOfBorder() {

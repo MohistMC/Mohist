@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/structure/BuiltinStructureSets.java
++++ b/net/minecraft/world/level/levelgen/structure/BuiltinStructureSets.java
+@@ -27,6 +_,6 @@
+     ResourceKey<StructureSet> TRIAL_CHAMBERS = register("trial_chambers");
+ 
+     private static ResourceKey<StructureSet> register(String p_209839_) {
+-        return ResourceKey.create(Registries.STRUCTURE_SET, ResourceLocation.withDefaultNamespace(p_209839_));
++        return ResourceKey.create(Registries.STRUCTURE_SET, new ResourceLocation(p_209839_));
+     }
+ }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/flat/FlatLevelGeneratorPresets.java
++++ b/net/minecraft/world/level/levelgen/flat/FlatLevelGeneratorPresets.java
+@@ -35,7 +_,7 @@
+     }
+ 
+     private static ResourceKey<FlatLevelGeneratorPreset> register(String p_226277_) {
+-        return ResourceKey.create(Registries.FLAT_LEVEL_GENERATOR_PRESET, ResourceLocation.withDefaultNamespace(p_226277_));
++        return ResourceKey.create(Registries.FLAT_LEVEL_GENERATOR_PRESET, new ResourceLocation(p_226277_));
+     }
+ 
+     static class Bootstrap {

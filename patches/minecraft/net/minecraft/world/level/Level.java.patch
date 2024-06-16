@@ -28,7 +28,15 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
-@@ -40,6 +_,7 @@
+@@ -32,7 +_,6 @@
+ import net.minecraft.util.AbortableIterationConsumer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
+-import net.minecraft.util.StringRepresentable;
+ import net.minecraft.util.profiling.ProfilerFiller;
+ import net.minecraft.world.DifficultyInstance;
+ import net.minecraft.world.TickRateManager;
+@@ -41,6 +_,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -36,7 +44,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.alchemy.PotionBrewing;
-@@ -53,11 +_,13 @@
+@@ -54,11 +_,13 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.TickingBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
@@ -50,7 +58,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -74,8 +_,17 @@
+@@ -75,12 +_,21 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
@@ -67,9 +75,16 @@
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
-     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
-     public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -104,29 +_,68 @@
+-    public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("overworld"));
+-    public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("the_nether"));
+-    public static final ResourceKey<Level> END = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("the_end"));
++    public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
++    public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
++    public static final ResourceKey<Level> END = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_end"));
+     public static final int MAX_LEVEL_SIZE = 30000000;
+     public static final int LONG_PARTICLE_CLIP_RANGE = 512;
+     public static final int SHORT_PARTICLE_CLIP_RANGE = 32;
+@@ -105,29 +_,68 @@
      @Deprecated
      private final RandomSource threadSafeRandom = RandomSource.createThreadSafe();
      private final Holder<DimensionType> dimensionTypeRegistration;
@@ -152,7 +167,7 @@
          this.dimensionTypeRegistration = p_270240_;
          final DimensionType dimensiontype = p_270240_.value();
          this.dimension = p_270683_;
-@@ -135,12 +_,12 @@
+@@ -136,12 +_,12 @@
              this.worldBorder = new WorldBorder() {
                  @Override
                  public double getCenterX() {
@@ -167,7 +182,7 @@
                  }
              };
          } else {
-@@ -153,9 +_,50 @@
+@@ -154,9 +_,50 @@
          this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
          this.registryAccess = p_270200_;
          this.damageSources = new DamageSources(p_270200_);
@@ -219,7 +234,7 @@
      public boolean isClientSide() {
          return this.isClientSide;
      }
-@@ -187,7 +_,7 @@
+@@ -188,7 +_,7 @@
      }
  
      public LevelChunk getChunk(int p_46727_, int p_46728_) {
@@ -228,7 +243,7 @@
      }
  
      @Nullable
-@@ -208,6 +_,18 @@
+@@ -209,6 +_,18 @@
  
      @Override
      public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -247,7 +262,7 @@
          if (this.isOutsideBuildHeight(p_46605_)) {
              return false;
          } else if (!this.isClientSide && this.isDebug()) {
-@@ -215,19 +_,63 @@
+@@ -216,19 +_,63 @@
          } else {
              LevelChunk levelchunk = this.getChunkAt(p_46605_);
              Block block = p_46606_.getBlock();
@@ -313,7 +328,7 @@
                          this.sendBlockUpdated(p_46605_, blockstate, p_46606_, p_46607_);
                      }
  
-@@ -246,9 +_,8 @@
+@@ -247,9 +_,8 @@
                      }
  
                      this.onBlockStateChange(p_46605_, blockstate, blockstate1);
@@ -324,7 +339,7 @@
              }
          }
      }
-@@ -300,6 +_,7 @@
+@@ -301,6 +_,7 @@
      }
  
      public void updateNeighborsAt(BlockPos p_46673_, Block p_46674_) {
@@ -332,7 +347,7 @@
      }
  
      public void updateNeighborsAtExceptFromFacing(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
-@@ -339,6 +_,14 @@
+@@ -340,6 +_,14 @@
  
      @Override
      public BlockState getBlockState(BlockPos p_46732_) {
@@ -347,7 +362,27 @@
          if (this.isOutsideBuildHeight(p_46732_)) {
              return Blocks.VOID_AIR.defaultBlockState();
          } else {
-@@ -474,10 +_,30 @@
+@@ -424,19 +_,6 @@
+         this.playSeededSound(p_46543_, p_46544_, p_46545_, p_46546_, p_46547_, p_46548_, p_46549_, p_46550_, this.threadSafeRandom.nextLong());
+     }
+ 
+-    public void playSound(
+-        @Nullable Player p_345448_,
+-        double p_343911_,
+-        double p_342136_,
+-        double p_343905_,
+-        Holder<SoundEvent> p_343950_,
+-        SoundSource p_345316_,
+-        float p_344093_,
+-        float p_343901_
+-    ) {
+-        this.playSeededSound(p_345448_, p_343911_, p_342136_, p_343905_, p_343950_, p_345316_, p_344093_, p_343901_, this.threadSafeRandom.nextLong());
+-    }
+-
+     public void playSound(@Nullable Player p_46551_, Entity p_46552_, SoundEvent p_46553_, SoundSource p_46554_, float p_46555_, float p_46556_) {
+         this.playSeededSound(p_46551_, p_46552_, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(p_46553_), p_46554_, p_46555_, p_46556_, this.threadSafeRandom.nextLong());
+     }
+@@ -488,10 +_,30 @@
          (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
      }
  
@@ -378,7 +413,7 @@
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
              this.pendingBlockEntityTickers.clear();
-@@ -497,16 +_,24 @@
+@@ -511,16 +_,24 @@
  
          this.tickingBlockEntities = false;
          profilerfiller.pop();
@@ -403,14 +438,15 @@
          }
      }
  
-@@ -655,25 +_,29 @@
+@@ -669,25 +_,29 @@
          Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
 -            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
 +            case MOB -> net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
-             case BLOW -> Explosion.BlockInteraction.TRIGGER_BLOCK;
+-            case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
++            case BLOW -> Explosion.BlockInteraction.TRIGGER_BLOCK;
 +            case STANDARD -> Explosion.BlockInteraction.DESTROY;
          };
          Explosion explosion = new Explosion(
@@ -447,7 +483,7 @@
          explosion.explode();
          explosion.finalizeExplosion(p_309655_);
          return explosion;
-@@ -688,6 +_,16 @@
+@@ -702,6 +_,16 @@
      @Nullable
      @Override
      public BlockEntity getBlockEntity(BlockPos p_46716_) {
@@ -464,7 +500,7 @@
          if (this.isOutsideBuildHeight(p_46716_)) {
              return null;
          } else {
-@@ -700,6 +_,12 @@
+@@ -714,6 +_,12 @@
      public void setBlockEntity(BlockEntity p_151524_) {
          BlockPos blockpos = p_151524_.getBlockPos();
          if (!this.isOutsideBuildHeight(blockpos)) {
@@ -477,7 +513,7 @@
              this.getChunkAt(blockpos).addAndRegisterBlockEntity(p_151524_);
          }
      }
-@@ -708,6 +_,7 @@
+@@ -722,6 +_,7 @@
          if (!this.isOutsideBuildHeight(p_46748_)) {
              this.getChunkAt(p_46748_).removeBlockEntity(p_46748_);
          }
@@ -485,7 +521,7 @@
      }
  
      public boolean isLoaded(BlockPos p_46750_) {
-@@ -784,8 +_,8 @@
+@@ -798,8 +_,8 @@
                  list.add(p_151522_);
              }
  
@@ -496,7 +532,7 @@
                      if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
                          list.add(enderdragonpart);
                      }
-@@ -818,8 +_,8 @@
+@@ -832,8 +_,8 @@
                  }
              }
  
@@ -507,7 +543,7 @@
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
-@@ -958,16 +_,15 @@
+@@ -972,16 +_,15 @@
      public abstract Scoreboard getScoreboard();
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
@@ -528,7 +564,7 @@
                          this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                      }
                  }
-@@ -1061,7 +_,7 @@
+@@ -1075,7 +_,7 @@
          return this.isDebug;
      }
  
@@ -537,10 +573,29 @@
  
      @Override
      public long nextSubTickCount() {
-@@ -1079,11 +_,75 @@
+@@ -1093,23 +_,75 @@
  
      public abstract PotionBrewing potionBrewing();
  
+-    public static enum ExplosionInteraction implements StringRepresentable {
+-        NONE("none"),
+-        BLOCK("block"),
+-        MOB("mob"),
+-        TNT("tnt"),
+-        TRIGGER("trigger");
+-
+-        public static final Codec<Level.ExplosionInteraction> CODEC = StringRepresentable.fromEnum(Level.ExplosionInteraction::values);
+-        private final String id;
+-
+-        private ExplosionInteraction(String p_344888_) {
+-            this.id = p_344888_;
+-        }
+-
+-        @Override
+-        public String getSerializedName() {
+-            return this.id;
+-        }
+-    }
 +    private double maxEntityRadius = 2.0D;
 +
 +    @Override
@@ -555,13 +610,11 @@
 +        return maxEntityRadius;
 +    }
 +
-     public static enum ExplosionInteraction {
-         NONE,
-         BLOCK,
-         MOB,
-         TNT,
--        BLOW;
--    }
++    public static enum ExplosionInteraction {
++        NONE,
++        BLOCK,
++        MOB,
++        TNT,
 +        BLOW,
 +        STANDARD; // CraftBukkit - Add STANDARD which will always use Explosion.Effect.DESTROY
 +    }

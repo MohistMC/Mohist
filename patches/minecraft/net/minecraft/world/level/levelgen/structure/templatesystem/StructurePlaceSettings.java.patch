@@ -1,7 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings.java
-@@ -21,7 +_,7 @@
-     private boolean keepLiquids = true;
+@@ -18,10 +_,10 @@
+     private boolean ignoreEntities;
+     @Nullable
+     private BoundingBox boundingBox;
+-    private LiquidSettings liquidSettings = LiquidSettings.APPLY_WATERLOGGING;
++    private boolean keepLiquids = true;
      @Nullable
      private RandomSource random;
 -    private int palette;
@@ -9,3 +13,34 @@
      private final List<StructureProcessor> processors = Lists.newArrayList();
      private boolean knownShape;
      private boolean finalizeEntities;
+@@ -33,7 +_,7 @@
+         structureplacesettings.rotationPivot = this.rotationPivot;
+         structureplacesettings.ignoreEntities = this.ignoreEntities;
+         structureplacesettings.boundingBox = this.boundingBox;
+-        structureplacesettings.liquidSettings = this.liquidSettings;
++        structureplacesettings.keepLiquids = this.keepLiquids;
+         structureplacesettings.random = this.random;
+         structureplacesettings.palette = this.palette;
+         structureplacesettings.processors.addAll(this.processors);
+@@ -72,8 +_,8 @@
+         return this;
+     }
+ 
+-    public StructurePlaceSettings setLiquidSettings(LiquidSettings p_343019_) {
+-        this.liquidSettings = p_343019_;
++    public StructurePlaceSettings setKeepLiquids(boolean p_163783_) {
++        this.keepLiquids = p_163783_;
+         return this;
+     }
+ 
+@@ -134,8 +_,8 @@
+         return this.processors;
+     }
+ 
+-    public boolean shouldApplyWaterlogging() {
+-        return this.liquidSettings == LiquidSettings.APPLY_WATERLOGGING;
++    public boolean shouldKeepLiquids() {
++        return this.keepLiquids;
+     }
+ 
+     public StructureTemplate.Palette getRandomPalette(List<StructureTemplate.Palette> p_74388_, @Nullable BlockPos p_74389_) {

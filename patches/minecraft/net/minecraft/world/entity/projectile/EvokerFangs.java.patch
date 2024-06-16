@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/entity/projectile/EvokerFangs.java
 +++ b/net/minecraft/world/entity/projectile/EvokerFangs.java
-@@ -12,12 +_,13 @@
- import net.minecraft.world.entity.LivingEntity;
+@@ -14,12 +_,13 @@
  import net.minecraft.world.entity.TraceableEntity;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.Level;
 +import org.bukkit.event.entity.EntityRemoveEvent;
  
@@ -15,7 +15,7 @@
      private boolean sentSpikeEvent;
      private int lifeTicks = 22;
      private boolean clientSideAttackStarted;
-@@ -106,6 +_,7 @@
+@@ -108,6 +_,7 @@
              }
  
              if (--this.lifeTicks < 0) {
@@ -23,7 +23,7 @@
                  this.discard();
              }
          }
-@@ -115,7 +_,7 @@
+@@ -117,7 +_,7 @@
          LivingEntity livingentity = this.getOwner();
          if (p_36945_.isAlive() && !p_36945_.isInvulnerable() && p_36945_ != livingentity) {
              if (livingentity == null) {

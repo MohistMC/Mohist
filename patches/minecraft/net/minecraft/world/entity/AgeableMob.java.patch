@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
-@@ -19,12 +_,12 @@
+@@ -19,6 +_,7 @@
      protected int age;
      protected int forcedAge;
      protected int forcedAgeTimer;
@@ -8,12 +8,6 @@
  
      protected AgeableMob(EntityType<? extends AgeableMob> p_146738_, Level p_146739_) {
          super(p_146738_, p_146739_);
-     }
- 
--    @Override
-     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_) {
-         if (p_146749_ == null) {
-             p_146749_ = new AgeableMob.AgeableMobGroupData(true);
 @@ -101,6 +_,7 @@
          super.addAdditionalSaveData(p_146761_);
          p_146761_.putInt("Age", this.getAge());

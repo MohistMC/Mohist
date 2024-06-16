@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -33,11 +_,13 @@
+@@ -34,11 +_,13 @@
  import net.minecraft.world.SimpleContainer;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
@@ -14,7 +14,7 @@
  import net.minecraft.world.entity.ai.Brain;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
-@@ -114,6 +_,7 @@
+@@ -116,6 +_,7 @@
      private float dancingAnimationTicks;
      private float spinningAnimationTicks;
      private float spinningAnimationTicks0;
@@ -22,7 +22,7 @@
  
      public Allay(EntityType<? extends Allay> p_218310_, Level p_218311_) {
          super(p_218310_, p_218311_);
-@@ -125,7 +_,13 @@
+@@ -127,7 +_,13 @@
          this.dynamicJukeboxListener = new DynamicGameEventListener<>(new Allay.JukeboxListener(this.vibrationUser.getPositionSource(), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
      }
  
@@ -37,7 +37,7 @@
      protected Brain.Provider<Allay> brainProvider() {
          return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
      }
-@@ -241,7 +_,7 @@
+@@ -243,7 +_,7 @@
      public void aiStep() {
          super.aiStep();
          if (!this.level().isClientSide && this.isAlive() && this.tickCount % 10 == 0) {
@@ -46,7 +46,7 @@
          }
  
          if (this.isDancing() && this.shouldStopDancing() && this.tickCount % 20 == 0) {
-@@ -309,7 +_,12 @@
+@@ -311,7 +_,12 @@
          ItemStack itemstack = p_218361_.getItemInHand(p_218362_);
          ItemStack itemstack1 = this.getItemInHand(InteractionHand.MAIN_HAND);
          if (this.isDancing() && this.isDuplicationItem(itemstack) && this.canDuplicate()) {
@@ -60,7 +60,7 @@
              this.level().broadcastEntityEvent(this, (byte)18);
              this.level().playSound(p_218361_, this, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.NEUTRAL, 2.0F, 1.0F);
              this.removeInteractionItem(p_218361_, itemstack);
-@@ -363,10 +_,7 @@
+@@ -365,10 +_,7 @@
      @Override
      public boolean wantsToPickUp(ItemStack p_218387_) {
          ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
@@ -72,20 +72,15 @@
      }
  
      private boolean allayConsidersItemEqual(ItemStack p_252278_, ItemStack p_250405_) {
-@@ -414,9 +_,10 @@
+@@ -416,6 +_,7 @@
      }
  
      private boolean shouldStopDancing() {
 +      if (this.forceDancing) {return false;} // CraftBukkit
          return this.jukeboxPos == null
--            || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.value().notificationRadius())
--            || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
-+                || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.value().notificationRadius())
-+                || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
-     }
- 
-     public float getHoldingItemAnimationProgress(float p_218395_) {
-@@ -499,25 +_,35 @@
+             || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.value().notificationRadius())
+             || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
+@@ -503,25 +_,35 @@
          return DUPLICATION_ITEM.test(p_239736_);
      }
  

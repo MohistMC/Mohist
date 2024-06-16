@@ -1,6 +1,22 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -86,7 +_,7 @@
+@@ -34,6 +_,7 @@
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.AgeableMob;
+ import net.minecraft.world.entity.Crackiness;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.EquipmentSlot;
+ import net.minecraft.world.entity.LivingEntity;
+@@ -53,6 +_,7 @@
+ import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
+ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
++import net.minecraft.world.entity.ai.goal.PanicGoal;
+ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+@@ -87,7 +_,7 @@
  import net.minecraft.world.level.pathfinder.PathType;
  import net.minecraft.world.phys.Vec3;
  
@@ -9,7 +25,7 @@
      private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Integer> DATA_COLLAR_COLOR = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.INT);
-@@ -450,16 +_,11 @@
+@@ -448,16 +_,11 @@
                          this.setBodyArmorItem(itemstack.copyWithCount(1));
                          itemstack.consume(1, p_30412_);
                          return InteractionResult.SUCCESS;
@@ -17,7 +33,7 @@
 +                    } else if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST)
                          && this.isOwnedBy(p_30412_)
                          && this.hasArmor()
-                         && (!EnchantmentHelper.hasBindingCurse(this.getBodyArmorItem()) || p_30412_.isCreative())) {
+                         && (!EnchantmentHelper.has(this.getBodyArmorItem(), EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) || p_30412_.isCreative())) {
 -                        itemstack.hurtAndBreak(1, p_30412_, getSlotForHand(p_30413_));
 -                        this.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
 -                        ItemStack itemstack1 = this.getBodyArmorItem();
@@ -28,7 +44,7 @@
                      } else if (ArmorMaterials.ARMADILLO.value().repairIngredient().get().test(itemstack)
                          && this.isInSittingPose()
                          && this.hasArmor()
-@@ -498,7 +_,7 @@
+@@ -496,7 +_,7 @@
      }
  
      private void tryToTame(Player p_336244_) {
@@ -37,8 +53,8 @@
              this.tame(p_336244_);
              this.navigation.stop();
              this.setTarget(null);
-@@ -578,7 +_,7 @@
-         return !this.getBodyArmorItem().isEmpty();
+@@ -576,7 +_,7 @@
+         return this.getBodyArmorItem().is(Items.WOLF_ARMOR);
      }
  
 -    private void setCollarColor(DyeColor p_30398_) {
@@ -46,7 +62,7 @@
          this.entityData.set(DATA_COLLAR_COLOR, p_30398_.getId());
      }
  
-@@ -650,6 +_,24 @@
+@@ -648,6 +_,24 @@
  
              return true;
          }
@@ -60,7 +76,7 @@
 +    @Override
 +    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 +        if (!this.hasArmor() || (player != null && !this.isOwnedBy(player)) ||
-+                (EnchantmentHelper.hasBindingCurse(this.getBodyArmorItem()) && (player == null || !player.isCreative()))
++            (EnchantmentHelper.has(this.getBodyArmorItem(), EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) && (player == null || !player.isCreative()))
 +        )
 +            return java.util.Collections.emptyList();
 +

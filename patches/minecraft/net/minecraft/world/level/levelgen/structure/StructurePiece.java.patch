@@ -9,7 +9,17 @@
          .add(Blocks.NETHER_BRICK_FENCE)
          .add(Blocks.TORCH)
          .add(Blocks.WALL_TORCH)
-@@ -92,6 +_,9 @@
+@@ -74,7 +_,8 @@
+             p_209999_.getInt("GD"),
+             BoundingBox.CODEC
+                 .parse(NbtOps.INSTANCE, p_209999_.get("BB"))
+-                .getOrThrow(p_341911_ -> new IllegalArgumentException("Invalid boundingbox: " + p_341911_))
++                .resultOrPartial(LOGGER::error)
++                .orElseThrow(() -> new IllegalArgumentException("Invalid boundingbox"))
+         );
+         int i = p_209999_.getInt("O");
+         this.setOrientation(i == -1 ? null : Direction.from2DDataValue(i));
+@@ -91,6 +_,9 @@
      }
  
      public final CompoundTag createTag(StructurePieceSerializationContext p_192645_) {

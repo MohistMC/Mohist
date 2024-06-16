@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
+@@ -81,8 +_,10 @@
+ import net.minecraft.world.item.component.ItemContainerContents;
+ import net.minecraft.world.item.component.TooltipProvider;
+ import net.minecraft.world.item.context.UseOnContext;
++import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
+ import net.minecraft.world.item.enchantment.Enchantment;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
++import net.minecraft.world.item.enchantment.Enchantments;
+ import net.minecraft.world.item.enchantment.ItemEnchantments;
+ import net.minecraft.world.level.ItemLike;
+ import net.minecraft.world.level.Level;
 @@ -92,7 +_,7 @@
  import org.apache.commons.lang3.mutable.MutableBoolean;
  import org.slf4j.Logger;
@@ -18,7 +29,7 @@
      final PatchedDataComponentMap components;
      @Nullable
      private Entity entityRepresentation;
-@@ -335,13 +_,22 @@
+@@ -347,13 +_,22 @@
      }
  
      public InteractionResult useOn(UseOnContext p_41662_) {
@@ -42,18 +53,22 @@
              if (player != null && interactionresult.indicateItemUse()) {
                  player.awardStat(Stats.ITEM_USED.get(item));
              }
-@@ -447,6 +_,10 @@
-             }
- 
-             this.hurtAndBreak(p_41623_, p_41624_.getRandom(), p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null, () -> {
-+                if (p_41624_ instanceof Player player) {
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
-+                    player.stopUsingItem(); // Forge: fix MC-168573
+@@ -453,7 +_,13 @@
+                 p_41623_,
+                 serverlevel,
+                 p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null,
+-                p_341563_ -> p_41624_.onEquippedItemBroken(p_341563_, p_335324_)
++                p_341563_ -> {
++                    if (p_41624_ instanceof Player player) {
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
++                        player.stopUsingItem(); // Forge: fix MC-168573
++                    }
++                    p_41624_.onEquippedItemBroken(p_341563_, p_335324_);
 +                }
-                 p_41624_.broadcastBreakEvent(p_335324_);
-                 Item item = this.getItem();
-                 this.shrink(1);
-@@ -635,6 +_,12 @@
+             );
+         }
+     }
+@@ -657,6 +_,12 @@
          return this.getItem().useOnRelease(this);
      }
  
@@ -66,7 +81,7 @@
      @Nullable
      public <T> T set(DataComponentType<? super T> p_332666_, @Nullable T p_335655_) {
          return this.components.set(p_332666_, p_335655_);
-@@ -757,6 +_,8 @@
+@@ -780,6 +_,8 @@
                  list.add(DISABLED_ITEM_TOOLTIP);
              }
  
@@ -75,7 +90,7 @@
              return list;
          }
      }
-@@ -970,6 +_,7 @@
+@@ -1011,6 +_,7 @@
          this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
      }
  
@@ -83,12 +98,3 @@
      public void onDestroyed(ItemEntity p_150925_) {
          this.getItem().onDestroyed(p_150925_);
      }
-@@ -988,5 +_,8 @@
- 
-     public boolean canBeHurtBy(DamageSource p_334859_) {
-         return !this.has(DataComponents.FIRE_RESISTANT) || !p_334859_.is(DamageTypeTags.IS_FIRE);
-+    }
-+
-+    public void setItem(Item bucket) {
-     }
- }

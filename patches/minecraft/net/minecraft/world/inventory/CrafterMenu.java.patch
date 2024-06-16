@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/inventory/CrafterMenu.java
 +++ b/net/minecraft/world/inventory/CrafterMenu.java
-@@ -8,6 +_,8 @@
+@@ -5,10 +_,11 @@
+ import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+-import net.minecraft.world.item.crafting.CraftingInput;
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.CrafterBlock;
@@ -9,7 +13,7 @@
  
  public class CrafterMenu extends AbstractContainerMenu implements ContainerListener {
      protected static final int SLOT_COUNT = 9;
-@@ -20,6 +_,21 @@
+@@ -21,6 +_,21 @@
      private final Player player;
      private final CraftingContainer container;
  
@@ -31,7 +35,7 @@
      public CrafterMenu(int p_310742_, Inventory p_312080_) {
          super(MenuType.CRAFTER_3x3, p_310742_);
          this.player = p_312080_.player;
-@@ -109,6 +_,7 @@
+@@ -110,6 +_,7 @@
  
      @Override
      public boolean stillValid(Player p_309546_) {

@@ -7,9 +7,9 @@
 +import com.mojang.authlib.GameProfile;
 +import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
+ import net.minecraft.network.DisconnectionDetails;
  import net.minecraft.network.chat.Component;
- import net.minecraft.network.protocol.ping.ClientboundPongResponsePacket;
-@@ -8,16 +_,29 @@
+@@ -9,16 +_,29 @@
  import net.minecraft.network.protocol.status.ServerStatus;
  import net.minecraft.network.protocol.status.ServerStatusPacketListener;
  import net.minecraft.network.protocol.status.ServerboundStatusRequestPacket;
@@ -39,7 +39,7 @@
      }
  
      @Override
-@@ -35,9 +_,45 @@
+@@ -36,9 +_,45 @@
              this.connection.disconnect(DISCONNECT_REASON);
          } else {
              this.hasRequestedStatus = true;

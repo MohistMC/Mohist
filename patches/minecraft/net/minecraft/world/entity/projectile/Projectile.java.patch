@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -23,6 +_,7 @@
+@@ -27,6 +_,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -8,9 +8,15 @@
  
  public abstract class Projectile extends Entity implements TraceableEntity {
      @Nullable
-@@ -32,6 +_,10 @@
+@@ -34,10 +_,14 @@
+     @Nullable
+     private Entity cachedOwner;
      private boolean leftOwner;
-     private boolean hasBeenShot;
+-    private boolean hasBeenShot;
+-    @Nullable
++    private boolean hasBeenShot;    
++	@Nullable
+     private Entity lastDeflectedBy;
  
 +   	// CraftBukkit start
 +   	private boolean hitCancelled = false;
@@ -19,7 +25,7 @@
      protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {
          super(p_37248_, p_37249_);
      }
-@@ -41,7 +_,9 @@
+@@ -47,7 +_,9 @@
              this.ownerUUID = p_37263_.getUUID();
              this.cachedOwner = p_37263_;
          }
@@ -30,7 +36,7 @@
  
      @Nullable
      @Override
-@@ -154,6 +_,17 @@
+@@ -161,6 +_,17 @@
          this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0 : vec3.y, vec3.z));
      }
  
@@ -48,7 +54,7 @@
      protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult p_329816_) {
          if (p_329816_.getType() == HitResult.Type.ENTITY) {
              EntityHitResult entityhitresult = (EntityHitResult)p_329816_;
-@@ -202,6 +_,11 @@
+@@ -215,6 +_,11 @@
      }
  
      protected void onHitBlock(BlockHitResult p_37258_) {
@@ -60,7 +66,7 @@
          BlockState blockstate = this.level().getBlockState(p_37258_.getBlockPos());
          blockstate.onProjectileHit(this.level(), blockstate, p_37258_, this);
      }
-@@ -265,7 +_,7 @@
+@@ -278,7 +_,7 @@
      @Override
      public boolean mayInteract(Level p_150167_, BlockPos p_150168_) {
          Entity entity = this.getOwner();

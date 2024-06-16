@@ -1,0 +1,42 @@
+--- a/net/minecraft/world/level/levelgen/structure/pools/LegacySinglePoolElement.java
++++ b/net/minecraft/world/level/levelgen/structure/pools/LegacySinglePoolElement.java
+@@ -4,34 +_,29 @@
+ import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+-import java.util.Optional;
+ import net.minecraft.core.Holder;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.level.block.Rotation;
+ import net.minecraft.world.level.levelgen.structure.BoundingBox;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
+-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+ 
+ public class LegacySinglePoolElement extends SinglePoolElement {
+     public static final MapCodec<LegacySinglePoolElement> CODEC = RecordCodecBuilder.mapCodec(
+-        p_341931_ -> p_341931_.group(templateCodec(), processorsCodec(), projectionCodec(), overrideLiquidSettingsCodec()).apply(p_341931_, LegacySinglePoolElement::new)
++        p_210357_ -> p_210357_.group(templateCodec(), processorsCodec(), projectionCodec()).apply(p_210357_, LegacySinglePoolElement::new)
+     );
+ 
+     protected LegacySinglePoolElement(
+-        Either<ResourceLocation, StructureTemplate> p_210348_,
+-        Holder<StructureProcessorList> p_210349_,
+-        StructureTemplatePool.Projection p_210350_,
+-        Optional<LiquidSettings> p_343388_
++        Either<ResourceLocation, StructureTemplate> p_210348_, Holder<StructureProcessorList> p_210349_, StructureTemplatePool.Projection p_210350_
+     ) {
+-        super(p_210348_, p_210349_, p_210350_, p_343388_);
++        super(p_210348_, p_210349_, p_210350_);
+     }
+ 
+     @Override
+-    protected StructurePlaceSettings getSettings(Rotation p_210353_, BoundingBox p_210354_, LiquidSettings p_345475_, boolean p_210355_) {
+-        StructurePlaceSettings structureplacesettings = super.getSettings(p_210353_, p_210354_, p_345475_, p_210355_);
++    protected StructurePlaceSettings getSettings(Rotation p_210353_, BoundingBox p_210354_, boolean p_210355_) {
++        StructurePlaceSettings structureplacesettings = super.getSettings(p_210353_, p_210354_, p_210355_);
+         structureplacesettings.popProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK);
+         structureplacesettings.addProcessor(BlockIgnoreProcessor.STRUCTURE_AND_AIR);
+         return structureplacesettings;

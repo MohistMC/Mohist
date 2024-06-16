@@ -17,7 +17,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
-@@ -37,45 +_,76 @@
+@@ -37,39 +_,66 @@
      private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
      private static final Logger LOGGER = LogUtils.getLogger();
      private final HolderLookup.Provider registries;
@@ -33,7 +33,7 @@
 +    }
 +
 +    public RecipeManager(HolderLookup.Provider p_330459_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-         super(GSON, "recipes");
+         super(GSON, Registries.elementsDirPath(Registries.RECIPE));
          this.registries = p_330459_;
 +        this.context = context;
      }
@@ -89,32 +89,7 @@
      public boolean hadErrorsLoading() {
          return this.hasErrors;
      }
- 
-     public <C extends Container, T extends Recipe<C>> Optional<RecipeHolder<T>> getRecipeFor(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
--        return this.byType(p_44016_).stream().filter(p_296918_ -> p_296918_.value().matches(p_44017_, p_44018_)).findFirst();
-+        List<RecipeHolder<T>> list = this.byType(p_44016_).stream().filter(p_296918_ -> p_296918_.value().matches(p_44017_, p_44018_)).toList();
-+        Optional<RecipeHolder<T>> recipe = (list.isEmpty()) ? Optional.empty() : Optional.of(list.getLast()); // CraftBukkit - SPIGOT-4638: last recipe gets priority
-+        p_44017_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
-+        return recipe;
-+        // CraftBukkit end
-     }
- 
-     public <C extends Container, T extends Recipe<C>> Optional<RecipeHolder<T>> getRecipeFor(
-@@ -88,7 +_,12 @@
-             }
-         }
- 
--        return this.byType(p_220249_).stream().filter(p_296912_ -> p_296912_.value().matches(p_220250_, p_220251_)).findFirst();
-+        // CraftBukkit start
-+        List<RecipeHolder<T>> list = this.byType(p_220249_).stream().filter(p_296912_ -> p_296912_.value().matches(p_220250_, p_220251_)).toList();
-+        Optional<RecipeHolder<T>> recipe = (list.isEmpty()) ? Optional.empty() : Optional.of(list.getLast()); // CraftBukkit - SPIGOT-4638: last recipe gets priority
-+        p_220250_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
-+        return recipe;
-+        // CraftBukkit end
-     }
- 
-     public <C extends Container, T extends Recipe<C>> List<RecipeHolder<T>> getAllRecipesFor(RecipeType<T> p_44014_) {
-@@ -161,9 +_,28 @@
+@@ -167,9 +_,28 @@
              builder1.put(recipeholder.id(), recipeholder);
          }
  
@@ -144,5 +119,5 @@
 +    }
 +    // CraftBukkit end
  
-     public static <C extends Container, T extends Recipe<C>> RecipeManager.CachedCheck<C, T> createCheck(final RecipeType<T> p_220268_) {
-         return new RecipeManager.CachedCheck<C, T>() {
+     public static <I extends RecipeInput, T extends Recipe<I>> RecipeManager.CachedCheck<I, T> createCheck(final RecipeType<T> p_220268_) {
+         return new RecipeManager.CachedCheck<I, T>() {

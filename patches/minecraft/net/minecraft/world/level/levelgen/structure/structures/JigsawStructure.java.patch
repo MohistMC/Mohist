@@ -1,0 +1,95 @@
+--- a/net/minecraft/world/level/levelgen/structure/structures/JigsawStructure.java
++++ b/net/minecraft/world/level/levelgen/structure/structures/JigsawStructure.java
+@@ -16,16 +_,12 @@
+ import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
+ import net.minecraft.world.level.levelgen.structure.Structure;
+ import net.minecraft.world.level.levelgen.structure.StructureType;
+-import net.minecraft.world.level.levelgen.structure.pools.DimensionPadding;
+ import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
+ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+ import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasBinding;
+ import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
+-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
+ 
+ public final class JigsawStructure extends Structure {
+-    public static final DimensionPadding DEFAULT_DIMENSION_PADDING = DimensionPadding.ZERO;
+-    public static final LiquidSettings DEFAULT_LIQUID_SETTINGS = LiquidSettings.APPLY_WATERLOGGING;
+     public static final int MAX_TOTAL_STRUCTURE_RANGE = 128;
+     public static final int MIN_DEPTH = 0;
+     public static final int MAX_DEPTH = 20;
+@@ -39,9 +_,7 @@
+                         Codec.BOOL.fieldOf("use_expansion_hack").forGetter(p_227646_ -> p_227646_.useExpansionHack),
+                         Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(p_227644_ -> p_227644_.projectStartToHeightmap),
+                         Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(p_227642_ -> p_227642_.maxDistanceFromCenter),
+-                        Codec.list(PoolAliasBinding.CODEC).optionalFieldOf("pool_aliases", List.of()).forGetter(p_309350_ -> p_309350_.poolAliases),
+-                        DimensionPadding.CODEC.optionalFieldOf("dimension_padding", DEFAULT_DIMENSION_PADDING).forGetter(p_341952_ -> p_341952_.dimensionPadding),
+-                        LiquidSettings.CODEC.optionalFieldOf("liquid_settings", DEFAULT_LIQUID_SETTINGS).forGetter(p_341953_ -> p_341953_.liquidSettings)
++                        Codec.list(PoolAliasBinding.CODEC).optionalFieldOf("pool_aliases", List.of()).forGetter(p_309350_ -> p_309350_.poolAliases)
+                     )
+                     .apply(p_227640_, JigsawStructure::new)
+         )
+@@ -54,8 +_,6 @@
+     private final Optional<Heightmap.Types> projectStartToHeightmap;
+     private final int maxDistanceFromCenter;
+     private final List<PoolAliasBinding> poolAliases;
+-    private final DimensionPadding dimensionPadding;
+-    private final LiquidSettings liquidSettings;
+ 
+     private static DataResult<JigsawStructure> verifyRange(JigsawStructure p_286886_) {
+         int i = switch (p_286886_.terrainAdaptation()) {
+@@ -76,9 +_,7 @@
+         boolean p_227632_,
+         Optional<Heightmap.Types> p_227633_,
+         int p_227634_,
+-        List<PoolAliasBinding> p_312703_,
+-        DimensionPadding p_344382_,
+-        LiquidSettings p_344801_
++        List<PoolAliasBinding> p_312703_
+     ) {
+         super(p_227627_);
+         this.startPool = p_227628_;
+@@ -89,8 +_,6 @@
+         this.projectStartToHeightmap = p_227633_;
+         this.maxDistanceFromCenter = p_227634_;
+         this.poolAliases = p_312703_;
+-        this.dimensionPadding = p_344382_;
+-        this.liquidSettings = p_344801_;
+     }
+ 
+     public JigsawStructure(
+@@ -101,13 +_,13 @@
+         boolean p_227624_,
+         Heightmap.Types p_227625_
+     ) {
+-        this(p_227620_, p_227621_, Optional.empty(), p_227622_, p_227623_, p_227624_, Optional.of(p_227625_), 80, List.of(), DEFAULT_DIMENSION_PADDING, DEFAULT_LIQUID_SETTINGS);
++        this(p_227620_, p_227621_, Optional.empty(), p_227622_, p_227623_, p_227624_, Optional.of(p_227625_), 80, List.of());
+     }
+ 
+     public JigsawStructure(
+         Structure.StructureSettings p_227614_, Holder<StructureTemplatePool> p_227615_, int p_227616_, HeightProvider p_227617_, boolean p_227618_
+     ) {
+-        this(p_227614_, p_227615_, Optional.empty(), p_227616_, p_227617_, p_227618_, Optional.empty(), 80, List.of(), DEFAULT_DIMENSION_PADDING, DEFAULT_LIQUID_SETTINGS);
++        this(p_227614_, p_227615_, Optional.empty(), p_227616_, p_227617_, p_227618_, Optional.empty(), 80, List.of());
+     }
+ 
+     @Override
+@@ -124,14 +_,16 @@
+             this.useExpansionHack,
+             this.projectStartToHeightmap,
+             this.maxDistanceFromCenter,
+-            PoolAliasLookup.create(this.poolAliases, blockpos, p_227636_.seed()),
+-            this.dimensionPadding,
+-            this.liquidSettings
++            PoolAliasLookup.create(this.poolAliases, blockpos, p_227636_.seed())
+         );
+     }
+ 
+     @Override
+     public StructureType<?> type() {
+         return StructureType.JIGSAW;
++    }
++
++    public List<PoolAliasBinding> getPoolAliases() {
++        return this.poolAliases;
+     }
+ }

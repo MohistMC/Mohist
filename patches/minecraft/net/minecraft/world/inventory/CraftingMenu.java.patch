@@ -1,17 +1,10 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
-@@ -1,7 +_,8 @@
- package net.minecraft.world.inventory;
- 
- import java.util.Optional;
--import net.minecraft.core.BlockPos;
-+
-+import com.mohistmc.mohist.plugins.ban.bans.BanItem;
- import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.world.Container;
-@@ -13,8 +_,13 @@
- import net.minecraft.world.item.crafting.Recipe;
+@@ -12,10 +_,16 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.crafting.CraftingInput;
+ import net.minecraft.world.item.crafting.CraftingRecipe;
++import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.crafting.RecipeType;
 +import net.minecraft.world.item.crafting.RepairItemRecipe;
@@ -22,9 +15,9 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.spigotmc.AsyncCatcher;
  
- public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
+ public class CraftingMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
      public static final int RESULT_SLOT = 0;
-@@ -24,10 +_,24 @@
+@@ -25,11 +_,24 @@
      private static final int INV_SLOT_END = 37;
      private static final int USE_ROW_SLOT_START = 37;
      private static final int USE_ROW_SLOT_END = 46;
@@ -32,6 +25,7 @@
 -    public final ResultContainer resultSlots = new ResultContainer();
 -    public final ContainerLevelAccess access;
 -    private final Player player;
+-    private boolean placingRecipe;
 +   	public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
 +   	public final ResultContainer resultSlots = new ResultContainer();
 +   	public final ContainerLevelAccess access;
@@ -53,7 +47,7 @@
  
      public CraftingMenu(int p_39353_, Inventory p_39354_) {
          this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
-@@ -37,6 +_,8 @@
+@@ -39,6 +_,8 @@
          super(MenuType.CRAFTING, p_39356_);
          this.access = p_39358_;
          this.player = p_39357_.player;
@@ -62,10 +56,10 @@
          this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
  
          for (int i = 0; i < 3; i++) {
-@@ -66,12 +_,17 @@
+@@ -78,12 +_,17 @@
                  CraftingRecipe craftingrecipe = recipeholder.value();
                  if (p_150551_.setRecipeUsed(p_150548_, serverplayer, recipeholder)) {
-                     ItemStack itemstack1 = craftingrecipe.assemble(p_150550_, p_150548_.registryAccess());
+                     ItemStack itemstack1 = craftingrecipe.assemble(craftinginput, p_150548_.registryAccess());
 -                    if (itemstack1.isItemEnabled(p_150548_.enabledFeatures())) {
 -                        itemstack = itemstack1;
 -                    }
@@ -85,7 +79,7 @@
              p_150551_.setItem(0, itemstack);
              p_150547_.setRemoteSlot(0, itemstack);
              serverplayer.connection.send(new ClientboundContainerSetSlotPacket(p_150547_.containerId, p_150547_.incrementStateId(), 0, itemstack));
-@@ -107,6 +_,7 @@
+@@ -132,6 +_,7 @@
  
      @Override
      public boolean stillValid(Player p_39368_) {

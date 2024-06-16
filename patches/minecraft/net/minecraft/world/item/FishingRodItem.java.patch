@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/FishingRodItem.java
 +++ b/net/minecraft/world/item/FishingRodItem.java
-@@ -11,6 +_,8 @@
+@@ -12,6 +_,8 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -9,7 +9,7 @@
  
  public class FishingRodItem extends Item {
      public FishingRodItem(Item.Properties p_41285_) {
-@@ -23,7 +_,11 @@
+@@ -24,7 +_,11 @@
          if (p_41291_.fishing != null) {
              if (!p_41290_.isClientSide) {
                  int i = p_41291_.fishing.retrieve(itemstack);
@@ -21,27 +21,27 @@
              }
  
              p_41290_.playSound(
-@@ -51,7 +_,18 @@
-             if (!p_41290_.isClientSide) {
-                 int k = EnchantmentHelper.getFishingSpeedBonus(itemstack);
-                 int j = EnchantmentHelper.getFishingLuckBonus(itemstack);
--                p_41290_.addFreshEntity(new FishingHook(p_41291_, p_41290_, j, k));
-+            // CraftBukkit start
-+            FishingHook entityfishinghook = new FishingHook(p_41291_, p_41290_, j, k);
-+            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) p_41291_.getBukkitEntity(), null, (org.bukkit.entity.FishHook) entityfishinghook.getBukkitEntity(), CraftEquipmentSlot.getHand(p_41292_), PlayerFishEvent.State.FISHING);
-+            p_41290_.getCraftServer().getPluginManager().callEvent(playerFishEvent);
+@@ -52,7 +_,18 @@
+             if (p_41290_ instanceof ServerLevel serverlevel) {
+                 int j = (int)(EnchantmentHelper.getFishingTimeReduction(serverlevel, itemstack, p_41291_) * 20.0F);
+                 int k = EnchantmentHelper.getFishingLuckBonus(serverlevel, itemstack, p_41291_);
+-                p_41290_.addFreshEntity(new FishingHook(p_41291_, p_41290_, k, j));
++                // CraftBukkit start
++                FishingHook entityfishinghook = new FishingHook(p_41291_, p_41290_, k, j);
++                PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) p_41291_.getBukkitEntity(), null, (org.bukkit.entity.FishHook) entityfishinghook.getBukkitEntity(), CraftEquipmentSlot.getHand(p_41292_), PlayerFishEvent.State.FISHING);
++                p_41290_.getCraftServer().getPluginManager().callEvent(playerFishEvent);
 +
-+            if (playerFishEvent.isCancelled()) {
-+               p_41291_.fishing = null;
-+               return InteractionResultHolder.pass(itemstack);
-+            }
-+            p_41290_.playSound((Player)null, p_41291_.getX(), p_41291_.getY(), p_41291_.getZ(), SoundEvents.FISHING_BOBBER_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F));
-+            p_41290_.addFreshEntity(entityfishinghook);
-+            // CraftBukkit end
++                if (playerFishEvent.isCancelled()) {
++                    p_41291_.fishing = null;
++                    return InteractionResultHolder.pass(itemstack);
++                }
++                p_41290_.playSound((Player) null, p_41291_.getX(), p_41291_.getY(), p_41291_.getZ(), SoundEvents.FISHING_BOBBER_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F));
++                p_41290_.addFreshEntity(entityfishinghook);
++                // CraftBukkit end
              }
  
              p_41291_.awardStat(Stats.ITEM_USED.get(this));
-@@ -64,5 +_,10 @@
+@@ -65,5 +_,10 @@
      @Override
      public int getEnchantmentValue() {
          return 1;

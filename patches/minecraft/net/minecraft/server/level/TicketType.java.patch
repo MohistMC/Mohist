@@ -14,7 +14,7 @@
      public static final TicketType<Unit> START = create("start", (p_9471_, p_9472_) -> 0);
      public static final TicketType<Unit> DRAGON = create("dragon", (p_9460_, p_9461_) -> 0);
      public static final TicketType<ChunkPos> PLAYER = create("player", Comparator.comparingLong(ChunkPos::toLong));
-@@ -18,6 +_,9 @@
+@@ -17,6 +_,9 @@
      public static final TicketType<BlockPos> PORTAL = create("portal", Vec3i::compareTo, 300);
      public static final TicketType<Integer> POST_TELEPORT = create("post_teleport", Integer::compareTo, 5);
      public static final TicketType<ChunkPos> UNKNOWN = create("unknown", Comparator.comparingLong(ChunkPos::toLong), 1);

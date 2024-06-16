@@ -12,6 +12,6 @@
      default InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {
          ItemStack itemstack = p_270300_.getItemInHand(p_270262_);
 +      	if (BanItem.check(p_270300_, itemstack)) return InteractionResultHolder.fail(itemstack);
-         EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(itemstack);
+         EquipmentSlot equipmentslot = p_270300_.getEquipmentSlotForItem(itemstack);
          if (!p_270300_.canUseSlot(equipmentslot)) {
              return InteractionResultHolder.pass(itemstack);

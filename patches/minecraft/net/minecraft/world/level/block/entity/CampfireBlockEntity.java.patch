@@ -1,6 +1,23 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -29,6 +_,11 @@
+@@ -14,20 +_,26 @@
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.Clearable;
++import net.minecraft.world.Container;
+ import net.minecraft.world.ContainerHelper;
+ import net.minecraft.world.Containers;
+-import net.minecraft.world.entity.LivingEntity;
++import net.minecraft.world.SimpleContainer;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.component.ItemContainerContents;
+ import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+ import net.minecraft.world.item.crafting.RecipeHolder;
+ import net.minecraft.world.item.crafting.RecipeManager;
+ import net.minecraft.world.item.crafting.RecipeType;
+-import net.minecraft.world.item.crafting.SingleRecipeInput;
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.CampfireBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -12,7 +29,16 @@
  
  public class CampfireBlockEntity extends BlockEntity implements Clearable {
      private static final int BURN_COOL_SPEED = 2;
-@@ -46,25 +_,38 @@
+@@ -35,7 +_,7 @@
+     private final NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
+     public final int[] cookingProgress = new int[4];
+     public final int[] cookingTime = new int[4];
+-    private final RecipeManager.CachedCheck<SingleRecipeInput, CampfireCookingRecipe> quickCheck = RecipeManager.createCheck(RecipeType.CAMPFIRE_COOKING);
++    private final RecipeManager.CachedCheck<Container, CampfireCookingRecipe> quickCheck = RecipeManager.createCheck(RecipeType.CAMPFIRE_COOKING);
+ 
+     public CampfireBlockEntity(BlockPos p_155301_, BlockState p_155302_) {
+         super(BlockEntityType.CAMPFIRE, p_155301_, p_155302_);
+@@ -45,25 +_,38 @@
          boolean flag = false;
  
          for (int i = 0; i < p_155310_.items.size(); i++) {
@@ -21,10 +47,10 @@
 -                flag = true;
 -                p_155310_.cookingProgress[i]++;
 -                if (p_155310_.cookingProgress[i] >= p_155310_.cookingTime[i]) {
--                    Container container = new SimpleContainer(itemstack);
+-                    SingleRecipeInput singlerecipeinput = new SingleRecipeInput(itemstack);
 -                    ItemStack itemstack1 = p_155310_.quickCheck
--                        .getRecipeFor(container, p_155307_)
--                        .map(p_327303_ -> p_327303_.value().assemble(container, p_155307_.registryAccess()))
+-                        .getRecipeFor(singlerecipeinput, p_155307_)
+-                        .map(p_341839_ -> p_341839_.value().assemble(singlerecipeinput, p_155307_.registryAccess()))
 -                        .orElse(itemstack);
 -                    if (itemstack1.isItemEnabled(p_155307_.enabledFeatures())) {
 -                        Containers.dropItemStack(p_155307_, (double)p_155308_.getX(), (double)p_155308_.getY(), (double)p_155308_.getZ(), itemstack1);
@@ -69,7 +95,16 @@
  
          if (flag) {
              setChanged(p_155307_, p_155308_, p_155309_);
-@@ -166,7 +_,11 @@
+@@ -158,17 +_,21 @@
+     public Optional<RecipeHolder<CampfireCookingRecipe>> getCookableRecipe(ItemStack p_59052_) {
+         return this.items.stream().noneMatch(ItemStack::isEmpty)
+             ? Optional.empty()
+-            : this.quickCheck.getRecipeFor(new SingleRecipeInput(p_59052_), this.level);
++            : this.quickCheck.getRecipeFor(new SimpleContainer(p_59052_), this.level);
+     }
+ 
+-    public boolean placeFood(@Nullable LivingEntity p_344627_, ItemStack p_238286_, int p_238287_) {
++    public boolean placeFood(@Nullable Entity p_238285_, ItemStack p_238286_, int p_238287_) {
          for (int i = 0; i < this.items.size(); i++) {
              ItemStack itemstack = this.items.get(i);
              if (itemstack.isEmpty()) {
@@ -80,5 +115,10 @@
 +            this.cookingTime[i] = event.getTotalCookTime(); // i -> event.getTotalCookTime()
 +            // CraftBukkit end
                  this.cookingProgress[i] = 0;
-                 this.items.set(i, p_238286_.split(1));
-                 this.level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(p_238285_, this.getBlockState()));
+-                this.items.set(i, p_238286_.consumeAndReturn(1, p_344627_));
+-                this.level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(p_344627_, this.getBlockState()));
++                this.items.set(i, p_238286_.split(1));
++                this.level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(p_238285_, this.getBlockState()));
+                 this.markUpdated();
+                 return true;
+             }

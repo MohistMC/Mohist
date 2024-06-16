@@ -1,14 +1,32 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -9,6 +_,7 @@
+@@ -3,13 +_,13 @@
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.Iterables;
+ import com.google.common.collect.Maps;
++import com.mojang.datafixers.util.Either;
+ import java.util.Arrays;
+-import java.util.HashSet;
+ import java.util.List;
  import java.util.Map;
+-import java.util.Objects;
  import java.util.Optional;
- import java.util.UUID;
+-import java.util.Set;
++import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
-@@ -30,6 +_,7 @@
+@@ -22,6 +_,8 @@
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.FloatTag;
+ import net.minecraft.nbt.ListTag;
++import net.minecraft.nbt.NbtUtils;
++import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
+ import net.minecraft.network.protocol.game.DebugPackets;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+@@ -29,6 +_,7 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
@@ -16,7 +34,34 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.Mth;
-@@ -85,6 +_,16 @@
+@@ -39,7 +_,6 @@
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.damagesource.DamageSource;
+-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+@@ -53,6 +_,8 @@
+ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+ import net.minecraft.world.entity.ai.navigation.PathNavigation;
+ import net.minecraft.world.entity.ai.sensing.Sensing;
++import net.minecraft.world.entity.decoration.HangingEntity;
++import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.monster.Enemy;
+ import net.minecraft.world.entity.player.Player;
+@@ -69,9 +_,7 @@
+ import net.minecraft.world.item.SpawnEggItem;
+ import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.component.ItemAttributeModifiers;
+-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+-import net.minecraft.world.item.enchantment.providers.VanillaEnchantmentProviders;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+@@ -85,8 +_,18 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
@@ -31,9 +76,26 @@
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
  
- public abstract class Mob extends LivingEntity implements EquipmentUser, Targeting {
+-public abstract class Mob extends LivingEntity implements EquipmentUser, Leashable, Targeting {
++public abstract class Mob extends LivingEntity implements EquipmentUser, Targeting {
      private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
-@@ -121,7 +_,7 @@
+     private static final int MOB_FLAG_NO_AI = 1;
+     private static final int MOB_FLAG_LEFTHANDED = 2;
+@@ -97,12 +_,11 @@
+     public static final float MAX_PICKUP_LOOT_CHANCE = 0.55F;
+     public static final float MAX_ENCHANTED_ARMOR_CHANCE = 0.5F;
+     public static final float MAX_ENCHANTED_WEAPON_CHANCE = 0.25F;
++    public static final String LEASH_TAG = "leash";
+     public static final float DEFAULT_EQUIPMENT_DROP_CHANCE = 0.085F;
+-    public static final float PRESERVE_ITEM_DROP_CHANCE_THRESHOLD = 1.0F;
+     public static final int PRESERVE_ITEM_DROP_CHANCE = 2;
+     public static final int UPDATE_GOAL_SELECTOR_EVERY_N_TICKS = 2;
+     private static final double DEFAULT_ATTACK_REACH = Math.sqrt(2.04F) - 0.6F;
+-    protected static final ResourceLocation RANDOM_SPAWN_BONUS_ID = ResourceLocation.withDefaultNamespace("random_spawn_bonus");
+     public int ambientSoundTime;
+     protected int xpReward;
+     protected LookControl lookControl;
+@@ -122,15 +_,22 @@
      private ItemStack bodyArmorItem = ItemStack.EMPTY;
      protected float bodyArmorDropChance;
      private boolean canPickUpLoot;
@@ -42,8 +104,13 @@
      private final Map<PathType, Float> pathfindingMalus = Maps.newEnumMap(PathType.class);
      @Nullable
      public ResourceKey<LootTable> lootTable;
-@@ -133,6 +_,10 @@
-     private Either<UUID, BlockPos> delayedLeashInfo;
+     public long lootTableSeed;
+     @Nullable
+-    private Leashable.LeashData leashData;
++    private Entity leashHolder;
++    private int delayedLeashHolderId;
++    @Nullable
++    private Either<UUID, BlockPos> delayedLeashInfo;
      private BlockPos restrictCenter = BlockPos.ZERO;
      private float restrictRadius = -1.0F;
 +    @Nullable
@@ -53,7 +120,16 @@
  
      protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
          super(p_21368_, p_21369_);
-@@ -239,8 +_,26 @@
+@@ -154,7 +_,7 @@
+     }
+ 
+     public static AttributeSupplier.Builder createMobAttributes() {
+-        return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0);
++        return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0).add(Attributes.ATTACK_KNOCKBACK);
+     }
+ 
+     protected PathNavigation createNavigation(Level p_21480_) {
+@@ -237,8 +_,26 @@
      }
  
      public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -81,7 +157,30 @@
  
      @Override
      public boolean canAttackType(EntityType<?> p_21399_) {
-@@ -372,6 +_,11 @@
+@@ -290,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected int getBaseExperienceReward() {
++    public int getExperienceReward() {
+         if (this.xpReward > 0) {
+             int i = this.xpReward;
+ 
+@@ -343,8 +_,11 @@
+     @Override
+     public void tick() {
+         super.tick();
+-        if (!this.level().isClientSide && this.tickCount % 5 == 0) {
+-            this.updateControlFlags();
++        if (!this.level().isClientSide) {
++            this.tickLeash();
++            if (this.tickCount % 5 == 0) {
++                this.updateControlFlags();
++            }
+         }
+     }
+ 
+@@ -367,6 +_,11 @@
          return null;
      }
  
@@ -93,7 +192,30 @@
      @Override
      public void addAdditionalSaveData(CompoundTag p_21484_) {
          super.addAdditionalSaveData(p_21484_);
-@@ -444,7 +_,13 @@
+@@ -413,7 +_,21 @@
+             p_21484_.putFloat("body_armor_drop_chance", this.bodyArmorDropChance);
+         }
+ 
+-        this.writeLeashData(p_21484_, this.leashData);
++        Either<UUID, BlockPos> either = this.delayedLeashInfo;
++        if (this.leashHolder instanceof LivingEntity) {
++            either = Either.left(this.leashHolder.getUUID());
++        } else if (this.leashHolder instanceof HangingEntity hangingentity) {
++            either = Either.right(hangingentity.getPos());
++        }
++
++        if (either != null) {
++            p_21484_.put("leash", either.map(p_326785_ -> {
++                CompoundTag compoundtag = new CompoundTag();
++                compoundtag.putUUID("UUID", p_326785_);
++                return compoundtag;
++            }, NbtUtils::writeBlockPos));
++        }
++
+         p_21484_.putBoolean("LeftHanded", this.isLeftHanded());
+         if (this.lootTable != null) {
+             p_21484_.putString("DeathLootTable", this.lootTable.location().toString());
+@@ -425,7 +_,13 @@
          if (this.isNoAi()) {
              p_21484_.putBoolean("NoAI", this.isNoAi());
          }
@@ -108,7 +230,24 @@
  
      @Override
      public void readAdditionalSaveData(CompoundTag p_21450_) {
-@@ -510,6 +_,19 @@
+@@ -476,14 +_,34 @@
+             this.bodyArmorItem = ItemStack.EMPTY;
+         }
+ 
+-        this.leashData = this.readLeashData(p_21450_);
++        if (p_21450_.contains("leash", 10)) {
++            this.delayedLeashInfo = Either.left(p_21450_.getCompound("leash").getUUID("UUID"));
++        } else if (p_21450_.contains("leash", 11)) {
++            this.delayedLeashInfo = NbtUtils.readBlockPos(p_21450_, "leash").<Either<UUID, BlockPos>>map(Either::right).orElse(null);
++        } else {
++            this.delayedLeashInfo = null;
++        }
++
+         this.setLeftHanded(p_21450_.getBoolean("LeftHanded"));
+         if (p_21450_.contains("DeathLootTable", 8)) {
+-            this.lootTable = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(p_21450_.getString("DeathLootTable")));
++            this.lootTable = ResourceKey.create(Registries.LOOT_TABLE, new ResourceLocation(p_21450_.getString("DeathLootTable")));
+             this.lootTableSeed = p_21450_.getLong("DeathLootTableSeed");
          }
  
          this.setNoAi(p_21450_.getBoolean("NoAI"));
@@ -128,7 +267,7 @@
      }
  
      @Override
-@@ -561,7 +_,7 @@
+@@ -535,7 +_,7 @@
      public void aiStep() {
          super.aiStep();
          this.level().getProfiler().push("looting");
@@ -137,7 +276,7 @@
              Vec3i vec3i = this.getPickupReach();
  
              for (ItemEntity itementity : this.level()
-@@ -581,45 +_,63 @@
+@@ -555,40 +_,63 @@
  
      protected void pickUpItem(ItemEntity p_21471_) {
          ItemStack itemstack = p_21471_.getItem();
@@ -154,7 +293,7 @@
 -    }
 -
 -    public ItemStack equipItemIfPossible(ItemStack p_255842_) {
--        EquipmentSlot equipmentslot = getEquipmentSlotForItem(p_255842_);
+-        EquipmentSlot equipmentslot = this.getEquipmentSlotForItem(p_255842_);
 -        ItemStack itemstack = this.getItemBySlot(equipmentslot);
 -        boolean flag = this.canReplaceCurrentItem(p_255842_, itemstack);
 -        if (equipmentslot.isArmor() && !flag) {
@@ -169,18 +308,7 @@
 -                this.spawnAtLocation(itemstack);
 -            }
 -
--            if (equipmentslot.isArmor() && p_255842_.getCount() > 1) {
--                ItemStack itemstack1 = p_255842_.copyWithCount(1);
--                this.setItemSlotAndDropWhenKilled(equipmentslot, itemstack1);
--                return itemstack1;
--            } else {
--                this.setItemSlotAndDropWhenKilled(equipmentslot, p_255842_);
--                return p_255842_;
--            }
--        } else {
--            return ItemStack.EMPTY;
--        }
--    }
+-            ItemStack itemstack1 = equipmentslot.limit(p_255842_);
 +            p_21471_.putRemoveCause(Cause.PICKUP); // CraftBukkit - add Bukkit remove cause
 +            p_21471_.discard();
 +         }
@@ -216,8 +344,12 @@
 +
 +         if (equipmentslot.isArmor() && p_255842_.getCount() > 1) {
 +            ItemStack itemstack1 = p_255842_.copyWithCount(1);
-+            this.setItemSlotAndDropWhenKilled(equipmentslot, itemstack1);
-+            return itemstack1;
+             this.setItemSlotAndDropWhenKilled(equipmentslot, itemstack1);
+             return itemstack1;
+-        } else {
+-            return ItemStack.EMPTY;
+-        }
+-    }
 +         } else {
 +            this.setItemSlotAndDropWhenKilled(equipmentslot, p_255842_);
 +            return p_255842_;
@@ -234,7 +366,29 @@
  
      protected void setItemSlotAndDropWhenKilled(EquipmentSlot p_21469_, ItemStack p_21470_) {
          this.setItemSlot(p_21469_, p_21470_);
-@@ -730,17 +_,27 @@
+@@ -601,10 +_,10 @@
+             case HAND:
+                 this.handDropChances[p_21509_.getIndex()] = 2.0F;
+                 break;
+-            case HUMANOID_ARMOR:
++            case ARMOR:
+                 this.armorDropChances[p_21509_.getIndex()] = 2.0F;
+                 break;
+-            case ANIMAL_ARMOR:
++            case BODY:
+                 this.bodyArmorDropChance = 2.0F;
+         }
+     }
+@@ -625,7 +_,7 @@
+         } else if (p_21428_.getItem() instanceof CrossbowItem && p_21429_.getItem() instanceof CrossbowItem) {
+             return this.canReplaceEqualItem(p_21428_, p_21429_);
+         } else if (p_21428_.getItem() instanceof ArmorItem armoritem) {
+-            if (EnchantmentHelper.has(p_21429_, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) {
++            if (EnchantmentHelper.hasBindingCurse(p_21429_)) {
+                 return false;
+             } else if (!(p_21429_.getItem() instanceof ArmorItem)) {
+                 return true;
+@@ -699,17 +_,27 @@
              this.discard();
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity entity = this.level().getNearestPlayer(this, -1.0);
@@ -262,10 +416,194 @@
                      this.discard();
                  } else if (d0 < (double)l) {
                      this.noActionTime = 0;
-@@ -1127,6 +_,16 @@
+@@ -872,9 +_,13 @@
+         return this.bodyArmorItem;
+     }
+ 
++    public boolean canWearBodyArmor() {
++        return false;
++    }
++
+     @Override
+     public boolean canUseSlot(EquipmentSlot p_334488_) {
+-        return p_334488_ != EquipmentSlot.BODY;
++        return true;
+     }
+ 
+     public boolean isWearingBodyArmor() {
+@@ -898,8 +_,8 @@
+     public ItemStack getItemBySlot(EquipmentSlot p_21467_) {
+         return switch (p_21467_.getType()) {
+             case HAND -> (ItemStack)this.handItems.get(p_21467_.getIndex());
+-            case HUMANOID_ARMOR -> (ItemStack)this.armorItems.get(p_21467_.getIndex());
+-            case ANIMAL_ARMOR -> this.bodyArmorItem;
++            case ARMOR -> (ItemStack)this.armorItems.get(p_21467_.getIndex());
++            case BODY -> this.bodyArmorItem;
+         };
+     }
+ 
+@@ -910,10 +_,10 @@
+             case HAND:
+                 this.onEquipItem(p_21416_, this.handItems.set(p_21416_.getIndex(), p_21417_), p_21417_);
+                 break;
+-            case HUMANOID_ARMOR:
++            case ARMOR:
+                 this.onEquipItem(p_21416_, this.armorItems.set(p_21416_.getIndex(), p_21417_), p_21417_);
+                 break;
+-            case ANIMAL_ARMOR:
++            case BODY:
+                 ItemStack itemstack = this.bodyArmorItem;
+                 this.bodyArmorItem = p_21417_;
+                 this.onEquipItem(p_21416_, itemstack, p_21417_);
+@@ -921,33 +_,23 @@
+     }
+ 
+     @Override
+-    protected void dropCustomDeathLoot(ServerLevel p_345102_, DamageSource p_21385_, boolean p_21387_) {
+-        super.dropCustomDeathLoot(p_345102_, p_21385_, p_21387_);
++    protected void dropCustomDeathLoot(DamageSource p_21385_, int p_21386_, boolean p_21387_) {
++        super.dropCustomDeathLoot(p_21385_, p_21386_, p_21387_);
+ 
+         for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+             ItemStack itemstack = this.getItemBySlot(equipmentslot);
+             float f = this.getEquipmentDropChance(equipmentslot);
+-            if (f != 0.0F) {
+-                boolean flag = f > 1.0F;
+-                Entity entity = p_21385_.getEntity();
+-                if (entity instanceof LivingEntity) {
+-                    LivingEntity livingentity = (LivingEntity)entity;
+-                    if (this.level() instanceof ServerLevel serverlevel) {
+-                        f = EnchantmentHelper.processEquipmentDropChance(serverlevel, livingentity, p_21385_, f);
+-                    }
+-                }
+-
+-                if (!itemstack.isEmpty()
+-                    && !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)
+-                    && (p_21387_ || flag)
+-                    && this.random.nextFloat() < f) {
+-                    if (!flag && itemstack.isDamageableItem()) {
+-                        itemstack.setDamageValue(itemstack.getMaxDamage() - this.random.nextInt(1 + this.random.nextInt(Math.max(itemstack.getMaxDamage() - 3, 1))));
+-                    }
+-
+-                    this.spawnAtLocation(itemstack);
+-                    this.setItemSlot(equipmentslot, ItemStack.EMPTY);
+-                }
++            boolean flag = f > 1.0F;
++            if (!itemstack.isEmpty()
++                && !EnchantmentHelper.hasVanishingCurse(itemstack)
++                && (p_21387_ || flag)
++                && Math.max(this.random.nextFloat() - (float)p_21386_ * 0.01F, 0.0F) < f) {
++                if (!flag && itemstack.isDamageableItem()) {
++                    itemstack.setDamageValue(itemstack.getMaxDamage() - this.random.nextInt(1 + this.random.nextInt(Math.max(itemstack.getMaxDamage() - 3, 1))));
++                }
++
++                this.spawnAtLocation(itemstack);
++                this.setItemSlot(equipmentslot, ItemStack.EMPTY);
+             }
+         }
+     }
+@@ -955,34 +_,9 @@
+     protected float getEquipmentDropChance(EquipmentSlot p_21520_) {
+         return switch (p_21520_.getType()) {
+             case HAND -> this.handDropChances[p_21520_.getIndex()];
+-            case HUMANOID_ARMOR -> this.armorDropChances[p_21520_.getIndex()];
+-            case ANIMAL_ARMOR -> this.bodyArmorDropChance;
++            case ARMOR -> this.armorDropChances[p_21520_.getIndex()];
++            case BODY -> this.bodyArmorDropChance;
+         };
+-    }
+-
+-    public void dropPreservedEquipment() {
+-        this.dropPreservedEquipment(p_343352_ -> true);
+-    }
+-
+-    public Set<EquipmentSlot> dropPreservedEquipment(Predicate<ItemStack> p_343102_) {
+-        Set<EquipmentSlot> set = new HashSet<>();
+-
+-        for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+-            ItemStack itemstack = this.getItemBySlot(equipmentslot);
+-            if (!itemstack.isEmpty()) {
+-                if (!p_343102_.test(itemstack)) {
+-                    set.add(equipmentslot);
+-                } else {
+-                    double d0 = (double)this.getEquipmentDropChance(equipmentslot);
+-                    if (d0 > 1.0) {
+-                        this.setItemSlot(equipmentslot, ItemStack.EMPTY);
+-                        this.spawnAtLocation(itemstack);
+-                    }
+-                }
+-            }
+-        }
+-
+-        return set;
+     }
+ 
+     private LootParams createEquipmentParams(ServerLevel p_331909_) {
+@@ -1021,7 +_,7 @@
+             boolean flag = true;
+ 
+             for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+-                if (equipmentslot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
++                if (equipmentslot.getType() == EquipmentSlot.Type.ARMOR) {
+                     ItemStack itemstack = this.getItemBySlot(equipmentslot);
+                     if (!flag && p_217055_.nextFloat() < f) {
+                         break;
+@@ -1095,43 +_,57 @@
          }
      }
  
+-    protected void populateDefaultEquipmentEnchantments(ServerLevelAccessor p_344674_, RandomSource p_217063_, DifficultyInstance p_217064_) {
+-        this.enchantSpawnedWeapon(p_344674_, p_217063_, p_217064_);
++    protected void populateDefaultEquipmentEnchantments(RandomSource p_217063_, DifficultyInstance p_217064_) {
++        float f = p_217064_.getSpecialMultiplier();
++        this.enchantSpawnedWeapon(p_217063_, f);
+ 
+         for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+-            if (equipmentslot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+-                this.enchantSpawnedArmor(p_344674_, p_217063_, equipmentslot, p_217064_);
++            if (equipmentslot.getType() == EquipmentSlot.Type.ARMOR) {
++                this.enchantSpawnedArmor(p_217063_, f, equipmentslot);
+             }
+         }
+     }
+ 
+-    protected void enchantSpawnedWeapon(ServerLevelAccessor p_344989_, RandomSource p_217049_, DifficultyInstance p_344491_) {
+-        this.enchantSpawnedEquipment(p_344989_, EquipmentSlot.MAINHAND, p_217049_, 0.25F, p_344491_);
+-    }
+-
+-    protected void enchantSpawnedArmor(ServerLevelAccessor p_342770_, RandomSource p_217052_, EquipmentSlot p_217054_, DifficultyInstance p_342649_) {
+-        this.enchantSpawnedEquipment(p_342770_, p_217054_, p_217052_, 0.5F, p_342649_);
+-    }
+-
+-    private void enchantSpawnedEquipment(ServerLevelAccessor p_342440_, EquipmentSlot p_344135_, RandomSource p_344290_, float p_343248_, DifficultyInstance p_345046_) {
+-        ItemStack itemstack = this.getItemBySlot(p_344135_);
+-        if (!itemstack.isEmpty() && p_344290_.nextFloat() < p_343248_ * p_345046_.getSpecialMultiplier()) {
+-            EnchantmentHelper.enchantItemFromProvider(itemstack, p_342440_.registryAccess(), VanillaEnchantmentProviders.MOB_SPAWN_EQUIPMENT, p_345046_, p_344290_);
+-            this.setItemSlot(p_344135_, itemstack);
+-        }
+-    }
+-
++    protected void enchantSpawnedWeapon(RandomSource p_217049_, float p_217050_) {
++        if (!this.getMainHandItem().isEmpty() && p_217049_.nextFloat() < 0.25F * p_217050_) {
++            this.setItemSlot(
++                EquipmentSlot.MAINHAND,
++                EnchantmentHelper.enchantItem(
++                    this.level().enabledFeatures(), p_217049_, this.getMainHandItem(), (int)(5.0F + p_217050_ * (float)p_217049_.nextInt(18)), false
++                )
++            );
++        }
++    }
++
++    protected void enchantSpawnedArmor(RandomSource p_217052_, float p_217053_, EquipmentSlot p_217054_) {
++        ItemStack itemstack = this.getItemBySlot(p_217054_);
++        if (!itemstack.isEmpty() && p_217052_.nextFloat() < 0.5F * p_217053_) {
++            this.setItemSlot(
++                p_217054_,
++                EnchantmentHelper.enchantItem(this.level().enabledFeatures(), p_217052_, itemstack, (int)(5.0F + p_217053_ * (float)p_217052_.nextInt(18)), false)
++            );
++        }
++    }
++
 +    /**
 +     * Forge: Override-Only, call via ForgeEventFactory.onFinalizeSpawn.<br>
 +     * Overrides are allowed. Do not wrap super calls within override (as that will cause stack overflows).<br>
@@ -279,15 +617,22 @@
      @Nullable
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_) {
          RandomSource randomsource = p_21434_.getRandom();
-@@ -1135,6 +_,7 @@
-                 new AttributeModifier("Random spawn bonus", randomsource.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
+-        AttributeInstance attributeinstance = Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE));
+-        if (!attributeinstance.hasModifier(RANDOM_SPAWN_BONUS_ID)) {
+-            attributeinstance.addPermanentModifier(
+-                new AttributeModifier(RANDOM_SPAWN_BONUS_ID, randomsource.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
++        this.getAttribute(Attributes.FOLLOW_RANGE)
++            .addPermanentModifier(
++                new AttributeModifier("Random spawn bonus", randomsource.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
              );
+-        }
+-
          this.setLeftHanded(randomsource.nextFloat() < 0.05F);
 +        this.spawnType = p_21436_;
          return p_21437_;
      }
  
-@@ -1142,6 +_,11 @@
+@@ -1139,16 +_,21 @@
          this.persistenceRequired = true;
      }
  
@@ -299,33 +644,122 @@
      @Override
      public void setDropChance(EquipmentSlot p_21410_, float p_21411_) {
          switch (p_21410_.getType()) {
-@@ -1179,6 +_,12 @@
+             case HAND:
+                 this.handDropChances[p_21410_.getIndex()] = p_21411_;
+                 break;
+-            case HUMANOID_ARMOR:
++            case ARMOR:
+                 this.armorDropChances[p_21410_.getIndex()] = p_21411_;
+                 break;
+-            case ANIMAL_ARMOR:
++            case BODY:
+                 this.bodyArmorDropChance = p_21411_;
+         }
+     }
+@@ -1163,7 +_,7 @@
+ 
+     @Override
+     public boolean canTakeItem(ItemStack p_21522_) {
+-        EquipmentSlot equipmentslot = this.getEquipmentSlotForItem(p_21522_);
++        EquipmentSlot equipmentslot = getEquipmentSlotForItem(p_21522_);
+         return this.getItemBySlot(equipmentslot).isEmpty() && this.canPickUpLoot();
+     }
+ 
+@@ -1175,23 +_,28 @@
+     public final InteractionResult interact(Player p_21420_, InteractionHand p_21421_) {
          if (!this.isAlive()) {
              return InteractionResult.PASS;
-         } else if (this.getLeashHolder() == p_21420_) {
++        } else if (this.getLeashHolder() == p_21420_) {
 +         // CraftBukkit start - fire PlayerUnleashEntityEvent
 +         if (CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
 +            ((ServerPlayer) p_21420_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
 +            return InteractionResult.PASS;
 +         }
 +         // CraftBukkit end
-             this.dropLeash(true, !p_21420_.hasInfiniteMaterials());
-             this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
-             return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1202,6 +_,12 @@
++            this.dropLeash(true, !p_21420_.hasInfiniteMaterials());
++            this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
++            return InteractionResult.sidedSuccess(this.level().isClientSide);
+         } else {
+             InteractionResult interactionresult = this.checkAndHandleImportantInteractions(p_21420_, p_21421_);
+             if (interactionresult.consumesAction()) {
+                 this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
+                 return interactionresult;
+             } else {
+-                InteractionResult interactionresult1 = super.interact(p_21420_, p_21421_);
+-                if (interactionresult1 != InteractionResult.PASS) {
+-                    return interactionresult1;
++                interactionresult = this.mobInteract(p_21420_, p_21421_);
++                if (interactionresult.consumesAction()) {
++                    this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
++                    return interactionresult;
+                 } else {
+-                    interactionresult = this.mobInteract(p_21420_, p_21421_);
+-                    if (interactionresult.consumesAction()) {
+-                        this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
+-                        return interactionresult;
+-                    } else {
+-                        return InteractionResult.PASS;
+-                    }
++                    return super.interact(p_21420_, p_21421_);
+                 }
+             }
+         }
+@@ -1199,26 +_,38 @@
+ 
      private InteractionResult checkAndHandleImportantInteractions(Player p_21500_, InteractionHand p_21501_) {
          ItemStack itemstack = p_21500_.getItemInHand(p_21501_);
-         if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
+-        if (itemstack.is(Items.NAME_TAG)) {
+-            InteractionResult interactionresult = itemstack.interactLivingEntity(p_21500_, this, p_21501_);
+-            if (interactionresult.consumesAction()) {
+-                return interactionresult;
++        if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
 +         // CraftBukkit start - fire PlayerLeashEntityEvent
 +         if (CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
 +            ((ServerPlayer) p_21500_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
 +            return InteractionResult.PASS;
 +         }
 +         // CraftBukkit end
-             this.setLeashedTo(p_21500_, true);
-             itemstack.shrink(1);
-             return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1300,6 +_,10 @@
++            this.setLeashedTo(p_21500_, true);
++            itemstack.shrink(1);
++            return InteractionResult.sidedSuccess(this.level().isClientSide);
++        } else {
++            if (itemstack.is(Items.NAME_TAG)) {
++                InteractionResult interactionresult = itemstack.interactLivingEntity(p_21500_, this, p_21501_);
++                if (interactionresult.consumesAction()) {
++                    return interactionresult;
++                }
+             }
+-        }
+ 
+-        if (itemstack.getItem() instanceof SpawnEggItem) {
+-            if (this.level() instanceof ServerLevel) {
+-                SpawnEggItem spawneggitem = (SpawnEggItem)itemstack.getItem();
+-                Optional<Mob> optional = spawneggitem.spawnOffspringFromSpawnEgg(
+-                    p_21500_, this, (EntityType<? extends Mob>)this.getType(), (ServerLevel)this.level(), this.position(), itemstack
+-                );
+-                optional.ifPresent(p_21476_ -> this.onOffspringSpawnedFromEgg(p_21500_, p_21476_));
+-                return optional.isPresent() ? InteractionResult.SUCCESS : InteractionResult.PASS;
++            if (itemstack.getItem() instanceof SpawnEggItem) {
++                if (this.level() instanceof ServerLevel) {
++                    SpawnEggItem spawneggitem = (SpawnEggItem)itemstack.getItem();
++                    Optional<Mob> optional = spawneggitem.spawnOffspringFromSpawnEgg(
++                        p_21500_, this, (EntityType<? extends Mob>)this.getType(), (ServerLevel)this.level(), this.position(), itemstack
++                    );
++                    optional.ifPresent(p_21476_ -> this.onOffspringSpawnedFromEgg(p_21500_, p_21476_));
++                    return optional.isPresent() ? InteractionResult.SUCCESS : InteractionResult.PASS;
++                } else {
++                    return InteractionResult.CONSUME;
++                }
+             } else {
+-                return InteractionResult.CONSUME;
++                return InteractionResult.PASS;
+             }
+-        } else {
+-            return InteractionResult.PASS;
+         }
+     }
+ 
+@@ -1292,6 +_,10 @@
                      }
                  }
  
@@ -336,10 +770,22 @@
                  this.level().addFreshEntity(t);
                  if (this.isPassenger()) {
                      Entity entity = this.getVehicle();
-@@ -1313,6 +_,19 @@
+@@ -1305,46 +_,121 @@
          }
      }
  
+-    @Nullable
+-    @Override
+-    public Leashable.LeashData getLeashData() {
+-        return this.leashData;
+-    }
+-
+-    @Override
+-    public void setLeashData(@Nullable Leashable.LeashData p_344337_) {
+-        this.leashData = p_344337_;
+-    }
+-
+-    @Override
 +   // Mohist start
 +   public AtomicReference<TransformReason> transformReason = new AtomicReference<>(EntityTransformEvent.TransformReason.UNKNOWN);
 +   public void transformReasonAndspawnReason(EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
@@ -353,23 +799,88 @@
 +   }
 +   // Mohist end
 +
-     protected void tickLeash() {
-         if (this.delayedLeashInfo != null) {
-             this.restoreLeashFromSave();
-@@ -1331,8 +_,10 @@
-             this.delayedLeashInfo = null;
++    protected void tickLeash() {
++        if (this.delayedLeashInfo != null) {
++            this.restoreLeashFromSave();
++        }
++
++        if (this.leashHolder != null) {
++            if (!this.isAlive() || !this.leashHolder.isAlive()) {
++                this.dropLeash(true, true);
++            }
++        }
++    }
++
+     public void dropLeash(boolean p_21456_, boolean p_21457_) {
+-        Leashable.super.dropLeash(p_21456_, p_21457_);
+-        if (this.getLeashData() == null) {
++        if (this.leashHolder != null) {
++            this.leashHolder = null;
++            this.delayedLeashInfo = null;
              this.clearRestriction();
-             if (!this.level().isClientSide && p_21457_) {
--                this.spawnAtLocation(Items.LEAD);
--            }
+-        }
+-    }
+-
+-    @Override
+-    public void leashTooFarBehaviour() {
+-        Leashable.super.leashTooFarBehaviour();
+-        this.goalSelector.disableControlFlag(Goal.Flag.MOVE);
+-    }
+-
+-    @Override
+-    public boolean canBeLeashed() {
+-        return !(this instanceof Enemy);
++            if (!this.level().isClientSide && p_21457_) {
 +            this.forceDrops = true; // CraftBukkit
 +            this.spawnAtLocation(Items.LEAD);
 +            this.forceDrops = false; // CraftBukkit
 +         }
++
++            if (!this.level().isClientSide && p_21456_ && this.level() instanceof ServerLevel) {
++                ((ServerLevel)this.level()).getChunkSource().broadcast(this, new ClientboundSetEntityLinkPacket(this, null));
++            }
++        }
++    }
++
++    public boolean canBeLeashed(Player p_21418_) {
++        return !this.isLeashed() && !(this instanceof Enemy);
++    }
++
++    public boolean isLeashed() {
++        return this.leashHolder != null;
++    }
++
++    public boolean mayBeLeashed() {
++        return this.isLeashed() || this.delayedLeashInfo != null;
++    }
++
++    @Nullable
++    public Entity getLeashHolder() {
++        if (this.leashHolder == null && this.delayedLeashHolderId != 0 && this.level().isClientSide) {
++            this.leashHolder = this.level().getEntity(this.delayedLeashHolderId);
++        }
++
++        return this.leashHolder;
++    }
++
++    public void setLeashedTo(Entity p_21464_, boolean p_21465_) {
++        this.leashHolder = p_21464_;
++        this.delayedLeashInfo = null;
++        if (!this.level().isClientSide && p_21465_ && this.level() instanceof ServerLevel) {
++            ((ServerLevel)this.level()).getChunkSource().broadcast(this, new ClientboundSetEntityLinkPacket(this, this.leashHolder));
++        }
++
++        if (this.isPassenger()) {
++            this.stopRiding();
++        }
++    }
++
++    public void setDelayedLeashHolderId(int p_21507_) {
++        this.delayedLeashHolderId = p_21507_;
++        this.dropLeash(false, false);
+     }
  
-             if (!this.level().isClientSide && p_21456_ && this.level() instanceof ServerLevel) {
-                 ((ServerLevel)this.level()).getChunkSource().broadcast(this, new ClientboundSetEntityLinkPacket(this, null));
-@@ -1382,6 +_,7 @@
+     @Override
      public boolean startRiding(Entity p_21396_, boolean p_21397_) {
          boolean flag = super.startRiding(p_21396_, p_21397_);
          if (flag && this.isLeashed()) {
@@ -377,36 +888,56 @@
              this.dropLeash(true, true);
          }
  
-@@ -1404,8 +_,10 @@
-             }
+         return flag;
+     }
  
-             if (this.tickCount > 100) {
--                this.spawnAtLocation(Items.LEAD);
--                this.delayedLeashInfo = null;
++    private void restoreLeashFromSave() {
++        if (this.delayedLeashInfo != null && this.level() instanceof ServerLevel serverlevel) {
++            Optional<UUID> optional1 = this.delayedLeashInfo.left();
++            Optional<BlockPos> optional = this.delayedLeashInfo.right();
++            if (optional1.isPresent()) {
++                Entity entity = serverlevel.getEntity(optional1.get());
++                if (entity != null) {
++                    this.setLeashedTo(entity, true);
++                    return;
++                }
++            } else if (optional.isPresent()) {
++                this.setLeashedTo(LeashFenceKnotEntity.getOrCreateKnot(this.level(), optional.get()), true);
++                return;
++            }
++
++            if (this.tickCount > 100) {
 +            	this.forceDrops = true; // CraftBukkit
 +            	this.spawnAtLocation(Items.LEAD);
 +            	this.forceDrops = false; // CraftBukkit
 +            	this.delayedLeashInfo = null;
-             }
-         }
-     }
-@@ -1477,27 +_,34 @@
++            }
++        }
++    }
++
+     @Override
+     public boolean isEffectiveAi() {
+         return super.isEffectiveAi() && !this.isNoAi();
+@@ -1412,36 +_,42 @@
  
      @Override
      public boolean doHurtTarget(Entity p_21372_) {
 -        float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
--        float f1 = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+-        DamageSource damagesource = this.damageSources().mobAttack(this);
+-        if (this.level() instanceof ServerLevel serverlevel) {
+-            f = EnchantmentHelper.modifyDamage(serverlevel, this.getWeaponItem(), p_21372_, damagesource, f);
+-        }
+-
+-        boolean flag = p_21372_.hurt(damagesource, f);
 +        float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
 +        float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-         if (p_21372_ instanceof LivingEntity) {
-             f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), p_21372_.getType());
--            f1 += (float)EnchantmentHelper.getKnockbackBonus(this);
++        if (p_21372_ instanceof LivingEntity) {
++            f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), p_21372_.getType());
 +            f1 += (float) EnchantmentHelper.getKnockbackBonus(this);
-         }
- 
-         int i = EnchantmentHelper.getFireAspect(this);
-         if (i > 0) {
--            p_21372_.igniteForSeconds(i * 4);
++        }
++
++        int i = EnchantmentHelper.getFireAspect(this);
++        if (i > 0) {
 +            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
 +            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_21372_.getBukkitEntity(), i * 4);
 +            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
@@ -415,17 +946,18 @@
 +                p_21372_.igniteForSeconds(combustEvent.getDuration(), false);
 +            }
 +            // CraftBukkit end
-         }
- 
-         boolean flag = p_21372_.hurt(this.damageSources().mobAttack(this), f);
++        }
++
++        boolean flag = p_21372_.hurt(this.damageSources().mobAttack(this), f);
          if (flag) {
-             if (f1 > 0.0F && p_21372_ instanceof LivingEntity) {
--                ((LivingEntity)p_21372_)
--                    .knockback(
--                        (double)(f1 * 0.5F),
--                        (double)Mth.sin(this.getYRot() * (float) (Math.PI / 180.0)),
--                        (double)(-Mth.cos(this.getYRot() * (float) (Math.PI / 180.0)))
--                    );
+-            float f1 = this.getKnockback(p_21372_, damagesource);
+-            if (f1 > 0.0F && p_21372_ instanceof LivingEntity livingentity) {
+-                livingentity.knockback(
+-                    (double)(f1 * 0.5F),
+-                    (double)Mth.sin(this.getYRot() * (float) (Math.PI / 180.0)),
+-                    (double)(-Mth.cos(this.getYRot() * (float) (Math.PI / 180.0)))
+-                );
++            if (f1 > 0.0F && p_21372_ instanceof LivingEntity) {
 +                ((LivingEntity) p_21372_)
 +                        .knockback(
 +                                (double) (f1 * 0.5F),
@@ -435,7 +967,23 @@
                  this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
              }
  
-@@ -1521,15 +_,25 @@
+-            if (this.level() instanceof ServerLevel serverlevel1) {
+-                EnchantmentHelper.doPostAttackEffects(serverlevel1, p_21372_, damagesource);
+-            }
+-
++            this.doEnchantDamageEffects(this, p_21372_);
+             this.setLastHurtMob(p_21372_);
+-            this.playAttackSound();
+         }
+ 
+         return flag;
+-    }
+-
+-    protected void playAttackSound() {
+     }
+ 
+     protected boolean isSunBurnTick() {
+@@ -1457,18 +_,28 @@
          return false;
      }
  
@@ -461,16 +1009,21 @@
 +
      @VisibleForTesting
      public void removeFreeWill() {
-         this.removeAllGoals(p_262562_ -> true);
-@@ -1543,6 +_,7 @@
+-        this.removeAllGoals(p_341273_ -> true);
++        this.removeAllGoals(p_262562_ -> true);
+         this.getBrain().removeAllBehaviors();
+     }
+ 
+@@ -1479,6 +_,8 @@
      @Override
      protected void removeAfterChangingDimensions() {
          super.removeAfterChangingDimensions();
 +      this.level.getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), UnleashReason.UNKNOWN)); // CraftBukkit
-         this.dropLeash(true, false);
++        this.dropLeash(true, false);
          this.getAllSlots().forEach(p_278936_ -> {
              if (!p_278936_.isEmpty()) {
-@@ -1556,5 +_,40 @@
+                 p_278936_.setCount(0);
+@@ -1491,5 +_,40 @@
      public ItemStack getPickResult() {
          SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
          return spawneggitem == null ? null : new ItemStack(spawneggitem);

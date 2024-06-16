@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -4,7 +_,6 @@
- import com.google.common.collect.ImmutableMap;
- import com.google.common.collect.Maps;
- import com.mojang.datafixers.util.Pair;
--import java.util.EnumMap;
- import java.util.List;
- import java.util.Map;
- import javax.annotation.Nullable;
 @@ -22,6 +_,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.tags.BlockTags;
@@ -64,7 +56,7 @@
  
      protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
          super(p_38087_, p_38088_);
-@@ -139,7 +_,7 @@
+@@ -139,11 +_,11 @@
  
      @Override
      public boolean isPushable() {
@@ -73,6 +65,11 @@
      }
  
      @Override
+-    public Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
++    protected Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
+         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_38132_, p_38133_));
+     }
+ 
 @@ -207,7 +_,55 @@
          }
      }
@@ -130,17 +127,10 @@
      protected float getBlockSpeedFactor() {
          BlockState blockstate = this.level().getBlockState(this.blockPosition());
          return blockstate.is(BlockTags.RAILS) ? 1.0F : super.getBlockSpeedFactor();
-@@ -234,13 +_,23 @@
+@@ -234,13 +_,30 @@
          return this.flipped ? this.getDirection().getOpposite().getClockWise() : this.getDirection().getClockWise();
      }
  
--    @Override
--    protected double getDefaultGravity() {
--        return this.isInWater() ? 0.005 : 0.04;
--    }
--
--    @Override
--    public void tick() {
 +   // Mohist start - Fix mixin (locals = LocalCapture.CAPTURE_FAILSOFT)
 +   double prevX;
 +   double prevY;
@@ -149,7 +139,15 @@
 +   float prevPitch;
 +   // Mohist end
 +
-+   public void tick() {
++
+     @Override
+     protected double getDefaultGravity() {
+         return this.isInWater() ? 0.005 : 0.04;
+     }
+ 
+     @Override
+-    public void tick() {
++	public void tick() {
 +      // CraftBukkit start
 +      prevX = this.getX();
 +      prevY = this.getY();
@@ -165,7 +163,7 @@
          }
  
          this.checkBelowWorld();
--        this.handleNetherPortal();
+-        this.handlePortal();
 +      // this.handleNetherPortal(); // CraftBukkit - handled in postTick
          if (this.level().isClientSide) {
              if (this.lerpSteps > 0) {

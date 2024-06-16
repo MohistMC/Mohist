@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -18,25 +_,35 @@
+@@ -5,7 +_,6 @@
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.component.DataComponents;
+ import net.minecraft.server.level.ServerLevel;
+-import net.minecraft.tags.EnchantmentTags;
+ import net.minecraft.world.Container;
+ import net.minecraft.world.SimpleContainer;
+ import net.minecraft.world.entity.ExperienceOrb;
+@@ -19,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
@@ -9,37 +17,11 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
  public class GrindstoneMenu extends AbstractContainerMenu {
--    public static final int MAX_NAME_LENGTH = 35;
--    public static final int INPUT_SLOT = 0;
--    public static final int ADDITIONAL_SLOT = 1;
--    public static final int RESULT_SLOT = 2;
--    private static final int INV_SLOT_START = 3;
--    private static final int INV_SLOT_END = 30;
--    private static final int USE_ROW_SLOT_START = 30;
--    private static final int USE_ROW_SLOT_END = 39;
--    private final Container resultSlots = new ResultContainer();
--    final Container repairSlots = new SimpleContainer(2) {
--        @Override
--        public void setChanged() {
--            super.setChanged();
--            GrindstoneMenu.this.slotsChanged(this);
--        }
--    };
--    private final ContainerLevelAccess access;
-+   public static final int MAX_NAME_LENGTH = 35;
-+   public static final int INPUT_SLOT = 0;
-+   public static final int ADDITIONAL_SLOT = 1;
-+   public static final int RESULT_SLOT = 2;
-+   private static final int INV_SLOT_START = 3;
-+   private static final int INV_SLOT_END = 30;
-+   private static final int USE_ROW_SLOT_START = 30;
-+   private static final int USE_ROW_SLOT_END = 39;
-+   private final Container resultSlots = new ResultContainer();
-+   final Container repairSlots = new SimpleContainer(2) {
-+       public void setChanged() {
-+           super.setChanged();
-+           GrindstoneMenu.this.slotsChanged(this);
-+       }
+     public static final int MAX_NAME_LENGTH = 35;
+@@ -36,8 +_,16 @@
+             super.setChanged();
+             GrindstoneMenu.this.slotsChanged(this);
+         }
 +
 +       // CraftBukkit start
 +       @Override
@@ -47,13 +29,13 @@
 +           return GrindstoneMenu.this.access.getLocation();
 +       }
 +       // CraftBukkit end
-+   };
-+   private final ContainerLevelAccess access;
-+   private int xp = -1;
+     };
+     private final ContainerLevelAccess access;
++    private int xp = -1;
  
      public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
          this(p_39563_, p_39564_, ContainerLevelAccess.NULL);
-@@ -48,13 +_,13 @@
+@@ -49,13 +_,13 @@
          this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
              @Override
              public boolean mayPlace(ItemStack p_39607_) {
@@ -69,7 +51,7 @@
              }
          });
          this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {
-@@ -65,6 +_,7 @@
+@@ -66,6 +_,7 @@
  
              @Override
              public void onTake(Player p_150574_, ItemStack p_150575_) {
@@ -77,7 +59,7 @@
                  p_39568_.execute((p_39634_, p_39635_) -> {
                      if (p_39634_ instanceof ServerLevel) {
                          ExperienceOrb.award((ServerLevel)p_39634_, Vec3.atCenterOf(p_39635_), this.getExperienceAmount(p_39634_));
-@@ -77,6 +_,7 @@
+@@ -78,6 +_,7 @@
              }
  
              private int getExperienceAmount(Level p_39632_) {
@@ -85,7 +67,7 @@
                  int l = 0;
                  l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(0));
                  l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(1));
-@@ -113,6 +_,8 @@
+@@ -114,6 +_,8 @@
          for (int k = 0; k < 9; k++) {
              this.addSlot(new Slot(p_39567_, k, 8 + k * 18, 142));
          }
@@ -94,7 +76,7 @@
      }
  
      @Override
-@@ -129,6 +_,17 @@
+@@ -130,6 +_,17 @@
      }
  
      private ItemStack computeResult(ItemStack p_335167_, ItemStack p_329934_) {
@@ -112,7 +94,7 @@
          boolean flag = !p_335167_.isEmpty() || !p_329934_.isEmpty();
          if (!flag) {
              return ItemStack.EMPTY;
-@@ -212,6 +_,7 @@
+@@ -213,6 +_,7 @@
  
      @Override
      public boolean stillValid(Player p_39572_) {
@@ -120,7 +102,7 @@
          return stillValid(this.access, p_39572_, Blocks.GRINDSTONE);
      }
  
-@@ -261,4 +_,20 @@
+@@ -262,4 +_,20 @@
  
          return itemstack;
      }

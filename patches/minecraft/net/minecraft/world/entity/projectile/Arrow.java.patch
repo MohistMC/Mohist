@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
-@@ -14,6 +_,7 @@
+@@ -15,6 +_,7 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.item.alchemy.PotionContents;
  import net.minecraft.world.level.Level;
@@ -8,7 +8,7 @@
  
  public class Arrow extends AbstractArrow {
      private static final int EXPOSED_POTION_DECAY_TIME = 600;
-@@ -35,11 +_,11 @@
+@@ -36,11 +_,11 @@
          this.updateColor();
      }
  
@@ -22,7 +22,7 @@
          this.getPickupItemStackOrigin().set(DataComponents.POTION_CONTENTS, p_328713_);
          this.updateColor();
      }
-@@ -50,7 +_,7 @@
+@@ -51,7 +_,7 @@
          this.updateColor();
      }
  
@@ -31,7 +31,7 @@
          PotionContents potioncontents = this.getPotionContents();
          this.entityData.set(ID_EFFECT_COLOR, potioncontents.equals(PotionContents.EMPTY) ? -1 : potioncontents.getColor());
      }
-@@ -103,6 +_,7 @@
+@@ -104,6 +_,7 @@
          PotionContents potioncontents = this.getPotionContents();
          if (potioncontents.potion().isPresent()) {
              for (MobEffectInstance mobeffectinstance : potioncontents.potion().get().value().getEffects()) {
@@ -39,7 +39,7 @@
                  p_36873_.addEffect(
                      new MobEffectInstance(
                          mobeffectinstance.getEffect(),
-@@ -117,6 +_,7 @@
+@@ -118,6 +_,7 @@
          }
  
          for (MobEffectInstance mobeffectinstance1 : potioncontents.customEffects()) {

@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -12,6 +_,7 @@
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
-@@ -59,16 +_,23 @@
+@@ -3,6 +_,7 @@
+ import java.time.LocalDate;
+ import java.time.temporal.ChronoField;
+ import java.util.List;
++import java.util.UUID;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+@@ -60,9 +_,16 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
@@ -24,8 +24,9 @@
 +import org.joml.Vector3f;
  
  public class Zombie extends Monster {
-     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+     private static final ResourceLocation SPEED_MODIFIER_BABY_ID = ResourceLocation.withDefaultNamespace("baby");
+@@ -75,7 +_,7 @@
+     private static final ResourceLocation ZOMBIE_RANDOM_SPAWN_BONUS_ID = ResourceLocation.withDefaultNamespace("zombie_random_spawn_bonus");
      private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Integer> DATA_SPECIAL_TYPE_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.INT);
 -    public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
@@ -33,7 +34,7 @@
      public static final float ZOMBIE_LEADER_CHANCE = 0.05F;
      public static final int REINFORCEMENT_ATTEMPTS = 50;
      public static final int REINFORCEMENT_RANGE_MAX = 40;
-@@ -79,7 +_,8 @@
+@@ -86,7 +_,8 @@
      private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
      private boolean canBreakDoors;
      private int inWaterTime;
@@ -43,7 +44,7 @@
  
      public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
          super(p_34271_, p_34272_);
-@@ -103,7 +_,7 @@
+@@ -110,7 +_,7 @@
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
          this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(ZombifiedPiglin.class));
          this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -52,7 +53,7 @@
          this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
          this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
      }
-@@ -197,7 +_,10 @@
+@@ -204,7 +_,10 @@
      public void tick() {
          if (!this.level().isClientSide && this.isAlive() && !this.isNoAi()) {
              if (this.isUnderWaterConverting()) {
@@ -64,7 +65,7 @@
                  if (this.conversionTime < 0) {
                      this.doUnderWaterConversion();
                  }
-@@ -214,7 +_,8 @@
+@@ -221,7 +_,8 @@
          }
  
          super.tick();
@@ -74,7 +75,7 @@
  
      @Override
      public void aiStep() {
-@@ -243,23 +_,30 @@
+@@ -251,23 +_,30 @@
          super.aiStep();
      }
  
@@ -111,7 +112,7 @@
          }
      }
  
-@@ -280,15 +_,25 @@
+@@ -288,15 +_,25 @@
                  livingentity = (LivingEntity)p_34288_.getEntity();
              }
  
@@ -141,7 +142,7 @@
                  for (int l = 0; l < 50; l++) {
                      int i1 = i + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
                      int j1 = j + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
-@@ -302,6 +_,7 @@
+@@ -310,6 +_,7 @@
                              && this.level().isUnobstructed(zombie)
                              && this.level().noCollision(zombie)
                              && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
@@ -149,11 +150,11 @@
                              zombie.setTarget(livingentity);
                              zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, null);
                              serverlevel.addFreshEntityWithPassengers(zombie);
-@@ -325,12 +_,19 @@
+@@ -335,12 +_,19 @@
          if (flag) {
              float f = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
              if (this.getMainHandItem().isEmpty() && this.isOnFire() && this.random.nextFloat() < f * 0.3F) {
--                p_34276_.igniteForSeconds(2 * (int)f);
+-                p_34276_.igniteForSeconds((float)(2 * (int)f));
 +            // CraftBukkit start
 +            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_34276_.getBukkitEntity(), 2 * (int) f); // PAIL: fixme
 +            this.level.getCraftServer().getPluginManager().callEvent(event);
@@ -173,22 +174,19 @@
  
      @Override
      protected SoundEvent getAmbientSound() {
-@@ -396,16 +_,21 @@
-             if (p_219160_.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
+@@ -407,6 +_,11 @@
                  return flag;
              }
-+            if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {
-+            }))
-+                return flag;
  
++            if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {})) {
++                return flag;
++            }
++
 +            villager.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION); // Mohist
              ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
              if (zombievillager != null) {
                  zombievillager.finalizeSpawn(
--                    p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true)
-+                        p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true)
-                 );
-                 zombievillager.setVillagerData(villager.getVillagerData());
+@@ -416,6 +_,7 @@
                  zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
                  zombievillager.setTradeOffers(villager.getOffers().copy());
                  zombievillager.setVillagerXp(villager.getVillagerXp());
@@ -196,7 +194,7 @@
                  if (!this.isSilent()) {
                      p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
                  }
-@@ -417,6 +_,22 @@
+@@ -427,6 +_,22 @@
          return flag;
      }
  
@@ -219,7 +217,7 @@
      @Override
      public EntityDimensions getDefaultDimensions(Pose p_328975_) {
          return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(p_328975_);
-@@ -461,6 +_,7 @@
+@@ -471,6 +_,7 @@
                              chicken1.finalizeSpawn(p_34297_, p_34298_, MobSpawnType.JOCKEY, null);
                              chicken1.setChickenJockey(true);
                              this.startRiding(chicken1);

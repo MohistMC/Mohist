@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -17,6 +_,8 @@
+@@ -4,6 +_,7 @@
+ import net.minecraft.core.particles.ParticleOptions;
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.nbt.CompoundTag;
++import net.minecraft.nbt.ListTag;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientGamePacketListener;
+ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+@@ -17,12 +_,17 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -8,24 +16,23 @@
 +import org.bukkit.event.entity.EntityRemoveEvent;
  
  public abstract class AbstractHurtingProjectile extends Projectile {
-     public static final double ATTACK_DEFLECTION_SCALE = 0.1;
-@@ -24,6 +_,8 @@
-     public double xPower;
-     public double yPower;
-     public double zPower;
+     public static final double INITAL_ACCELERATION_POWER = 0.1;
+     public static final double DEFLECTION_SCALE = 0.5;
+     public double accelerationPower = 0.1;
+ 
 +    public float bukkitYield = 1; // CraftBukkit
 +    public boolean isIncendiary = true; // CraftBukkit
- 
++
      protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
          super(p_36833_, p_36834_);
-@@ -89,8 +_,13 @@
+     }
+@@ -78,8 +_,13 @@
              }
  
              HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, this.getClipType());
 -            if (hitresult.getType() != HitResult.Type.MISS) {
--                this.hitTargetOrDeflectSelf(hitresult);
 +            if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-+                this.preHitTargetOrDeflectSelf(hitresult);
+                 this.hitTargetOrDeflectSelf(hitresult);
 +                // CraftBukkit start - Fire ProjectileHitEvent
 +                if (this.isRemoved()) {
 +                    CraftEventFactory.callProjectileHitEvent(this, hitresult);
@@ -34,7 +41,7 @@
              }
  
              this.checkInsideBlocks();
-@@ -128,6 +_,7 @@
+@@ -117,6 +_,7 @@
  
              this.setPos(d0, d1, d2);
          } else {
@@ -42,12 +49,3 @@
              this.discard();
          }
      }
-@@ -211,7 +_,7 @@
-         this.assignPower(d0, d1, d2);
-     }
- 
--    private void assignPower(double p_329575_, double p_331475_, double p_330972_) {
-+    public void assignPower(double p_329575_, double p_331475_, double p_330972_) {
-         double d0 = Math.sqrt(p_329575_ * p_329575_ + p_331475_ * p_331475_ + p_330972_ * p_330972_);
-         if (d0 != 0.0) {
-             this.xPower = p_329575_ / d0 * 0.1;
