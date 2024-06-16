@@ -88,6 +88,7 @@ public class ForgeInjectBukkit {
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
     public static Map<StatType<?>, Statistic> statisticMap = new HashMap<>();
     public static Map<net.minecraft.world.level.biome.Biome, Biome> biomeBiomeMap = new HashMap<>();
+    public static Map<MobCategory, SpawnCategory> spawnCategoryMap = new HashMap<>();
 
 
     public static void init() {
@@ -336,6 +337,7 @@ public class ForgeInjectBukkit {
             } catch (Exception e) {
                 String name = category.name();
                 SpawnCategory spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
+                spawnCategoryMap.put(category, spawnCategory);
                 MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
             }
         }
