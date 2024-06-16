@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -8,6 +_,7 @@
+@@ -2,12 +_,14 @@
+ 
+ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Sets;
++import com.mohistmc.plugins.world.utils.ConfigByWorlds;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.DataResult;
  import com.mojang.serialization.Dynamic;
  import com.mojang.serialization.DynamicOps;
  import com.mojang.serialization.Lifecycle;
@@ -154,13 +161,14 @@
        this.f_78458_ = p_78576_;
     }
  
-@@ -375,6 +_,12 @@
+@@ -375,6 +_,13 @@
  
     public void m_6166_(Difficulty p_78521_) {
        this.f_78443_ = this.f_78443_.m_46918_(p_78521_);
++      ConfigByWorlds.difficulty(m_5462_(), p_78521_.name());
 +      // CraftBukkit start
 +      ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(this.m_5472_(), this.m_5474_());
-+      for (ServerPlayer player : (java.util.List<ServerPlayer>) (java.util.List) world.m_6907_()) {
++      for (ServerPlayer player : world.m_6907_()) {
 +         player.f_8906_.m_9829_(packet);
 +      }
 +      // CraftBukkit end
