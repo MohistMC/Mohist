@@ -21,18 +21,18 @@
                  p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16)
              );
              if (p_52937_.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos)) {
-+            // CraftBukkit start
-+            org.bukkit.block.Block from = CraftBlock.at(p_52937_, p_52938_);
-+            org.bukkit.block.Block to = CraftBlock.at(p_52937_, blockpos);
-+            BlockFromToEvent event = new BlockFromToEvent(from, to);
-+            org.bukkit.Bukkit.getPluginManager().callEvent(event);
++            	// CraftBukkit start
++            	org.bukkit.block.Block from = CraftBlock.at(p_52937_, p_52938_);
++            	org.bukkit.block.Block to = CraftBlock.at(p_52937_, blockpos);
++            	BlockFromToEvent event = new BlockFromToEvent(from, to);
++            	org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
-+               return;
-+            }
++            	if (event.isCancelled()) {
++               	return;
++            	}
 +
-+            blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
-+            // CraftBukkit end
++            	blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
++            	// CraftBukkit end
                  if (p_52937_.isClientSide) {
                      for (int j = 0; j < 128; j++) {
                          double d0 = p_52937_.random.nextDouble();

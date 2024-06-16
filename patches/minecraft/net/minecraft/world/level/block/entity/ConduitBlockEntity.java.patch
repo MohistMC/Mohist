@@ -8,47 +8,30 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.HolderLookup;
-@@ -26,25 +_,26 @@
+@@ -26,6 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.World;
  
  public class ConduitBlockEntity extends BlockEntity {
--    private static final int BLOCK_REFRESH_RATE = 2;
--    private static final int EFFECT_DURATION = 13;
--    private static final float ROTATION_SPEED = -0.0375F;
--    private static final int MIN_ACTIVE_SIZE = 16;
--    private static final int MIN_KILL_SIZE = 42;
--    private static final int KILL_RANGE = 8;
--    private static final Block[] VALID_BLOCKS = new Block[]{Blocks.PRISMARINE, Blocks.PRISMARINE_BRICKS, Blocks.SEA_LANTERN, Blocks.DARK_PRISMARINE};
--    public int tickCount;
--    private float activeRotation;
--    private boolean isActive;
--    private boolean isHunting;
+     private static final int BLOCK_REFRESH_RATE = 2;
+@@ -39,12 +_,12 @@
+     private float activeRotation;
+     private boolean isActive;
+     private boolean isHunting;
 -    private final List<BlockPos> effectBlocks = Lists.newArrayList();
 -    @Nullable
 -    private LivingEntity destroyTarget;
 -    @Nullable
 -    private UUID destroyTargetUUID;
 -    private long nextAmbientSoundActivation;
-+   private static final int BLOCK_REFRESH_RATE = 2;
-+   private static final int EFFECT_DURATION = 13;
-+   private static final float ROTATION_SPEED = -0.0375F;
-+   private static final int MIN_ACTIVE_SIZE = 16;
-+   private static final int MIN_KILL_SIZE = 42;
-+   private static final int KILL_RANGE = 8;
-+   private static final Block[] VALID_BLOCKS = new Block[]{Blocks.PRISMARINE, Blocks.PRISMARINE_BRICKS, Blocks.SEA_LANTERN, Blocks.DARK_PRISMARINE};
-+   public int tickCount;
-+   private float activeRotation;
-+   private boolean isActive;
-+   private boolean isHunting;
-+   public final List<BlockPos> effectBlocks = Lists.newArrayList();
-+   @Nullable
-+   public LivingEntity destroyTarget;
-+   @Nullable
-+   public UUID destroyTargetUUID;
-+   private long nextAmbientSoundActivation;
++   	public final List<BlockPos> effectBlocks = Lists.newArrayList();
++   	@Nullable
++   	public LivingEntity destroyTarget;
++   	@Nullable
++   	public UUID destroyTargetUUID;
++   	private long nextAmbientSoundActivation;
  
      public ConduitBlockEntity(BlockPos p_155397_, BlockState p_155398_) {
          super(BlockEntityType.CONDUIT, p_155397_, p_155398_);
@@ -63,56 +46,17 @@
                                  p_155417_.add(blockpos1);
                              }
                          }
-@@ -178,49 +_,63 @@
+@@ -178,11 +_,30 @@
          if (!list.isEmpty()) {
              for (Player player : list) {
                  if (p_155445_.closerThan(player.blockPosition(), (double)j) && player.isInWaterOrRain()) {
 -                    player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true));
 -                }
--            }
--        }
--    }
--
--    private static void updateDestroyTarget(Level p_155409_, BlockPos p_155410_, BlockState p_155411_, List<BlockPos> p_155412_, ConduitBlockEntity p_155413_) {
--        LivingEntity livingentity = p_155413_.destroyTarget;
--        int i = p_155412_.size();
--        if (i < 42) {
--            p_155413_.destroyTarget = null;
--        } else if (p_155413_.destroyTarget == null && p_155413_.destroyTargetUUID != null) {
--            p_155413_.destroyTarget = findDestroyTarget(p_155409_, p_155410_, p_155413_.destroyTargetUUID);
--            p_155413_.destroyTargetUUID = null;
--        } else if (p_155413_.destroyTarget == null) {
--            List<LivingEntity> list = p_155409_.getEntitiesOfClass(
--                LivingEntity.class, getDestroyRangeAABB(p_155410_), p_341840_ -> p_341840_ instanceof Enemy && p_341840_.isInWaterOrRain()
--            );
--            if (!list.isEmpty()) {
--                p_155413_.destroyTarget = list.get(p_155409_.random.nextInt(list.size()));
--            }
--        } else if (!p_155413_.destroyTarget.isAlive() || !p_155410_.closerThan(p_155413_.destroyTarget.blockPosition(), 8.0)) {
--            p_155413_.destroyTarget = null;
--        }
--
--        if (p_155413_.destroyTarget != null) {
--            p_155409_.playSound(
--                null,
--                p_155413_.destroyTarget.getX(),
--                p_155413_.destroyTarget.getY(),
--                p_155413_.destroyTarget.getZ(),
--                SoundEvents.CONDUIT_ATTACK_TARGET,
--                SoundSource.BLOCKS,
--                1.0F,
--                1.0F
--            );
--            p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F);
--        }
--
--        if (livingentity != p_155413_.destroyTarget) {
--            p_155409_.sendBlockUpdated(p_155410_, p_155411_, p_155411_, 2);
--        }
--    }
 +               player.addEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONDUIT); // CraftBukkit
 +               player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true));
-+            }
+             }
+-        }
+-    }
 +         }
 +
 +      }
@@ -134,26 +78,26 @@
 +      updateDestroyTarget(world, blockposition, iblockdata, list, tileentityconduit);
 +   }
 +   // Mohist end
-+
-+   private static void updateDestroyTarget(Level p_155409_, BlockPos p_155410_, BlockState p_155411_, List<BlockPos> p_155412_, ConduitBlockEntity p_155413_) {
-+      LivingEntity livingentity = p_155413_.destroyTarget;
-+      int i = p_155412_.size();
-+      if (i < 42) {
-+         p_155413_.destroyTarget = null;
-+      } else if (p_155413_.destroyTarget == null && p_155413_.destroyTargetUUID != null) {
-+         p_155413_.destroyTarget = findDestroyTarget(p_155409_, p_155410_, p_155413_.destroyTargetUUID);
-+         p_155413_.destroyTargetUUID = null;
-+      } else if (p_155413_.destroyTarget == null) {
-+         List<LivingEntity> list = p_155409_.getEntitiesOfClass(LivingEntity.class, getDestroyRangeAABB(p_155410_), (p_309299_) -> {
-+            return p_309299_ instanceof Enemy && p_309299_.isInWaterOrRain();
-+         });
-+         if (!list.isEmpty()) {
-+            p_155413_.destroyTarget = list.get(p_155409_.random.nextInt(list.size()));
-+         }
-+      } else if (!p_155413_.destroyTarget.isAlive() || !p_155410_.closerThan(p_155413_.destroyTarget.blockPosition(), 8.0D)) {
-+         p_155413_.destroyTarget = null;
-+      }
-+
+ 
+     private static void updateDestroyTarget(Level p_155409_, BlockPos p_155410_, BlockState p_155411_, List<BlockPos> p_155412_, ConduitBlockEntity p_155413_) {
+         LivingEntity livingentity = p_155413_.destroyTarget;
+@@ -203,19 +_,13 @@
+             p_155413_.destroyTarget = null;
+         }
+ 
+-        if (p_155413_.destroyTarget != null) {
+-            p_155409_.playSound(
+-                null,
+-                p_155413_.destroyTarget.getX(),
+-                p_155413_.destroyTarget.getY(),
+-                p_155413_.destroyTarget.getZ(),
+-                SoundEvents.CONDUIT_ATTACK_TARGET,
+-                SoundSource.BLOCKS,
+-                1.0F,
+-                1.0F
+-            );
+-            p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F);
+-        }
 +      if (mohist$damageTarget.getAndSet(true) && p_155413_.destroyTarget != null) {
 +         // CraftBukkit start
 +         if (p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic().directBlock(p_155409_, p_155410_), 4.0F)) {  // CraftBukkit
@@ -161,15 +105,9 @@
 +         }
 +         // CraftBukkit end
 +      }
-+
-+      if (livingentity != p_155413_.destroyTarget) {
-+         p_155409_.sendBlockUpdated(p_155410_, p_155411_, p_155411_, 2);
-+      }
-+
-+   }
  
-     private static void updateClientTarget(Level p_155400_, BlockPos p_155401_, ConduitBlockEntity p_155402_) {
-         if (p_155402_.destroyTargetUUID == null) {
+         if (livingentity != p_155413_.destroyTarget) {
+             p_155409_.sendBlockUpdated(p_155410_, p_155411_, p_155411_, 2);
 @@ -233,7 +_,7 @@
          }
      }

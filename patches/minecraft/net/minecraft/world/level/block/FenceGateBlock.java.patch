@@ -45,14 +45,7 @@
              SoundSource.BLOCKS,
              1.0F,
              p_53366_.getRandom().nextFloat() * 0.1F + 0.9F
-@@ -180,13 +_,13 @@
- 
-     @Override
-     protected void onExplosionHit(BlockState p_311339_, Level p_310915_, BlockPos p_311232_, Explosion p_312135_, BiConsumer<ItemStack, BlockPos> p_313242_) {
--        if (p_312135_.canTriggerBlocks() && !p_311339_.getValue(POWERED)) {
-+        if (p_312135_.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK && !p_310915_.isClientSide() && !p_311339_.getValue(POWERED)) {
-             boolean flag = p_311339_.getValue(OPEN);
-             p_310915_.setBlockAndUpdate(p_311232_, p_311339_.setValue(OPEN, Boolean.valueOf(!flag)));
+@@ -186,7 +_,7 @@
              p_310915_.playSound(
                  null,
                  p_311232_,

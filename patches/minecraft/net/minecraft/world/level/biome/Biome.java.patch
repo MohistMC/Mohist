@@ -34,23 +34,17 @@
              long2floatlinkedopenhashmap.defaultReturnValue(Float.NaN);
              return long2floatlinkedopenhashmap;
          }));
--
--    Biome(Biome.ClimateSettings p_220530_, BiomeSpecialEffects p_220531_, BiomeGenerationSettings p_220532_, MobSpawnSettings p_220533_) {
--        this.climateSettings = p_220530_;
--        this.generationSettings = p_220532_;
--        this.mobSettings = p_220533_;
--        this.specialEffects = p_220531_;
 +    private final net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo;
 +
-+   public Biome.ClimateSettings i; // Mohist
-+
-+   Biome(Biome.ClimateSettings p_220530_, BiomeSpecialEffects p_220531_, BiomeGenerationSettings p_220532_, MobSpawnSettings p_220533_) {
-+      this.climateSettings = p_220530_;
-+      this.generationSettings = p_220532_;
-+      this.mobSettings = p_220533_;
-+      this.specialEffects = p_220531_;
-+      this.modifiableBiomeInfo = new net.minecraftforge.common.world.ModifiableBiomeInfo(new net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo(p_220530_, p_220531_, p_220532_, p_220533_)); // FORGE: cache original biome info on construction so we can bypass our field read coremods where necessary
-+      this.i = getModifiedClimateSettings(); // Mohist
++   	public Biome.ClimateSettings i; // Mohist
+ 
+     Biome(Biome.ClimateSettings p_220530_, BiomeSpecialEffects p_220531_, BiomeGenerationSettings p_220532_, MobSpawnSettings p_220533_) {
+         this.climateSettings = p_220530_;
+         this.generationSettings = p_220532_;
+         this.mobSettings = p_220533_;
+         this.specialEffects = p_220531_;
++        this.modifiableBiomeInfo = new net.minecraftforge.common.world.ModifiableBiomeInfo(new net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo(p_220530_, p_220531_, p_220532_, p_220533_)); // FORGE: cache original biome info on construction so we can bypass our field read coremods where necessary
++      	this.i = getModifiedClimateSettings(); // Mohist
      }
  
      public int getSkyColor() {

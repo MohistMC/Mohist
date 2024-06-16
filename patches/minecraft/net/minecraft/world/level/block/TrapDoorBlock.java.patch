@@ -17,34 +17,22 @@
  
  public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
      public static final MapCodec<TrapDoorBlock> CODEC = RecordCodecBuilder.mapCodec(
-@@ -114,7 +_,10 @@
- 
-     @Override
-     protected void onExplosionHit(BlockState p_312876_, Level p_312713_, BlockPos p_312697_, Explosion p_312889_, BiConsumer<ItemStack, BlockPos> p_312223_) {
--        if (p_312889_.canTriggerBlocks() && this.type.canOpenByWindCharge() && !p_312876_.getValue(POWERED)) {
-+        if (p_312889_.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK
-+            && !p_312713_.isClientSide()
-+            && this.type.canOpenByWindCharge()
-+            && !p_312876_.getValue(POWERED)) {
-             this.toggle(p_312876_, p_312713_, p_312697_, null);
-         }
- 
 @@ -148,6 +_,18 @@
          if (!p_57548_.isClientSide) {
              boolean flag = p_57548_.hasNeighborSignal(p_57549_);
              if (flag != p_57547_.getValue(POWERED)) {
-+            // CraftBukkit start
-+            org.bukkit.block.Block bblock = CraftBlock.at(p_57548_, p_57549_);
++            	// CraftBukkit start
++            	org.bukkit.block.Block bblock = CraftBlock.at(p_57548_, p_57549_);
 +
-+            int power = bblock.getBlockPower();
-+            int oldPower = (Boolean) p_57547_.getValue(OPEN) ? 15 : 0;
++            	int power = bblock.getBlockPower();
++            	int oldPower = (Boolean) p_57547_.getValue(OPEN) ? 15 : 0;
 +
-+            if (oldPower == 0 ^ power == 0 || p_57550_.defaultBlockState().isSignalSource()) {
-+               BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bblock, oldPower, power);
-+               p_57548_.getCraftServer().getPluginManager().callEvent(eventRedstone);
-+               flag = eventRedstone.getNewCurrent() > 0;
-+            }
-+            // CraftBukkit end
++            	if (oldPower == 0 ^ power == 0 || p_57550_.defaultBlockState().isSignalSource()) {
++               		BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bblock, oldPower, power);
++               		p_57548_.getCraftServer().getPluginManager().callEvent(eventRedstone);
++               		flag = eventRedstone.getNewCurrent() > 0;
++            	}
++            	// CraftBukkit end
                  if (p_57547_.getValue(OPEN) != flag) {
                      p_57547_ = p_57547_.setValue(OPEN, Boolean.valueOf(flag));
                      this.playSound(null, p_57548_, p_57549_, flag);

@@ -54,28 +54,28 @@
 +
 +    public List<ItemStack> getContents() {
 +      return this.items;
-+   }
++   	}
 +
 +    public void onOpen(CraftHumanEntity who) {
 +      transaction.add(who);
-+   }
++   	}
 +
 +    public void onClose(CraftHumanEntity who) {
 +      transaction.remove(who);
-+   }
++   	}
 +
 +    public List<HumanEntity> getViewers() {
 +      return transaction;
-+   }
++   	}
 +
 +    @Override
 +    public int getMaxStackSize() {
 +      return maxStack;
-+   }
++   	}
 +
 +    public void setMaxStackSize(int size) {
 +      maxStack = size;
-+   }
++   	}
 +
 +    // CraftBukkit end
 +
@@ -99,31 +99,20 @@
          BlockPos blockpos = BlockPos.containing(p_155554_.getLevelX(), p_155554_.getLevelY() + 1.0, p_155554_.getLevelZ());
          BlockState blockstate = p_155553_.getBlockState(blockpos);
          Container container = getSourceContainer(p_155553_, p_155554_, blockpos, blockstate);
-@@ -255,12 +_,19 @@
-             }
-         }
+@@ -260,6 +_,13 @@
  
--        return false;
--    }
-+      return false;
-+   }
- 
--    public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
--        boolean flag = false;
--        ItemStack itemstack = p_59333_.getItem().copy();
-+   public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
-+      boolean flag = false;
-+      // CraftBukkit start
-+      InventoryPickupItemEvent event = new InventoryPickupItemEvent(p_59332_.getOwner().getInventory(), (org.bukkit.entity.Item) p_59333_.getBukkitEntity());
-+      p_59333_.level.getCraftServer().getPluginManager().callEvent(event);
-+      if (event.isCancelled()) {
-+         return false;
-+      }
-+      // CraftBukkit end
-+      ItemStack itemstack = p_59333_.getItem().copy();
+     public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
+         boolean flag = false;
++      	// CraftBukkit start
++      	InventoryPickupItemEvent event = new InventoryPickupItemEvent(p_59332_.getOwner().getInventory(), (org.bukkit.entity.Item) p_59333_.getBukkitEntity());
++      	p_59333_.level.getCraftServer().getPluginManager().callEvent(event);
++      	if (event.isCancelled()) {
++         	return false;
++      	}
++      	// CraftBukkit end
+         ItemStack itemstack = p_59333_.getItem().copy();
          ItemStack itemstack1 = addItem(null, p_59332_, itemstack, null);
          if (itemstack1.isEmpty()) {
-             flag = true;
 @@ -473,5 +_,14 @@
      @Override
      protected AbstractContainerMenu createMenu(int p_59312_, Inventory p_59313_) {

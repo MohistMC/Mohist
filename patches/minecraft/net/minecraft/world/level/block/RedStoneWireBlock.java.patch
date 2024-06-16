@@ -49,16 +49,16 @@
      private void updatePowerStrength(Level p_55531_, BlockPos p_55532_, BlockState p_55533_) {
          int i = this.calculateTargetStrength(p_55531_, p_55532_);
 -        if (p_55533_.getValue(POWER) != i) {
-+      // CraftBukkit start
-+      int oldPower = p_55533_.getValue(POWER);
-+      if (oldPower != i) {
-+         BlockRedstoneEvent event = new BlockRedstoneEvent(CraftBlock.at(p_55531_, p_55532_), oldPower, i);
-+         p_55531_.getCraftServer().getPluginManager().callEvent(event);
++      	// CraftBukkit start
++      	int oldPower = p_55533_.getValue(POWER);
++      	if (oldPower != i) {
++         	BlockRedstoneEvent event = new BlockRedstoneEvent(CraftBlock.at(p_55531_, p_55532_), oldPower, i);
++         	p_55531_.getCraftServer().getPluginManager().callEvent(event);
 +
-+         i = event.getNewCurrent();
-+      }
-+      if (oldPower != i) {
-+         // CraftBukkit end
++         	i = event.getNewCurrent();
++      	}
++      	if (oldPower != i) {
++         	// CraftBukkit end
              if (p_55531_.getBlockState(p_55532_) == p_55533_) {
                  p_55531_.setBlock(p_55532_, p_55533_.setValue(POWER, Integer.valueOf(i)), 2);
              }

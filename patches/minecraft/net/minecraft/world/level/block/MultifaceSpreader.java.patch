@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MultifaceSpreader.java
 +++ b/net/minecraft/world/level/block/MultifaceSpreader.java
-@@ -150,41 +_,38 @@
+@@ -150,15 +_,15 @@
                      p_221702_.getChunk(p_221703_.pos()).markPosForPostprocessing(p_221703_.pos());
                  }
  
@@ -14,59 +14,31 @@
  
 -    public static record SpreadPos(BlockPos pos, Direction face) {
 -    }
--
--    @FunctionalInterface
--    public interface SpreadPredicate {
--        boolean test(BlockGetter p_221729_, BlockPos p_221730_, MultifaceSpreader.SpreadPos p_221731_);
--    }
--
--    public static enum SpreadType {
--        SAME_POSITION {
--            @Override
--            public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221751_, Direction p_221752_, Direction p_221753_) {
--                return new MultifaceSpreader.SpreadPos(p_221751_, p_221752_);
--            }
--        },
--        SAME_PLANE {
--            @Override
--            public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221758_, Direction p_221759_, Direction p_221760_) {
--                return new MultifaceSpreader.SpreadPos(p_221758_.relative(p_221759_), p_221760_);
--            }
--        },
--        WRAP_AROUND {
--            @Override
--            public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221765_, Direction p_221766_, Direction p_221767_) {
--                return new MultifaceSpreader.SpreadPos(p_221765_.relative(p_221766_).relative(p_221767_), p_221766_.getOpposite());
--            }
--        };
--
--        public abstract MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221741_, Direction p_221742_, Direction p_221743_);
--    }
 +   public static record SpreadPos(BlockPos pos, Direction face, BlockPos source) { // CraftBukkit
 +   }
-+
-+   @FunctionalInterface
-+   public interface SpreadPredicate {
-+      boolean test(BlockGetter p_221729_, BlockPos p_221730_, MultifaceSpreader.SpreadPos p_221731_);
-+   }
-+
-+   public static enum SpreadType {
-+      SAME_POSITION {
-+         public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221751_, Direction p_221752_, Direction p_221753_) {
-+            return new MultifaceSpreader.SpreadPos(p_221751_, p_221752_, p_221751_);
-+         }
-+      },
-+      SAME_PLANE {
-+         public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221758_, Direction p_221759_, Direction p_221760_) {
-+            return new MultifaceSpreader.SpreadPos(p_221758_.relative(p_221759_), p_221760_, p_221758_);
-+         }
-+      },
-+      WRAP_AROUND {
-+         public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221765_, Direction p_221766_, Direction p_221767_) {
-+            return new MultifaceSpreader.SpreadPos(p_221765_.relative(p_221766_).relative(p_221767_), p_221766_.getOpposite(), p_221765_);
-+         }
-+      };
-+
-+      public abstract MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221741_, Direction p_221742_, Direction p_221743_);
-+   }
- }
+ 
+     @FunctionalInterface
+     public interface SpreadPredicate {
+@@ -169,19 +_,19 @@
+         SAME_POSITION {
+             @Override
+             public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221751_, Direction p_221752_, Direction p_221753_) {
+-                return new MultifaceSpreader.SpreadPos(p_221751_, p_221752_);
++            	return new MultifaceSpreader.SpreadPos(p_221751_, p_221752_, p_221751_);
+             }
+         },
+         SAME_PLANE {
+             @Override
+             public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221758_, Direction p_221759_, Direction p_221760_) {
+-                return new MultifaceSpreader.SpreadPos(p_221758_.relative(p_221759_), p_221760_);
++            	return new MultifaceSpreader.SpreadPos(p_221758_.relative(p_221759_), p_221760_, p_221758_);
+             }
+         },
+         WRAP_AROUND {
+             @Override
+             public MultifaceSpreader.SpreadPos getSpreadPos(BlockPos p_221765_, Direction p_221766_, Direction p_221767_) {
+-                return new MultifaceSpreader.SpreadPos(p_221765_.relative(p_221766_).relative(p_221767_), p_221766_.getOpposite());
++            	return new MultifaceSpreader.SpreadPos(p_221765_.relative(p_221766_).relative(p_221767_), p_221766_.getOpposite(), p_221765_);
+             }
+         };
+ 

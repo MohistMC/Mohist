@@ -38,10 +38,10 @@
                  ItemEntity itementity = new ItemEntity(this.level, d3, d4, d5, this.item.split(this.level.random.nextInt(21) + 10));
                  itementity.setDeltaMovement(Vec3.ZERO);
 -                this.level.addFreshEntity(itementity);
-+            // CraftBukkit start
-+            org.bukkit.block.Block bblock = CraftBlock.at(this.level, this.worldPosition);
-+            CraftEventFactory.handleBlockDropItemEvent(bblock, bblock.getState(), (ServerPlayer) p_278006_, Arrays.asList(itementity));
-+            // CraftBukkit end
++            	// CraftBukkit start
++            	org.bukkit.block.Block bblock = CraftBlock.at(this.level, this.worldPosition);
++            	CraftEventFactory.handleBlockDropItemEvent(bblock, bblock.getState(), (ServerPlayer) p_278006_, Arrays.asList(itementity));
++            	// CraftBukkit end
                  this.item = ItemStack.EMPTY;
              }
          }

@@ -123,11 +123,11 @@
          if (!p_49499_.isClientSide) {
              BlockPos blockpos = p_49500_.relative(p_49501_.getValue(FACING));
              p_49499_.setBlock(blockpos, p_49501_.setValue(PART, BedPart.HEAD), 3);
-+         // CraftBukkit start - SPIGOT-7315: Don't updated if we capture block states
-+         if (p_49499_.captureBlockStates) {
-+            return;
-+         }
-+         // CraftBukkit end
++         	// CraftBukkit start - SPIGOT-7315: Don't updated if we capture block states
++         	if (p_49499_.captureBlockStates) {
++            	return;
++         	}
++         	// CraftBukkit end
              p_49499_.blockUpdated(p_49500_, Blocks.AIR);
              p_49501_.updateNeighbourShapes(p_49499_, p_49500_, 3);
          }

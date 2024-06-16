@@ -63,7 +63,7 @@
  
                              if (this.hasHorizontalConnection(blockstate3)) {
 -                                p_222656_.setBlock(blockpos, blockstate3, 2);
-+                        CraftEventFactory.handleBlockSpreadEvent(p_222656_, p_222657_, blockpos, blockstate3, 2); // CraftBukkit
++                        		CraftEventFactory.handleBlockSpreadEvent(p_222656_, p_222657_, blockpos, blockstate3, 2); // CraftBukkit
                              }
  
                              return;
@@ -72,7 +72,7 @@
                              BlockState blockstate2 = this.copyRandomFaces(p_222655_, blockstate1, p_222658_);
                              if (blockstate1 != blockstate2 && this.hasHorizontalConnection(blockstate2)) {
 -                                p_222656_.setBlock(blockpos1, blockstate2, 2);
-+                        CraftEventFactory.handleBlockSpreadEvent(p_222656_, p_222657_, blockpos1, blockstate2, 2); // CraftBukkit
++                       			CraftEventFactory.handleBlockSpreadEvent(p_222656_, p_222657_, blockpos1, blockstate2, 2); // CraftBukkit
                              }
                          }
                      }

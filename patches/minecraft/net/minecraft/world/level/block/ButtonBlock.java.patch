@@ -26,7 +26,7 @@
  
  public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
      public static final MapCodec<ButtonBlock> CODEC = RecordCodecBuilder.mapCodec(
-@@ -113,26 +_,39 @@
+@@ -113,7 +_,22 @@
          if (p_329418_.getValue(POWERED)) {
              return InteractionResult.CONSUME;
          } else {
@@ -50,60 +50,37 @@
              return InteractionResult.sidedSuccess(p_334611_.isClientSide);
          }
      }
- 
-     @Override
-     protected void onExplosionHit(BlockState p_310762_, Level p_312485_, BlockPos p_312982_, Explosion p_311820_, BiConsumer<ItemStack, BlockPos> p_312672_) {
--        if (p_311820_.canTriggerBlocks() && !p_310762_.getValue(POWERED)) {
--            this.press(p_310762_, p_312485_, p_312982_, null);
-+        if (p_311820_.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK && !p_312485_.isClientSide() && !p_310762_.getValue(POWERED)) {
-+            this.press(p_310762_, p_312485_, p_312982_);
-         }
- 
-         super.onExplosionHit(p_310762_, p_312485_, p_312982_, p_311820_, p_312672_);
-     }
- 
--    public void press(BlockState p_51117_, Level p_51118_, BlockPos p_51119_, @Nullable Player p_343045_) {
-+    public void press(BlockState p_51117_, Level p_51118_, BlockPos p_51119_) {
-         p_51118_.setBlock(p_51119_, p_51117_.setValue(POWERED, Boolean.valueOf(true)), 3);
-         this.updateNeighbours(p_51117_, p_51118_, p_51119_);
-         p_51118_.scheduleTick(p_51119_, this, this.ticksToStayPressed);
--        this.playSound(p_343045_, p_51118_, p_51119_, true);
--        p_51118_.gameEvent(p_343045_, GameEvent.BLOCK_ACTIVATE, p_51119_);
-     }
- 
-     protected void playSound(@Nullable Player p_51068_, LevelAccessor p_51069_, BlockPos p_51070_, boolean p_51071_) {
 @@ -189,7 +_,33 @@
              : null;
          boolean flag = abstractarrow != null;
          boolean flag1 = p_51121_.getValue(POWERED);
--        if (flag != flag1) {
 +
-+      // CraftBukkit start - Call interact event when arrows turn on wooden buttons
-+      if (flag1 != flag && flag) {
-+         org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
-+         EntityInteractEvent event = new EntityInteractEvent(abstractarrow.getBukkitEntity(), block);
-+         p_51122_.getCraftServer().getPluginManager().callEvent(event);
++        // CraftBukkit start - Call interact event when arrows turn on wooden buttons
++        if (flag1 != flag && flag) {
++            org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
++            EntityInteractEvent event = new EntityInteractEvent(abstractarrow.getBukkitEntity(), block);
++            p_51122_.getCraftServer().getPluginManager().callEvent(event);
 +
-+         if (event.isCancelled()) {
-+            return;
-+         }
-+      }
-+      // CraftBukkit end
++            if (event.isCancelled()) {
++                return;
++            }
++        }
++        // CraftBukkit end
 +
-+      if (flag != flag1) {
-+         // CraftBukkit start
-+         boolean powered = flag1;
-+         org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
-+         int old = (powered) ? 15 : 0;
-+         int current = (!powered) ? 15 : 0;
+         if (flag != flag1) {
++            // CraftBukkit start
++            boolean powered = flag1;
++            org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
++            int old = (powered) ? 15 : 0;
++            int current = (!powered) ? 15 : 0;
 +
-+         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
-+         p_51122_.getCraftServer().getPluginManager().callEvent(eventRedstone);
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            p_51122_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +
-+         if ((flag && eventRedstone.getNewCurrent() <= 0) || (!flag && eventRedstone.getNewCurrent() > 0)) {
-+            return;
-+         }
-+         // CraftBukkit end
++            if ((flag && eventRedstone.getNewCurrent() <= 0) || (!flag && eventRedstone.getNewCurrent() > 0)) {
++                return;
++            }
++            // CraftBukkit end
              p_51122_.setBlock(p_51123_, p_51121_.setValue(POWERED, Boolean.valueOf(flag)), 3);
              this.updateNeighbours(p_51121_, p_51122_, p_51123_);
              this.playSound(null, p_51122_, p_51123_, flag);

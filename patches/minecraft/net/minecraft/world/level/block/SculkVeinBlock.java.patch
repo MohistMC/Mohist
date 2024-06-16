@@ -53,12 +53,12 @@
                  if (blockstate1.is(tagkey)) {
                      BlockState blockstate2 = Blocks.SCULK.defaultBlockState();
 -                    p_222377_.setBlock(blockpos, blockstate2, 3);
-+               // CraftBukkit start - Call BlockSpreadEvent
-+               if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
-+                  return false;
-+               }
-+               // CraftBukkit end
-+               // Mohist end
++               		// CraftBukkit start - Call BlockSpreadEvent
++               		if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
++                  		return false;
++               		}
++               		// CraftBukkit end
++               		// Mohist end
                      Block.pushEntitiesUp(blockstate1, blockstate2, p_222377_, blockpos);
                      p_222377_.playSound(null, blockpos, SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.BLOCKS, 1.0F, 1.0F);
                      this.veinSpreader.spreadAll(blockstate2, p_222377_, blockpos, p_222376_.isWorldGeneration());

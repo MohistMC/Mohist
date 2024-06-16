@@ -181,9 +181,9 @@
 +        return getSoundType(state);
 +    }
 +
-+   // Spigot start
-+   public static float range(float min, float value, float max) {
-+      return value < min ? min : Math.min(value, max); // Mohist
-+   }
-+   // Spigot end
++   	// Spigot start
++   	public static float range(float min, float value, float max) {
++      	return value < min ? min : Math.min(value, max); // Mohist
++   	}
++   	// Spigot end
  }

@@ -8,22 +8,16 @@
  
  public class CropBlock extends BushBlock implements BonemealableBlock {
      public static final MapCodec<CropBlock> CODEC = simpleCodec(CropBlock::new);
-@@ -85,15 +_,28 @@
-     @Override
-     protected void randomTick(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
-         if (p_221051_.getRawBrightness(p_221052_, 0) >= 9) {
--            int i = this.getAge(p_221050_);
--            if (i < this.getMaxAge()) {
--                float f = getGrowthSpeed(this, p_221051_, p_221052_);
+@@ -88,12 +_,25 @@
+             int i = this.getAge(p_221050_);
+             if (i < this.getMaxAge()) {
+                 float f = getGrowthSpeed(this, p_221051_, p_221052_);
 -                if (p_221053_.nextInt((int)(25.0F / f) + 1) == 0) {
 -                    p_221051_.setBlock(p_221052_, this.getStateForAge(i + 1), 2);
 -                }
 -            }
 -        }
 -    }
-+         int i = this.getAge(p_221050_);
-+         if (i < this.getMaxAge()) {
-+            float f = getGrowthSpeed(this, p_221051_, p_221052_);
 +            // Spigot start
 +            int modifier;
 +            if (this == Blocks.BEETROOTS) {

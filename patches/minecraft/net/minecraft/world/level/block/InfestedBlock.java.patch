@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/InfestedBlock.java
 +++ b/net/minecraft/world/level/block/InfestedBlock.java
-@@ -9,20 +_,21 @@
+@@ -9,15 +_,16 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.server.level.ServerLevel;
@@ -18,14 +18,7 @@
  
  public class InfestedBlock extends Block {
      public static final MapCodec<InfestedBlock> CODEC = RecordCodecBuilder.mapCodec(
--        p_341832_ -> p_341832_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("host").forGetter(InfestedBlock::getHostBlock), propertiesCodec())
--                .apply(p_341832_, InfestedBlock::new)
-+        p_309286_ -> p_309286_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("host").forGetter(InfestedBlock::getHostBlock), propertiesCodec())
-+                .apply(p_309286_, InfestedBlock::new)
-     );
-     private final Block hostBlock;
-     private static final Map<Block, Block> BLOCK_BY_HOST_BLOCK = Maps.newIdentityHashMap();
-@@ -52,15 +_,16 @@
+@@ -52,8 +_,9 @@
          Silverfish silverfish = EntityType.SILVERFISH.create(p_54181_);
          if (silverfish != null) {
              silverfish.moveTo((double)p_54182_.getX() + 0.5, (double)p_54182_.getY(), (double)p_54182_.getZ() + 0.5, 0.0F, 0.0F);
@@ -37,11 +30,3 @@
          }
      }
  
-     @Override
-     protected void spawnAfterBreak(BlockState p_221360_, ServerLevel p_221361_, BlockPos p_221362_, ItemStack p_221363_, boolean p_221364_) {
-         super.spawnAfterBreak(p_221360_, p_221361_, p_221362_, p_221363_, p_221364_);
--        if (p_221361_.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !EnchantmentHelper.hasTag(p_221363_, EnchantmentTags.PREVENTS_INFESTED_SPAWNS)) {
-+        if (p_221361_.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221363_) == 0) {
-             this.spawnInfestation(p_221361_, p_221362_);
-         }
-     }

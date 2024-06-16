@@ -13,7 +13,7 @@
  
              if (p_221785_.isEmptyBlock(blockpos1) && p_221784_.canSurvive(p_221785_, blockpos1)) {
 -                p_221785_.setBlock(blockpos1, p_221784_, 2);
-+            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_221785_, p_221786_, blockpos1, p_221784_, 2); // CraftBukkit
++            	org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_221785_, p_221786_, blockpos1, p_221784_, 2); // CraftBukkit
              }
          }
      }

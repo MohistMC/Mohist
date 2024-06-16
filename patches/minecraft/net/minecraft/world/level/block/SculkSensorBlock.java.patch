@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/SculkSensorBlock.java
 +++ b/net/minecraft/world/level/block/SculkSensorBlock.java
-@@ -15,6 +_,7 @@
- import net.minecraft.util.valueproviders.ConstantInt;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
-+import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.context.BlockPlaceContext;
- import net.minecraft.world.level.BlockGetter;
 @@ -294,8 +_,13 @@
      @Override
      protected void spawnAfterBreak(BlockState p_222142_, ServerLevel p_222143_, BlockPos p_222144_, ItemStack p_222145_, boolean p_222146_) {

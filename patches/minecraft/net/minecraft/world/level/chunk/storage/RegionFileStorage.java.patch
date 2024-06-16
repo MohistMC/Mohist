@@ -9,13 +9,3 @@
      private final RegionStorageInfo info;
      private final Path folder;
      private final boolean sync;
-@@ -102,9 +_,5 @@
-         for (RegionFile regionfile : this.regionCache.values()) {
-             regionfile.flush();
-         }
--    }
--
--    public RegionStorageInfo info() {
--        return this.info;
-     }
- }

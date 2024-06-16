@@ -1,36 +1,12 @@
 --- a/net/minecraft/world/level/chunk/ImposterProtoChunk.java
 +++ b/net/minecraft/world/level/chunk/ImposterProtoChunk.java
-@@ -94,9 +_,9 @@
-     }
- 
-     @Override
--    public void setPersistedStatus(ChunkStatus p_342322_) {
-+    public void setStatus(ChunkStatus p_327906_) {
-         if (this.allowWrites) {
--            super.setPersistedStatus(p_342322_);
-+            super.setStatus(p_327906_);
-         }
-     }
- 
-@@ -185,8 +_,8 @@
-     }
- 
-     @Override
--    public ChunkStatus getPersistedStatus() {
--        return this.wrapped.getPersistedStatus();
-+    public ChunkStatus getStatus() {
-+        return this.wrapped.getStatus();
-     }
- 
-     @Override
-@@ -291,5 +_,10 @@
-     @Override
+@@ -292,4 +_,9 @@
      public ChunkSkyLightSources getSkyLightSources() {
          return this.wrapped.getSkyLightSources();
-+    }
+     }
 +
 +    @Override
 +    public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
 +       this.wrapped.findBlocks(p_285343_, p_285030_);
-     }
++    }
  }

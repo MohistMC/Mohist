@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -22,14 +_,13 @@
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
--import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.LivingEntity;
--import net.minecraft.world.entity.ai.attributes.Attributes;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.item.PrimedTnt;
+@@ -30,6 +_,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.projectile.Projectile;
  import net.minecraft.world.item.ItemStack;
@@ -60,41 +52,17 @@
          Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
          for (Entity entity : list) {
-@@ -278,7 +_,7 @@
-                         double d13 = (1.0 - d11) * (double)getSeenPercent(vec3, entity) * (double)this.damageCalculator.getKnockbackMultiplier(entity);
-                         double d10;
-                         if (entity instanceof LivingEntity livingentity) {
--                            d10 = d13 * (1.0 - livingentity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE));
-+                            d10 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, d13);
-                         } else {
-                             d10 = d13;
-                         }
 @@ -287,6 +_,13 @@
                          d7 *= d10;
                          d9 *= d10;
                          Vec3 vec31 = new Vec3(d5, d7, d9);
-+                  // CraftBukkit start - Call EntityKnockbackEvent
-+                  if (entity instanceof LivingEntity) {
-+                     Vec3 result = entity.getDeltaMovement().add(vec31);
-+                     org.bukkit.event.entity.EntityKnockbackEvent event = CraftEventFactory.callEntityKnockbackEvent((org.bukkit.craftbukkit.entity.CraftLivingEntity) entity.getBukkitEntity(), source, org.bukkit.event.entity.EntityKnockbackEvent.KnockbackCause.EXPLOSION, d10, vec31, result.x, result.y, result.z);
-+                     vec31 = (event.isCancelled()) ? Vec3.ZERO : new Vec3(event.getFinalKnockback().getX(), event.getFinalKnockback().getY(), event.getFinalKnockback().getZ());
-+                  }
-+                  // CraftBukkit end
++                  		// CraftBukkit start - Call EntityKnockbackEvent
++                  		if (entity instanceof LivingEntity) {
++                     		Vec3 result = entity.getDeltaMovement().add(vec31);
++                     		org.bukkit.event.entity.EntityKnockbackEvent event = CraftEventFactory.callEntityKnockbackEvent((org.bukkit.craftbukkit.entity.CraftLivingEntity) entity.getBukkitEntity(), source, org.bukkit.event.entity.EntityKnockbackEvent.KnockbackCause.EXPLOSION, d10, vec31, result.x, result.y, result.z);
++                     		vec31 = (event.isCancelled()) ? Vec3.ZERO : new Vec3(event.getFinalKnockback().getX(), event.getFinalKnockback().getY(), event.getFinalKnockback().getZ());
++                  		}
++                  		// CraftBukkit end
                          entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
                          if (entity instanceof Player) {
                              Player player = (Player)entity;
-@@ -431,14 +_,6 @@
- 
-     public Holder<SoundEvent> getExplosionSound() {
-         return this.explosionSound;
--    }
--
--    public boolean canTriggerBlocks() {
--        if (this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK && !this.level.isClientSide()) {
--            return this.source != null && this.source.getType() == EntityType.BREEZE_WIND_CHARGE ? this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : true;
--        } else {
--            return false;
--        }
-     }
- 
-     public static enum BlockInteraction {

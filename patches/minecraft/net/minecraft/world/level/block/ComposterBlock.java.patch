@@ -137,7 +137,7 @@
  
          public InputContainer(BlockState p_52022_, LevelAccessor p_52023_, BlockPos p_52024_) {
              super(1);
-+         this.bukkitOwner = new CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
++         	this.bukkitOwner = new CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
              this.state = p_52022_;
              this.level = p_52023_;
              this.pos = p_52024_;

@@ -68,16 +68,3 @@
  
      @Override
      protected void tick(BlockState p_221005_, ServerLevel p_221006_, BlockPos p_221007_, RandomSource p_221008_) {
-@@ -147,8 +_,10 @@
-                     commandblockentity.setAutomatic(this.automatic);
-                 }
- 
--                boolean flag = p_51804_.hasNeighborSignal(p_51805_);
--                commandblockentity.setPowered(flag);
-+                if (commandblockentity.getMode() == CommandBlockEntity.Mode.SEQUENCE) {
-+                    boolean flag = p_51804_.hasNeighborSignal(p_51805_);
-+                    commandblockentity.setPowered(flag);
-+                }
-             }
-         }
-     }

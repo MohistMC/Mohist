@@ -120,12 +120,12 @@
                      return null;
                  } else {
 -                    if (!this.level.isClientSide) {
-+               // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-+               if (!this.level.isClientSide && mohist$doPlace.get() && (!this.level.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
++               		// CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
++               		if (!this.level.isClientSide && mohist$doPlace.get() && (!this.level.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
                          p_62866_.onPlace(this.level, p_62865_, blockstate, p_62867_);
                      }
  
-@@ -301,6 +_,17 @@
+@@ -301,6 +_,16 @@
          }
      }
  
@@ -139,7 +139,6 @@
 +      }
 +   }
 +
-+   /** @deprecated */
      @Deprecated
      @Override
      public void addEntity(Entity p_62826_) {
@@ -174,32 +173,6 @@
          }
      }
  
-@@ -374,24 +_,7 @@
-     @Override
-     public void setBlockEntity(BlockEntity p_156374_) {
-         BlockPos blockpos = p_156374_.getBlockPos();
--        BlockState blockstate = this.getBlockState(blockpos);
--        if (!blockstate.hasBlockEntity()) {
--            LOGGER.warn("Trying to set block entity {} at position {}, but state {} does not allow it", p_156374_, blockpos, blockstate);
--        } else {
--            BlockState blockstate1 = p_156374_.getBlockState();
--            if (blockstate != blockstate1) {
--                if (!p_156374_.getType().isValid(blockstate)) {
--                    LOGGER.warn("Trying to set block entity {} at position {}, but state {} does not allow it", p_156374_, blockpos, blockstate);
--                    return;
--                }
--
--                if (blockstate.getBlock() != blockstate1.getBlock()) {
--                    LOGGER.warn("Block state mismatch on block entity {} in position {}, {} != {}, updating", p_156374_, blockpos, blockstate, blockstate1);
--                }
--
--                p_156374_.setBlockState(blockstate);
--            }
--
-+        if (this.getBlockState(blockpos).hasBlockEntity()) {
-             p_156374_.setLevel(this.level);
-             p_156374_.clearRemoved();
-             BlockEntity blockentity = this.blockEntities.put(blockpos.immutable(), p_156374_);
 @@ -406,9 +_,14 @@
      public CompoundTag getBlockEntityNbtForSaving(BlockPos p_62932_, HolderLookup.Provider p_329605_) {
          BlockEntity blockentity = this.getBlockEntity(p_62932_);
@@ -300,15 +273,6 @@
              }
          });
      }
-@@ -583,7 +_,7 @@
-     }
- 
-     @Override
--    public ChunkStatus getPersistedStatus() {
-+    public ChunkStatus getStatus() {
-         return ChunkStatus.FULL;
-     }
- 
 @@ -596,6 +_,7 @@
      }
  
@@ -325,7 +289,7 @@
          this.blockEntities.values().forEach(p_187988_ -> {
              if (this.level instanceof ServerLevel serverlevel) {
                  this.addGameEventListener(p_187988_, serverlevel);
-@@ -654,6 +_,34 @@
+@@ -654,6 +_,24 @@
          return new LevelChunk.BoundTickingBlockEntity<>(p_156376_, p_156377_);
      }
  
@@ -335,16 +299,6 @@
 +    @Override
 +    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(@org.jetbrains.annotations.NotNull net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
 +       return capProvider.getCapability(cap, side);
-+    }
-+
-+    @Override
-+    public boolean areCapsCompatible(net.minecraftforge.common.capabilities.CapabilityProvider<LevelChunk> other) {
-+        return capProvider.areCapsCompatible(other);
-+    }
-+
-+    @Override
-+    public boolean areCapsCompatible(@org.jetbrains.annotations.Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher other) {
-+        return capProvider.areCapsCompatible(other);
 +    }
 +
 +    @Override
@@ -373,7 +327,7 @@
                          CrashReportCategory crashreportcategory = crashreport.addCategory("Block entity being ticked");
                          this.blockEntity.fillCrashReportCategory(crashreportcategory);
 +                        if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringBlockEntities.get()) {
-+                            LOGGER.error("{}", crashreport.getFriendlyReport());
++                            LOGGER.error("{}", crashreport.getFriendlyReport(net.minecraft.ReportType.CRASH));
 +                            blockEntity.setRemoved();
 +                            LevelChunk.this.removeBlockEntity(blockEntity.getBlockPos());
 +                        } else
@@ -393,8 +347,8 @@
 +     */
 +    @java.lang.Deprecated
 +    @org.jetbrains.annotations.Nullable
-+    public final CompoundTag writeCapsToNBT() {
-+       return capProvider.serializeInternal();
++    public final CompoundTag writeCapsToNBT(HolderLookup.Provider registryAccess) {
++       return capProvider.serializeInternal(registryAccess);
 +    }
 +
 +    /**
@@ -404,8 +358,8 @@
 +     *
 +     */
 +    @java.lang.Deprecated
-+    public final void readCapsFromNBT(CompoundTag tag) {
-+        capProvider.deserializeInternal(tag);
++    public final void readCapsFromNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
++        capProvider.deserializeInternal(registryAccess, tag);
 +    }
 +
 +    @Override

@@ -44,17 +44,6 @@
      public void validate() {
          this.featuresPerStep.get();
      }
-@@ -109,7 +_,9 @@
-         return BuiltInRegistries.CHUNK_GENERATOR.getResourceKey(this.codec());
-     }
- 
--    public CompletableFuture<ChunkAccess> createBiomes(RandomState p_223160_, Blender p_223161_, StructureManager p_223162_, ChunkAccess p_223163_) {
-+    public CompletableFuture<ChunkAccess> createBiomes(
-+        Executor p_223159_, RandomState p_223160_, Blender p_223161_, StructureManager p_223162_, ChunkAccess p_223163_
-+    ) {
-         return CompletableFuture.supplyAsync(Util.wrapThreadWithTaskName("init_biomes", () -> {
-             p_223163_.fillBiomesFromNoise(this.biomeSource, p_223160_.sampler());
-             return p_223163_;
 @@ -311,6 +_,31 @@
          }
      }
@@ -102,14 +91,3 @@
              p_223106_.setStartForStructure(p_223113_, structure, structurestart, p_223111_);
              return true;
          } else {
-@@ -591,7 +_,9 @@
-         }
-     }
- 
--    public abstract CompletableFuture<ChunkAccess> fillFromNoise(Blender p_223210_, RandomState p_223211_, StructureManager p_223212_, ChunkAccess p_223213_);
-+    public abstract CompletableFuture<ChunkAccess> fillFromNoise(
-+        Executor p_223209_, Blender p_223210_, RandomState p_223211_, StructureManager p_223212_, ChunkAccess p_223213_
-+    );
- 
-     public abstract int getSeaLevel();
- 

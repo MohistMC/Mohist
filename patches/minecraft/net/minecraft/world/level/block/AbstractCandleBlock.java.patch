@@ -1,27 +1,20 @@
 --- a/net/minecraft/world/level/block/AbstractCandleBlock.java
 +++ b/net/minecraft/world/level/block/AbstractCandleBlock.java
-@@ -42,12 +_,18 @@
+@@ -42,9 +_,14 @@
              && p_151934_.getValue(LIT);
      }
  
 -    @Override
 -    protected void onProjectileHit(Level p_151905_, BlockState p_151906_, BlockHitResult p_151907_, Projectile p_151908_) {
 -        if (!p_151905_.isClientSide && p_151908_.isOnFire() && this.canBeLit(p_151906_)) {
--            setLit(p_151905_, p_151906_, p_151907_.getBlockPos(), true);
--        }
--    }
 +	@Override
 +   	public void onProjectileHit(Level p_151905_, BlockState p_151906_, BlockHitResult p_151907_, Projectile p_151908_) {
-+      if (!p_151905_.isClientSide && p_151908_.isOnFire() && this.canBeLit(p_151906_)) {
-+         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_151905_, p_151907_.getBlockPos(), p_151908_).isCancelled()) {
-+            return;
-+         }
-+         // CraftBukkit end
-+         setLit(p_151905_, p_151906_, p_151907_.getBlockPos(), true);
-+      }
-+
-+   }
- 
-     protected boolean canBeLit(BlockState p_151935_) {
-         return !p_151935_.getValue(LIT);
++      	if (!p_151905_.isClientSide && p_151908_.isOnFire() && this.canBeLit(p_151906_)) {
++         	// CraftBukkit start
++         	if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_151905_, p_151907_.getBlockPos(), p_151908_).isCancelled()) {
++            	return;
++         	}
++         	// CraftBukkit end
+             setLit(p_151905_, p_151906_, p_151907_.getBlockPos(), true);
+         }
+     }

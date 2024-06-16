@@ -1,17 +1,5 @@
 --- a/net/minecraft/world/level/block/CakeBlock.java
 +++ b/net/minecraft/world/level/block/CakeBlock.java
-@@ -66,7 +_,10 @@
-     ) {
-         Item item = p_332983_.getItem();
-         if (p_332983_.is(ItemTags.CANDLES) && p_333266_.getValue(BITES) == 0 && Block.byItem(item) instanceof CandleBlock candleblock) {
--            p_332983_.consume(1, p_327926_);
-+            if (!p_327926_.isCreative()) {
-+                p_332983_.shrink(1);
-+            }
-+
-             p_328017_.playSound(null, p_332811_, SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
-             p_328017_.setBlockAndUpdate(p_332811_, CandleCakeBlock.byCandle(candleblock));
-             p_328017_.gameEvent(p_327926_, GameEvent.BLOCK_CHANGE, p_332811_);
 @@ -97,7 +_,18 @@
              return InteractionResult.PASS;
          } else {

@@ -18,7 +18,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.SculkCatalystBlock;
  import net.minecraft.world.level.block.SculkSpreader;
-@@ -29,14 +_,15 @@
+@@ -29,10 +_,11 @@
  public class SculkCatalystBlockEntity extends BlockEntity implements GameEventListener.Provider<SculkCatalystBlockEntity.CatalystListener> {
      private final SculkCatalystBlockEntity.CatalystListener catalystListener;
  
@@ -32,20 +32,13 @@
 +      catalystListener.level = level; // CraftBukkit
 +   }
  
--    public static void serverTick(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
--        p_222783_.catalystListener.getSculkSpreader().updateCursors(p_222780_, p_222781_, p_222780_.getRandom(), true);
--    }
-+   public static void serverTick(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
-+      p_222783_.catalystListener.getSculkSpreader().updateCursors(p_222780_, p_222781_, p_222780_.getRandom(), true);
-+   }
- 
-     @Override
-     protected void loadAdditional(CompoundTag p_334885_, HolderLookup.Provider p_332157_) {
+     public static void serverTick(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
+         p_222783_.catalystListener.getSculkSpreader().updateCursors(p_222780_, p_222781_, p_222780_.getRandom(), true);
 @@ -59,12 +_,14 @@
          final SculkSpreader sculkSpreader;
          private final BlockState blockState;
          private final PositionSource positionSource;
-+      private Level level; // CraftBukkit
++      	private Level level; // CraftBukkit
  
 -        public CatalystListener(BlockState p_283224_, PositionSource p_283095_) {
 -            this.blockState = p_283224_;
@@ -61,16 +54,6 @@
  
          @Override
          public PositionSource getListenerSource() {
-@@ -85,8 +_,7 @@
-         public boolean handleGameEvent(ServerLevel p_283470_, Holder<GameEvent> p_332335_, GameEvent.Context p_283014_, Vec3 p_282350_) {
-             if (p_332335_.is(GameEvent.ENTITY_DIE) && p_283014_.sourceEntity() instanceof LivingEntity livingentity) {
-                 if (!livingentity.wasExperienceConsumed()) {
--                    DamageSource damagesource = livingentity.getLastDamageSource();
--                    int i = livingentity.getExperienceReward(p_283470_, Optionull.map(damagesource, DamageSource::getEntity));
-+                    int i = livingentity.getExperienceReward();
-                     if (livingentity.shouldDropExperience() && i > 0) {
-                         this.sculkSpreader.addCursors(BlockPos.containing(p_282350_.relative(Direction.UP, 0.5)), i);
-                         this.tryAwardItSpreadsAdvancement(p_283470_, livingentity);
 @@ -109,7 +_,7 @@
              return this.sculkSpreader;
          }

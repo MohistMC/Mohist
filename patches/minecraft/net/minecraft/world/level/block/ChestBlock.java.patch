@@ -60,12 +60,12 @@
          return this.combine(p_51574_, p_51575_, p_51576_, false).apply(MENU_PROVIDER_COMBINER).orElse(null);
      }
  
-+   // CraftBukkit start
-+   @Nullable
-+   public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos, boolean ignoreObstructions) {
-+      return this.combine(pState, pLevel, pPos, ignoreObstructions).apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider) null);
-+   }
-+   // CraftBukkit end
++   	// CraftBukkit start
++   	@Nullable
++   	public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos, boolean ignoreObstructions) {
++      	return this.combine(pState, pLevel, pPos, ignoreObstructions).apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider) null);
++   	}
++   	// CraftBukkit end
 +
      public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> opennessCombiner(final LidBlockEntity p_51518_) {
          return new DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction>() {

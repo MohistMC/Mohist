@@ -41,11 +41,11 @@
          }
      }
 +
-+   // CraftBukkit start
-+   protected void fireExtinguished(net.minecraft.world.level.LevelAccessor world, BlockPos position) {
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.AIR.defaultBlockState()).isCancelled()) {
-+         world.removeBlock(position, false);
-+      }
-+   }
-+   // CraftBukkit end
++   	// CraftBukkit start
++   	protected void fireExtinguished(net.minecraft.world.level.LevelAccessor world, BlockPos position) {
++      	if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.AIR.defaultBlockState()).isCancelled()) {
++         	world.removeBlock(position, false);
++      	}
++   	}
++   	// CraftBukkit end
  }

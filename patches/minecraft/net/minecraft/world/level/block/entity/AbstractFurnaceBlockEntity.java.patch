@@ -224,12 +224,12 @@
      }
  
 -    private static boolean burn(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
-+   // Mohist start - Fix compatibility with ImprovableSkills mod
-+   public static AtomicReference<Level> burn$world  = new AtomicReference<>(null);
-+   public static AtomicReference<BlockPos> burn$blockposition  = new AtomicReference<>(null);
-+   // Mohist end
++   	// Mohist start - Fix compatibility with ImprovableSkills mod
++   	public static AtomicReference<Level> burn$world  = new AtomicReference<>(null);
++   	public static AtomicReference<BlockPos> burn$blockposition  = new AtomicReference<>(null);
++   	// Mohist end
 +
-+   private boolean burn(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
++   	private boolean burn(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
          if (p_299450_ != null && canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
              ItemStack itemstack = p_267073_.get(0);
 -            ItemStack itemstack1 = p_299450_.value().getResultItem(p_266740_);

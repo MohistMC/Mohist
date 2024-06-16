@@ -68,14 +68,6 @@
              this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
              if (this.openCount <= 0) {
                  this.level.gameEvent(p_59688_, GameEvent.CONTAINER_CLOSE, this.worldPosition);
-@@ -186,7 +_,6 @@
-         }
-     }
- 
--    @Override
-     protected Component getDefaultName() {
-         return Component.translatable("container.shulkerBox");
-     }
 @@ -229,7 +_,7 @@
  
      @Override

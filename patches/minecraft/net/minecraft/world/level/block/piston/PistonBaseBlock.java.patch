@@ -28,18 +28,18 @@
                  i = 2;
              }
  
-+         // CraftBukkit start
-+         if (!this.isSticky) {
-+            org.bukkit.block.Block block = CraftBlock.at(p_60168_, p_60169_);
-+            BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(direction));
-+            p_60168_.getCraftServer().getPluginManager().callEvent(event);
++         	// CraftBukkit start
++         	if (!this.isSticky) {
++            	org.bukkit.block.Block block = CraftBlock.at(p_60168_, p_60169_);
++            	BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(direction));
++            	p_60168_.getCraftServer().getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
-+               return;
-+            }
-+         }
-+         // PAIL: checkME - what happened to setTypeAndData?
-+         // CraftBukkit end
++            	if (event.isCancelled()) {
++               		return;
++            	}
++         	}
++         	// PAIL: checkME - what happened to setTypeAndData?
++         	// CraftBukkit end
 +
              p_60168_.blockEvent(p_60169_, this, i, direction.get3DDataValue());
          }

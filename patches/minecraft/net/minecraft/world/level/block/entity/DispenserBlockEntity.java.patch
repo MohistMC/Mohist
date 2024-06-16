@@ -57,39 +57,3 @@
  
      protected DispenserBlockEntity(BlockEntityType<?> p_155489_, BlockPos p_155490_, BlockState p_155491_) {
          super(p_155489_, p_155490_, p_155491_);
-@@ -44,29 +_,15 @@
-         return i;
-     }
- 
--    public ItemStack insertItem(ItemStack p_345441_) {
--        int i = this.getMaxStackSize(p_345441_);
--
--        for (int j = 0; j < this.items.size(); j++) {
--            ItemStack itemstack = this.items.get(j);
--            if (itemstack.isEmpty() || ItemStack.isSameItemSameComponents(p_345441_, itemstack)) {
--                int k = Math.min(p_345441_.getCount(), i - itemstack.getCount());
--                if (k > 0) {
--                    if (itemstack.isEmpty()) {
--                        this.setItem(j, p_345441_.split(k));
--                    } else {
--                        p_345441_.shrink(k);
--                        itemstack.grow(k);
--                    }
--                }
--
--                if (p_345441_.isEmpty()) {
--                    break;
--                }
-+    public int addItem(ItemStack p_59238_) {
-+        for (int i = 0; i < this.items.size(); i++) {
-+            if (this.items.get(i).isEmpty()) {
-+                this.setItem(i, p_59238_);
-+                return i;
-             }
-         }
- 
--        return p_345441_;
-+        return -1;
-     }
- 
-     @Override

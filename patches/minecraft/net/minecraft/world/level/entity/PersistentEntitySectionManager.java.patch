@@ -40,7 +40,7 @@
      }
  
 +    public boolean addNewEntityWithoutEvent(T entity) {
-+        return this.addEntityWithoutEvent(entity, false);
++       return this.addEntityWithoutEvent(entity, false);
 +    }
 +
      private boolean addEntity(T p_157539_, boolean p_157540_) {
@@ -65,21 +65,7 @@
              return true;
          }
      }
-@@ -101,11 +_,11 @@
-     }
- 
-     public void addLegacyChunkEntities(Stream<T> p_157553_) {
--        p_157553_.forEach(p_157607_ -> this.addEntity((T)p_157607_, true));
-+        p_157553_.forEach(p_157607_ -> this.addEntity((T) p_157607_, true));
-     }
- 
-     public void addWorldGenChunkEntities(Stream<T> p_157560_) {
--        p_157560_.forEach(p_157605_ -> this.addEntity((T)p_157605_, false));
-+        p_157560_.forEach(p_157605_ -> this.addEntity((T) p_157605_, false));
-     }
- 
-     void startTicking(T p_157565_) {
-@@ -171,17 +_,28 @@
+@@ -171,7 +_,17 @@
          }
      }
  
@@ -97,14 +83,8 @@
          PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157513_);
          if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
              return false;
-         } else {
--            List<T> list = this.sectionStorage
--                .getExistingSectionsInChunk(p_157513_)
--                .flatMap(p_157542_ -> p_157542_.getEntities().filter(EntityAccess::shouldBeSaved))
--                .collect(Collectors.toList());
-+            List<T> list = this.sectionStorage.getExistingSectionsInChunk(p_157513_).flatMap((p_157542_) -> {
-+                return p_157542_.getEntities().filter(EntityAccess::shouldBeSaved);
-+            }).collect(Collectors.toList());
+@@ -182,6 +_,8 @@
+                 .collect(Collectors.toList());
              if (list.isEmpty()) {
                  if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
 +                    if (callEvent)
@@ -172,111 +152,6 @@
      public boolean isLoaded(UUID p_157551_) {
          return this.knownUuids.contains(p_157551_);
      }
-@@ -306,58 +_,58 @@
- 
-     public void dumpSections(Writer p_157549_) throws IOException {
-         CsvOutput csvoutput = CsvOutput.builder()
--            .addColumn("x")
--            .addColumn("y")
--            .addColumn("z")
--            .addColumn("visibility")
--            .addColumn("load_status")
--            .addColumn("entity_count")
--            .build(p_157549_);
-+                .addColumn("x")
-+                .addColumn("y")
-+                .addColumn("z")
-+                .addColumn("visibility")
-+                .addColumn("load_status")
-+                .addColumn("entity_count")
-+                .build(p_157549_);
-         this.sectionStorage
--            .getAllChunksWithExistingSections()
--            .forEach(
--                (long p_157517_) -> {
--                    PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157517_);
--                    this.sectionStorage
--                        .getExistingSectionPositionsInChunk(p_157517_)
--                        .forEach(
--                            (long p_157521_) -> {
--                                EntitySection<T> entitysection = this.sectionStorage.getSection(p_157521_);
--                                if (entitysection != null) {
--                                    try {
--                                        csvoutput.writeRow(
--                                            SectionPos.x(p_157521_),
--                                            SectionPos.y(p_157521_),
--                                            SectionPos.z(p_157521_),
--                                            entitysection.getStatus(),
--                                            persistententitysectionmanager$chunkloadstatus,
--                                            entitysection.size()
--                                        );
--                                    } catch (IOException ioexception) {
--                                        throw new UncheckedIOException(ioexception);
--                                    }
--                                }
--                            }
--                        );
--                }
--            );
-+                .getAllChunksWithExistingSections()
-+                .forEach(
-+                        (long p_157517_) -> {
-+                            PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157517_);
-+                            this.sectionStorage
-+                                    .getExistingSectionPositionsInChunk(p_157517_)
-+                                    .forEach(
-+                                            (long p_157521_) -> {
-+                                                EntitySection<T> entitysection = this.sectionStorage.getSection(p_157521_);
-+                                                if (entitysection != null) {
-+                                                    try {
-+                                                        csvoutput.writeRow(
-+                                                                SectionPos.x(p_157521_),
-+                                                                SectionPos.y(p_157521_),
-+                                                                SectionPos.z(p_157521_),
-+                                                                entitysection.getStatus(),
-+                                                                persistententitysectionmanager$chunkloadstatus,
-+                                                                entitysection.size()
-+                                                        );
-+                                                    } catch (IOException ioexception) {
-+                                                        throw new UncheckedIOException(ioexception);
-+                                                    }
-+                                                }
-+                                            }
-+                                    );
-+                        }
-+                );
-     }
- 
-     @VisibleForDebug
-     public String gatherStats() {
-         return this.knownUuids.size()
--            + ","
--            + this.visibleEntityStorage.count()
--            + ","
--            + this.sectionStorage.count()
--            + ","
--            + this.chunkLoadStatuses.size()
--            + ","
--            + this.chunkVisibility.size()
--            + ","
--            + this.loadingInbox.size()
--            + ","
--            + this.chunksToUnload.size();
-+                + ","
-+                + this.visibleEntityStorage.count()
-+                + ","
-+                + this.sectionStorage.count()
-+                + ","
-+                + this.chunkLoadStatuses.size()
-+                + ","
-+                + this.chunkVisibility.size()
-+                + ","
-+                + this.loadingInbox.size()
-+                + ","
-+                + this.chunksToUnload.size();
-     }
- 
-     @VisibleForDebug
 @@ -367,11 +_,13 @@
  
      class Callback implements EntityInLevelCallback {
@@ -291,14 +166,7 @@
              this.currentSectionKey = p_157615_;
              this.currentSection = p_157616_;
          }
-@@ -384,15 +_,19 @@
-                 Visibility visibility = this.currentSection.getStatus();
-                 if (!this.currentSection.remove(this.entity)) {
-                     PersistentEntitySectionManager.LOGGER
--                        .warn("Entity {} wasn't found in section {} (moving to {})", this.entity, SectionPos.of(this.currentSectionKey), i);
-+                            .warn("Entity {} wasn't found in section {} (moving to {})", this.entity, SectionPos.of(this.currentSectionKey), i);
-                 }
- 
+@@ -390,9 +_,13 @@
                  PersistentEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
                  EntitySection<T> entitysection = PersistentEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
                  entitysection.add(this.entity);
@@ -312,12 +180,3 @@
              }
          }
  
-@@ -430,7 +_,7 @@
-         public void onRemove(Entity.RemovalReason p_157619_) {
-             if (!this.currentSection.remove(this.entity)) {
-                 PersistentEntitySectionManager.LOGGER
--                    .warn("Entity {} wasn't found in section {} (destroying due to {})", this.entity, SectionPos.of(this.currentSectionKey), p_157619_);
-+                        .warn("Entity {} wasn't found in section {} (destroying due to {})", this.entity, SectionPos.of(this.currentSectionKey), p_157619_);
-             }
- 
-             Visibility visibility = PersistentEntitySectionManager.getEffectiveStatus(this.entity, this.currentSection.getStatus());

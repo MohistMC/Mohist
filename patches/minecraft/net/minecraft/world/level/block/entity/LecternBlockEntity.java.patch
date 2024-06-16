@@ -62,7 +62,7 @@
          @Override
          public int getMaxStackSize() {
              return 1;
-@@ -99,9 +_,51 @@
+@@ -99,9 +_,52 @@
              return false;
          }
  
@@ -108,6 +108,7 @@
 +         return CraftLocation.toBukkit(worldPosition, level.getWorld());
 +      }
 +
++	  @Override
 +      public void clearContent() {
 +      }
 +

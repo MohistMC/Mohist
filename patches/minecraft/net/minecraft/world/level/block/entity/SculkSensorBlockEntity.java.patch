@@ -8,38 +8,3 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Holder;
-@@ -8,7 +_,6 @@
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.NbtOps;
- import net.minecraft.nbt.Tag;
--import net.minecraft.resources.RegistryOps;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.level.block.SculkSensorBlock;
-@@ -45,11 +_,10 @@
-     protected void loadAdditional(CompoundTag p_334658_, HolderLookup.Provider p_335301_) {
-         super.loadAdditional(p_334658_, p_335301_);
-         this.lastVibrationFrequency = p_334658_.getInt("last_vibration_frequency");
--        RegistryOps<Tag> registryops = p_335301_.createSerializationContext(NbtOps.INSTANCE);
-         if (p_334658_.contains("listener", 10)) {
-             VibrationSystem.Data.CODEC
--                .parse(registryops, p_334658_.getCompound("listener"))
--                .resultOrPartial(p_341842_ -> LOGGER.error("Failed to parse vibration listener for Sculk Sensor: '{}'", p_341842_))
-+                .parse(new Dynamic<>(NbtOps.INSTANCE, p_334658_.getCompound("listener")))
-+                .resultOrPartial(LOGGER::error)
-                 .ifPresent(p_281146_ -> this.vibrationData = p_281146_);
-         }
-     }
-@@ -58,10 +_,9 @@
-     protected void saveAdditional(CompoundTag p_187511_, HolderLookup.Provider p_327837_) {
-         super.saveAdditional(p_187511_, p_327837_);
-         p_187511_.putInt("last_vibration_frequency", this.lastVibrationFrequency);
--        RegistryOps<Tag> registryops = p_327837_.createSerializationContext(NbtOps.INSTANCE);
-         VibrationSystem.Data.CODEC
--            .encodeStart(registryops, this.vibrationData)
--            .resultOrPartial(p_341841_ -> LOGGER.error("Failed to encode vibration listener for Sculk Sensor: '{}'", p_341841_))
-+            .encodeStart(NbtOps.INSTANCE, this.vibrationData)
-+            .resultOrPartial(LOGGER::error)
-             .ifPresent(p_222820_ -> p_187511_.put("listener", p_222820_));
-     }
- 
