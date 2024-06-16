@@ -607,7 +607,7 @@
              }
           }
  
-@@ -1151,31 +_,47 @@
+@@ -1151,31 +_,49 @@
        } else {
           ItemStack itemstack = null;
  
@@ -622,12 +622,14 @@
 +               break;
 +            }
 +         }
++         EntityResurrectEvent event = null;
++         if (this.getBukkitEntity() instanceof  org.bukkit.entity.LivingEntity) {
++            event = new EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity());
++            event.setCancelled(itemstack == null);
++            Bukkit.getPluginManager().callEvent(event);
++         }
 +
-+         EntityResurrectEvent event = new EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity());
-+         event.setCancelled(itemstack == null);
-+         Bukkit.getPluginManager().callEvent(event);
-+
-+         if (!event.isCancelled()) {
++         if (event != null && event.isCancelled()) {
 +            if (!itemstack1.m_41619_()) {
                 itemstack1.m_41774_(1);
 -               break;
@@ -659,7 +661,7 @@
           }
  
 -         return itemstack != null;
-+         return !event.isCancelled();
++         return (event == null) ? itemstack != null : !event.isCancelled();
        }
     }
  
