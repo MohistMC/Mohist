@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.back;
 
+import com.mohistmc.MohistConfig;
 import com.mohistmc.plugins.config.MohistPluginConfig;
 import java.io.File;
 import org.bukkit.Location;
@@ -18,6 +19,7 @@ public class BackConfig extends MohistPluginConfig {
     }
 
     public void saveLocation(Player player, Location location, BackType backType) {
+        if (!MohistConfig.back_enable) return;
         yaml.set(player.getUniqueId() + ".location", location);
         yaml.set(player.getUniqueId() + ".type", backType.name());
         save();
