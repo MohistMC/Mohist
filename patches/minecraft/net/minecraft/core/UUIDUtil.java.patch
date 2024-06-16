@@ -1,0 +1,12 @@
+--- a/net/minecraft/core/UUIDUtil.java
++++ b/net/minecraft/core/UUIDUtil.java
+@@ -55,6 +_,9 @@
+    }
+ 
+    public static int[] m_235881_(UUID p_235882_) {
++      if (p_235882_ == null) {
++         p_235882_ = UUID.randomUUID();
++      }
+       long i = p_235882_.getMostSignificantBits();
+       long j = p_235882_.getLeastSignificantBits();
+       return m_235872_(i, j);
