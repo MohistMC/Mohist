@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/carver/CarverDebugSettings.java
++++ b/net/minecraft/world/level/levelgen/carver/CarverDebugSettings.java
+@@ -20,7 +_,7 @@
+                 )
+                 .apply(p_159135_, CarverDebugSettings::new)
+     );
+-    private boolean debugMode;
++    private final boolean debugMode;
+     private final BlockState airState;
+     private final BlockState waterState;
+     private final BlockState lavaState;

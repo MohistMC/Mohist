@@ -37,19 +37,13 @@
  
      private void handleEntityOnFireInside(BlockState p_153556_, Level p_153557_, BlockPos p_153558_) {
          if (this.precipitationType == Biome.Precipitation.SNOW) {
-@@ -77,12 +_,36 @@
-         }
-     }
- 
--    public static void lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
--        int i = p_153560_.getValue(LEVEL) - 1;
--        BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
+@@ -80,9 +_,33 @@
+     public static void lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
+         int i = p_153560_.getValue(LEVEL) - 1;
+         BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
 -        p_153561_.setBlockAndUpdate(p_153562_, blockstate);
 -        p_153561_.gameEvent(GameEvent.BLOCK_CHANGE, p_153562_, GameEvent.Context.of(blockstate));
 -    }
-+   public static void lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
-+      int i = p_153560_.getValue(LEVEL) - 1;
-+      BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
 +      changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
 +   }
 +
@@ -80,21 +74,17 @@
  
      @Override
      public void handlePrecipitation(BlockState p_153539_, Level p_153540_, BlockPos p_153541_, Biome.Precipitation p_153542_) {
-@@ -107,9 +_,12 @@
+@@ -107,8 +_,11 @@
      protected void receiveStalactiteDrip(BlockState p_153544_, Level p_153545_, BlockPos p_153546_, Fluid p_153547_) {
          if (!this.isFull(p_153544_)) {
              BlockState blockstate = p_153544_.setValue(LEVEL, Integer.valueOf(p_153544_.getValue(LEVEL) + 1));
 -            p_153545_.setBlockAndUpdate(p_153546_, blockstate);
 -            p_153545_.gameEvent(GameEvent.BLOCK_CHANGE, p_153546_, GameEvent.Context.of(blockstate));
--            p_153545_.levelEvent(1047, p_153546_, 0);
--        }
--    }
-+         // CraftBukkit start
-+         if (!changeLevel(p_153544_, p_153545_, p_153546_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL)) {
-+            return;
-+         }
-+         // CraftBukkit end
-+         p_153545_.levelEvent(1047, p_153546_, 0);
-+      }
-+   }
- }
++         	// CraftBukkit start
++         	if (!changeLevel(p_153544_, p_153545_, p_153546_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL)) {
++            	return;
++         	}
++         	// CraftBukkit end
+             p_153545_.levelEvent(1047, p_153546_, 0);
+         }
+     }

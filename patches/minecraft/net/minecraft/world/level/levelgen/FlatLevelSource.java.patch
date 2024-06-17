@@ -16,27 +16,19 @@
  import net.minecraft.world.level.biome.FixedBiomeSource;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
-@@ -38,6 +_,12 @@
+@@ -38,7 +_,14 @@
          this.settings = p_256337_;
      }
  
-+   // CraftBukkit start
-+   public FlatLevelSource(FlatLevelGeneratorSettings p_256337_, BiomeSource biomeSource) {
-+      super(biomeSource, Util.memoize(p_256337_::adjustGenerationSettings));
-+      this.settings = p_256337_;
-+   }
-+   // CraftBukkit end
-     @Override
+-    @Override
++   	// CraftBukkit start
++   	public FlatLevelSource(FlatLevelGeneratorSettings p_256337_, BiomeSource biomeSource) {
++      	super(biomeSource, Util.memoize(p_256337_::adjustGenerationSettings));
++      	this.settings = p_256337_;
++   	}
++   	// CraftBukkit end
++    
++	@Override
      public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_) {
          Stream<Holder<StructureSet>> stream = this.settings
-@@ -66,7 +_,9 @@
-     }
- 
-     @Override
--    public CompletableFuture<ChunkAccess> fillFromNoise(Blender p_224184_, RandomState p_224185_, StructureManager p_224186_, ChunkAccess p_224187_) {
-+    public CompletableFuture<ChunkAccess> fillFromNoise(
-+        Executor p_224183_, Blender p_224184_, RandomState p_224185_, StructureManager p_224186_, ChunkAccess p_224187_
-+    ) {
-         List<BlockState> list = this.settings.getLayers();
-         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-         Heightmap heightmap = p_224187_.getOrCreateHeightmapUnprimed(Heightmap.Types.OCEAN_FLOOR_WG);
+             .structureOverrides()

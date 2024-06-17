@@ -3,11 +3,11 @@
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.6)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.6)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.21)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.21)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.6--50.1.6-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
+[![](https://img.shields.io/badge/Forge-1.21--51.0.8-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.21.html)
 [![](https://img.shields.io/badge/JDK-17.0.10-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
-[![](https://img.shields.io/badge/Gradle-8.6-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.6/release-notes.html)
+[![](https://img.shields.io/badge/Gradle-8.7-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.6/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/mohistmc)
@@ -18,9 +18,9 @@
 Progress
 ------
 
-- [ ] Rectify Forge([**5eb5c3463**](https://github.com/MinecraftForge/MinecraftForge/commit/5eb5c3463))
+- [ ] Rectify Forge([**7a497cdbd**](https://github.com/MinecraftForge/MinecraftForge/commit/7a497cdbd))
 - [x] Start patch
-    * [x] Bukkit([**376e37db**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/376e37db))
+    * [x] Bukkit([**2b4b6d14**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/2b4b6d14))
     * [ ] CraftBukkit([**f057cf449**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/f057cf449))
     * [x] Spigot ([**fcd94e21**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/fcd94e21))
         * [x] Bukkit-Patches

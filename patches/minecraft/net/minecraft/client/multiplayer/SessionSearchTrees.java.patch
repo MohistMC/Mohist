@@ -1,21 +1,17 @@
 --- a/net/minecraft/client/multiplayer/SessionSearchTrees.java
 +++ b/net/minecraft/client/multiplayer/SessionSearchTrees.java
-@@ -29,10 +_,10 @@
- @OnlyIn(Dist.CLIENT)
- public class SessionSearchTrees {
+@@ -31,8 +_,8 @@
      private static final SessionSearchTrees.Key RECIPE_COLLECTIONS = new SessionSearchTrees.Key();
--    private static final SessionSearchTrees.Key CREATIVE_NAMES = new SessionSearchTrees.Key();
--    private static final SessionSearchTrees.Key CREATIVE_TAGS = new SessionSearchTrees.Key();
+     public static final SessionSearchTrees.Key CREATIVE_NAMES = new SessionSearchTrees.Key();
+     public static final SessionSearchTrees.Key CREATIVE_TAGS = new SessionSearchTrees.Key();
 -    private CompletableFuture<SearchTree<ItemStack>> creativeByNameSearch = CompletableFuture.completedFuture(SearchTree.empty());
 -    private CompletableFuture<SearchTree<ItemStack>> creativeByTagSearch = CompletableFuture.completedFuture(SearchTree.empty());
-+    public static final SessionSearchTrees.Key CREATIVE_NAMES = new SessionSearchTrees.Key();
-+    public static final SessionSearchTrees.Key CREATIVE_TAGS = new SessionSearchTrees.Key();
 +    private CompletableFuture<SearchTree<ItemStack>> EMPTY = CompletableFuture.completedFuture(SearchTree.empty());
 +    private Map<SessionSearchTrees.Key, CompletableFuture<SearchTree<ItemStack>>> creativeSearch = new IdentityHashMap<>();
      private CompletableFuture<SearchTree<RecipeCollection>> recipeSearch = CompletableFuture.completedFuture(SearchTree.empty());
      private final Map<SessionSearchTrees.Key, Runnable> reloaders = new IdentityHashMap<>();
  
-@@ -82,47 +_,53 @@
+@@ -82,44 +_,50 @@
      }
  
      public void updateCreativeTags(List<ItemStack> p_344581_) {
@@ -76,7 +72,3 @@
      }
  
      @OnlyIn(Dist.CLIENT)
--    static class Key {
-+    public static class Key {
-     }
- }

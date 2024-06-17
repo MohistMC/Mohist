@@ -75,15 +75,6 @@
      ) {
          TextureAtlasSprite textureatlassprite = p_111452_.apply(this.getMaterial("particle"));
          if (this.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
-@@ -226,7 +_,7 @@
-         }
-     }
- 
--    private static BakedQuad bakeFace(
-+    public static BakedQuad bakeFace(
-         BlockElement p_111438_, BlockElementFace p_111439_, TextureAtlasSprite p_111440_, Direction p_111441_, ModelState p_111442_
-     ) {
-         return FACE_BAKERY.bakeQuad(
 @@ -290,7 +_,18 @@
          ItemTransform itemtransform5 = this.getTransform(ItemDisplayContext.GUI);
          ItemTransform itemtransform6 = this.getTransform(ItemDisplayContext.GROUND);

@@ -16,14 +16,10 @@
  
  public class CauldronBlock extends AbstractCauldronBlock {
      public static final MapCodec<CauldronBlock> CODEC = simpleCodec(CauldronBlock::new);
-@@ -56,18 +_,16 @@
-         return true;
-     }
- 
--    @Override
--    protected void receiveStalactiteDrip(BlockState p_152940_, Level p_152941_, BlockPos p_152942_, Fluid p_152943_) {
--        if (p_152943_ == Fluids.WATER) {
--            BlockState blockstate = Blocks.WATER_CAULDRON.defaultBlockState();
+@@ -60,14 +_,13 @@
+     protected void receiveStalactiteDrip(BlockState p_152940_, Level p_152941_, BlockPos p_152942_, Fluid p_152943_) {
+         if (p_152943_ == Fluids.WATER) {
+             BlockState blockstate = Blocks.WATER_CAULDRON.defaultBlockState();
 -            p_152941_.setBlockAndUpdate(p_152942_, blockstate);
 -            p_152941_.gameEvent(GameEvent.BLOCK_CHANGE, p_152942_, GameEvent.Context.of(blockstate));
 -            p_152941_.levelEvent(1047, p_152942_, 0);
@@ -34,9 +30,6 @@
 -            p_152941_.levelEvent(1046, p_152942_, 0);
 -        }
 -    }
-+   protected void receiveStalactiteDrip(BlockState p_152940_, Level p_152941_, BlockPos p_152942_, Fluid p_152943_) {
-+      if (p_152943_ == Fluids.WATER) {
-+         BlockState blockstate = Blocks.WATER_CAULDRON.defaultBlockState();
 +         LayeredCauldronBlock.changeLevel(p_152940_, p_152941_, p_152942_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL); // CraftBukkit
 +         p_152941_.levelEvent(1047, p_152942_, 0);
 +      } else if (p_152943_ == Fluids.LAVA) {

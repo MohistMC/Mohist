@@ -49,7 +49,7 @@ public class Remapper {
         this.toNmsMapping = new JarMapping();
         this.toNmsMapping.packages.put("org/yaml/snakeyaml/", "com/mohistmc/org/yaml/snakeyaml/");
         this.toNmsMapping.packages.put("javax/inject/", "com/mohistmc/javax/inject/");
-        this.toNmsMapping.packages.put("org/bukkit/craftbukkit/v1_20_R4/", "org/bukkit/craftbukkit/");
+        this.toNmsMapping.packages.put("org/bukkit/craftbukkit/v1_21_R1/", "org/bukkit/craftbukkit/");
         this.toNmsMapping.classes.put("io/netty/util/Version", "com/mohistmc/mohist/bukkit/pluginfix/ScriptBlockPlus");
         this.toBukkitMapping = new JarMapping();
         this.inheritanceMap = new InheritanceMap();

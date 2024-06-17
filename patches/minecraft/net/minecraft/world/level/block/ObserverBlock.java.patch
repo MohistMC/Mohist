@@ -1,17 +1,13 @@
 --- a/net/minecraft/world/level/block/ObserverBlock.java
 +++ b/net/minecraft/world/level/block/ObserverBlock.java
-@@ -14,9 +_,10 @@
+@@ -14,6 +_,7 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class ObserverBlock extends DirectionalBlock {
--    public static final MapCodec<ObserverBlock> CODEC = simpleCodec(ObserverBlock::new);
-+   public static final MapCodec<ObserverBlock> CODEC = simpleCodec(ObserverBlock::new);
-     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
- 
-     @Override
+     public static final MapCodec<ObserverBlock> CODEC = simpleCodec(ObserverBlock::new);
 @@ -47,8 +_,18 @@
      @Override
      protected void tick(BlockState p_221840_, ServerLevel p_221841_, BlockPos p_221842_, RandomSource p_221843_) {

@@ -18,18 +18,11 @@
  
  public class BigDripleafBlock extends HorizontalDirectionalBlock implements BonemealableBlock, SimpleWaterloggedBlock {
      public static final MapCodec<BigDripleafBlock> CODEC = simpleCodec(BigDripleafBlock::new);
-@@ -188,12 +_,26 @@
- 
-     @Override
+@@ -190,7 +_,20 @@
      protected void entityInside(BlockState p_152266_, Level p_152267_, BlockPos p_152268_, Entity p_152269_) {
--        if (!p_152267_.isClientSide) {
--            if (p_152266_.getValue(TILT) == Tilt.NONE && canEntityTilt(p_152268_, p_152269_) && !p_152267_.hasNeighborSignal(p_152268_)) {
+         if (!p_152267_.isClientSide) {
+             if (p_152266_.getValue(TILT) == Tilt.NONE && canEntityTilt(p_152268_, p_152269_) && !p_152267_.hasNeighborSignal(p_152268_)) {
 -                this.setTiltAndScheduleTick(p_152266_, p_152267_, p_152268_, Tilt.UNSTABLE, null);
--            }
--        }
--    }
-+      if (!p_152267_.isClientSide) {
-+         if (p_152266_.getValue(TILT) == Tilt.NONE && canEntityTilt(p_152268_, p_152269_) && !p_152267_.hasNeighborSignal(p_152268_)) {
 +            // CraftBukkit start - tilt dripleaf
 +            org.bukkit.event.Cancellable cancellable;
 +            if (p_152269_ instanceof Player) {
@@ -44,10 +37,6 @@
 +            }
 +            this.setTiltAndScheduleTick(p_152266_, p_152267_, p_152268_, Tilt.UNSTABLE, null);
 +            // CraftBukkit end
-+         }
-+
-+      }
-+   }
- 
-     @Override
-     protected void tick(BlockState p_220798_, ServerLevel p_220799_, BlockPos p_220800_, RandomSource p_220801_) {
+             }
+         }
+     }

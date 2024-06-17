@@ -18,15 +18,11 @@
  
  public class InfestedBlock extends Block {
      public static final MapCodec<InfestedBlock> CODEC = RecordCodecBuilder.mapCodec(
-@@ -52,8 +_,9 @@
+@@ -52,6 +_,7 @@
          Silverfish silverfish = EntityType.SILVERFISH.create(p_54181_);
          if (silverfish != null) {
              silverfish.moveTo((double)p_54182_.getX() + 0.5, (double)p_54182_.getY(), (double)p_54182_.getZ() + 0.5, 0.0F, 0.0F);
--            p_54181_.addFreshEntity(silverfish);
--            silverfish.spawnAnim();
-+         silverfish.spawnReason(CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK);
-+         p_54181_.addFreshEntity(silverfish);
-+         silverfish.spawnAnim();
++         	silverfish.spawnReason(CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK);
+             p_54181_.addFreshEntity(silverfish);
+             silverfish.spawnAnim();
          }
-     }
- 

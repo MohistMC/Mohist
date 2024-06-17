@@ -1,13 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -1,29 +_,30 @@
- package net.minecraft.world.entity;
- 
--import com.google.common.annotations.VisibleForTesting;
-+import com.google.common.base.Function;
- import com.google.common.base.Objects;
- import com.google.common.collect.ImmutableList;
- import com.google.common.collect.ImmutableMap;
+@@ -7,6 +_,7 @@
  import com.google.common.collect.Iterables;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
@@ -15,11 +8,8 @@
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DataResult;
- import com.mojang.serialization.Dynamic;
--import it.unimi.dsi.fastutil.doubles.DoubleDoubleImmutablePair;
--import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
--import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
-+
+@@ -16,12 +_,15 @@
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
  import java.util.Collection;
  import java.util.ConcurrentModificationException;
 +import java.util.HashSet;
@@ -33,10 +23,8 @@
 +import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
--import javax.annotation.Nonnull;
+ import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
- import net.minecraft.BlockUtil;
- import net.minecraft.Util;
 @@ -39,6 +_,8 @@
  import net.minecraft.core.particles.ParticleOptions;
  import net.minecraft.core.particles.ParticleTypes;
@@ -46,14 +34,6 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.Tag;
-@@ -53,7 +_,6 @@
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.resources.ResourceKey;
--import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.level.ServerChunkCache;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.server.level.ServerPlayer;
 @@ -68,6 +_,7 @@
  import net.minecraft.tags.ItemTags;
  import net.minecraft.tags.TagKey;
@@ -62,27 +42,6 @@
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.damagesource.CombatRules;
-@@ -93,7 +_,6 @@
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.AbstractArrow;
--import net.minecraft.world.entity.projectile.Projectile;
- import net.minecraft.world.food.FoodProperties;
- import net.minecraft.world.item.ArmorItem;
- import net.minecraft.world.item.AxeItem;
-@@ -103,9 +_,10 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
- import net.minecraft.world.item.UseAnim;
--import net.minecraft.world.item.enchantment.Enchantment;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
--import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
-+import net.minecraft.world.item.enchantment.Enchantments;
-+import net.minecraft.world.item.enchantment.FrostWalkerEnchantment;
-+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
- import net.minecraft.world.level.ClipContext;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
 @@ -126,13 +_,32 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -534,23 +493,13 @@
          if (this.getType().is(EntityTypeTags.IMMUNE_TO_INFESTED)) {
              return !p_21197_.is(MobEffects.INFESTED);
          } else if (this.getType().is(EntityTypeTags.IMMUNE_TO_OOZING)) {
-@@ -981,20 +_,51 @@
+@@ -981,12 +_,37 @@
          return this.getType().is(EntityTypeTags.INVERTED_HEALING_AND_HARM);
      }
  
 -    @Nullable
 -    public MobEffectInstance removeEffectNoUpdate(Holder<MobEffect> p_329442_) {
 -        return this.activeEffects.remove(p_329442_);
--    }
--
--    public boolean removeEffect(Holder<MobEffect> p_335910_) {
--        MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_335910_);
--        if (mobeffectinstance != null) {
--            this.onEffectRemoved(mobeffectinstance);
--            return true;
--        } else {
--            return false;
--        }
 -    }
 +   // Mohist start
 +   public AtomicReference<EntityPotionEffectEvent.Cause> removeEffectNoUpdateCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
@@ -578,43 +527,27 @@
 +      removeEffectNoUpdateCause.set(cause);
 +      return removeEffectNoUpdate(pEffect);
 +   }
-+
-+   public boolean removeEffect(Holder<MobEffect> p_21196_) {
-+       if (net.minecraftforge.event.ForgeEventFactory.onLivingEffectRemove(this, p_21196_.get())) {
-+           return false;
-+       }
-+       MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_);
-+       if (mobeffectinstance != null) {
-+           this.onEffectRemoved(mobeffectinstance);
-+           return true;
-+       } else {
-+           return false;
-+       }
-+   }
-+
+ 
+     public boolean removeEffect(Holder<MobEffect> p_335910_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingEffectRemove(this, p_335910_.get())) {
++            return false;
++        }
+         MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_335910_);
+         if (mobeffectinstance != null) {
+             this.onEffectRemoved(mobeffectinstance);
+@@ -996,6 +_,12 @@
+         }
+     }
+ 
 +   public boolean removeEffect(Holder<MobEffect> pEffect, EntityPotionEffectEvent.Cause cause) {
 +      removeEffectNoUpdateCause.set(cause);
 +      return removeEffect(pEffect);
 +   }
 +   // Mohist end
- 
++
      protected void onEffectAdded(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
          this.effectsDirty = true;
-@@ -1041,13 +_,9 @@
-     }
- 
-     private void refreshDirtyAttributes() {
--        Set<AttributeInstance> set = this.getAttributes().getAttributesToUpdate();
--
--        for (AttributeInstance attributeinstance : set) {
-+        for (AttributeInstance attributeinstance : this.getAttributes().getDirtyAttributes()) {
-             this.onAttributeUpdated(attributeinstance.getAttribute());
-         }
--
--        set.clear();
-     }
- 
-     private void onAttributeUpdated(Holder<Attribute> p_328945_) {
+         if (!this.level().isClientSide) {
 @@ -1064,211 +_,286 @@
          }
      }
@@ -1114,7 +1047,7 @@
          if (!this.isRemoved() && !this.dead) {
              Entity entity = p_21014_.getEntity();
              LivingEntity livingentity = this.getKillCredit();
-@@ -1361,50 +_,87 @@
+@@ -1361,28 +_,39 @@
          }
      }
  
@@ -1136,6 +1069,8 @@
 -                    this.level().addFreshEntity(itementity);
 -                }
 -            }
+-        }
+-    }
 +   protected void createWitherRose(@Nullable LivingEntity p_21269_) {
 +      if (!this.level().isClientSide) {
 +         boolean flag = false;
@@ -1166,34 +1101,19 @@
 +
 +      }
 +   }
-+
-+    protected void dropAllDeathLoot(DamageSource p_21192_) {
-+        Entity entity = p_21192_.getEntity();
-+        int i;
-+        if (entity instanceof Player) {
-+            i = EnchantmentHelper.getMobLooting((LivingEntity)entity);
-+        } else {
-+            i = 0;
-         }
--    }
  
--    protected void dropAllDeathLoot(ServerLevel p_342160_, DamageSource p_21192_) {
-+        i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_21192_);
+     protected void dropAllDeathLoot(ServerLevel p_342160_, DamageSource p_21192_) {
 +        this.captureDrops(new java.util.ArrayList<>());
          boolean flag = this.lastHurtByPlayerTime > 0;
--        if (this.shouldDropLoot() && p_342160_.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
-+        if (this.shouldDropLoot() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+         if (this.shouldDropLoot() && p_342160_.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
              this.dropFromLootTable(p_21192_, flag);
--            this.dropCustomDeathLoot(p_342160_, p_21192_, flag);
-+            this.dropCustomDeathLoot(p_21192_, i, flag);
-         }
+@@ -1391,16 +_,33 @@
  
          this.dropEquipment();
--        this.dropExperience(p_21192_.getEntity());
-+        this.dropExperience();
+         this.dropExperience(p_21192_.getEntity());
 +
 +        var drops = captureDrops(null);
-+        if (!net.minecraftforge.event.ForgeEventFactory.onLivingDrops(this, p_21192_, drops, i, lastHurtByPlayerTime > 0)) {
++        if (!net.minecraftforge.event.ForgeEventFactory.onLivingDrops(this, p_21192_, drops, lastHurtByPlayerTime > 0)) {
 +            drops.forEach(e -> level().addFreshEntity(e));
 +        }
      }
@@ -1201,8 +1121,6 @@
      protected void dropEquipment() {
      }
  
--    protected void dropExperience(@Nullable Entity p_342525_) {
--        if (this.level() instanceof ServerLevel serverlevel
 +    // CraftBukkit start
 +    public int getExpReward() {
 +        if (this.level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
@@ -1214,33 +1132,16 @@
 +    }
 +    // CraftBukkit end
 +
-+    protected void dropExperience() {
-+        if (this.level() instanceof ServerLevel
+     protected void dropExperience(@Nullable Entity p_342525_) {
+         if (this.level() instanceof ServerLevel serverlevel
              && !this.wasExperienceConsumed()
              && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
 -            ExperienceOrb.award(serverlevel, this.position(), this.getExperienceReward(serverlevel, p_342525_));
-+            int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.lastHurtByPlayer, this.getExperienceReward());
-+            ExperienceOrb.award((ServerLevel) this.level(), this.position(), reward);
++            int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.lastHurtByPlayer, this.getExperienceReward(serverlevel, p_342525_));
++            ExperienceOrb.award(serverlevel, this.position(), reward);
          }
      }
  
--    protected void dropCustomDeathLoot(ServerLevel p_344205_, DamageSource p_21018_, boolean p_21020_) {
-+    protected void dropCustomDeathLoot(DamageSource p_21018_, int p_21019_, boolean p_21020_) {
-     }
- 
-     public ResourceKey<LootTable> getLootTable() {
-@@ -1415,11 +_,6 @@
-         return 0L;
-     }
- 
--    protected float getKnockback(Entity p_344037_, DamageSource p_343881_) {
--        float f = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
--        return this.level() instanceof ServerLevel serverlevel ? EnchantmentHelper.modifyKnockback(serverlevel, this.getWeaponItem(), p_344037_, p_343881_, f) : f;
--    }
--
-     protected void dropFromLootTable(DamageSource p_21021_, boolean p_21022_) {
-         ResourceKey<LootTable> resourcekey = this.getLootTable();
-         LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(resourcekey);
 @@ -1427,8 +_,8 @@
              .withParameter(LootContextParams.THIS_ENTITY, this)
              .withParameter(LootContextParams.ORIGIN, this.position())
@@ -1299,17 +1200,6 @@
          }
      }
  
-@@ -1497,10 +_,6 @@
-         }
-     }
- 
--    public Map<Enchantment, Set<EnchantmentLocationBasedEffect>> activeLocationDependentEnchantments() {
--        return this.activeLocationDependentEnchantments;
--    }
--
-     public LivingEntity.Fallsounds getFallSounds() {
-         return new LivingEntity.Fallsounds(SoundEvents.GENERIC_SMALL_FALL, SoundEvents.GENERIC_BIG_FALL);
-     }
 @@ -1513,6 +_,28 @@
          return p_21202_.getEatingSound();
      }
@@ -1353,25 +1243,6 @@
              if (blockstate.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(blockpos);
                  return true;
-@@ -1536,12 +_,14 @@
-     }
- 
-     private boolean trapdoorUsableAsLadder(BlockPos p_21177_, BlockState p_21178_) {
--        if (!p_21178_.getValue(TrapDoorBlock.OPEN)) {
--            return false;
--        } else {
-+        if (p_21178_.getValue(TrapDoorBlock.OPEN)) {
-             BlockState blockstate = this.level().getBlockState(p_21177_.below());
--            return blockstate.is(Blocks.LADDER) && blockstate.getValue(LadderBlock.FACING) == p_21178_.getValue(TrapDoorBlock.FACING);
-+            if (blockstate.is(Blocks.LADDER) && blockstate.getValue(LadderBlock.FACING) == p_21178_.getValue(TrapDoorBlock.FACING)) {
-+                return true;
-+            }
-         }
-+
-+        return false;
-     }
- 
-     @Override
 @@ -1560,17 +_,26 @@
  
      @Override
@@ -1771,19 +1642,6 @@
      }
  
      @Override
-@@ -1908,12 +_,6 @@
-         return this.getItemBySlot(EquipmentSlot.OFFHAND);
-     }
- 
--    @Nonnull
--    @Override
--    public ItemStack getWeaponItem() {
--        return this.getMainHandItem();
--    }
--
-     public boolean isHolding(Item p_21056_) {
-         return this.isHolding(p_147200_ -> p_147200_.is(p_21056_));
-     }
 @@ -1958,6 +_,12 @@
  
      public abstract void setItemSlot(EquipmentSlot p_21036_, ItemStack p_21037_);
@@ -1797,16 +1655,6 @@
      public Iterable<ItemStack> getHandSlots() {
          return List.of();
      }
-@@ -2052,8 +_,7 @@
-         return this.hasEffect(MobEffects.JUMP) ? 0.1F * ((float)this.getEffect(MobEffects.JUMP).getAmplifier() + 1.0F) : 0.0F;
-     }
- 
--    @VisibleForTesting
--    public void jumpFromGround() {
-+    protected void jumpFromGround() {
-         float f = this.getJumpPower();
-         if (!(f <= 1.0E-5F)) {
-             Vec3 vec3 = this.getDeltaMovement();
 @@ -2064,15 +_,18 @@
              }
  
@@ -1828,7 +1676,7 @@
      }
  
      protected float getWaterSlowDown() {
-@@ -2097,24 +_,30 @@
+@@ -2097,7 +_,8 @@
              }
  
              FluidState fluidstate = this.level().getFluidState(this.blockPosition());
@@ -1838,24 +1686,7 @@
                  double d9 = this.getY();
                  float f4 = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
                  float f5 = 0.02F;
--                float f6 = (float)this.getAttributeValue(Attributes.WATER_MOVEMENT_EFFICIENCY);
-+                float f6 = (float)EnchantmentHelper.getDepthStrider(this);
-+                if (f6 > 3.0F) {
-+                    f6 = 3.0F;
-+                }
-+
-                 if (!this.onGround()) {
-                     f6 *= 0.5F;
-                 }
- 
-                 if (f6 > 0.0F) {
--                    f4 += (0.54600006F - f4) * f6;
--                    f5 += (this.getSpeed() - f5) * f6;
-+                    f4 += (0.54600006F - f4) * f6 / 3.0F;
-+                    f5 += (this.getSpeed() - f5) * f6 / 3.0F;
-                 }
- 
-                 if (this.hasEffect(MobEffects.DOLPHINS_GRACE)) {
+@@ -2115,6 +_,7 @@
                      f4 = 0.96F;
                  }
  
@@ -1912,14 +1743,7 @@
          Map<EquipmentSlot, ItemStack> map = this.collectEquipmentChanges();
          if (map != null) {
              this.handleHandSwap(map);
-@@ -2460,11 +_,12 @@
-         for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-             ItemStack itemstack = switch (equipmentslot.getType()) {
-                 case HAND -> this.getLastHandItem(equipmentslot);
--                case HUMANOID_ARMOR -> this.getLastArmorItem(equipmentslot);
--                case ANIMAL_ARMOR -> this.lastBodyItemStack;
-+                case ARMOR -> this.getLastArmorItem(equipmentslot);
-+                case BODY -> this.lastBodyItemStack;
+@@ -2465,6 +_,7 @@
              };
              ItemStack itemstack1 = this.getItemBySlot(equipmentslot);
              if (this.equipmentHasChanged(itemstack, itemstack1)) {
@@ -1927,60 +1751,6 @@
                  if (map == null) {
                      map = Maps.newEnumMap(EquipmentSlot.class);
                  }
-@@ -2472,32 +_,20 @@
-                 map.put(equipmentslot, itemstack1);
-                 AttributeMap attributemap = this.getAttributes();
-                 if (!itemstack.isEmpty()) {
--                    itemstack.forEachModifier(equipmentslot, (p_341266_, p_341267_) -> {
--                        AttributeInstance attributeinstance = attributemap.getInstance(p_341266_);
-+                    itemstack.forEachModifier(equipmentslot, (p_326776_, p_326777_) -> {
-+                        AttributeInstance attributeinstance = attributemap.getInstance(p_326776_);
-                         if (attributeinstance != null) {
--                            attributeinstance.removeModifier(p_341267_);
-+                            attributeinstance.removeModifier(p_326777_);
-                         }
--
--                        EnchantmentHelper.stopLocationBasedEffects(itemstack, this, equipmentslot);
-                     });
-                 }
--            }
--        }
- 
--        if (map != null) {
--            for (Entry<EquipmentSlot, ItemStack> entry : map.entrySet()) {
--                EquipmentSlot equipmentslot1 = entry.getKey();
--                ItemStack itemstack2 = entry.getValue();
--                if (!itemstack2.isEmpty()) {
--                    itemstack2.forEachModifier(equipmentslot1, (p_341270_, p_341271_) -> {
--                        AttributeInstance attributeinstance = this.attributes.getInstance(p_341270_);
-+                if (!itemstack1.isEmpty()) {
-+                    itemstack1.forEachModifier(equipmentslot, (p_326780_, p_326781_) -> {
-+                        AttributeInstance attributeinstance = attributemap.getInstance(p_326780_);
-                         if (attributeinstance != null) {
--                            attributeinstance.removeModifier(p_341271_.id());
--                            attributeinstance.addTransientModifier(p_341271_);
--                        }
--
--                        if (this.level() instanceof ServerLevel serverlevel) {
--                            EnchantmentHelper.runLocationChangedEffects(serverlevel, itemstack2, this, equipmentslot1);
-+                            attributeinstance.removeModifier(p_326781_.id());
-+                            attributeinstance.addTransientModifier(p_326781_);
-                         }
-                     });
-                 }
-@@ -2535,10 +_,10 @@
-                 case HAND:
-                     this.setLastHandItem(p_326783_, itemstack);
-                     break;
--                case HUMANOID_ARMOR:
-+                case ARMOR:
-                     this.setLastArmorItem(p_326783_, itemstack);
-                     break;
--                case ANIMAL_ARMOR:
-+                case BODY:
-                     this.lastBodyItemStack = itemstack;
-             }
-         });
 @@ -2636,6 +_,10 @@
          this.level().getProfiler().push("jump");
          if (this.jumping && this.isAffectedByFluids()) {
@@ -2031,15 +1801,6 @@
              this.setSharedFlag(7, flag);
          }
      }
-@@ -2791,8 +_,6 @@
- 
-         if (!this.level().isClientSide && this.autoSpinAttackTicks <= 0) {
-             this.setLivingEntityFlag(4, false);
--            this.autoSpinAttackDmg = 0.0F;
--            this.autoSpinAttackItemStack = null;
-         }
-     }
- 
 @@ -2913,15 +_,20 @@
  
      @Override
@@ -2070,15 +1831,6 @@
      public float getYHeadRot() {
          return this.yHeadRot;
      }
-@@ -2937,7 +_,7 @@
-     }
- 
-     @Override
--    public Vec3 getRelativePortalPosition(Direction.Axis p_21085_, BlockUtil.FoundRectangle p_21086_) {
-+    protected Vec3 getRelativePortalPosition(Direction.Axis p_21085_, BlockUtil.FoundRectangle p_21086_) {
-         return resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_21085_, p_21086_));
-     }
- 
 @@ -2979,8 +_,11 @@
  
      private void updatingUsingItem() {
@@ -2092,7 +1844,7 @@
                  this.updateUsingItem(this.useItem);
              } else {
                  this.stopUsingItem();
-@@ -2989,19 +_,23 @@
+@@ -2989,12 +_,16 @@
      }
  
      protected void updateUsingItem(ItemStack p_147201_) {
@@ -2110,20 +1862,11 @@
              this.completeUsingItem();
          }
      }
- 
-     private boolean shouldTriggerItemUseEffects() {
--        int i = this.useItem.getUseDuration(this) - this.getUseItemRemainingTicks();
--        int j = (int)((float)this.useItem.getUseDuration(this) * 0.21875F);
-+        int i = this.useItem.getUseDuration() - this.getUseItemRemainingTicks();
-+        int j = (int)((float)this.useItem.getUseDuration() * 0.21875F);
-         boolean flag = i > j;
-         return flag && this.getUseItemRemainingTicks() % 4 == 0;
-     }
 @@ -3029,8 +_,12 @@
      public void startUsingItem(InteractionHand p_21159_) {
          ItemStack itemstack = this.getItemInHand(p_21159_);
          if (!itemstack.isEmpty() && !this.isUsingItem()) {
-+            int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.getUseDuration());
++            int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.getUseDuration(this));
 +            if (duration <= 0) {
 +                return;
 +            }
@@ -2133,27 +1876,6 @@
              if (!this.level().isClientSide) {
                  this.setLivingEntityFlag(1, true);
                  this.setLivingEntityFlag(2, p_21159_ == InteractionHand.OFF_HAND);
-@@ -3050,7 +_,7 @@
-             if (this.isUsingItem() && this.useItem.isEmpty()) {
-                 this.useItem = this.getItemInHand(this.getUsedItemHand());
-                 if (!this.useItem.isEmpty()) {
--                    this.useItemRemaining = this.useItem.getUseDuration(this);
-+                    this.useItemRemaining = this.useItem.getUseDuration();
-                 }
-             } else if (!this.isUsingItem() && !this.useItem.isEmpty()) {
-                 this.useItem = ItemStack.EMPTY;
-@@ -3067,11 +_,6 @@
-         this.yBodyRotO = this.yBodyRot;
-     }
- 
--    @Override
--    public float getPreciseBodyRotation(float p_345405_) {
--        return Mth.lerp(p_345405_, this.yBodyRotO, this.yBodyRot);
--    }
--
-     protected void triggerItemUseEffects(ItemStack p_21138_, int p_21139_) {
-         if (!p_21138_.isEmpty() && this.isUsingItem()) {
-             if (p_21138_.getUseAnimation() == UseAnim.DRINK) {
 @@ -3099,6 +_,9 @@
              vec31 = vec31.xRot(-this.getXRot() * (float) (Math.PI / 180.0));
              vec31 = vec31.yRot(-this.getYRot() * (float) (Math.PI / 180.0));
@@ -2229,13 +1951,7 @@
  
      public ItemStack getUseItem() {
          return this.useItem;
-@@ -3140,12 +_,18 @@
-     }
- 
-     public int getTicksUsingItem() {
--        return this.isUsingItem() ? this.useItem.getUseDuration(this) - this.getUseItemRemainingTicks() : 0;
-+        return this.isUsingItem() ? this.useItem.getUseDuration() - this.getUseItemRemainingTicks() : 0;
-     }
+@@ -3145,7 +_,13 @@
  
      public void releaseUsingItem() {
          if (!this.useItem.isEmpty()) {
@@ -2257,64 +1973,16 @@
          if (!this.level().isClientSide) {
              boolean flag = this.isUsingItem();
              this.setLivingEntityFlag(1, false);
-@@ -3170,10 +_,56 @@
+@@ -3170,7 +_,8 @@
      public boolean isBlocking() {
          if (this.isUsingItem() && !this.useItem.isEmpty()) {
              Item item = this.useItem.getItem();
 -            return item.getUseAnimation(this.useItem) != UseAnim.BLOCK ? false : item.getUseDuration(this.useItem, this) - this.useItemRemaining >= 5;
 +            boolean canBlock = this.useItem.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK);
-+            return !canBlock ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
++            return !canBlock ? false : item.getUseDuration(this.useItem, this) - this.useItemRemaining >= 5;
          } else {
              return false;
          }
-+    }
-+
-+    public HitResult getRayTrace(int maxDistance, ClipContext.Fluid fluidCollisionOption) {
-+        if (maxDistance < 1 || maxDistance > 120) {
-+            throw new IllegalArgumentException("maxDistance must be between 1-120");
-+        }
-+
-+        Vec3 start = new Vec3(getX(), getY() + getEyeHeight(), getZ());
-+        org.bukkit.util.Vector dir = getBukkitEntity().getLocation().getDirection().multiply(maxDistance);
-+        Vec3 end = new Vec3(start.x + dir.getX(), start.y + dir.getY(), start.z + dir.getZ());
-+        ClipContext raytrace = new ClipContext(start, end, ClipContext.Block.OUTLINE, fluidCollisionOption, this);
-+
-+        return this.level().clip(raytrace);
-+    }
-+
-+    public @Nullable EntityHitResult getTargetEntity(int maxDistance) {
-+        if (maxDistance < 1 || maxDistance > 120) {
-+            throw new IllegalArgumentException("maxDistance must be between 1-120");
-+        }
-+
-+        Vec3 start = this.getEyePosition(1.0F);
-+        Vec3 direction = this.getLookAngle();
-+        Vec3 end = start.add(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance);
-+
-+        List<Entity> entityList = this.level().getEntities(this, getBoundingBox().expandTowards(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance).inflate(1.0D, 1.0D, 1.0D), EntitySelector.NO_SPECTATORS.and(Entity::isPickable));
-+
-+        double distance = 0.0D;
-+        EntityHitResult result = null;
-+
-+        for (Entity entity : entityList) {
-+            final double inflationAmount = (double) entity.getPickRadius();
-+            AABB aabb = entity.getBoundingBox().inflate(inflationAmount, inflationAmount, inflationAmount);
-+            Optional<Vec3> rayTraceResult = aabb.clip(start, end);
-+
-+            if (rayTraceResult.isPresent()) {
-+                Vec3 rayTrace = rayTraceResult.get();
-+                double distanceTo = start.distanceToSqr(rayTrace);
-+                if (distanceTo < distance || distance == 0.0D) {
-+                    result = new EntityHitResult(entity, rayTrace);
-+                    distance = distanceTo;
-+                }
-+            }
-+        }
-+
-+        return result;
-     }
- 
-     public boolean isSuppressingSlidingDownLadder() {
 @@ -3193,51 +_,77 @@
          return this.fallFlyTicks;
      }
@@ -2436,17 +2104,6 @@
  
      public boolean isAffectedByPotions() {
          return !this.isDeadOrDying();
-@@ -3285,8 +_,8 @@
-     }
- 
-     @Override
--    public boolean canUsePortal(boolean p_342370_) {
--        return super.canUsePortal(p_342370_) && !this.isSleeping();
-+    public boolean canChangeDimensions() {
-+        return super.canChangeDimensions() && !this.isSleeping();
-     }
- 
-     public Optional<BlockPos> getSleepingPos() {
 @@ -3311,8 +_,8 @@
          }
  
@@ -2463,7 +2120,7 @@
  
      private boolean checkBedExists() {
 -        return this.getSleepingPos().map(p_341272_ -> this.level().getBlockState(p_341272_).getBlock() instanceof BedBlock).orElse(false);
-+        return this.getSleepingPos().map(p_326778_ -> net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_326778_)).orElse(false);
++        return this.getSleepingPos().map(p_341272_ -> net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_341272_)).orElse(false);
      }
  
      public void stopSleeping() {
@@ -2488,7 +2145,7 @@
      }
  
      @Override
-@@ -3365,29 +_,28 @@
+@@ -3365,7 +_,7 @@
      }
  
      public ItemStack getProjectile(ItemStack p_21272_) {
@@ -2496,118 +2153,18 @@
 +        return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_21272_, ItemStack.EMPTY);
      }
  
--    public final ItemStack eat(Level p_21067_, ItemStack p_21068_) {
-+    public ItemStack eat(Level p_21067_, ItemStack p_21068_) {
-         FoodProperties foodproperties = p_21068_.get(DataComponents.FOOD);
--        return foodproperties != null ? this.eat(p_21067_, p_21068_, foodproperties) : p_21068_;
--    }
-+        if (foodproperties != null) {
-+            p_21067_.playSound(
-+                null,
-+                this.getX(),
-+                this.getY(),
-+                this.getZ(),
-+                this.getEatingSound(p_21068_),
-+                SoundSource.NEUTRAL,
-+                1.0F,
-+                1.0F + (p_21067_.random.nextFloat() - p_21067_.random.nextFloat()) * 0.4F
-+            );
-+            this.addEatEffect(foodproperties);
-+            p_21068_.consume(1, this);
-+            this.gameEvent(GameEvent.EAT);
-+        }
- 
--    public ItemStack eat(Level p_342887_, ItemStack p_342841_, FoodProperties p_344463_) {
--        p_342887_.playSound(
--            null,
--            this.getX(),
--            this.getY(),
--            this.getZ(),
--            this.getEatingSound(p_342841_),
--            SoundSource.NEUTRAL,
--            1.0F,
--            1.0F + (p_342887_.random.nextFloat() - p_342887_.random.nextFloat()) * 0.4F
--        );
--        this.addEatEffect(p_344463_);
--        p_342841_.consume(1, this);
--        this.gameEvent(GameEvent.EAT);
--        return p_342841_;
-+        return p_21068_;
+     public final ItemStack eat(Level p_21067_, ItemStack p_21068_) {
+@@ -3431,6 +_,8 @@
      }
  
-     private void addEatEffect(FoodProperties p_333441_) {
-@@ -3412,8 +_,8 @@
-         };
-     }
- 
--    public void onEquippedItemBroken(Item p_343772_, EquipmentSlot p_345353_) {
--        this.level().broadcastEntityEvent(this, entityEventForEquipmentBreak(p_345353_));
-+    public void broadcastBreakEvent(EquipmentSlot p_21167_) {
-+        this.level().broadcastEntityEvent(this, entityEventForEquipmentBreak(p_21167_));
-     }
- 
-     public static EquipmentSlot getSlotForHand(InteractionHand p_333846_) {
-@@ -3430,21 +_,16 @@
-         }
-     }
- 
--    public EquipmentSlot getEquipmentSlotForItem(ItemStack p_147234_) {
-+    public static EquipmentSlot getEquipmentSlotForItem(ItemStack p_147234_) {
+     public EquipmentSlot getEquipmentSlotForItem(ItemStack p_147234_) {
 +        final EquipmentSlot slot = p_147234_.getEquipmentSlot();
 +        if (slot != null) return slot; // FORGE: Allow modders to set a non-default equipment slot for a stack; e.g. a non-armor chestplate-slot item
          Equipable equipable = Equipable.get(p_147234_);
--        if (equipable != null) {
--            EquipmentSlot equipmentslot = equipable.getEquipmentSlot();
--            if (this.canUseSlot(equipmentslot)) {
--                return equipmentslot;
--            }
--        }
--
--        return EquipmentSlot.MAINHAND;
-+        return equipable != null ? equipable.getEquipmentSlot() : EquipmentSlot.MAINHAND;
-     }
+         if (equipable != null) {
+             EquipmentSlot equipmentslot = equipable.getEquipmentSlot();
+@@ -3558,4 +_,46 @@
  
-     private static SlotAccess createEquipmentSlotAccess(LivingEntity p_147196_, EquipmentSlot p_147197_) {
-         return p_147197_ != EquipmentSlot.HEAD && p_147197_ != EquipmentSlot.MAINHAND && p_147197_ != EquipmentSlot.OFFHAND
--            ? SlotAccess.forEquipmentSlot(p_147196_, p_147197_, p_341262_ -> p_341262_.isEmpty() || p_147196_.getEquipmentSlotForItem(p_341262_) == p_147197_)
-+            ? SlotAccess.forEquipmentSlot(p_147196_, p_147197_, p_269791_ -> p_269791_.isEmpty() || Mob.getEquipmentSlotForItem(p_269791_) == p_147197_)
-             : SlotAccess.forEquipmentSlot(p_147196_, p_147197_);
-     }
- 
-@@ -3516,7 +_,7 @@
-     }
- 
-     public boolean canDisableShield() {
--        return this.getWeaponItem().getItem() instanceof AxeItem;
-+        return this.getMainHandItem().getItem() instanceof AxeItem;
-     }
- 
-     @Override
-@@ -3536,26 +_,55 @@
- 
-     @Override
-     public void igniteForTicks(int p_328356_) {
--        super.igniteForTicks(Mth.ceil((double)p_328356_ * this.getAttributeValue(Attributes.BURNING_TIME)));
-+        super.igniteForTicks(ProtectionEnchantment.getFireAfterDampener(this, p_328356_));
-     }
- 
-     public boolean hasInfiniteMaterials() {
-         return false;
-     }
- 
--    @Override
--    public boolean isInvulnerableTo(DamageSource p_345519_) {
--        if (super.isInvulnerableTo(p_345519_)) {
--            return true;
--        } else {
--            if (this.level() instanceof ServerLevel serverlevel && EnchantmentHelper.isImmuneToDamage(serverlevel, this, p_345519_)) {
--                return true;
--            }
--
--            return false;
--        }
--    }
--
      public static record Fallsounds(SoundEvent small, SoundEvent big) {
      }
 +

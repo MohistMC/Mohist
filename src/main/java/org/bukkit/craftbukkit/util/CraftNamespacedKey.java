@@ -17,7 +17,7 @@ public final class CraftNamespacedKey {
     }
 
     public static NamespacedKey fromString(String string) {
-        return CraftNamespacedKey.fromMinecraft(new ResourceLocation(string));
+        return CraftNamespacedKey.fromMinecraft(ResourceLocation.parse(string));
     }
 
     public static NamespacedKey fromMinecraft(ResourceLocation minecraft) {
@@ -25,6 +25,6 @@ public final class CraftNamespacedKey {
     }
 
     public static ResourceLocation toMinecraft(NamespacedKey key) {
-        return new ResourceLocation(key.getNamespace(), key.getKey());
+        return ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getKey());
     }
 }

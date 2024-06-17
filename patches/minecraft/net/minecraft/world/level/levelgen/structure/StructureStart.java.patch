@@ -4,23 +4,14 @@
      private int references;
      @Nullable
      private volatile BoundingBox cachedBoundingBox;
-+   // CraftBukkit start
-+   private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
-+   public org.bukkit.craftbukkit.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
-+   public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION;
-+   // CraftBukkit end
++   	// CraftBukkit start
++   	private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
++   	public org.bukkit.craftbukkit.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   	public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION;
++   	// CraftBukkit end
  
      public StructureStart(Structure p_226846_, ChunkPos p_226847_, int p_226848_, PiecesContainer p_226849_) {
          this.structure = p_226846_;
-@@ -44,7 +_,7 @@
-             return INVALID_START;
-         } else {
-             Registry<Structure> registry = p_226858_.registryAccess().registryOrThrow(Registries.STRUCTURE);
--            Structure structure = registry.get(ResourceLocation.parse(s));
-+            Structure structure = registry.get(new ResourceLocation(s));
-             if (structure == null) {
-                 LOGGER.error("Unknown stucture id: {}", s);
-                 return null;
 @@ -99,7 +_,15 @@
  
      public CompoundTag createTag(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {

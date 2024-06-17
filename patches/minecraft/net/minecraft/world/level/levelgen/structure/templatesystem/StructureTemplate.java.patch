@@ -59,18 +59,7 @@
      public boolean placeInWorld(
          ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_
      ) {
-@@ -238,8 +_,8 @@
-                 && this.size.getY() >= 1
-                 && this.size.getZ() >= 1) {
-                 BoundingBox boundingbox = p_230332_.getBoundingBox();
--                List<BlockPos> list1 = Lists.newArrayListWithCapacity(p_230332_.shouldApplyWaterlogging() ? list.size() : 0);
--                List<BlockPos> list2 = Lists.newArrayListWithCapacity(p_230332_.shouldApplyWaterlogging() ? list.size() : 0);
-+                List<BlockPos> list1 = Lists.newArrayListWithCapacity(p_230332_.shouldKeepLiquids() ? list.size() : 0);
-+                List<BlockPos> list2 = Lists.newArrayListWithCapacity(p_230332_.shouldKeepLiquids() ? list.size() : 0);
-                 List<Pair<BlockPos, CompoundTag>> list3 = Lists.newArrayListWithCapacity(list.size());
-                 int i = Integer.MAX_VALUE;
-                 int j = Integer.MAX_VALUE;
-@@ -248,10 +_,10 @@
+@@ -248,7 +_,7 @@
                  int i1 = Integer.MIN_VALUE;
                  int j1 = Integer.MIN_VALUE;
  
@@ -78,11 +67,7 @@
 +                for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list, this)) {
                      BlockPos blockpos = structuretemplate$structureblockinfo.pos;
                      if (boundingbox == null || boundingbox.isInside(blockpos)) {
--                        FluidState fluidstate = p_230332_.shouldApplyWaterlogging() ? p_230329_.getFluidState(blockpos) : null;
-+                        FluidState fluidstate = p_230332_.shouldKeepLiquids() ? p_230329_.getFluidState(blockpos) : null;
-                         BlockState blockstate = structuretemplate$structureblockinfo.state.mirror(p_230332_.getMirror()).rotate(p_230332_.getRotation());
-                         if (structuretemplate$structureblockinfo.nbt != null) {
-                             BlockEntity blockentity = p_230329_.getBlockEntity(blockpos);
+                         FluidState fluidstate = p_230332_.shouldApplyWaterlogging() ? p_230329_.getFluidState(blockpos) : null;
 @@ -360,7 +_,7 @@
                  }
  
@@ -188,11 +173,11 @@
          p_74619_.put("entities", listtag);
          p_74619_.put("size", this.newIntegerList(this.size.getX(), this.size.getY(), this.size.getZ()));
 +
-+      // CraftBukkit Start - PDC
-+      if (!this.persistentDataContainer.isEmpty()) {
-+         p_74619_.put("BukkitValues", this.persistentDataContainer.toTagCompound());
-+      }
-+      // CraftBukkit end
++      	// CraftBukkit Start - PDC
++      	if (!this.persistentDataContainer.isEmpty()) {
++         	p_74619_.put("BukkitValues", this.persistentDataContainer.toTagCompound());
++      	}
++      	// CraftBukkit end
 +
          return NbtUtils.addCurrentDataVersion(p_74619_);
      }

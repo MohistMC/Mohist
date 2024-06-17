@@ -5,18 +5,18 @@
          } else {
              p_51189_.awardStat(Stats.EAT_CAKE_SLICE);
 -            p_51189_.getFoodData().eat(2, 0.1F);
-+         // CraftBukkit start
-+         // pPlayer.getFoodData().eat(2, 0.1F);
-+         int oldFoodLevel = p_51189_.getFoodData().foodLevel;
++            // CraftBukkit start
++            // pPlayer.getFoodData().eat(2, 0.1F);
++            int oldFoodLevel = p_51189_.getFoodData().foodLevel;
 +
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(p_51189_, 2 + oldFoodLevel);
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(p_51189_, 2 + oldFoodLevel);
 +
-+         if (!event.isCancelled()) {
-+            p_51189_.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 0.1F);
-+         }
++            if (!event.isCancelled()) {
++                p_51189_.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 0.1F);
++            }
 +
-+         ((net.minecraft.server.level.ServerPlayer) p_51189_).getBukkitEntity().sendHealthUpdate();
-+         // CraftBukkit end
++            ((net.minecraft.server.level.ServerPlayer) p_51189_).getBukkitEntity().sendHealthUpdate();
++            // CraftBukkit end
              int i = p_51188_.getValue(BITES);
              p_51186_.gameEvent(p_51189_, GameEvent.EAT, p_51187_);
              if (i < 6) {

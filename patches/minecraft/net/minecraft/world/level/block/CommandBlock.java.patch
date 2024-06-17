@@ -21,50 +21,26 @@
  import org.slf4j.Logger;
  
  public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
-@@ -60,20 +_,33 @@
- 
+@@ -61,9 +_,21 @@
      @Override
      protected void neighborChanged(BlockState p_51838_, Level p_51839_, BlockPos p_51840_, Block p_51841_, BlockPos p_51842_, boolean p_51843_) {
--        if (!p_51839_.isClientSide) {
+         if (!p_51839_.isClientSide) {
 -            if (p_51839_.getBlockEntity(p_51840_) instanceof CommandBlockEntity commandblockentity) {
--                boolean flag = p_51839_.hasNeighborSignal(p_51840_);
--                boolean flag1 = commandblockentity.isPowered();
--                commandblockentity.setPowered(flag);
--                if (!flag1 && !commandblockentity.isAutomatic() && commandblockentity.getMode() != CommandBlockEntity.Mode.SEQUENCE) {
--                    if (flag) {
--                        commandblockentity.markConditionMet();
--                        p_51839_.scheduleTick(p_51840_, this, 1);
--                    }
--                }
-+      if (!p_51839_.isClientSide) {
-+         BlockEntity blockentity = p_51839_.getBlockEntity(p_51840_);
-+         if (blockentity instanceof CommandBlockEntity) {
-+            CommandBlockEntity commandblockentity = (CommandBlockEntity)blockentity;
-+            boolean flag = p_51839_.hasNeighborSignal(p_51840_);
-+            boolean flag1 = commandblockentity.isPowered();
-+            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = CraftBlock.at(p_51839_, p_51840_);
-+            int old = flag1 ? 15 : 0;
-+            int current = flag ? 15 : 0;
++            BlockEntity blockentity = p_51839_.getBlockEntity(p_51840_);
++            if (blockentity instanceof CommandBlockEntity) {
++                CommandBlockEntity commandblockentity = (CommandBlockEntity) blockentity;
+                 boolean flag = p_51839_.hasNeighborSignal(p_51840_);
+                 boolean flag1 = commandblockentity.isPowered();
++                // CraftBukkit start
++                org.bukkit.block.Block bukkitBlock = CraftBlock.at(p_51839_, p_51840_);
++                int old = flag1 ? 15 : 0;
++                int current = flag ? 15 : 0;
 +
-+            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
-+            p_51839_.getCraftServer().getPluginManager().callEvent(eventRedstone);
-+            flag = eventRedstone.getNewCurrent() > 0;
-+            // CraftBukkit end
++                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
++                p_51839_.getCraftServer().getPluginManager().callEvent(eventRedstone);
++                flag = eventRedstone.getNewCurrent() > 0;
++                // CraftBukkit end
 +
-+            commandblockentity.setPowered(flag);
-+            if (!flag1 && !commandblockentity.isAutomatic() && commandblockentity.getMode() != CommandBlockEntity.Mode.SEQUENCE) {
-+               if (flag) {
-+                  commandblockentity.markConditionMet();
-+                  p_51839_.scheduleTick(p_51840_, this, 1);
-+               }
-+
-             }
--        }
--    }
-+         }
-+      }
-+   }
- 
-     @Override
-     protected void tick(BlockState p_221005_, ServerLevel p_221006_, BlockPos p_221007_, RandomSource p_221008_) {
+                 commandblockentity.setPowered(flag);
+                 if (!flag1 && !commandblockentity.isAutomatic() && commandblockentity.getMode() != CommandBlockEntity.Mode.SEQUENCE) {
+                     if (flag) {

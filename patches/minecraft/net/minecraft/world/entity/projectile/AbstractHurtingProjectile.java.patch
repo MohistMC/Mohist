@@ -49,3 +49,12 @@
              this.discard();
          }
      }
+@@ -194,7 +_,7 @@
+         this.setDeltaMovement(vec3);
+     }
+ 
+-    private void assignDirectionalMovement(Vec3 p_342200_, double p_343156_) {
++    public void assignDirectionalMovement(Vec3 p_342200_, double p_343156_) {
+         this.setDeltaMovement(p_342200_.normalize().scale(p_343156_));
+         this.hasImpulse = true;
+     }

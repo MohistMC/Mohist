@@ -12,11 +12,11 @@
                  if (flag) {
                      p_55667_.scheduleTick(p_55668_, this, 4);
                  } else {
-+               	// CraftBukkit start
-+               	if (CraftEventFactory.callRedstoneChange(p_55667_, p_55668_, 0, 15).getNewCurrent() != 15) {
-+                  	return;
-+               	}
-+               	// CraftBukkit end
++               		// CraftBukkit start
++               		if (CraftEventFactory.callRedstoneChange(p_55667_, p_55668_, 0, 15).getNewCurrent() != 15) {
++                  		return;
++               		}
++               		// CraftBukkit end
                      p_55667_.setBlock(p_55668_, p_55666_.cycle(LIT), 2);
                  }
              }

@@ -14,6 +14,7 @@ import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -83,12 +84,12 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             }
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.Arrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
+                launch = new net.minecraft.world.entity.projectile.Arrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
                 ((Arrow) launch.getBukkitEntity()).setBasePotionType(PotionType.WATER);
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.SpectralArrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPECTRAL_ARROW));
+                launch = new net.minecraft.world.entity.projectile.SpectralArrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPECTRAL_ARROW), null);
             } else {
-                launch = new net.minecraft.world.entity.projectile.Arrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
+                launch = new net.minecraft.world.entity.projectile.Arrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
             }
             ((net.minecraft.world.entity.projectile.AbstractArrow) launch).pickup = net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED;
             ((net.minecraft.world.entity.projectile.AbstractArrow) launch).projectileSource = this;
@@ -102,23 +103,17 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             double d5 = random.nextGaussian() * 0.05D + (double) enumdirection.getStepZ();
 
             if (SmallFireball.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.SmallFireball(world, null, d0, d1, d2);
+                launch = new net.minecraft.world.entity.projectile.SmallFireball(world, null, new Vec3(d0, d1, d2));
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
                 launch = EntityType.WITHER_SKULL.create(world);
                 launch.setPos(d0, d1, d2);
-                double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((AbstractHurtingProjectile) launch).xPower = d3 / d6 * 0.1D;
-                ((AbstractHurtingProjectile) launch).yPower = d4 / d6 * 0.1D;
-                ((AbstractHurtingProjectile) launch).zPower = d5 / d6 * 0.1D;
+                ((AbstractHurtingProjectile) launch).assignDirectionalMovement(new Vec3(d3, d4, d5), 0.1D);
             } else {
                 launch = EntityType.FIREBALL.create(world);
                 launch.setPos(d0, d1, d2);
-                double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((AbstractHurtingProjectile) launch).xPower = d3 / d6 * 0.1D;
-                ((AbstractHurtingProjectile) launch).yPower = d4 / d6 * 0.1D;
-                ((AbstractHurtingProjectile) launch).zPower = d5 / d6 * 0.1D;
+                ((AbstractHurtingProjectile) launch).assignDirectionalMovement(new Vec3(d3, d4, d5), 0.1D);
             }
 
             ((AbstractHurtingProjectile) launch).projectileSource = this;

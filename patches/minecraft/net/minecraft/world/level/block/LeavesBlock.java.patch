@@ -16,14 +16,14 @@
      @Override
      protected void randomTick(BlockState p_221379_, ServerLevel p_221380_, BlockPos p_221381_, RandomSource p_221382_) {
          if (this.decaying(p_221379_)) {
-+         // CraftBukkit start
-+         LeavesDecayEvent event = new LeavesDecayEvent(CraftBlock.at(p_221380_, p_221381_));
-+         p_221380_.getCraftServer().getPluginManager().callEvent(event);
++         	// CraftBukkit start
++        	LeavesDecayEvent event = new LeavesDecayEvent(CraftBlock.at(p_221380_, p_221381_));
++         	p_221380_.getCraftServer().getPluginManager().callEvent(event);
 +
-+         if (event.isCancelled() || p_221380_.getBlockState(p_221381_).getBlock() != this) {
-+            return;
-+         }
-+         // CraftBukkit end
++         	if (event.isCancelled() || p_221380_.getBlockState(p_221381_).getBlock() != this) {
++            	return;
++         	}
++         	// CraftBukkit end
              dropResources(p_221379_, p_221380_, p_221381_);
              p_221380_.removeBlock(p_221381_, false);
          }

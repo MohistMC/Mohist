@@ -24,7 +24,7 @@
                  }
              }
          }
-@@ -193,34 +_,44 @@
+@@ -193,7 +_,7 @@
  
      @Override
      protected float getDestroyProgress(BlockState p_261691_, Player p_262171_, BlockGetter p_261621_, BlockPos p_261500_) {
@@ -32,55 +32,38 @@
 +        return p_262171_.getMainHandItem().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.getDestroyProgress(p_261691_, p_262171_, p_261621_, p_261500_);
      }
  
--    protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
--        BlockState blockstate = p_262076_.getBlockState(p_262109_.below());
--        BlockPos blockpos = p_262109_.below(2);
--        BlockState blockstate1 = p_262076_.getBlockState(blockpos);
--        BambooLeaves bambooleaves = BambooLeaves.NONE;
--        if (p_261759_ >= 1) {
--            if (!blockstate.is(Blocks.BAMBOO) || blockstate.getValue(LEAVES) == BambooLeaves.NONE) {
--                bambooleaves = BambooLeaves.SMALL;
--            } else if (blockstate.is(Blocks.BAMBOO) && blockstate.getValue(LEAVES) != BambooLeaves.NONE) {
--                bambooleaves = BambooLeaves.LARGE;
--                if (blockstate1.is(Blocks.BAMBOO)) {
+     protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
+@@ -201,26 +_,34 @@
+         BlockPos blockpos = p_262109_.below(2);
+         BlockState blockstate1 = p_262076_.getBlockState(blockpos);
+         BambooLeaves bambooleaves = BambooLeaves.NONE;
++      	boolean shouldUpdateOthers = false; // CraftBukkit
++
+         if (p_261759_ >= 1) {
+             if (!blockstate.is(Blocks.BAMBOO) || blockstate.getValue(LEAVES) == BambooLeaves.NONE) {
+                 bambooleaves = BambooLeaves.SMALL;
+             } else if (blockstate.is(Blocks.BAMBOO) && blockstate.getValue(LEAVES) != BambooLeaves.NONE) {
+                 bambooleaves = BambooLeaves.LARGE;
+                 if (blockstate1.is(Blocks.BAMBOO)) {
 -                    p_262076_.setBlock(p_262109_.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
 -                    p_262076_.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
--                }
-+   protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
-+      BlockState blockstate = p_262076_.getBlockState(p_262109_.below());
-+      BlockPos blockpos = p_262109_.below(2);
-+      BlockState blockstate1 = p_262076_.getBlockState(blockpos);
-+      BambooLeaves bambooleaves = BambooLeaves.NONE;
-+      boolean shouldUpdateOthers = false; // CraftBukkit
-+
-+      if (p_261759_ >= 1) {
-+         if (blockstate.is(Blocks.BAMBOO) && blockstate.getValue(LEAVES) != BambooLeaves.NONE) {
-+            if (blockstate.is(Blocks.BAMBOO) && blockstate.getValue(LEAVES) != BambooLeaves.NONE) {
-+               bambooleaves = BambooLeaves.LARGE;
-+               if (blockstate1.is(Blocks.BAMBOO)) {
 +                  // CraftBukkit start - moved down
 +                  // pLevel.setBlock(pPos.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
 +                  // pLevel.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
 +                  shouldUpdateOthers = true;
 +                  // CraftBukkit end
-+               }
+                 }
              }
--        }
-+         } else {
-+            bambooleaves = BambooLeaves.SMALL;
-+         }
-+      }
+         }
  
--        int i = p_261855_.getValue(AGE) != 1 && !blockstate1.is(Blocks.BAMBOO) ? 0 : 1;
--        int j = (p_261759_ < 11 || !(p_261633_.nextFloat() < 0.25F)) && p_261759_ != 15 ? 0 : 1;
+         int i = p_261855_.getValue(AGE) != 1 && !blockstate1.is(Blocks.BAMBOO) ? 0 : 1;
+         int j = (p_261759_ < 11 || !(p_261633_.nextFloat() < 0.25F)) && p_261759_ != 15 ? 0 : 1;
 -        p_262076_.setBlock(
 -            p_262109_.above(),
 -            this.defaultBlockState().setValue(AGE, Integer.valueOf(i)).setValue(LEAVES, bambooleaves).setValue(STAGE, Integer.valueOf(j)),
 -            3
 -        );
 -    }
-+      int i = p_261855_.getValue(AGE) != 1 && !blockstate1.is(Blocks.BAMBOO) ? 0 : 1;
-+      int j = (p_261759_ < 11 || !(p_261633_.nextFloat() < 0.25F)) && p_261759_ != 15 ? 0 : 1;
 +      // CraftBukkit start
 +      if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), this.defaultBlockState().setValue(AGE, i).setValue(LEAVES, bambooleaves).setValue(STAGE, j), 3)) {
 +         if (shouldUpdateOthers) {

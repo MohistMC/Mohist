@@ -45,7 +45,7 @@
          }
  
 -        p_52264_.setBlock(p_52265_, this.getStateForAge(i), 2);
-+      CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.getStateForAge(i), 2); // CraftBukkit
++      	CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.getStateForAge(i), 2); // CraftBukkit
      }
  
      protected int getBonemealAgeIncrease(Level p_52262_) {

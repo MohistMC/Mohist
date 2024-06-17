@@ -19,31 +19,26 @@
  
  public class ConcretePowderBlock extends FallingBlock {
      public static final MapCodec<ConcretePowderBlock> CODEC = RecordCodecBuilder.mapCodec(
-@@ -32,35 +_,55 @@
-         this.concrete = p_52060_;
-     }
+@@ -34,33 +_,55 @@
  
--    @Override
--    public void onLand(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
+     @Override
+     public void onLand(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
 -        if (shouldSolidify(p_52068_, p_52069_, p_52071_)) {
 -            p_52068_.setBlock(p_52069_, this.concrete.defaultBlockState(), 3);
 -        }
 -    }
--
--    @Override
--    public BlockState getStateForPlacement(BlockPlaceContext p_52063_) {
--        BlockGetter blockgetter = p_52063_.getLevel();
--        BlockPos blockpos = p_52063_.getClickedPos();
--        BlockState blockstate = blockgetter.getBlockState(blockpos);
--        return shouldSolidify(blockgetter, blockpos, blockstate) ? this.concrete.defaultBlockState() : super.getStateForPlacement(p_52063_);
-+   public void onLand(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
-+      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
++        if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
 +         CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.concrete.defaultBlockState(), 3); // CraftBukkit
 +      }
 +
 +   }
-+
-+   public BlockState getStateForPlacement(BlockPlaceContext p_52063_) {
+ 
+     @Override
+     public BlockState getStateForPlacement(BlockPlaceContext p_52063_) {
+-        BlockGetter blockgetter = p_52063_.getLevel();
+-        BlockPos blockpos = p_52063_.getClickedPos();
+-        BlockState blockstate = blockgetter.getBlockState(blockpos);
+-        return shouldSolidify(blockgetter, blockpos, blockstate) ? this.concrete.defaultBlockState() : super.getStateForPlacement(p_52063_);
 +      LevelAccessor blockgetter = p_52063_.getLevel(); // Mohist TODO
 +      BlockPos blockpos = p_52063_.getClickedPos();
 +      BlockState blockstate = blockgetter.getBlockState(blockpos);
@@ -92,7 +87,7 @@
                      flag = true;
                      break;
                  }
-@@ -74,10 +_,27 @@
+@@ -74,10 +_,28 @@
          return p_52089_.getFluidState().is(FluidTags.WATER);
      }
  
@@ -100,6 +95,7 @@
 -    protected BlockState updateShape(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {
 -        return touchesLiquid(p_52077_, p_52078_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
 -    }
++	@Override
 +   public BlockState updateShape(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {
 +      // CraftBukkit start
 +      if (touchesLiquid(p_52077_, p_52078_, p_52074_)) {

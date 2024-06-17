@@ -15,7 +15,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
-@@ -16,14 +_,34 @@
+@@ -16,6 +_,9 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -25,12 +25,10 @@
  
  public interface CaveVines {
      VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 16.0, 15.0);
-     BooleanProperty BERRIES = BlockStateProperties.BERRIES;
+@@ -23,7 +_,24 @@
  
--    static InteractionResult use(@Nullable Entity p_270738_, BlockState p_270772_, Level p_270721_, BlockPos p_270587_) {
--        if (p_270772_.getValue(BERRIES)) {
-+   static InteractionResult use(@Nullable Entity p_270738_, BlockState p_270772_, Level p_270721_, BlockPos p_270587_) {
-+      if (p_270772_.getValue(BERRIES)) {
+     static InteractionResult use(@Nullable Entity p_270738_, BlockState p_270772_, Level p_270721_, BlockPos p_270587_) {
+         if (p_270772_.getValue(BERRIES)) {
 +         // CraftBukkit start
 +         if (!CraftEventFactory.callEntityChangeBlockEvent(p_270738_, p_270587_, p_270772_.setValue(CaveVines.BERRIES, false))) {
 +            return InteractionResult.SUCCESS;

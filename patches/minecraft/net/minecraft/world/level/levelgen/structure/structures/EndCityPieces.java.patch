@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
 +++ b/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
-@@ -372,7 +_,7 @@
-         }
- 
-         private static ResourceLocation makeResourceLocation(String p_227503_) {
--            return ResourceLocation.withDefaultNamespace("end_city/" + p_227503_);
-+            return new ResourceLocation("end_city/" + p_227503_);
+@@ -379,7 +_,7 @@
+         protected void addAdditionalSaveData(StructurePieceSerializationContext p_227500_, CompoundTag p_227501_) {
+             super.addAdditionalSaveData(p_227500_, p_227501_);
+             p_227501_.putString("Rot", this.placeSettings.getRotation().name());
+-            p_227501_.putBoolean("OW", this.placeSettings.getProcessors().get(0) == BlockIgnoreProcessor.STRUCTURE_BLOCK);
++            p_227501_.putBoolean`("OW", this.placeSettings.getProcessors().get(0) == BlockIgnoreProcessor.STRUCTURE_BLOCK);
          }
  
          @Override
