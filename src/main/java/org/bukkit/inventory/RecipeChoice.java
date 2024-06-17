@@ -78,7 +78,6 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
                 }
 
                 Preconditions.checkArgument(!choice.isAir(), "Cannot have empty/air choice");
-
                 this.choices.add(choice);
             }
         }

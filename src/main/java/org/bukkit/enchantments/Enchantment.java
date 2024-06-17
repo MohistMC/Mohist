@@ -2,9 +2,8 @@ package org.bukkit.enchantments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import java.util.Locale;
 import org.bukkit.Keyed;
-import org.bukkit.MinecraftExperimental;
-import org.bukkit.MinecraftExperimental.Requires;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Translatable;
@@ -197,19 +196,16 @@ public abstract class Enchantment implements Keyed, Translatable {
     /**
      * Increases fall damage of maces
      */
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     public static final Enchantment DENSITY = getEnchantment("density");
 
     /**
      * Reduces armor effectiveness against maces
      */
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     public static final Enchantment BREACH = getEnchantment("breach");
 
     /**
      * Emits wind burst upon hitting enemy
      */
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     public static final Enchantment WIND_BURST = getEnchantment("wind_burst");
 
     /**
@@ -283,7 +279,9 @@ public abstract class Enchantment implements Keyed, Translatable {
      * fishing.
      *
      * @return true if the enchantment is a treasure enchantment
+     * @deprecated enchantment types are now managed by tags
      */
+    @Deprecated
     public abstract boolean isTreasure();
 
     /**
@@ -354,7 +352,7 @@ public abstract class Enchantment implements Keyed, Translatable {
         if (name.equals("ARROW_DAMAGE")) {
             name = "POWER";
         }
-        return getByKey(NamespacedKey.fromString(name.toLowerCase()));
+        return getByKey(NamespacedKey.fromString(name.toLowerCase(Locale.ROOT)));
     }
 
     /**

@@ -19,7 +19,7 @@ public class Mohist {
     public static final String NAME = "Mohist";
     public static Logger LOGGER = LogManager.getLogger();
     public static i18n i18n;
-    public static String version = "1.20.6";
+    public static String version = "1.21";
     public static String modid = "mohist";
     public static ClassLoader classLoader;
     public static VersionInfo versionInfo;

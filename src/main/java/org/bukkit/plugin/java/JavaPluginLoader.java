@@ -292,7 +292,6 @@ public final class JavaPluginLoader implements PluginLoader {
                 }
             }
 
-            final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName() + " Event: " + listener.getClass().getName() + "::" + method.getName() + "(" + eventClass.getSimpleName() + ")", pluginParentTimer); // Spigot
             EventExecutor executor = new EventExecutor() {
                 @Override
                 public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
@@ -300,12 +299,7 @@ public final class JavaPluginLoader implements PluginLoader {
                         if (!eventClass.isAssignableFrom(event.getClass())) {
                             return;
                         }
-                        // Spigot start
-                        boolean isAsync = event.isAsynchronous();
-                        if (!isAsync) timings.startTiming();
                         method.invoke(listener, event);
-                        if (!isAsync) timings.stopTiming();
-                        // Spigot end
                     } catch (InvocationTargetException ex) {
                         throw new EventException(ex.getCause());
                     } catch (Throwable t) {

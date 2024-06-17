@@ -56,7 +56,6 @@ public class YamlConfiguration extends FileConfiguration {
     private final Yaml yaml;
 
     public YamlConfiguration() {
-
         yamlDumperOptions = new DumperOptions();
         yamlDumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlLoaderOptions = new LoaderOptions();

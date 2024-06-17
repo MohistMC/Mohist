@@ -30,7 +30,6 @@
          if (p_329418_.getValue(POWERED)) {
              return InteractionResult.CONSUME;
          } else {
--            this.press(p_329418_, p_334611_, p_332004_, p_330636_);
 +            // CraftBukkit start
 +            boolean powered = p_329418_.getValue(POWERED);
 +            org.bukkit.block.Block block = CraftBlock.at(p_334611_, p_332004_);
@@ -44,13 +43,13 @@
 +                return InteractionResult.SUCCESS;
 +            }
 +            // CraftBukkit end
-+            this.press(p_329418_, p_334611_, p_332004_);
+             this.press(p_329418_, p_334611_, p_332004_, p_330636_);
 +            this.playSound(p_330636_, p_334611_, p_332004_, true);
 +            p_334611_.gameEvent(p_330636_, GameEvent.BLOCK_ACTIVATE, p_332004_);
              return InteractionResult.sidedSuccess(p_334611_.isClientSide);
          }
      }
-@@ -189,7 +_,33 @@
+@@ -189,7 +_,32 @@
              : null;
          boolean flag = abstractarrow != null;
          boolean flag1 = p_51121_.getValue(POWERED);
@@ -69,10 +68,9 @@
 +
          if (flag != flag1) {
 +            // CraftBukkit start
-+            boolean powered = flag1;
 +            org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
-+            int old = (powered) ? 15 : 0;
-+            int current = (!powered) ? 15 : 0;
++            int old = (flag1) ? 15 : 0;
++            int current = (!flag1) ? 15 : 0;
 +
 +            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
 +            p_51122_.getCraftServer().getPluginManager().callEvent(eventRedstone);

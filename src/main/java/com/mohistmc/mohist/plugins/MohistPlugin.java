@@ -45,7 +45,7 @@ public class MohistPlugin {
         BackConfig.init();
         WarpsConfig.init();
 
-        File file = new File("libraries", "com/mohistmc/mohistplugins/mohistplugins-1.20.6.jar");
+        File file = new File("libraries", "com/mohistmc/mohistplugins/mohistplugins-1.21.jar");
         if (file.exists()) {
             plugin = Control.loadPlugin(file);
             if (plugin != null) {
