@@ -1609,8 +1609,8 @@
 +   public final boolean isInFluidType() {
 +      return this.forgeFluidTypeHeight.size() > 0;
 +   }
-+  @Override
-+  public final net.minecraftforge.fluids.FluidType getEyeInFluidType() {
++   @Override
++   public final net.minecraftforge.fluids.FluidType getEyeInFluidType() {
 +      return forgeFluidTypeOnEyes;
 +   }
 +   @Override

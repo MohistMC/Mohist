@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -1,7 +_,10 @@
+@@ -1,7 +_,11 @@
  package net.minecraft.server.level;
  
 +import com.mohistmc.api.ItemAPI;
++import com.mohistmc.eventhandler.dispatcher.BlockEventDispatcher;
 +import com.mohistmc.plugins.ban.bans.BanItem;
  import com.mojang.logging.LogUtils;
  import java.util.Objects;
@@ -215,7 +216,7 @@
           return false;
        } else {
           BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
-@@ -229,30 +_,42 @@
+@@ -229,30 +_,43 @@
           if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
              this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
              return false;
@@ -239,11 +240,13 @@
 -               boolean flag1 = this.f_9245_.m_36298_(blockstate);
 +               boolean flag1 = blockstate.canHarvestBlock(this.f_9244_, p_9281_, this.f_9245_); // previously player.hasCorrectToolForDrops(blockstate)
                 itemstack.m_41686_(this.f_9244_, blockstate, p_9281_, this.f_9245_);
+-               if (flag && flag1) {
 +               if (itemstack.m_41619_() && !itemstack1.m_41619_())
 +                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.f_9245_, itemstack1, InteractionHand.MAIN_HAND);
 +               boolean flag = removeBlock(p_9281_, flag1);
 +
-                if (flag && flag1) {
++               boolean isDropItems = BlockEventDispatcher.blockBreakEvent.get() != null && BlockEventDispatcher.blockBreakEvent.getAndSet(null).isDropItems();
++               if (flag && flag1 && isDropItems) {
                    block.m_6240_(this.f_9244_, this.f_9245_, p_9281_, blockstate, blockentity, itemstack1);
                 }
  
