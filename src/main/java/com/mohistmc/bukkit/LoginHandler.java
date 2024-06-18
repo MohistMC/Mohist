@@ -1,7 +1,9 @@
 package com.mohistmc.bukkit;
 
 import com.mohistmc.MohistConfig;
+import java.util.concurrent.ExecutionException;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.bukkit.craftbukkit.v1_20_R1.util.Waitable;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -51,5 +53,25 @@ public class LoginHandler {
         }
         // CraftBukkit end
         serverLoginPacketListener.state = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
+    }
+
+    public static void disconnect(ServerGamePacketListenerImpl serverGamePacketListener, String pTextComponent){
+        Waitable waitable = new Waitable() {
+            @Override
+            protected Object evaluate() {
+                serverGamePacketListener.disconnect(pTextComponent);
+                return null;
+            }
+        };
+
+        serverGamePacketListener.server.processQueue.add(waitable);
+
+        try {
+            waitable.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

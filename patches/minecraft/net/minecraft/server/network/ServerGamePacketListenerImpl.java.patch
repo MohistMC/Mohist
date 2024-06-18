@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,16 +_,25 @@
+@@ -2,16 +_,26 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
++import com.mohistmc.bukkit.LoginHandler;
 +import com.mohistmc.bukkit.inventory.MohistModsInventory;
 +import com.mohistmc.paper.event.player.PlayerJumpEvent;
 +import com.mohistmc.paper.event.player.PlayerUseUnknownEntityEvent;
@@ -89,7 +90,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -176,15 +_,68 @@
+@@ -176,28 +_,83 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -158,7 +159,13 @@
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
     private static final int f_244471_ = 4096;
-@@ -197,7 +_,9 @@
+    private static final Component f_244304_ = Component.m_237115_("multiplayer.disconnect.chat_validation_failed");
+    public final Connection f_9742_;
+-   private final MinecraftServer f_9745_;
++   public final MinecraftServer f_9745_;
+    public ServerPlayer f_9743_;
+    private int f_9746_;
+    private int f_215200_ = -1;
     private long f_9747_;
     private boolean f_9748_;
     private long f_9749_;
@@ -229,7 +236,7 @@
           this.m_9942_(Component.m_237115_("multiplayer.disconnect.idling"));
        }
  
-@@ -337,12 +_,60 @@
+@@ -337,12 +_,44 @@
        return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
     }
  
@@ -247,23 +254,7 @@
 +         return;
 +      }
 +      if (!this.cserver.isPrimaryThread()) {
-+         Waitable waitable = new Waitable() {
-+            @Override
-+            protected Object evaluate() {
-+               ServerGamePacketListenerImpl.this.disconnect(pTextComponent);
-+               return null;
-+            }
-+         };
-+
-+         this.f_9745_.processQueue.add(waitable);
-+
-+         try {
-+            waitable.get();
-+         } catch (InterruptedException e) {
-+            Thread.currentThread().interrupt();
-+         } catch (ExecutionException e) {
-+            throw new RuntimeException(e);
-+         }
++         LoginHandler.disconnect(this, pTextComponent);
 +         return;
 +      }
 +      String leaveMessage = ChatFormatting.YELLOW + this.f_9743_.m_6302_() + " left the game.";
@@ -1332,7 +1323,7 @@
              p_9866_.m_179617_(new ServerboundInteractPacket.Handler() {
 -               private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
 +               PlayerInteractEntityEvent event;
-+               private void performInteraction(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) { // CraftBukkit
++               private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) { // CraftBukkit
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_);
                    if (itemstack.m_246617_(serverlevel.m_246046_())) {
                       ItemStack itemstack1 = itemstack.m_41777_();
@@ -1381,15 +1372,13 @@
                 }
  
                 public void m_142299_(InteractionHand p_143677_) {
--                  this.m_143678_(p_143677_, Player::m_36157_);
 +                  event = new PlayerInteractEntityEvent(getCraftPlayer(), entity.getBukkitEntity(), (p_143677_ == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
-+                  this.performInteraction(p_143677_, Player::m_36157_);
+                   this.m_143678_(p_143677_, Player::m_36157_);
                 }
  
                 public void m_142143_(InteractionHand p_143682_, Vec3 p_143683_) {
--                  this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
 +                  event = new PlayerInteractAtEntityEvent(getCraftPlayer(), entity.getBukkitEntity(), new org.bukkit.util.Vector(p_143683_.f_82479_, p_143683_.f_82480_, p_143683_.f_82481_), (p_143682_ == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
-+                  this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
+                   this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
 +                     InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, p_143683_, p_143682_);
 +                     if (onInteractEntityAtResult != null) return onInteractEntityAtResult;
                       return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
