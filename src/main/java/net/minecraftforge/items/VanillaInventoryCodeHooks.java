@@ -55,20 +55,22 @@ public class VanillaInventoryCodeHooks
                             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(extractItem);
 
                             InventoryHolder owner = InventoryOwner.get(dest);
-                            Inventory sourceInventory = InventoryOwner.getInventory(container);
-                            Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
-                            if (destinationInventory != null && sourceInventory != null) {
-                                InventoryMoveItemEvent event;
-                                try {
-                                    event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), destinationInventory, true);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                    if (event.isCancelled()) {
-                                        extractItem = ItemStack.EMPTY;
-                                    } else {
-                                        extractItem = CraftItemStack.asNMSCopy(event.getItem());
+                            if (container != null) {
+                                Inventory sourceInventory = InventoryOwner.getInventory(container);
+                                Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
+                                if (destinationInventory != null && sourceInventory != null) {
+                                    InventoryMoveItemEvent event;
+                                    try {
+                                        event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), destinationInventory, true);
+                                        Bukkit.getPluginManager().callEvent(event);
+                                        if (event.isCancelled()) {
+                                            extractItem = ItemStack.EMPTY;
+                                        } else {
+                                            extractItem = CraftItemStack.asNMSCopy(event.getItem());
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
 
