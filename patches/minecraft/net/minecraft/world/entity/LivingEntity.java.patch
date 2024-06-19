@@ -738,8 +738,7 @@
              this.m_7292_(new MobEffectInstance(MobEffects.f_19617_, 100, 1));
 +            addEffectCause.set(EntityPotionEffectEvent.Cause.TOTEM);
              this.m_7292_(new MobEffectInstance(MobEffects.f_19607_, 800, 0));
--            this.m_9236_().m_7605_(this, (byte)35);
-+            this.f_19853_.m_7605_(this, (byte)35);
+             this.m_9236_().m_7605_(this, (byte)35);
           }
  
 -         return itemstack != null;
