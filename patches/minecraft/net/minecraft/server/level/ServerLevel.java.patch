@@ -433,11 +433,11 @@
  
 +   // CraftBukkit start
 +   public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntity(entity, reason);
++      return this.addEntityByReason(entity, reason);
 +   }
 +
 +   public boolean addWithUUID(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntity(entity, reason);
++      return this.addEntityByReason(entity, reason);
 +   }
 +
     public void m_143334_(Entity p_143335_) {
@@ -449,7 +449,7 @@
     }
  
 +   public void addDuringTeleport(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-+      this.addEntity(entity, reason);
++      this.addEntityByReason(entity, reason);
 +   }
 +   // CraftBukkit end
 +
@@ -495,7 +495,7 @@
     }
  
 +   // Mohist start
-+   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
++   public boolean addEntityByReason(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      entity.spawnReason(spawnReason);
 +      return m_8872_(entity);
 +   }
