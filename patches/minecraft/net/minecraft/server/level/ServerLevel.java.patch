@@ -89,7 +89,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,6 +_,17 @@
+@@ -155,7 +_,19 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -105,8 +105,10 @@
 +import org.bukkit.event.world.TimeSkipEvent;
 +import org.bukkit.generator.WorldInfo;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
  public class ServerLevel extends Level implements WorldGenLevel {
+    public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
 @@ -188,24 +_,71 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
@@ -482,7 +484,7 @@
           return false;
        } else {
 -         return this.f_143244_.m_157533_(p_8873_);
-+         if (p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
++         if (!AsyncCatcher.catchAsync() && p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
 +            return false;
 +         }
 +         if (this.f_143244_.m_157533_(p_8873_)) {
