@@ -169,6 +169,10 @@ public class MohistConfig {
         return ColorsAPI.of(MohistConfig.motdFirstLine) + "\n" + ColorsAPI.of(MohistConfig.motdSecondLine);
     }
 
+    public static boolean isProxyOnlineMode() {
+        return org.bukkit.Bukkit.getOnlineMode()  || (velocity_enabled && velocity_onlineMode);
+    }
+
     public static boolean show_logo;
     public static String mohist_lang;
     public static boolean check_update;

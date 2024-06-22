@@ -1,5 +1,21 @@
 --- a/net/minecraft/server/players/GameProfileCache.java
 +++ b/net/minecraft/server/players/GameProfileCache.java
+@@ -10,6 +_,7 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
++import com.mohistmc.MohistConfig;
+ import com.mojang.authlib.Agent;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.GameProfileRepository;
+@@ -90,6 +_,7 @@
+             atomicreference.set((GameProfile)null);
+          }
+       };
++      if (MohistConfig.isProxyOnlineMode())
+       p_10994_.findProfilesByNames(new String[]{p_10995_}, Agent.MINECRAFT, profilelookupcallback);
+       GameProfile gameprofile = atomicreference.get();
+       if (!m_11007_() && gameprofile == null) {
 @@ -115,7 +_,7 @@
        Date date = calendar.getTime();
        GameProfileCache.GameProfileInfo gameprofilecache$gameprofileinfo = new GameProfileCache.GameProfileInfo(p_10992_, date);
