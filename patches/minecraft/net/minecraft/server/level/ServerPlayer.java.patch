@@ -470,7 +470,7 @@
           }
        }
  
-@@ -701,26 +_,58 @@
+@@ -701,26 +_,59 @@
     }
  
     private boolean m_9216_() {
@@ -526,9 +526,11 @@
 +      // CraftBukkit end
        this.f_8927_ = true;
        ServerLevel serverlevel = this.m_284548_();
-       ResourceKey<Level> resourcekey = serverlevel.m_46472_();
+-      ResourceKey<Level> resourcekey = serverlevel.m_46472_();
 -      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
-+      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
++      ResourceKey<LevelStem> resourcekey = serverlevel.getTypeKey();
++      ResourceKey<Level> resourcekey_o = serverlevel.m_46472_();
++      if (resourcekey == LevelStem.f_63973_ && serverlevel != null && p_9180_.getTypeKey() == LevelStem.f_63971_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
 +         this.f_8927_ = true; // CraftBukkit - Moved down from above
           this.m_19877_();
           this.m_284548_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
@@ -551,10 +553,11 @@
           if (portalinfo != null) {
 +            Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
              serverlevel.m_46473_().m_6180_("moving");
-             if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
+-            if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
++            if (resourcekey == LevelStem.f_63971_ && p_9180_.getTypeKey() == LevelStem.f_63972_) { // CraftBukkit
                 this.f_8933_ = this.m_20182_();
 -            } else if (p_9180_.m_46472_() == Level.f_46430_) {
-+            } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_) {
++            } else if (spawnPortal && p_9180_.getTypeKey() == LevelStem.f_63973_) { // CraftBukkit
                 this.m_9006_(p_9180_, BlockPos.m_274446_(portalinfo.f_77676_));
              }
  
@@ -582,7 +585,7 @@
              this.f_8920_ = -1;
              this.f_8917_ = -1.0F;
              this.f_8918_ = -1;
-+            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.m_46472_());
++            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey_o, p_9180_.m_46472_());
 +            // CraftBukkit start
 +            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(changeEvent);

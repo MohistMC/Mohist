@@ -937,11 +937,16 @@
     protected boolean m_269011_() {
        return true;
     }
-@@ -2027,11 +_,17 @@
-             ResourceKey<Level> resourcekey = this.m_9236_().m_46472_() == Level.f_46429_ ? Level.f_46428_ : Level.f_46429_;
+@@ -2024,14 +_,20 @@
+          ServerLevel serverlevel = (ServerLevel)this.m_9236_();
+          if (this.f_19817_) {
+             MinecraftServer minecraftserver = serverlevel.m_7654_();
+-            ResourceKey<Level> resourcekey = this.m_9236_().m_46472_() == Level.f_46429_ ? Level.f_46428_ : Level.f_46429_;
++            ResourceKey<Level> resourcekey = this.m_9236_().getTypeKey() == LevelStem.f_63972_ ? Level.f_46428_ : Level.f_46429_;
              ServerLevel serverlevel1 = minecraftserver.m_129880_(resourcekey);
-             if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
+-            if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
 -               this.m_9236_().m_46473_().m_6180_("portal");
++            if (true && serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) { // CraftBukkit
 +               this.f_19853_.m_46473_().m_6180_("portal");
                 this.f_19818_ = i;
                 this.m_20091_();

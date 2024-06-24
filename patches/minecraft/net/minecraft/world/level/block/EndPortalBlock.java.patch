@@ -26,8 +26,12 @@
  
  public class EndPortalBlock extends BaseEntityBlock {
     protected static final VoxelShape f_53014_ = Block.m_49796_(0.0D, 6.0D, 0.0D, 16.0D, 12.0D, 16.0D);
-@@ -39,10 +_,26 @@
-          ResourceKey<Level> resourcekey = p_53026_.m_46472_() == Level.f_46430_ ? Level.f_46428_ : Level.f_46430_;
+@@ -36,13 +_,29 @@
+ 
+    public void m_7892_(BlockState p_53025_, Level p_53026_, BlockPos p_53027_, Entity p_53028_) {
+       if (p_53026_ instanceof ServerLevel && p_53028_.m_6072_() && Shapes.m_83157_(Shapes.m_83064_(p_53028_.m_20191_().m_82386_((double)(-p_53027_.m_123341_()), (double)(-p_53027_.m_123342_()), (double)(-p_53027_.m_123343_()))), p_53025_.m_60808_(p_53026_, p_53027_), BooleanOp.f_82689_)) {
+-         ResourceKey<Level> resourcekey = p_53026_.m_46472_() == Level.f_46430_ ? Level.f_46428_ : Level.f_46430_;
++         ResourceKey<Level> resourcekey = p_53026_.getTypeKey() == LevelStem.f_63973_ ? Level.f_46428_ : Level.f_46430_;
           ServerLevel serverlevel = ((ServerLevel)p_53026_).m_7654_().m_129880_(resourcekey);
           if (serverlevel == null) {
 +         }
