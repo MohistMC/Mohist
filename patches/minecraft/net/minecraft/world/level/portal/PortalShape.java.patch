@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.world.level.portal;
  
  import java.util.Optional;
++import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
@@ -78,39 +79,45 @@
        }
  
        return 21;
-@@ -165,13 +_,32 @@
+@@ -165,12 +_,37 @@
        return this.f_77690_ != null && this.f_77692_ >= 2 && this.f_77692_ <= 21 && this.f_77691_ >= 3 && this.f_77691_ <= 21;
     }
  
-+   private AtomicReference<BlockState> mohist$state = new AtomicReference<>();
++   // Mohist start
++   private final AtomicReference<BlockState> mohist$state = new AtomicReference<>();
++   private final AtomicBoolean createPortalBlocks = new AtomicBoolean(true);
 +
     public void m_77743_() {
++      org.bukkit.World bworld = this.f_77686_.getMinecraftWorld().getWorld();
        BlockState blockstate = Blocks.f_50142_.m_49966_().m_61124_(NetherPortalBlock.f_54904_, this.f_77687_);
 +      mohist$state.set(blockstate);
        BlockPos.m_121940_(this.f_77690_, this.f_77690_.m_5484_(Direction.UP, this.f_77691_ - 1).m_5484_(this.f_77688_, this.f_77692_ - 1)).forEach((p_77725_) -> {
           this.f_77686_.m_7731_(p_77725_, blockstate, 18);
        });
-    }
- 
-+   public boolean createPortalBlocksCB() {
-+      org.bukkit.World bworld = this.f_77686_.getMinecraftWorld().getWorld();
-+      m_77743_();
+-   }
++
 +      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, PortalCreateEvent.CreateReason.FIRE);
 +      this.f_77686_.getMinecraftWorld().m_7654_().server.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
-+         return false;
++         createPortalBlocks.set(false);
++         return;
 +      }
 +      // CraftBukkit end
 +      BlockPos.m_121940_(this.f_77690_, this.f_77690_.m_5484_(Direction.UP, this.f_77691_ - 1).m_5484_(this.f_77688_, this.f_77692_ - 1)).forEach((p_77725_) -> {
 +         this.f_77686_.m_7731_(p_77725_, mohist$state.get(), 18);
 +      });
-+      return true; // CraftBukkit
++      createPortalBlocks.set(true);
 +   }
 +
++   public boolean createPortalBlocksCB() {
++      m_77743_();
++      return createPortalBlocks.getAndSet(true); // CraftBukkit
++   }
++   // Mohist end
+ 
     public boolean m_77744_() {
        return this.m_77698_() && this.f_77689_ == this.f_77692_ * this.f_77691_;
-    }
 @@ -201,6 +_,8 @@
        return new Vec3(d2, d4, d3);
     }
