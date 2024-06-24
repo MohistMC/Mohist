@@ -84,7 +84,11 @@ public class ShapedRecipe extends CraftingRecipe {
         // Remove character mappings for characters that no longer exist in the shape
         HashMap<Character, RecipeChoice> newIngredients = new HashMap<>();
         for (String row : shape) {
-            for (Character c : row.toCharArray()) {
+            for (char c : row.toCharArray()) {
+                // SPIGOT-7770: Space in recipe shape must represent no ingredient
+                if (c == ' ') {
+                    continue;
+                }
                 newIngredients.put(c, ingredients.get(c));
             }
         }
@@ -141,6 +145,7 @@ public class ShapedRecipe extends CraftingRecipe {
     @Deprecated
     @NotNull
     public ShapedRecipe setIngredient(char key, @NotNull Material ingredient, int raw) {
+        Preconditions.checkArgument(key != ' ', "Space in recipe shape must represent no ingredient");
         Preconditions.checkArgument(ingredients.containsKey(key), "Symbol does not appear in the shape:", key);
 
         // -1 is the old wildcard, map to Short.MAX_VALUE as the new one
@@ -165,6 +170,7 @@ public class ShapedRecipe extends CraftingRecipe {
      */
     @NotNull
     public ShapedRecipe setIngredient(char key, @NotNull RecipeChoice ingredient) {
+        Preconditions.checkArgument(key != ' ', "Space in recipe shape must represent no ingredient");
         Preconditions.checkArgument(ingredients.containsKey(key), "Symbol does not appear in the shape:", key);
 
         ingredients.put(key, ingredient);
