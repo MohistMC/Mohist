@@ -28,6 +28,7 @@ import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
 import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -472,14 +473,14 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             ((ThrowableProjectile) launch).shootFromRotation(this.getHandle(), this.getHandle().getXRot(), this.getHandle().getYRot(), 0.0F, 1.5F, 1.0F); // ItemEnderPearl
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
+                launch = new net.minecraft.world.entity.projectile.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
                 ((Arrow) launch.getBukkitEntity()).setBasePotionType(PotionType.WATER);
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.SpectralArrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPECTRAL_ARROW));
+                launch = new net.minecraft.world.entity.projectile.SpectralArrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPECTRAL_ARROW), null);
             } else if (Trident.class.isAssignableFrom(projectile)) {
                 launch = new ThrownTrident(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TRIDENT));
             } else {
-                launch = new net.minecraft.world.entity.projectile.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
+                launch = new net.minecraft.world.entity.projectile.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
             }
             ((net.minecraft.world.entity.projectile.AbstractArrow) launch).shootFromRotation(this.getHandle(), this.getHandle().getXRot(), this.getHandle().getYRot(), 0.0F, 3.0F, 1.0F); // ItemBow
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
@@ -499,19 +500,20 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         } else if (Fireball.class.isAssignableFrom(projectile)) {
             Location location = this.getEyeLocation();
             Vector direction = location.getDirection().multiply(10);
+            Vec3 vec = new Vec3(direction.getX(), direction.getY(), direction.getZ());
 
             if (SmallFireball.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.SmallFireball(world, this.getHandle(), direction.getX(), direction.getY(), direction.getZ());
+                launch = new net.minecraft.world.entity.projectile.SmallFireball(world, this.getHandle(), vec);
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.WitherSkull(world, this.getHandle(), direction.getX(), direction.getY(), direction.getZ());
+                launch = new net.minecraft.world.entity.projectile.WitherSkull(world, this.getHandle(), vec);
             } else if (DragonFireball.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.DragonFireball(world, this.getHandle(), direction.getX(), direction.getY(), direction.getZ());
+                launch = new net.minecraft.world.entity.projectile.DragonFireball(world, this.getHandle(), vec);
             } else if (WindCharge.class.isAssignableFrom(projectile)) {
                 launch = EntityType.WIND_CHARGE.create(world);
                 ((net.minecraft.world.entity.projectile.windcharge.WindCharge) launch).setOwner(this.getHandle());
-                ((net.minecraft.world.entity.projectile.windcharge.WindCharge) launch).assignPower(direction.getX(), direction.getY(), direction.getZ());
+                ((net.minecraft.world.entity.projectile.windcharge.WindCharge) launch).assignDirectionalMovement(vec, 1.0D);
             } else {
-                launch = new LargeFireball(world, this.getHandle(), direction.getX(), direction.getY(), direction.getZ(), 1);
+                launch = new LargeFireball(world, this.getHandle(), vec, 1);
             }
 
             ((AbstractHurtingProjectile) launch).projectileSource = this;

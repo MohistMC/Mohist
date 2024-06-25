@@ -129,6 +129,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.Server;
+import org.bukkit.ServerLinks;
 import org.bukkit.ServerTickManager;
 import org.bukkit.StructureType;
 import org.bukkit.UnsafeValues;
@@ -299,6 +300,7 @@ public final class CraftServer implements Server {
     public CraftScoreboardManager scoreboardManager;
     public CraftDataPackManager dataPackManager;
     private CraftServerTickManager serverTickManager;
+    private CraftServerLinks serverLinks;
     public boolean playerCommandState;
     private boolean printSaveWarning;
     private CraftIconCache icon;
@@ -328,6 +330,7 @@ public final class CraftServer implements Server {
         this.structureManager = new CraftStructureManager(console.getStructureManager(), console.registryAccess());
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
         this.serverTickManager = new CraftServerTickManager(console.tickRateManager());
+        this.serverLinks = new CraftServerLinks(console);
 
         Bukkit.setServer(this);
 
@@ -724,7 +727,7 @@ public final class CraftServer implements Server {
 
     @Override
     public boolean getAllowNether() {
-        return this.getServer().isNetherEnabled();
+        return this.getProperties().allowNether;
     }
 
     @Override
@@ -1145,7 +1148,7 @@ public final class CraftServer implements Server {
         } else if (name.equals(levelName + "_the_end")) {
             worldKey = net.minecraft.world.level.Level.END;
         } else {
-            worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
+            worldKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace(name.toLowerCase(java.util.Locale.ENGLISH)));
         }
 
         // If set to not keep spawn in memory (changed from default) then adjust rule accordingly
@@ -1409,7 +1412,7 @@ public final class CraftServer implements Server {
         if (recipe.isPresent()) {
             RecipeHolder<CraftingRecipe> recipeCrafting = recipe.get();
             if (craftResult.setRecipeUsed(craftWorld.getHandle(), craftPlayer.getHandle(), recipeCrafting)) {
-                itemstack = recipeCrafting.value().assemble(inventoryCrafting, craftWorld.getHandle().registryAccess());
+                itemstack = recipeCrafting.value().assemble(inventoryCrafting.asCraftInput(), craftWorld.getHandle().registryAccess());
             }
         }
 
@@ -1439,7 +1442,7 @@ public final class CraftServer implements Server {
         net.minecraft.world.item.ItemStack itemStack = net.minecraft.world.item.ItemStack.EMPTY;
 
         if (recipe.isPresent()) {
-            itemStack = recipe.get().value().assemble(inventoryCrafting, craftWorld.getHandle().registryAccess());
+            itemStack = recipe.get().value().assemble(inventoryCrafting.asCraftInput(), craftWorld.getHandle().registryAccess());
         }
 
         return this.createItemCraftResult(CraftItemStack.asBukkitCopy(itemStack), inventoryCrafting, craftWorld.getHandle());
@@ -1447,7 +1450,7 @@ public final class CraftServer implements Server {
 
     private CraftItemCraftResult createItemCraftResult(ItemStack itemStack, CraftingContainer inventoryCrafting, ServerLevel worldServer) {
         CraftItemCraftResult craftItemResult = new CraftItemCraftResult(itemStack);
-        NonNullList<net.minecraft.world.item.ItemStack> remainingItems = this.getServer().getRecipeManager().getRemainingItemsFor(RecipeType.CRAFTING, inventoryCrafting, worldServer);
+        NonNullList<net.minecraft.world.item.ItemStack> remainingItems = this.getServer().getRecipeManager().getRemainingItemsFor(RecipeType.CRAFTING, inventoryCrafting.asCraftInput(), worldServer);
 
         // Set the resulting matrix items and overflow items
         for (int i = 0; i < remainingItems.size(); ++i) {
@@ -1487,7 +1490,7 @@ public final class CraftServer implements Server {
             inventoryCrafting.setItem(i, CraftItemStack.asNMSCopy(craftingMatrix[i]));
         }
 
-        return this.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inventoryCrafting, world.getHandle());
+        return this.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inventoryCrafting.asCraftInput(), world.getHandle());
     }
 
     @Override
@@ -2088,6 +2091,11 @@ public final class CraftServer implements Server {
     @Override
     public void setMotd(String motd) {
         this.console.setMotd(motd);
+    }
+
+    @Override
+    public ServerLinks getServerLinks() {
+        return this.serverLinks;
     }
 
     @Override

@@ -9,22 +9,6 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-@@ -10,7 +_,6 @@
- import java.io.Writer;
- import java.net.InetAddress;
- import java.net.Proxy;
--import java.net.URI;
- import java.nio.charset.StandardCharsets;
- import java.nio.file.Files;
- import java.nio.file.Path;
-@@ -30,7 +_,6 @@
- import net.minecraft.server.ConsoleInput;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.ServerInterface;
--import net.minecraft.server.ServerLinks;
- import net.minecraft.server.Services;
- import net.minecraft.server.WorldStem;
- import net.minecraft.server.gui.MinecraftServerGui;
 @@ -58,6 +_,12 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -47,10 +31,12 @@
      @Nullable
      private RconThread rconThread;
      public DedicatedServerSettings settings;
-@@ -80,6 +_,8 @@
+@@ -79,7 +_,9 @@
+     private RemoteSampleLogger tickTimeLogger;
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
-     private final ServerLinks serverLinks;
+-    private final ServerLinks serverLinks;
++    public ServerLinks serverLinks;
 +    @Nullable
 +    private net.minecraft.client.server.LanServerPinger dediLanPinger;
  

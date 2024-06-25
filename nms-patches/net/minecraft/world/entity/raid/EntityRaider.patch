@@ -1,0 +1,58 @@
+--- a/net/minecraft/world/entity/raid/EntityRaider.java
++++ b/net/minecraft/world/entity/raid/EntityRaider.java
+@@ -38,6 +38,10 @@
+ import net.minecraft.world.level.WorldAccess;
+ import net.minecraft.world.phys.Vec3D;
+ 
++// CraftBukkit start
++import org.bukkit.event.entity.EntityRemoveEvent;
++// CraftBukkit end
++
+ public abstract class EntityRaider extends EntityMonsterPatrolling {
+ 
+     protected static final DataWatcherObject<Boolean> IS_CELEBRATING = DataWatcher.defineId(EntityRaider.class, DataWatcherRegistry.BOOLEAN);
+@@ -233,7 +237,7 @@
+             this.onItemPickup(entityitem);
+             this.setItemSlot(enumitemslot, itemstack);
+             this.take(entityitem, itemstack.getCount());
+-            entityitem.discard();
++            entityitem.discard(EntityRemoveEvent.Cause.PICKUP); // CraftBukkit - add Bukkit remove cause
+             this.getCurrentRaid().setLeader(this.getWave(), this);
+             this.setPatrolLeader(true);
+         } else {
+@@ -282,7 +286,7 @@
+ 
+         private final T mob;
+ 
+-        public b(final EntityRaider entityraider, final EntityRaider entityraider1) {
++        public b(final EntityRaider entityraider, final T entityraider1) { // CraftBukkit - decompile error
+             this.mob = entityraider1;
+             this.setFlags(EnumSet.of(PathfinderGoal.Type.MOVE));
+         }
+@@ -475,7 +479,7 @@
+         private final float hostileRadiusSqr;
+         public final PathfinderTargetCondition shoutTargeting = PathfinderTargetCondition.forNonCombat().range(8.0D).ignoreLineOfSight().ignoreInvisibilityTesting();
+ 
+-        public a(final EntityRaider entityraider, final EntityIllagerAbstract entityillagerabstract, final float f) {
++        public a(final EntityIllagerAbstract entityillagerabstract, final float f) { // CraftBukkit - decompile error
+             this.mob = entityillagerabstract;
+             this.hostileRadiusSqr = f * f;
+             this.setFlags(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
+@@ -498,7 +502,7 @@
+             while (iterator.hasNext()) {
+                 EntityRaider entityraider = (EntityRaider) iterator.next();
+ 
+-                entityraider.setTarget(this.mob.getTarget());
++                entityraider.setTarget(this.mob.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER, true); // CraftBukkit
+             }
+ 
+         }
+@@ -515,7 +519,7 @@
+                 while (iterator.hasNext()) {
+                     EntityRaider entityraider = (EntityRaider) iterator.next();
+ 
+-                    entityraider.setTarget(entityliving);
++                    entityraider.setTarget(this.mob.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER, true); // CraftBukkit
+                     entityraider.setAggressive(true);
+                 }
+ 

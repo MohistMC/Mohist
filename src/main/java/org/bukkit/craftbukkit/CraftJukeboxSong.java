@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.Holder;
-import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.bukkit.JukeboxSong;
@@ -28,9 +27,9 @@ public class CraftJukeboxSong implements JukeboxSong, Handleable<net.minecraft.w
     public static Holder<net.minecraft.world.item.JukeboxSong> bukkitToMinecraftHolder(JukeboxSong bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
-        IRegistry<net.minecraft.world.item.JukeboxSong> registry = CraftRegistry.getMinecraftRegistry(Registries.JUKEBOX_SONG);
+        net.minecraft.core.Registry<net.minecraft.world.item.JukeboxSong> registry = CraftRegistry.getMinecraftRegistry(Registries.JUKEBOX_SONG);
 
-        if (registry.wrapAsHolder(bukkitToMinecraft(bukkit)) instanceof Holder.c<net.minecraft.world.item.JukeboxSong> holder) {
+        if (registry.wrapAsHolder(bukkitToMinecraft(bukkit)) instanceof Holder.Reference<net.minecraft.world.item.JukeboxSong> holder) {
             return holder;
         }
 

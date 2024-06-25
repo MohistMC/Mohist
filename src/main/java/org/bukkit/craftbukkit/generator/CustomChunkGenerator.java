@@ -244,7 +244,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(Executor executor, Blender blender, RandomState noiseConfig, StructureManager structureAccessor, ChunkAccess chunk) {
+    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState noiseConfig, StructureManager structureAccessor, ChunkAccess chunk) {
         CompletableFuture<ChunkAccess> future = null;
         WorldgenRandom random = CustomChunkGenerator.getSeededRandom();
         int x = chunk.getPos().x;
@@ -252,7 +252,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         random.setSeed(Mth.getSeed(x, "should-noise".hashCode(), z) ^ this.world.getSeed());
         if (this.generator.shouldGenerateNoise(this.world.getWorld(), new RandomSourceWrapper.RandomWrapper(random), x, z)) {
-            future = this.delegate.fillFromNoise(executor, blender, noiseConfig, structureAccessor, chunk);
+            future = this.delegate.fillFromNoise(blender, noiseConfig, structureAccessor, chunk);
         }
 
         java.util.function.Function<ChunkAccess, ChunkAccess> function = (ichunkaccess1) -> {

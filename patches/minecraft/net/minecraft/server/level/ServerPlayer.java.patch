@@ -991,7 +991,7 @@
 +         if (this.respawnDimension != null) {
 +            world = this.server.getLevel(this.respawnDimension);
 +            if (world != null && this.getRespawnPosition() != null) {
-+               position = Player.findRespawnPositionAndUseSpawnBlock((ServerLevel) world, this.getRespawnPosition(), this.getRespawnAngle(), false, false).orElse(null);
++               position = ServerPlayer.findRespawnAndUseSpawnBlock((ServerLevel) world, this.getRespawnPosition(), this.getRespawnAngle(), false, false).orElse(null);
 +            }
 +         }
 +         if (world == null || position == null) {

@@ -141,7 +141,7 @@
                  }
  
                  return p_328475_;
-@@ -140,7 +_,35 @@
+@@ -140,7 +_,36 @@
                              p_329808_ -> !(p_329808_ instanceof Saddleable saddleable) ? false : !saddleable.isSaddled() && saddleable.isSaddleable()
                          );
                      if (!list.isEmpty()) {
@@ -174,7 +174,8 @@
 +                        }
 +                        // CraftBukkit end
 +
-+                        ((Saddleable)list.get(0)).equipSaddle(SoundSource.BLOCKS);
++                        ((Saddleable)list.get(0)).equipSaddle(itemstack1, SoundSource.BLOCKS);
++                        p_334031_.shrink(1);
                          this.setSuccess(true);
                          return p_334031_;
                      } else {
@@ -253,7 +254,7 @@
                              p_335219_.shrink(1);
                              this.setSuccess(true);
                              return p_335219_;
-@@ -232,9 +_,51 @@
+@@ -232,9 +_,41 @@
                  DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_333855_.getItem();
                  BlockPos blockpos = p_333645_.pos().relative(p_333645_.state().getValue(DispenserBlock.FACING));
                  Level level = p_333645_.level();
@@ -293,17 +294,7 @@
 +                if (dispensiblecontaineritem.emptyContents(null, level, blockpos, null, p_333855_)) {
                      dispensiblecontaineritem.checkExtraContent(null, level, p_333855_, blockpos);
 -                    return this.consumeWithRemainder(p_333645_, p_333855_, new ItemStack(Items.BUCKET));
-+                    // CraftBukkit start - Handle stacked buckets
-+                    Item item = Items.BUCKET;
-+                    p_333855_.shrink(1);
-+                    if (p_333855_.isEmpty()) {
-+                        p_333855_.setItem(Items.BUCKET);
-+                        p_333855_.setCount(1);
-+                    } else if (p_333645_.blockEntity().addItem(new ItemStack(item)) < 0) {
-+                        this.defaultDispenseItemBehavior.dispense(p_333645_, new ItemStack(item));
-+                    }
-+                    return p_333855_;
-+                    // CraftBukkit end
++                    return new ItemStack(Items.BUCKET);
                  } else {
                      return this.defaultDispenseItemBehavior.dispense(p_333645_, p_333855_);
                  }

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.List;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.Recipe;
 public class CraftInventoryCrafting extends CraftInventory implements CraftingInventory {
     private final Container resultInventory;
 
-    public CraftInventoryCrafting(Container inventory, Container resultInventory) {
+    public CraftInventoryCrafting(CraftingContainer inventory, Container resultInventory) {
         super(inventory);
         this.resultInventory = resultInventory;
     }
@@ -21,8 +22,8 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
         return this.resultInventory;
     }
 
-    public Container getMatrixInventory() {
-        return this.inventory;
+    public CraftingContainer getMatrixInventory() {
+        return (CraftingContainer) this.inventory;
     }
 
     @Override
@@ -115,7 +116,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public Recipe getRecipe() {
-        RecipeHolder<?> recipe = this.getInventory().getCurrentRecipe();
+        RecipeHolder<?> recipe = this.getMatrixInventory().getCurrentRecipe();
         return recipe == null ? null : recipe.toBukkitRecipe();
     }
 }

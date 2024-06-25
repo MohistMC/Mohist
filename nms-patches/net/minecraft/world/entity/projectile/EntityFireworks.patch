@@ -1,0 +1,69 @@
+--- a/net/minecraft/world/entity/projectile/EntityFireworks.java
++++ b/net/minecraft/world/entity/projectile/EntityFireworks.java
+@@ -32,6 +32,10 @@
+ import net.minecraft.world.phys.MovingObjectPositionEntity;
+ import net.minecraft.world.phys.Vec3D;
+ 
++// CraftBukkit start
++import org.bukkit.event.entity.EntityRemoveEvent;
++// CraftBukkit end
++
+ public class EntityFireworks extends IProjectile implements ItemSupplier {
+ 
+     public static final DataWatcherObject<ItemStack> DATA_ID_FIREWORKS_ITEM = DataWatcher.defineId(EntityFireworks.class, DataWatcherRegistry.ITEM_STACK);
+@@ -148,7 +152,7 @@
+         MovingObjectPosition movingobjectposition = ProjectileHelper.getHitResultOnMoveVector(this, this::canHitEntity);
+ 
+         if (!this.noPhysics) {
+-            this.hitTargetOrDeflectSelf(movingobjectposition);
++            this.preHitTargetOrDeflectSelf(movingobjectposition); // CraftBukkit - projectile hit event
+             this.hasImpulse = true;
+         }
+ 
+@@ -163,7 +167,11 @@
+         }
+ 
+         if (!this.level().isClientSide && this.life > this.lifetime) {
+-            this.explode();
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++                this.explode();
++            }
++            // CraftBukkit end
+         }
+ 
+     }
+@@ -172,14 +180,18 @@
+         this.level().broadcastEntityEvent(this, (byte) 17);
+         this.gameEvent(GameEvent.EXPLODE, this.getOwner());
+         this.dealExplosionDamage();
+-        this.discard();
++        this.discard(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
+     }
+ 
+     @Override
+     protected void onHitEntity(MovingObjectPositionEntity movingobjectpositionentity) {
+         super.onHitEntity(movingobjectpositionentity);
+         if (!this.level().isClientSide) {
+-            this.explode();
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++                this.explode();
++            }
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -189,7 +201,11 @@
+ 
+         this.level().getBlockState(blockposition).entityInside(this.level(), blockposition, this);
+         if (!this.level().isClientSide() && this.hasExplosion()) {
+-            this.explode();
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++                this.explode();
++            }
++            // CraftBukkit end
+         }
+ 
+         super.onHitBlock(movingobjectpositionblock);

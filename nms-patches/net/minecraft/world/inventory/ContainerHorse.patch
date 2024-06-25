@@ -1,0 +1,56 @@
+--- a/net/minecraft/world/inventory/ContainerHorse.java
++++ b/net/minecraft/world/inventory/ContainerHorse.java
+@@ -10,6 +10,11 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
++// CraftBukkit end
++
+ public class ContainerHorse extends Container {
+ 
+     private final IInventory horseContainer;
+@@ -18,8 +23,23 @@
+     private static final int SLOT_BODY_ARMOR = 1;
+     private static final int SLOT_HORSE_INVENTORY_START = 2;
+ 
++    // CraftBukkit start
++    org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity;
++    PlayerInventory player;
++
++    @Override
++    public InventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        return bukkitEntity = new CraftInventoryView(player.player.getBukkitEntity(), horseContainer.getOwner().getInventory(), this);
++    }
++
+     public ContainerHorse(int i, PlayerInventory playerinventory, IInventory iinventory, final EntityHorseAbstract entityhorseabstract, int j) {
+         super((Containers) null, i);
++        player = playerinventory;
++        // CraftBukkit end
+         this.horseContainer = iinventory;
+         this.armorContainer = entityhorseabstract.getBodyArmorAccess();
+         this.horse = entityhorseabstract;
+@@ -28,7 +48,7 @@
+         iinventory.startOpen(playerinventory.player);
+         boolean flag1 = true;
+ 
+-        this.addSlot(new Slot(this, iinventory, 0, 8, 18) {
++        this.addSlot(new Slot(iinventory, 0, 8, 18) { // CraftBukkit - decompile error
+             @Override
+             public boolean mayPlace(ItemStack itemstack) {
+                 return itemstack.is(Items.SADDLE) && !this.hasItem() && entityhorseabstract.isSaddleable();
+@@ -39,7 +59,7 @@
+                 return entityhorseabstract.isSaddleable();
+             }
+         });
+-        this.addSlot(new ArmorSlot(this, this.armorContainer, entityhorseabstract, EnumItemSlot.BODY, 0, 8, 36, (MinecraftKey) null) {
++        this.addSlot(new ArmorSlot(this.armorContainer, entityhorseabstract, EnumItemSlot.BODY, 0, 8, 36, (MinecraftKey) null) { // CraftBukkit - decompile error
+             @Override
+             public boolean mayPlace(ItemStack itemstack) {
+                 return entityhorseabstract.isBodyArmorItem(itemstack);

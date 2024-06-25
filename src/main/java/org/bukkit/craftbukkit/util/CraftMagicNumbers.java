@@ -326,32 +326,22 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(Material material, EquipmentSlot slot) {
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> defaultAttributes = ImmutableMultimap.builder();
-
-        ItemAttributeModifiers nmsDefaultAttributes = CraftMagicNumbers.getItem(material).getDefaultAttributeModifiers();
-        nmsDefaultAttributes.forEach(CraftEquipmentSlot.getNMS(slot), (key, value) -> {
-            Attribute attribute = CraftAttribute.minecraftToBukkit(key.value());
-            defaultAttributes.put(attribute, CraftAttributeInstance.convert(value, slot));
-        });
-
-        return defaultAttributes.build();
+        return  material.getDefaultAttributeModifiers(slot);
     }
 
     @Override
     public CreativeCategory getCreativeCategory(Material material) {
-        return CreativeCategory.BUILDING_BLOCKS; // TODO: Figure out what to do with this
+        return material.getCreativeCategory();
     }
 
     @Override
     public String getBlockTranslationKey(Material material) {
-        Block block = CraftMagicNumbers.getBlock(material);
-        return (block != null) ? block.getDescriptionId() : null;
+        return material.getBlockTranslationKey();
     }
 
     @Override
     public String getItemTranslationKey(Material material) {
-        Item item = CraftMagicNumbers.getItem(material);
-        return (item != null) ? item.getDescriptionId() : null;
+        return material.getItemTranslationKey();
     }
 
     @Override

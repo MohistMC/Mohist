@@ -1,13 +1,22 @@
 --- a/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -46,8 +_,8 @@
+@@ -40,8 +_,8 @@
+ import org.apache.commons.lang3.Validate;
+ 
+ public class ItemFrame extends HangingEntity {
+-    private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
+-    private static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
++    public static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.ITEM_STACK);
++    public static final EntityDataAccessor<Integer> DATA_ROTATION = SynchedEntityData.defineId(ItemFrame.class, EntityDataSerializers.INT);
+     public static final int NUM_ROTATIONS = 8;
      private static final float DEPTH = 0.0625F;
      private static final float WIDTH = 0.75F;
-     private static final float HEIGHT = 0.75F;
--    public float dropChance = 1.0F;
--    public boolean fixed;
-+    private float dropChance = 1.0F;
-+    private boolean fixed;
+@@ -69,7 +_,7 @@
+     }
  
-     public ItemFrame(EntityType<? extends ItemFrame> p_31761_, Level p_31762_) {
-         super(p_31761_, p_31762_);
+     @Override
+-    protected void setDirection(Direction p_31793_) {
++    public void setDirection(Direction p_31793_) {
+         Validate.notNull(p_31793_);
+         this.direction = p_31793_;
+         if (p_31793_.getAxis().isHorizontal()) {

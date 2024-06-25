@@ -31,7 +31,7 @@
 +   	public int maxSwell = 30;
 +   	public int explosionRadius = 3;
 +   	private int droppedSkulls;
-+   	private Player entityIgniter; // CraftBukkit
++   	public Entity entityIgniter; // CraftBukkit
  
      public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
          super(p_32278_, p_32279_);

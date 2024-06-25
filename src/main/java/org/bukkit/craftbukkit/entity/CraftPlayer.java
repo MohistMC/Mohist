@@ -42,13 +42,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.ConnectionProtocol;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPopPacket;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
+import net.minecraft.network.protocol.common.ClientboundServerLinksPacket;
 import net.minecraft.network.protocol.common.ClientboundStoreCookiePacket;
 import net.minecraft.network.protocol.common.ClientboundTransferPacket;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
@@ -123,6 +123,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Note;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
+import org.bukkit.ServerLinks;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
@@ -144,6 +145,7 @@ import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftServerLinks;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -479,7 +481,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         org.spigotmc.AsyncCatcher.catchOp("player kick"); // Spigot
         if (this.getHandle().connection == null) return;
 
-        this.getHandle().connection.disconnect(message == null ? "" : message);
+        this.getHandle().connection.disconnect(CraftChatMessage.fromStringOrEmpty(message, true));
     }
 
     @Override
@@ -563,7 +565,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch, long seed) {
         if (loc == null || sound == null || category == null || this.getHandle().connection == null) return;
 
-        this.playSound0(loc, Holder.direct(SoundEvent.createVariableRangeEvent(new ResourceLocation(sound))), net.minecraft.sounds.SoundSource.valueOf(category.name()), volume, pitch, seed);
+        this.playSound0(loc, Holder.direct(SoundEvent.createVariableRangeEvent(ResourceLocation.parse(sound))), net.minecraft.sounds.SoundSource.valueOf(category.name()), volume, pitch, seed);
     }
 
     private void playSound0(Location loc, Holder<SoundEvent> soundEffectHolder, net.minecraft.sounds.SoundSource categoryNMS, float volume, float pitch, long seed) {
@@ -606,7 +608,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void playSound(org.bukkit.entity.Entity entity, String sound, org.bukkit.SoundCategory category, float volume, float pitch, long seed) {
         if (!(entity instanceof CraftEntity craftEntity) || sound == null || category == null || this.getHandle().connection == null) return;
 
-        this.playSound0(entity, Holder.direct(SoundEvent.createVariableRangeEvent(new ResourceLocation(sound))), net.minecraft.sounds.SoundSource.valueOf(category.name()), volume, pitch, seed);
+        this.playSound0(entity, Holder.direct(SoundEvent.createVariableRangeEvent(ResourceLocation.parse(sound))), net.minecraft.sounds.SoundSource.valueOf(category.name()), volume, pitch, seed);
     }
 
     private void playSound0(org.bukkit.entity.Entity entity, Holder<SoundEvent> soundEffectHolder, net.minecraft.sounds.SoundSource categoryNMS, float volume, float pitch, long seed) {
@@ -640,7 +642,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void stopSound(String sound, org.bukkit.SoundCategory category) {
         if (this.getHandle().connection == null) return;
 
-        this.getHandle().connection.send(new ClientboundStopSoundPacket(new ResourceLocation(sound), category == null ? net.minecraft.sounds.SoundSource.MASTER : net.minecraft.sounds.SoundSource.valueOf(category.name())));
+        this.getHandle().connection.send(new ClientboundStopSoundPacket(ResourceLocation.parse(sound), category == null ? net.minecraft.sounds.SoundSource.MASTER : net.minecraft.sounds.SoundSource.valueOf(category.name())));
     }
 
     @Override
@@ -980,6 +982,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    public void sendLinks(ServerLinks links) {
+        if (getHandle().connection == null) {
+            return;
+        }
+        Preconditions.checkArgument(links != null, "links cannot be null");
+
+        net.minecraft.server.ServerLinks nms = ((CraftServerLinks) links).getServerLinks();
+        getHandle().connection.send(new ClientboundServerLinksPacket(nms.untrust()));
+    }
+
+    @Override
     public void addCustomChatCompletions(Collection<String> completions) {
         this.sendCustomChatCompletionPacket(completions, ClientboundCustomChatCompletionsPacket.Action.ADD);
     }
@@ -1064,8 +1077,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (fromWorld == toWorld) {
             entity.connection.teleport(to);
         } else {
+            entity.portalProcess = null; // SPIGOT-7785: there is no need to carry this over as it contains the old world/location and we might run into trouble if there is a portal in the same spot in both worlds
             // The respawn reason should never be used if the passed location is non null.
-            this.server.getHandle().respawn(entity, toWorld, true, to, true, null);
+            this.server.getHandle().respawn(entity, true, Entity.RemovalReason.CHANGED_DIMENSION, null, to);
         }
         return true;
     }
@@ -1128,7 +1142,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         BlockPos bed = this.getHandle().getRespawnPosition();
 
         if (world != null && bed != null) {
-            Optional<Vec3> spawnLoc = net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(world, bed, this.getHandle().getRespawnAngle(), this.getHandle().isRespawnForced(), true);
+            Optional<ServerPlayer.RespawnPosAngle> spawnLoc = net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(world, bed, this.getHandle().getRespawnAngle(), this.getHandle().isRespawnForced(), true);
             if (spawnLoc.isPresent()) {
                 Vec3 vec = spawnLoc.get();
                 return CraftLocation.toBukkit(vec, world.getWorld(), this.getHandle().getRespawnAngle(), 0);
@@ -1788,7 +1802,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (this.getHandle().connection == null) return;
 
         if (this.channels.contains(channel)) {
-            ResourceLocation id = new ResourceLocation(StandardMessenger.validateAndCorrectChannel(channel));
+            ResourceLocation id = ResourceLocation.parse(StandardMessenger.validateAndCorrectChannel(channel));
             this.sendCustomPayload(id, message);
         }
     }
@@ -1915,7 +1929,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 }
             }
 
-            this.sendCustomPayload(new ResourceLocation("register"), stream.toByteArray());
+            this.sendCustomPayload(ResourceLocation.withDefaultNamespace("register"), stream.toByteArray());
         }
     }
 

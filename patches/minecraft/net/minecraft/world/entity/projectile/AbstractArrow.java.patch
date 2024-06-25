@@ -40,7 +40,8 @@
 -    private ItemStack pickupItemStack = this.getDefaultPickupItem();
 +    public ItemStack pickupItemStack = this.getDefaultPickupItem();
      @Nullable
-     private ItemStack firedFromWeapon = null;
+-    private ItemStack firedFromWeapon = null;
++    public ItemStack firedFromWeapon = null;
 +    private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
  
      protected AbstractArrow(EntityType<? extends AbstractArrow> p_332730_, Level p_335646_) {

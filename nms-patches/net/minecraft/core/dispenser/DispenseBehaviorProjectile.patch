@@ -1,0 +1,57 @@
+--- a/net/minecraft/core/dispenser/DispenseBehaviorProjectile.java
++++ b/net/minecraft/core/dispenser/DispenseBehaviorProjectile.java
+@@ -9,6 +9,13 @@
+ import net.minecraft.world.item.ProjectileItem;
+ import net.minecraft.world.level.block.BlockDispenser;
+ 
++// CraftBukkit start
++import net.minecraft.world.entity.Entity;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
++
+ public class DispenseBehaviorProjectile extends DispenseBehaviorItem {
+ 
+     private final ProjectileItem projectileItem;
+@@ -32,9 +39,38 @@
+         IPosition iposition = this.dispenseConfig.positionFunction().getDispensePosition(sourceblock, enumdirection);
+         IProjectile iprojectile = this.projectileItem.asProjectile(worldserver, iposition, itemstack, enumdirection);
+ 
+-        this.projectileItem.shoot(iprojectile, (double) enumdirection.getStepX(), (double) enumdirection.getStepY(), (double) enumdirection.getStepZ(), this.dispenseConfig.power(), this.dispenseConfig.uncertainty());
++        // CraftBukkit start
++        // this.projectileItem.shoot(iprojectile, (double) enumdirection.getStepX(), (double) enumdirection.getStepY(), (double) enumdirection.getStepZ(), this.dispenseConfig.power(), this.dispenseConfig.uncertainty());
++        ItemStack itemstack1 = itemstack.split(1);
++        org.bukkit.block.Block block = CraftBlock.at(worldserver, sourceblock.pos());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) enumdirection.getStepX(), (double) enumdirection.getStepY(), (double) enumdirection.getStepZ()));
++        if (!BlockDispenser.eventFired) {
++            worldserver.getCraftServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled()) {
++            itemstack.grow(1);
++            return itemstack;
++        }
++
++        if (!event.getItem().equals(craftItem)) {
++            itemstack.grow(1);
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IDispenseBehavior idispensebehavior = (IDispenseBehavior) BlockDispenser.DISPENSER_REGISTRY.get(eventStack.getItem());
++            if (idispensebehavior != IDispenseBehavior.NOOP && idispensebehavior != this) {
++                idispensebehavior.dispense(sourceblock, eventStack);
++                return itemstack;
++            }
++        }
++
++        this.projectileItem.shoot(iprojectile, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), this.dispenseConfig.power(), this.dispenseConfig.uncertainty());
++        ((Entity) iprojectile).projectileSource = new org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource(sourceblock.blockEntity());
++        // CraftBukkit end
+         worldserver.addFreshEntity(iprojectile);
+-        itemstack.shrink(1);
++        // itemstack.shrink(1); // CraftBukkit - Handled during event processing
+         return itemstack;
+     }
+ 

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -11,26 +_,40 @@
- import net.minecraft.world.level.Level;
+@@ -12,25 +_,40 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
--import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -17,10 +16,8 @@
 +        isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
      }
  
--    public LargeFireball(Level p_181151_, LivingEntity p_181152_, Vec3 p_342986_, int p_181156_) {
--        super(EntityType.FIREBALL, p_181152_, p_342986_, p_181151_);
-+    public LargeFireball(Level p_181151_, LivingEntity p_181152_, double p_181153_, double p_181154_, double p_181155_, int p_181156_) {
-+        super(EntityType.FIREBALL, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
+     public LargeFireball(Level p_181151_, LivingEntity p_181152_, Vec3 p_342986_, int p_181156_) {
+         super(EntityType.FIREBALL, p_181152_, p_342986_, p_181151_);
          this.explosionPower = p_181156_;
 +        isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
      }

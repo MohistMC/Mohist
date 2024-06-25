@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/item/crafting/IRecipeComplex.java
++++ b/net/minecraft/world/item/crafting/IRecipeComplex.java
+@@ -3,6 +3,11 @@
+ import net.minecraft.core.HolderLookup;
+ import net.minecraft.world.item.ItemStack;
+ 
++// CraftBukkit start
++import org.bukkit.NamespacedKey;
++import org.bukkit.inventory.Recipe;
++// CraftBukkit end
++
+ public abstract class IRecipeComplex implements RecipeCrafting {
+ 
+     private final CraftingBookCategory category;
+@@ -25,4 +30,11 @@
+     public CraftingBookCategory category() {
+         return this.category;
+     }
++
++    // CraftBukkit start
++    @Override
++    public Recipe toBukkitRecipe(NamespacedKey id) {
++        return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(id, this);
++    }
++    // CraftBukkit end
+ }

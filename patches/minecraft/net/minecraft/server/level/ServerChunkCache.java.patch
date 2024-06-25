@@ -14,14 +14,7 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionStage;
  import java.util.concurrent.Executor;
-@@ -18,13 +_,13 @@
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.SectionPos;
- import net.minecraft.network.protocol.Packet;
--import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.progress.ChunkProgressListener;
- import net.minecraft.util.VisibleForDebug;
- import net.minecraft.util.profiling.ProfilerFiller;
+@@ -25,6 +_,7 @@
  import net.minecraft.util.thread.BlockableEventLoop;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
@@ -92,15 +85,6 @@
              this.distanceManager.addTicket(TicketType.UNKNOWN, chunkpos, j, chunkpos);
              if (this.chunkAbsent(chunkholder, j)) {
                  ProfilerFiller profilerfiller = this.level.getProfiler();
-@@ -230,7 +_,7 @@
-     }
- 
-     private boolean chunkAbsent(@Nullable ChunkHolder p_8417_, int p_8418_) {
--        return p_8417_ == null || p_8417_.getTicketLevel() > p_8418_;
-+        return p_8417_ == null || p_8417_.oldTicketLevel > p_8418_; // CraftBukkit using oldTicketLevel for isLoaded checks
-     }
- 
-     @Override
 @@ -284,7 +_,15 @@
  
      @Override

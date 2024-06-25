@@ -30,7 +30,7 @@
 @@ -123,8 +133,30 @@
          }
      }
-
+ 
 +    // CraftBukkit start
 +    private EnumInteractionResult explodeBed(IBlockData iblockdata, World world, BlockPosition blockposition) {
 +        {
@@ -57,7 +57,7 @@
 +        // CraftBukkit - moved world and biome check into EntityHuman
 +        return true || world.dimensionType().bedWorks();
      }
-
+ 
      private boolean kickVillagerOutOfBed(World world, BlockPosition blockposition) {
 @@ -323,6 +355,11 @@
              BlockPosition blockposition1 = blockposition.relative((EnumDirection) iblockdata.getValue(BlockBed.FACING));

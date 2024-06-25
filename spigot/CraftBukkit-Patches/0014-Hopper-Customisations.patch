@@ -38,6 +38,7 @@ index 4a2646d8a3..5890449c77 100644
                      if (!itemstack.isEmpty()) {
                          int j = itemstack.getCount();
                          // CraftBukkit start - Call event when pushing items into other inventories
+                         ItemStack original = itemstack.copy();
 -                        CraftItemStack oitemstack = CraftItemStack.asCraftMirror(tileentityhopper.removeItem(i, 1));
 +                        CraftItemStack oitemstack = CraftItemStack.asCraftMirror(tileentityhopper.removeItem(i, world.spigotConfig.hopperAmount)); // Spigot
  
@@ -46,7 +47,7 @@ index 4a2646d8a3..5890449c77 100644
 @@ -230,7 +235,7 @@ public class TileEntityHopper extends TileEntityLootable implements IHopper {
                          world.getCraftServer().getPluginManager().callEvent(event);
                          if (event.isCancelled()) {
-                             tileentityhopper.setItem(i, itemstack);
+                             tileentityhopper.setItem(i, original);
 -                            tileentityhopper.setCooldown(8); // Delay hopper checks
 +                            tileentityhopper.setCooldown(world.spigotConfig.hopperTransfer); // Delay hopper checks // Spigot
                              return false;

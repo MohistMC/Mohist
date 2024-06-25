@@ -48,7 +48,7 @@ public class CraftContainer extends AbstractContainerMenu {
     }
 
     public CraftContainer(final Inventory inventory, final Player player, int id) {
-        this(new InventoryView() {
+        this(new CraftAbstractInventoryView() {
 
             private final String originalTitle = (inventory instanceof CraftInventoryCustom) ? ((CraftInventoryCustom.MinecraftInventory) ((CraftInventory) inventory).getInventory()).getTitle() : inventory.getType().getDefaultTitle();
             private String title = this.originalTitle;
@@ -153,7 +153,7 @@ public class CraftContainer extends AbstractContainerMenu {
             case GRINDSTONE:
                 return MenuType.GRINDSTONE;
             case STONECUTTER:
-                return MenuType.STONECUTTER;
+                setupStoneCutter(top, bottom); // SPIGOT-7757 - manual setup required for individual slots
             case SMITHING:
             case SMITHING_NEW:
                 return MenuType.SMITHING;
@@ -311,6 +311,26 @@ public class CraftContainer extends AbstractContainerMenu {
         this.addSlot(new Slot(top, 1, 26, 48));
         this.addSlot(new Slot(top, 2, 44, 48));
         this.addSlot(new Slot(top, 3, 98, 48));
+
+        int row;
+        int col;
+
+        for (row = 0; row < 3; ++row) {
+            for (col = 0; col < 9; ++col) {
+                this.addSlot(new Slot(bottom, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+            }
+        }
+
+        for (row = 0; row < 9; ++row) {
+            this.addSlot(new Slot(bottom, row, 8 + row * 18, 142));
+        }
+        // End copy from ContainerSmithing
+    }
+
+    private void setupStoneCutter(Container top, Container bottom) {
+        // This code copied from ContainerStonecutter
+        this.addSlot(new Slot(top, 0, 20, 33));
+        this.addSlot(new Slot(top, 1, 143, 33));
 
         int row;
         int col;

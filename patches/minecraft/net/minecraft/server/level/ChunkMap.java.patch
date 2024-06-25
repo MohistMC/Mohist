@@ -227,7 +227,15 @@
              if (i != 0) {
                  int j = entitytype.updateInterval();
                  if (this.entityMap.containsKey(p_140200_.getId())) {
-@@ -1222,7 +_,7 @@
+@@ -1215,14 +_,14 @@
+     }
+ 
+     public class TrackedEntity {
+-        final ServerEntity serverEntity;
++        public final ServerEntity serverEntity;
+         final Entity entity;
+         private final int range;
+         SectionPos lastSectionPos;
          public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
          public TrackedEntity(final Entity p_140478_, final int p_140479_, final int p_140480_, final boolean p_140481_) {

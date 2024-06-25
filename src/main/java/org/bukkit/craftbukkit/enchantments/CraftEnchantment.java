@@ -2,11 +2,10 @@ package org.bukkit.craftbukkit.enchantments;
 
 import com.google.common.base.Preconditions;
 import java.util.Locale;
+import net.minecraft.Util;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
-import net.minecraft.world.item.enchantment.VanishingCurseEnchantment;
+import net.minecraft.tags.EnchantmentTags;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.CraftRegistry;
@@ -33,6 +32,10 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
         return CraftRegistry.bukkitToMinecraft(bukkit);
     }
 
+    public static Holder<net.minecraft.world.item.enchantment.Enchantment> bukkitToMinecraftHolder(Enchantment bukkit) {
+        return CraftRegistry.bukkitToMinecraftHolder(bukkit, Registries.ENCHANTMENT);
+    }
+
     public static String bukkitToString(Enchantment bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
@@ -53,18 +56,18 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
     }
 
     private final NamespacedKey key;
-    private final net.minecraft.world.item.enchantment.Enchantment handle;
+    private final Holder<net.minecraft.world.item.enchantment.Enchantment> handle;
     private final int id;
 
     public CraftEnchantment(NamespacedKey key, net.minecraft.world.item.enchantment.Enchantment handle) {
         this.key = key;
-        this.handle = handle;
-        this.id = BuiltInRegistries.ENCHANTMENT.getId(handle);
+        this.handle = CraftRegistry.getMinecraftRegistry(Registries.ENCHANTMENT).wrapAsHolder(handle);
+        this.id = CraftRegistry.getMinecraftRegistry(Registries.ENCHANTMENT).getId(handle);
     }
 
     @Override
     public net.minecraft.world.item.enchantment.Enchantment getHandle() {
-        return this.handle;
+        return this.handle.value();
     }
 
     @Override
@@ -74,12 +77,12 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
 
     @Override
     public int getMaxLevel() {
-        return this.handle.getMaxLevel();
+        return this.getHandle().getMaxLevel();
     }
 
     @Override
     public int getStartLevel() {
-        return this.handle.getMinLevel();
+        return this.getHandle().getMinLevel();
     }
 
     @Override
@@ -89,17 +92,17 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
 
     @Override
     public boolean isTreasure() {
-        return this.handle.isTreasureOnly();
+        return !handle.is(EnchantmentTags.IN_ENCHANTING_TABLE);
     }
 
     @Override
     public boolean isCursed() {
-        return this.handle instanceof BindingCurseEnchantment || this.handle instanceof VanishingCurseEnchantment;
+        return handle.is(EnchantmentTags.CURSE);
     }
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        return this.handle.canEnchant(CraftItemStack.asNMSCopy(item));
+        return this.getHandle().canEnchant(CraftItemStack.asNMSCopy(item));
     }
 
     @Override
@@ -161,12 +164,12 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
             return false;
         }
         CraftEnchantment ench = (CraftEnchantment) other;
-        return !this.handle.isCompatibleWith(ench.getHandle());
+        return !net.minecraft.world.item.enchantment.Enchantment.areCompatible(handle, ench.handle);
     }
 
     @Override
     public String getTranslationKey() {
-        return this.handle.getDescriptionId();
+        return Util.makeDescriptionId("enchantment", handle.unwrapKey().get().location());
     }
 
     @Override

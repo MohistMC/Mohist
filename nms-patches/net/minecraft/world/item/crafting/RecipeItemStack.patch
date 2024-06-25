@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/item/crafting/RecipeItemStack.java
++++ b/net/minecraft/world/item/crafting/RecipeItemStack.java
+@@ -40,6 +40,7 @@
+     public ItemStack[] itemStacks;
+     @Nullable
+     private IntList stackingIds;
++    public boolean exact; // CraftBukkit
+     public static final Codec<RecipeItemStack> CODEC = codec(true);
+     public static final Codec<RecipeItemStack> CODEC_NONEMPTY = codec(false);
+ 
+@@ -77,6 +78,15 @@
+             for (int j = 0; j < i; ++j) {
+                 ItemStack itemstack1 = aitemstack[j];
+ 
++                // CraftBukkit start
++                if (exact) {
++                    if (itemstack1.getItem() == itemstack.getItem() && ItemStack.isSameItemSameComponents(itemstack, itemstack1)) {
++                        return true;
++                    }
++
++                    continue;
++                }
++                // CraftBukkit end
+                 if (itemstack1.is(itemstack.getItem())) {
+                     return true;
+                 }

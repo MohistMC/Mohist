@@ -122,16 +122,11 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
             if (context.getKiller() != null) {
                 Player nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
-                this.setMaybe(builder, LootContextParams.KILLER_ENTITY, nmsKiller);
+                this.setMaybe(builder, LootContextParams.ATTACKING_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
                 this.setMaybe(builder, LootContextParams.DAMAGE_SOURCE, handle.damageSources().playerAttack(nmsKiller));
                 this.setMaybe(builder, LootContextParams.LAST_DAMAGE_PLAYER, nmsKiller); // SPIGOT-5603 - Set minecraft:killed_by_player
                 this.setMaybe(builder, LootContextParams.TOOL, nmsKiller.getUseItem()); // SPIGOT-6925 - Set minecraft:match_tool
-            }
-
-            // SPIGOT-5603 - Use LootContext#lootingModifier
-            if (context.getLootingModifier() != LootContext.DEFAULT_LOOT_MODIFIER) {
-                this.setMaybe(builder, LootContextParams.LOOTING_MOD, context.getLootingModifier());
             }
         }
 
@@ -145,7 +140,6 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
                 nmsBuilder.optional(param);
             }
         }
-        nmsBuilder.optional(LootContextParams.LOOTING_MOD);
 
         return builder.create(this.getHandle().getParamSet());
     }
@@ -164,8 +158,8 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
         Location location = CraftLocation.toBukkit(position, info.getLevel().getWorld());
         LootContext.Builder contextBuilder = new LootContext.Builder(location);
 
-        if (info.hasParam(LootContextParams.KILLER_ENTITY)) {
-            CraftEntity killer = info.getParamOrNull(LootContextParams.KILLER_ENTITY).getBukkitEntity();
+        if (info.hasParam(LootContextParams.ATTACKING_ENTITY)) {
+            CraftEntity killer = info.getParamOrNull(LootContextParams.ATTACKING_ENTITY).getBukkitEntity();
             if (killer instanceof CraftHumanEntity) {
                 contextBuilder.killer((CraftHumanEntity) killer);
             }
@@ -173,10 +167,6 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
         if (info.hasParam(LootContextParams.THIS_ENTITY)) {
             contextBuilder.lootedEntity(info.getParamOrNull(LootContextParams.THIS_ENTITY).getBukkitEntity());
-        }
-
-        if (info.hasParam(LootContextParams.LOOTING_MOD)) {
-            contextBuilder.lootingModifier(info.getParamOrNull(LootContextParams.LOOTING_MOD));
         }
 
         contextBuilder.luck(info.getLuck());

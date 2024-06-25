@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
+@@ -31,7 +_,7 @@
+         this.pos = p_31708_;
+     }
+ 
+-    protected void setDirection(Direction p_31728_) {
++    public void setDirection(Direction p_31728_) {
+         Objects.requireNonNull(p_31728_);
+         Validate.isTrue(p_31728_.getAxis().isHorizontal());
+         this.direction = p_31728_;
 @@ -59,6 +_,8 @@
          } else {
              boolean flag = BlockPos.betweenClosedStream(this.calculateSupportBox()).allMatch(p_341437_ -> {

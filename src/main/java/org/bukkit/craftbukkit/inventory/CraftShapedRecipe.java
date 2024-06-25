@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
@@ -47,17 +49,27 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
 
     @Override
     public void addToCraftingManager() {
-        String[] shape = this.getShape();
         Map<Character, org.bukkit.inventory.RecipeChoice> ingred = this.getChoiceMap();
-        int width = shape[0].length();
-        NonNullList<Ingredient> data = NonNullList.withSize(shape.length * width, Ingredient.EMPTY);
+        String[] shape = replaceUndefinedIngredientsWithEmpty(this.getShape(), ingred);
+        ingred.values().removeIf(Objects::isNull);
+        Map<Character, Ingredient> data = Maps.transformValues(ingred, (bukkit) -> toNMS(bukkit, false));
+
+        ShapedRecipePattern pattern = ShapedRecipePattern.of(data, shape);
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new ShapedRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), pattern, CraftItemStack.asNMSCopy(this.getResult()))));
+    }
+
+    private static String[] replaceUndefinedIngredientsWithEmpty(String[] shape, Map<Character, org.bukkit.inventory.RecipeChoice> ingredients) {
 
         for (int i = 0; i < shape.length; i++) {
             String row = shape[i];
-            for (int j = 0; j < row.length(); j++) {
-                data.set(i * width + j, this.toNMS(ingred.get(row.charAt(j)), false));
+            StringBuilder filteredRow = new StringBuilder(row.length());
+
+            for (char character : row.toCharArray()) {
+                filteredRow.append(ingredients.get(character) == null ? ' ' : character);
             }
+
+            shape[i] = filteredRow.toString();
         }
-        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapedRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), new ShapedRecipePattern(width, shape.length, data, Optional.empty()), CraftItemStack.asNMSCopy(this.getResult()))));
+        return shape;
     }
 }

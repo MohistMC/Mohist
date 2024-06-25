@@ -1,0 +1,131 @@
+--- a/net/minecraft/server/level/ChunkProviderServer.java
++++ b/net/minecraft/server/level/ChunkProviderServer.java
+@@ -82,6 +82,16 @@
+         this.clearCache();
+     }
+ 
++    // CraftBukkit start - properly implement isChunkLoaded
++    public boolean isChunkLoaded(int chunkX, int chunkZ) {
++        PlayerChunk chunk = this.chunkMap.getUpdatingChunkIfPresent(ChunkCoordIntPair.asLong(chunkX, chunkZ));
++        if (chunk == null) {
++            return false;
++        }
++        return chunk.getFullChunkNow() != null;
++    }
++    // CraftBukkit end
++
+     @Override
+     public LightEngineThreaded getLightEngine() {
+         return this.lightEngine;
+@@ -125,7 +135,7 @@
+                 if (k == this.lastChunkPos[l] && chunkstatus == this.lastChunkStatus[l]) {
+                     IChunkAccess ichunkaccess = this.lastChunk[l];
+ 
+-                    if (ichunkaccess != null || !flag) {
++                    if (ichunkaccess != null) { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
+                         return ichunkaccess;
+                     }
+                 }
+@@ -138,7 +148,7 @@
+             Objects.requireNonNull(completablefuture);
+             chunkproviderserver_b.managedBlock(completablefuture::isDone);
+             ChunkResult<IChunkAccess> chunkresult = (ChunkResult) completablefuture.join();
+-            IChunkAccess ichunkaccess1 = (IChunkAccess) chunkresult.orElse((Object) null);
++            IChunkAccess ichunkaccess1 = (IChunkAccess) chunkresult.orElse(null); // CraftBukkit - decompile error
+ 
+             if (ichunkaccess1 == null && flag) {
+                 throw (IllegalStateException) SystemUtils.pauseInIde(new IllegalStateException("Chunk not there when requested: " + chunkresult.getError()));
+@@ -218,7 +228,15 @@
+         int l = ChunkLevel.byStatus(chunkstatus);
+         PlayerChunk playerchunk = this.getVisibleChunkIfPresent(k);
+ 
+-        if (flag) {
++        // CraftBukkit start - don't add new ticket for currently unloading chunk
++        boolean currentlyUnloading = false;
++        if (playerchunk != null) {
++            FullChunkStatus oldChunkState = ChunkLevel.fullStatus(playerchunk.oldTicketLevel);
++            FullChunkStatus currentChunkState = ChunkLevel.fullStatus(playerchunk.getTicketLevel());
++            currentlyUnloading = (oldChunkState.isOrAfter(FullChunkStatus.FULL) && !currentChunkState.isOrAfter(FullChunkStatus.FULL));
++        }
++        if (flag && !currentlyUnloading) {
++            // CraftBukkit end
+             this.distanceManager.addTicket(TicketType.UNKNOWN, chunkcoordintpair, l, chunkcoordintpair);
+             if (this.chunkAbsent(playerchunk, l)) {
+                 GameProfilerFiller gameprofilerfiller = this.level.getProfiler();
+@@ -237,7 +255,7 @@
+     }
+ 
+     private boolean chunkAbsent(@Nullable PlayerChunk playerchunk, int i) {
+-        return playerchunk == null || playerchunk.getTicketLevel() > i;
++        return playerchunk == null || playerchunk.oldTicketLevel > i; // CraftBukkit using oldTicketLevel for isLoaded checks
+     }
+ 
+     @Override
+@@ -292,11 +310,31 @@
+ 
+     @Override
+     public void close() throws IOException {
+-        this.save(true);
++        // CraftBukkit start
++        close(true);
++    }
++
++    public void close(boolean save) throws IOException {
++        if (save) {
++            this.save(true);
++        }
++        // CraftBukkit end
+         this.lightEngine.close();
+         this.chunkMap.close();
+     }
+ 
++    // CraftBukkit start - modelled on below
++    public void purgeUnload() {
++        this.level.getProfiler().push("purge");
++        this.distanceManager.purgeStaleTickets();
++        this.runDistanceManagerUpdates();
++        this.level.getProfiler().popPush("unload");
++        this.chunkMap.tick(() -> true);
++        this.level.getProfiler().pop();
++        this.clearCache();
++    }
++    // CraftBukkit end
++
+     @Override
+     public void tick(BooleanSupplier booleansupplier, boolean flag) {
+         this.level.getProfiler().push("purge");
+@@ -346,11 +384,11 @@
+ 
+                 this.lastSpawnState = spawnercreature_d;
+                 gameprofilerfiller.popPush("spawnAndTick");
+-                boolean flag = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING);
++                boolean flag = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !this.level.players().isEmpty(); // CraftBukkit
+ 
+                 SystemUtils.shuffle(list, this.level.random);
+                 int l = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+-                boolean flag1 = this.level.getLevelData().getGameTime() % 400L == 0L;
++                boolean flag1 = this.level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && this.level.getLevelData().getGameTime() % this.level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
+                 Iterator iterator1 = list.iterator();
+ 
+                 while (iterator1.hasNext()) {
+@@ -560,13 +598,19 @@
+         }
+ 
+         @Override
+-        protected boolean pollTask() {
++        // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
++        public boolean pollTask() {
++        try {
+             if (ChunkProviderServer.this.runDistanceManagerUpdates()) {
+                 return true;
+             } else {
+                 ChunkProviderServer.this.lightEngine.tryScheduleUpdate();
+                 return super.pollTask();
+             }
++        } finally {
++            chunkMap.callbackExecutor.run();
++        }
++        // CraftBukkit end
+         }
+     }
+ 

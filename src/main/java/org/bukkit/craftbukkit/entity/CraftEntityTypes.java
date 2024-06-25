@@ -32,6 +32,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.DiodeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -218,7 +219,7 @@ public final class CraftEntityTypes {
     private static final BiConsumer<SpawnData, net.minecraft.world.entity.Entity> MOVE_EMPTY_ROT = (spawnData, entity) -> entity.moveTo(spawnData.x(), spawnData.y(), spawnData.z(), 0, 0);
     private static final BiConsumer<SpawnData, AbstractHurtingProjectile> DIRECTION = (spawnData, entity) -> {
         Vector direction = spawnData.location().getDirection().multiply(10);
-        entity.assignPower(direction.getX(), direction.getY(), direction.getZ());
+        entity.assignDirectionalMovement(new Vec3(direction.getX(), direction.getY(), direction.getZ()), 1.0);
     };
     private static final Map<Class<?>, EntityTypeData<?, ?>> CLASS_TYPE_DATA = new HashMap<>();
     private static final Map<EntityType, EntityTypeData<?, ?>> ENTITY_TYPE_DATA = new HashMap<>();
@@ -463,8 +464,8 @@ public final class CraftEntityTypes {
                 if (nmsBlock.isSolid() || DiodeBlock.isDiode(nmsBlock)) {
                     boolean taken = false;
                     AABB bb = (ItemFrame.class.isAssignableFrom(clazz))
-                            ? net.minecraft.world.entity.decoration.ItemFrame.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height)
-                            : HangingEntity.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height);
+                            ? net.minecraft.world.entity.decoration.ItemFrame.calculateBoundingBoxStatic(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height)
+                            : net.minecraft.world.entity.decoration.Painting.calculateBoundingBoxStatic(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height);
                     List<net.minecraft.world.entity.Entity> list = spawnData.world().getEntities(null, bb);
                     for (Iterator<net.minecraft.world.entity.Entity> it = list.iterator(); !taken && it.hasNext(); ) {
                         net.minecraft.world.entity.Entity e = it.next();
