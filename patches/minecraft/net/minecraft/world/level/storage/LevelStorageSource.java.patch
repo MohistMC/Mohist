@@ -65,7 +65,7 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean m_230843_() {
           return this.f_230840_.isEmpty();
-@@ -394,14 +_,24 @@
+@@ -394,15 +_,31 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock f_78270_;
@@ -73,13 +73,14 @@
 +      public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
-+      public final ResourceKey<LevelStem> dimensionType;
++      public ResourceKey<LevelStem> dimensionType;
  
 -      LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
 +      public LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
           this.f_78272_ = p_289967_;
           this.f_230867_ = new LevelStorageSource.LevelDirectory(p_289988_);
           this.f_78270_ = DirectoryLock.m_13640_(p_289988_);
+-      }
 +         this.dimensionType = null;
 +      }
 +
@@ -89,9 +90,16 @@
 +         this.f_78272_ = s;
 +         this.f_230867_ = new LevelStorageSource.LevelDirectory(path);
 +         this.f_78270_ = DirectoryLock.m_13640_(path);
-       }
++      }
++
++      // Mohist start
++      public void setTypeKey(ResourceKey<LevelStem> dimensionType) {
++         this.dimensionType = dimensionType;
++      }
++      // Mohist end
  
        public String m_78277_() {
+          return this.f_78272_;
 @@ -413,7 +_,7 @@
        }
  
