@@ -13,11 +13,11 @@ import static net.minecraftforge.forge.tasks.Util.*
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'net.minecraftforge.gradleutils' version '2.+'
+    id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
-    id 'de.undercouch.download' version '5.2.1'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.77,5.2.0)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.77,5.2.0)' apply false
+    id 'de.undercouch.download' version '5.4.0'
+    id 'net.minecraftforge.gradle.patcher' version '[6.0,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0,6.2)' apply false
 }
 
 init() //Init all our extension methods!
@@ -36,8 +36,8 @@ ext {
     MODLAUNCHER_VERSION = '10.0.8'
     SECUREJARHANDLER_VERSION = '2.1.6'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
-    ASM_VERSION = '9.5'
-    INSTALLER_VERSION = '2.1.+'
+    ASM_VERSION = '9.7'
+    INSTALLER_VERSION = '2.2.+'
     MIXIN_VERSION = '0.8.5'
     TERMINALCONSOLEAPPENDER_VERSION = '1.4.0'
     JLINE_VERSION = '3.21.0'
@@ -61,7 +61,7 @@ ext {
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.1'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
     MIN_TAG_FOR_CHANGELOG = '41.0'
@@ -293,7 +293,7 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     prj.task([type: DownloadMavenArtifact], 'downloadInstaller') {
-        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
+        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:fatjar"
         changing = true
     }
 

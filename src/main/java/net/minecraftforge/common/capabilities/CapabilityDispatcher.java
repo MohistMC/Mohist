@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.ArrayList;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import java.util.List;
@@ -36,9 +37,9 @@ import org.jetbrains.annotations.Nullable;
 @MethodsReturnNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider
 {
-    private ICapabilityProvider[] caps;
-    private INBTSerializable<Tag>[] writers;
-    private String[] names;
+    private final ICapabilityProvider[] caps;
+    private final INBTSerializable<Tag>[] writers;
+    private final String[] names;
     private final List<Runnable> listeners;
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners)
@@ -49,9 +50,9 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     @SuppressWarnings("unchecked")
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners, @Nullable ICapabilityProvider parent)
     {
-        List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-        List<INBTSerializable<Tag>> lstWriters = Lists.newArrayList();
-        List<String> lstNames = Lists.newArrayList();
+        List<ICapabilityProvider> lstCaps = new ArrayList<>();
+        List<INBTSerializable<Tag>> lstWriters = new ArrayList<>();
+        List<String> lstNames = new ArrayList<>();
         this.listeners = listeners;
 
         if (parent != null) // Parents go first!
