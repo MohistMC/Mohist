@@ -607,7 +607,7 @@
              }
           }
  
-@@ -1151,31 +_,49 @@
+@@ -1151,31 +_,51 @@
        } else {
           ItemStack itemstack = null;
  
@@ -623,13 +623,15 @@
 +            }
 +         }
 +         EntityResurrectEvent event = null;
-+         if (this.getBukkitEntity() instanceof  org.bukkit.entity.LivingEntity) {
++         boolean callEvent = (itemstack == null);
++         if (this.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
 +            event = new EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity());
-+            event.setCancelled(itemstack == null);
++            event.setCancelled(callEvent);
 +            Bukkit.getPluginManager().callEvent(event);
++            callEvent = event.isCancelled();
 +         }
 +
-+         if (event != null && event.isCancelled()) {
++         if (!callEvent) {
 +            if (!itemstack1.m_41619_()) {
                 itemstack1.m_41774_(1);
 -               break;
@@ -661,7 +663,7 @@
           }
  
 -         return itemstack != null;
-+         return (event == null) ? itemstack != null : !event.isCancelled();
++         return !callEvent;
        }
     }
  
