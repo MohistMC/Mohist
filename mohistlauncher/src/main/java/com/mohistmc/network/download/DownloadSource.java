@@ -20,8 +20,8 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.AllArgsConstructor;
 import lombok.ToString;
 
 @Getter
