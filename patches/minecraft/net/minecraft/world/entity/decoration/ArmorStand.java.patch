@@ -9,6 +9,20 @@
     };
     private final NonNullList<ItemStack> f_31538_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
     private final NonNullList<ItemStack> f_31539_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+@@ -95,6 +_,13 @@
+       this.m_6034_(p_31557_, p_31558_, p_31559_);
+    }
+ 
++   // CraftBukkit start - SPIGOT-3607, SPIGOT-3637
++   @Override
++   public float getBukkitYaw() {
++      return this.m_146908_();
++   }
++   // CraftBukkit end
++
+    public void m_6210_() {
+       double d0 = this.m_20185_();
+       double d1 = this.m_20186_();
 @@ -153,6 +_,21 @@
  
     }
