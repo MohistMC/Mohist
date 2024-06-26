@@ -94,7 +94,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,24 +_,72 @@
+@@ -188,24 +_,86 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -111,6 +111,7 @@
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
 +   public final String name;
++   public ResourceKey<LevelStem> typeKey;
 +
 +   public LevelChunk getChunkIfLoaded(int x, int z) {
 +      return this.chunkSource.getChunk(x, z, false);
@@ -118,7 +119,7 @@
 +
 +   @Override
 +   public ResourceKey<LevelStem> getTypeKey() {
-+      return super.getTypeKey();
++      return typeKey == null ? super.getTypeKey() : typeKey;
 +   }
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
@@ -128,6 +129,18 @@
 +      File worldFile = DimensionType.getStorageFolder(p_215003_, p_215001_.levelDirectory.path()).toFile();
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
 +      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
++      var typeKey = p_215001_.dimensionType;
++      if (typeKey != null) {
++         this.typeKey = typeKey;
++      } else {
++         var dimensions = p_214999_.registryAccess().registryOrThrow(Registries.LEVEL_STEM);
++         var key = dimensions.getResourceKey(p_215004_);
++         if (key.isPresent()) {
++            this.typeKey = key.get();
++         } else {
++            this.typeKey = ResourceKey.create(Registries.LEVEL_STEM, dimension.location());
++         }
++      }
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
@@ -160,6 +173,7 @@
 +
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist
 +      // CraftBukkit end
++      // Mohist end
        boolean flag = p_214999_.forceSynchronousWrites();
        DataFixer datafixer = p_214999_.getFixerUpper();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.getDimensionPath(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
