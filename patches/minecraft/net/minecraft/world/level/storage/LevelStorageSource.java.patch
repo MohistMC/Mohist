@@ -24,7 +24,7 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -297,7 +_,7 @@
+@@ -297,10 +_,14 @@
        return this.f_78195_;
     }
  
@@ -33,7 +33,14 @@
        return new LevelStorageSource.LevelStorageAccess(p_78261_);
     }
  
-@@ -343,7 +_,7 @@
++   public LevelStorageAccess createAccess(String p_78261_, ResourceKey<LevelStem> dimensionType) throws IOException {
++      return new LevelStorageSource.LevelStorageAccess(p_78261_, dimensionType);
++   }
++
+    public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
+       public boolean m_230843_() {
+          return this.f_230840_.isEmpty();
+@@ -343,9 +_,10 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock f_78270_;
@@ -41,7 +48,31 @@
 +      public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
++      public ResourceKey<LevelStem> dimensionType;
  
+       public LevelStorageAccess(String p_78276_) throws IOException {
+          this.f_78272_ = p_78276_;
+@@ -353,6 +_,20 @@
+          this.f_78270_ = DirectoryLock.m_13640_(this.f_230867_.f_230850_());
+       }
+ 
++      public LevelStorageAccess(String s, ResourceKey<LevelStem> dimensionType) throws IOException {
++         this.dimensionType = dimensionType;
++         // CraftBukkit end
++         this.f_78272_ = s;
++         this.f_230867_ = new LevelStorageSource.LevelDirectory(LevelStorageSource.this.f_78194_.resolve(s));
++         this.f_78270_ = DirectoryLock.m_13640_(this.f_230867_.f_230850_());
++      }
++
++      // Mohist start
++      public void setTypeKey(ResourceKey<LevelStem> dimensionType) {
++         this.dimensionType = dimensionType;
++      }
++      // Mohist end
++
+       public String m_78277_() {
+          return this.f_78272_;
+       }
 @@ -388,6 +_,19 @@
           return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_245503_(p_248747_, p_251873_, p_249187_, p_249736_));
        }

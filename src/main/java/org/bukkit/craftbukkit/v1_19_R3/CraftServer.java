@@ -992,24 +992,11 @@ public final class CraftServer implements Server {
             biomeProvider = getBiomeProvider(name);
         }
 
-        ResourceKey<LevelStem> actualDimension;
-        switch (creator.environment()) {
-            case NORMAL:
-                actualDimension = LevelStem.OVERWORLD;
-                break;
-            case NETHER:
-                actualDimension = LevelStem.NETHER;
-                break;
-            case THE_END:
-                actualDimension = LevelStem.END;
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal dimension");
-        }
+        ResourceKey<LevelStem> actualDimension = ForgeInjectBukkit.environment0.get(creator.environment());
 
         LevelStorageSource.LevelStorageAccess worldSession;
         try {
-            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name);
+            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
