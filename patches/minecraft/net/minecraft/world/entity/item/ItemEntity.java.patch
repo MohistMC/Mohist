@@ -216,7 +216,7 @@
  
        if (p_32034_.m_128403_("Owner")) {
           this.f_31982_ = p_32034_.m_128342_("Owner");
-@@ -301,17 +_,65 @@
+@@ -301,10 +_,18 @@
  
     public void m_6123_(Player p_32040_) {
        if (!this.f_19853_.f_46443_) {
@@ -229,61 +229,13 @@
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
 +         if (hook < 0) return;
 +
-+         // CraftBukkit start - fire PlayerPickupItemEvent
-+         int canHold = p_32040_.m_150109_().canHold(itemstack);
-+         int remaining = itemstack.m_41613_() - canHold;
-+
-+         if (this.f_31986_ <= 0 && canHold > 0) {
-+            itemstack.m_41764_(canHold);
-+            // Call legacy event
-+            PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
-+            playerEvent.setCancelled(!playerEvent.getPlayer().getCanPickupItems());
-+            this.f_19853_.getCraftServer().getPluginManager().callEvent(playerEvent);
-+            if (playerEvent.isCancelled()) {
-+               itemstack.m_41764_(canHold + remaining); // SPIGOT-5294 - restore count
-+               return;
-+            }
-+
-+            // Call newer event afterwards
-+            EntityPickupItemEvent entityEvent = new EntityPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
-+            entityEvent.setCancelled(!entityEvent.getEntity().getCanPickupItems());
-+            this.f_19853_.getCraftServer().getPluginManager().callEvent(entityEvent);
-+            if (entityEvent.isCancelled()) {
-+               itemstack.m_41764_(canHold + remaining); // SPIGOT-5294 - restore count
-+               return;
-+            }
-+
-+            // Update the ItemStack if it was changed in the event
-+            ItemStack current = this.m_32055_();
-+            if (!itemstack.equals(current)) {
-+               itemstack = current;
-+            } else {
-+               itemstack.m_41764_(canHold + remaining); // = i
-+            }
-+
-+            // Possibly < 0; fix here so we do not have to modify code below
-+            this.f_31986_ = 0;
-+         } else if (this.f_31986_ == 0 && hook != 1) {
-+            // ensure that the code below isn't triggered if canHold says we can't pick the items up
-+            this.f_31986_ = -1;
-+         }
-+         // CraftBukkit end
-+
 +         ItemStack copy = itemstack.m_41777_();
-+         if (this.f_31986_ == 0 && (this.f_31982_ == null /*|| lifespan - this.age <= 200*/ || this.f_31982_.equals(p_32040_.m_142081_())) && (hook == 1 || p_32040_.m_150109_().m_36054_(itemstack))) {
++         if (this.f_31986_ == 0 && (this.f_31982_ == null || lifespan - this.f_31985_ <= 200 || this.f_31982_.equals(p_32040_.m_142081_())) && (hook == 1 || i <= 0 || p_32040_.m_150109_().m_36054_(itemstack))) {
 +            copy.m_41764_(copy.m_41613_() - itemstack.m_41613_());
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
              p_32040_.m_7938_(this, i);
              if (itemstack.m_41619_()) {
                 this.m_146870_();
-                itemstack.m_41764_(i);
-             }
- 
--            p_32040_.m_6278_(Stats.f_12984_.m_12902_(item), i);
-+            p_32040_.m_6278_(Stats.f_12984_.m_12902_(itemstack.m_41720_()), i);
-             p_32040_.m_21053_(this);
-          }
- 
 @@ -328,8 +_,8 @@
     }
  
