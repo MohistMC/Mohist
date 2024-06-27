@@ -216,7 +216,7 @@
  
        if (p_32034_.m_128403_("Owner")) {
           this.f_31982_ = p_32034_.m_128342_("Owner");
-@@ -301,10 +_,58 @@
+@@ -301,17 +_,65 @@
  
     public void m_6123_(Player p_32040_) {
        if (!this.f_19853_.f_46443_) {
@@ -231,7 +231,7 @@
 +
 +         // CraftBukkit start - fire PlayerPickupItemEvent
 +         int canHold = p_32040_.m_150109_().canHold(itemstack);
-+         int remaining = i - canHold;
++         int remaining = itemstack.m_41613_() - canHold;
 +
 +         if (this.f_31986_ <= 0 && canHold > 0) {
 +            itemstack.m_41764_(canHold);
@@ -240,7 +240,7 @@
 +            playerEvent.setCancelled(!playerEvent.getPlayer().getCanPickupItems());
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(playerEvent);
 +            if (playerEvent.isCancelled()) {
-+               itemstack.m_41764_(i); // SPIGOT-5294 - restore count
++               itemstack.m_41764_(canHold + remaining); // SPIGOT-5294 - restore count
 +               return;
 +            }
 +
@@ -249,7 +249,7 @@
 +            entityEvent.setCancelled(!entityEvent.getEntity().getCanPickupItems());
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(entityEvent);
 +            if (entityEvent.isCancelled()) {
-+               itemstack.m_41764_(i); // SPIGOT-5294 - restore count
++               itemstack.m_41764_(canHold + remaining); // SPIGOT-5294 - restore count
 +               return;
 +            }
 +
@@ -271,11 +271,19 @@
 +
 +         ItemStack copy = itemstack.m_41777_();
 +         if (this.f_31986_ == 0 && (this.f_31982_ == null /*|| lifespan - this.age <= 200*/ || this.f_31982_.equals(p_32040_.m_142081_())) && (hook == 1 || p_32040_.m_150109_().m_36054_(itemstack))) {
-+            copy.m_41764_(copy.m_41613_() - m_32055_().m_41613_());
++            copy.m_41764_(copy.m_41613_() - itemstack.m_41613_());
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
              p_32040_.m_7938_(this, i);
              if (itemstack.m_41619_()) {
                 this.m_146870_();
+                itemstack.m_41764_(i);
+             }
+ 
+-            p_32040_.m_6278_(Stats.f_12984_.m_12902_(item), i);
++            p_32040_.m_6278_(Stats.f_12984_.m_12902_(itemstack.m_41720_()), i);
+             p_32040_.m_21053_(this);
+          }
+ 
 @@ -328,8 +_,8 @@
     }
  
