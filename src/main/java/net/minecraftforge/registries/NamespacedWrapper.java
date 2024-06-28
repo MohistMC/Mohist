@@ -81,7 +81,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
 
         int realId = this.delegate.add(id, key.location(), value);
         if (realId != id && id != -1)
-            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", key, id, realId);
+            LOGGER.debug("Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", key, id, realId);
 
         return getHolder(key, value);
     }
