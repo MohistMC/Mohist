@@ -3,6 +3,7 @@ package com.mohistmc.bukkit.remapping;
 import com.google.common.io.ByteStreams;
 import cpw.mods.modlauncher.ClassTransformer;
 import cpw.mods.modlauncher.TransformingClassLoader;
+import java.lang.invoke.MethodHandles;
 import org.objectweb.asm.ClassReader;
 
 import java.io.ByteArrayInputStream;
@@ -82,7 +83,7 @@ public class RemapSourceHandler extends URLStreamHandler {
     @SuppressWarnings("unchecked")
     public static void register() {
         try {
-            Unsafe.ensureClassInitialized(URL.class);
+            MethodHandles.lookup().ensureInitialized(URL.class);
             MethodHandle getter = Unsafe.lookup().findStaticGetter(URL.class, "handlers", Hashtable.class);
             Hashtable<String, URLStreamHandler> handlers = (Hashtable<String, URLStreamHandler>) getter.invokeExact();
             handlers.put("remap", new RemapSourceHandler());
