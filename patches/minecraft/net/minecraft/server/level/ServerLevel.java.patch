@@ -71,7 +71,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,23 +_,50 @@
+@@ -181,23 +_,62 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -86,6 +86,7 @@
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
 +   public final String name;
++   public ResourceKey<LevelStem> typeKey;
 +
 +   public LevelChunk getChunkIfLoaded(int x, int z) {
 +      return this.f_8547_.m_62227_(x, z, false);
@@ -93,7 +94,7 @@
 +
 +   @Override
 +   public ResourceKey<LevelStem> getTypeKey() {
-+      return super.getTypeKey();
++      return typeKey == null ? super.getTypeKey() : typeKey;
 +   }
  
     public ServerLevel(MinecraftServer p_203762_, Executor p_203763_, LevelStorageSource.LevelStorageAccess p_203764_, ServerLevelData p_203765_, ResourceKey<Level> p_203766_, Holder<DimensionType> p_203767_, ChunkProgressListener p_203768_, ChunkGenerator p_203769_, boolean p_203770_, long p_203771_, List<CustomSpawner> p_203772_, boolean p_203773_) {
@@ -103,6 +104,17 @@
 +      File worldFile = DimensionType.m_196975_(p_203766_, p_203764_.f_78271_).toFile();
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
 +      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
++      var typeKey = p_203764_.dimensionType;
++      if (typeKey != null) {
++         this.typeKey = typeKey;
++      } else {
++         var dimensions = p_203762_.m_129910_().m_5961_().m_204655_();
++         var key = dimensions.m_7745_(p_203766_.m_135782_());
++         if (key == null) {
++         } else {
++            this.typeKey = ResourceKey.m_135785_(Registry.f_122820_, p_203766_.m_135782_());
++         }
++      }
 +      if (p_203765_ instanceof PrimaryLevelData) {
 +         this.M = (PrimaryLevelData) p_203765_;
 +      } else if (p_203765_ instanceof DerivedLevelData derivedLevelData) {

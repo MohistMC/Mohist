@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/portal/PortalInfo.java
 +++ b/net/minecraft/world/level/portal/PortalInfo.java
-@@ -1,17 +_,31 @@
+@@ -1,17 +_,48 @@
  package net.minecraft.world.level.portal;
  
 +import net.minecraft.server.level.ServerLevel;
@@ -15,8 +15,8 @@
     public final Vec3 f_77677_;
     public final float f_77678_;
     public final float f_77679_;
-+   public ServerLevel level;
-+   public CraftPortalEvent portalEvent;
++   public ServerLevel world;
++   public CraftPortalEvent portalEventInfo;
 +
  
     public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
@@ -28,7 +28,24 @@
 +
 +   public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_, CraftPortalEvent event, ServerLevel level){
 +      this(p_77681_, p_77682_, p_77683_, p_77684_);
-+      this.portalEvent = event;
-+      this.level = level;
++      this.portalEventInfo = event;
++      this.world = level;
++   }
++
++
++   public void setPortalEventInfo(CraftPortalEvent event) {
++      this.portalEventInfo = event;
++   }
++
++   public CraftPortalEvent getPortalEventInfo() {
++      return this.portalEventInfo;
++   }
++
++   public void setWorld(ServerLevel world) {
++      this.world = world;
++   }
++
++   public ServerLevel getWorld() {
++      return this.world;
     }
  }

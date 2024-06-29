@@ -8,6 +8,14 @@
  import java.util.function.Predicate;
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
+@@ -32,6 +_,7 @@
+ import net.minecraft.commands.arguments.EntityAnchorArgument;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
++import net.minecraft.core.PositionImpl;
+ import net.minecraft.core.SectionPos;
+ import net.minecraft.core.particles.BlockParticleOption;
+ import net.minecraft.core.particles.ParticleTypes;
 @@ -83,7 +_,6 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
@@ -16,6 +24,14 @@
  import net.minecraft.world.level.block.HoneyBlock;
  import net.minecraft.world.level.block.Mirror;
  import net.minecraft.world.level.block.RenderShape;
+@@ -93,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.border.WorldBorder;
+ import net.minecraft.world.level.dimension.DimensionType;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.entity.EntityAccess;
+ import net.minecraft.world.level.entity.EntityInLevelCallback;
+ import net.minecraft.world.level.gameevent.GameEvent;
 @@ -115,8 +_,28 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -336,13 +352,13 @@
 +               Vehicle vehicle = ( Vehicle ) this.getBukkitEntity();
 +               org.bukkit.block.Block bl = this.f_19853_.getWorld().getBlockAt(Mth.m_14107_(this.m_20185_()), Mth.m_14107_(this.m_20186_()), Mth.m_14107_(this.m_20189_()));
 +
-+               if (vec3.f_82479_ > p_19974_.f_82479_) {
++               if (p_19974_.f_82479_ > vec3.f_82479_) {
 +                  bl = bl.getRelative(BlockFace.EAST);
-+               } else if (vec3.f_82479_ < p_19974_.f_82479_) {
++               } else if (p_19974_.f_82479_ < vec3.f_82479_) {
 +                  bl = bl.getRelative(BlockFace.WEST);
-+               } else if (vec3.f_82481_ > p_19974_.f_82481_) {
++               } else if (p_19974_.f_82481_ > vec3.f_82481_) {
 +                  bl = bl.getRelative(BlockFace.SOUTH);
-+               } else if (vec3.f_82481_ < p_19974_.f_82481_) {
++               } else if (p_19974_.f_82481_ < vec3.f_82481_) {
 +                  bl = bl.getRelative( BlockFace.NORTH);
 +               }
 +
@@ -845,24 +861,50 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2237,14 +_,20 @@
+@@ -2237,14 +_,44 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
 +      return this.changeDimension(p_20118_, p_20118_.m_8871_());
 +   }
++
++   private AtomicReference<BlockPos> mohist$postion = new AtomicReference<>();
++
++   @Nullable
++   public Entity teleportTo(ServerLevel pDestination, BlockPos location) {
++      mohist$postion.set(location);
++      return this.m_5489_(pDestination);
++   }
++
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_20118_.m_46472_())) return null;
        if (this.f_19853_ instanceof ServerLevel && !this.m_146910_()) {
-          this.f_19853_.m_46473_().m_6180_("changeDimension");
-          this.m_19877_();
+-         this.f_19853_.m_46473_().m_6180_("changeDimension");
+-         this.m_19877_();
++         // this.unRide();
++         // CraftBukkit start
++         if (p_20118_ == null) {
++            return null;
++         }
++         // CraftBukkit end
           this.f_19853_.m_46473_().m_6180_("reposition");
 -         PortalInfo portalinfo = this.m_7937_(p_20118_);
-+         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_20118_, this::m_7937_);
++         BlockPos location = mohist$postion.get();
++         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, p_20118_, this::m_7937_) : new PortalInfo(new Vec3(location.m_123341_(), location.m_123342_(), location.m_123343_()), Vec3.f_82478_, this.f_19857_, this.f_19858_);
++
           if (portalinfo == null) {
              return null;
           } else {
++            portalinfo.setWorld(p_20118_);
++            // CraftBukkit start
++            if (portalinfo.world == f_19853_) {
++               // SPIGOT-6782: Just move the entity if a plugin changed the world to the one the entity is already in
++               m_7678_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, portalinfo.f_77679_);
++               m_20256_(portalinfo.f_77677_);
++               return this;
++            }
++            this.m_19877_();
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerLevel) this.f_19853_, p_20118_, this.f_19857_, spawnPortal -> { //Forge: Start vanilla logic
              this.f_19853_.m_46473_().m_6182_("reloading");
              Entity entity = this.m_6095_().m_20615_(p_20118_);
@@ -872,7 +914,7 @@
                 entity.m_20256_(portalinfo.f_77677_);
                 p_20118_.m_143334_(entity);
 -               if (p_20118_.m_46472_() == Level.f_46430_) {
-+               if (spawnPortal && p_20118_.m_46472_() == Level.f_46430_) {
++               if (spawnPortal && p_20118_.getTypeKey() == LevelStem.f_63973_) {
                    ServerLevel.m_8617_(p_20118_);
                 }
 +
@@ -1045,10 +1087,11 @@
        this.f_146795_ = null;
     }
  
-@@ -3062,8 +_,81 @@
+@@ -3061,6 +_,76 @@
+    public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
- 
++
 +   /* ================================== Forge Start =====================================*/
 +
 +   private boolean canUpdate = true;
@@ -1118,12 +1161,6 @@
 +
 +   /* ================================== Forge End =====================================*/
 +
-+
+ 
     public Level m_183503_() {
        return this.f_19853_;
-+   }
-+
-+   public void teleportTo(ServerLevel handle, BlockPos blockPos) {
-    }
- 
-    @FunctionalInterface

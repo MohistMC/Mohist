@@ -461,7 +461,7 @@
                 this.f_8933_ = this.m_20182_();
 -            } else if (p_9180_.m_46472_() == Level.f_46430_) {
 -               this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
-+           } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_ && portalinfo.portalEvent != null && portalinfo.portalEvent.getCanCreatePortal()) {
++           } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_ && portalinfo.portalEventInfo != null && portalinfo.portalEventInfo.getCanCreatePortal()) {
 +              this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
 +           }
 +
