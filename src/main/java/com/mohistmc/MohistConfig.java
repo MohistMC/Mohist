@@ -224,6 +224,8 @@ public class MohistConfig {
 
     // Ban events
     public static boolean doFireTick;
+    public static boolean explosion;
+
     public static boolean worldmanage;
 
     public static boolean bukkitpermissionshandler;
@@ -283,6 +285,7 @@ public class MohistConfig {
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
         doFireTick = getBoolean("events.fire_tick", false);
+        explosion = getBoolean("events.explosion", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
         velocity_enabled = getBoolean("velocity.enabled", false);
