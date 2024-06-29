@@ -106,14 +106,12 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -226,10 +_,28 @@
+@@ -226,10 +_,26 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
  
 +   // CraftBukkit start
-+   public int expToDrop;
 +   public boolean forceDrops;
-+   public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 +   public CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
 +   public Set<UUID> collidableExemptions = new HashSet<>();
@@ -705,7 +703,7 @@
                 this.f_19853_.m_7967_(itementity);
              }
           }
-@@ -1288,31 +_,42 @@
+@@ -1288,12 +_,9 @@
  
     protected void m_6668_(DamageSource p_21192_) {
        Entity entity = p_21192_.m_7639_();
@@ -720,20 +718,10 @@
 +      this.captureDrops(new java.util.ArrayList<>());
  
        boolean flag = this.f_20889_ > 0;
-+      this.m_5907_(); // CraftBukkit - from below
        if (this.m_6125_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_)) {
-          this.m_7625_(p_21192_, flag);
-          this.m_7472_(p_21192_, i, flag);
-       }
--
--      this.m_5907_();
-+      // CraftBukkit start - Call death event
-+      CraftEventFactory.callEntityDeathEvent(this, this.drops);
-+      this.drops = new ArrayList<>();
-+      // CraftBukkit end
-+
-+
-+      // this.dropInventory();// CraftBukkit - moved up
+@@ -1303,16 +_,21 @@
+ 
+       this.m_5907_();
        this.m_21226_();
 +
 +      Collection<ItemEntity> drops = captureDrops(null);
@@ -746,17 +734,12 @@
  
 +
     protected void m_21226_() {
--      if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
+       if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
 -         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), this.m_6552_(this.f_20888_));
--      }
++         int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.m_6552_(this.f_20888_));
++         ExperienceOrb.m_147082_((ServerLevel) this.f_19853_, this.m_20182_(), reward);
+       }
 -
-+      // CraftBukkit start - Update getExpReward() above if the removed if() changes!
-+       if(true){
-+          int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.expToDrop);
-+          ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), reward);
-+          this.expToDrop = 0;
-+       }
-+      // CraftBukkit end
     }
  
     protected void m_7472_(DamageSource p_21018_, int p_21019_, boolean p_21020_) {

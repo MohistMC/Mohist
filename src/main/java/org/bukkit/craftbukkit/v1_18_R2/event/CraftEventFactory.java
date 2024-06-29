@@ -783,14 +783,6 @@ public class CraftEventFactory {
         CraftWorld world = (CraftWorld) entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
 
-        victim.expToDrop = event.getDroppedExp();
-
-        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
-            if (stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0) continue;
-
-            world.dropItem(entity.getLocation(), stack);
-        }
-
         return event;
     }
 
@@ -805,7 +797,6 @@ public class CraftEventFactory {
         victim.keepLevel = event.getKeepLevel();
         victim.newLevel = event.getNewLevel();
         victim.newTotalExp = event.getNewTotalExp();
-        victim.expToDrop = event.getDroppedExp();
         victim.newExp = event.getNewExp();
 
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {

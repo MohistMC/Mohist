@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -35,12 +_,14 @@
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LightLayer;
--import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.gameevent.GameEvent;
+@@ -41,6 +_,9 @@
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -124,43 +118,7 @@
                    return flag1;
                 } else {
                    long i = this.f_19853_.m_46467_();
-@@ -478,18 +_,18 @@
-    }
- 
-    private void m_31646_(DamageSource p_31647_) {
--      Block.m_49840_(this.f_19853_, this.m_142538_(), new ItemStack(Items.f_42650_));
-+      drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(new ItemStack(Items.f_42650_))); // CraftBukkit - add to drops
-       this.m_31653_(p_31647_);
-    }
- 
-    private void m_31653_(DamageSource p_31654_) {
-       this.m_31566_();
--      this.m_6668_(p_31654_);
-+      // this.dropAllDeathLoot(p_31654_); // CraftBukkit - moved down
- 
-       for(int i = 0; i < this.f_31538_.size(); ++i) {
-          ItemStack itemstack = this.f_31538_.get(i);
-          if (!itemstack.m_41619_()) {
--            Block.m_49840_(this.f_19853_, this.m_142538_().m_7494_(), itemstack);
-+            drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
-             this.f_31538_.set(i, ItemStack.f_41583_);
-          }
-       }
-@@ -497,11 +_,11 @@
-       for(int j = 0; j < this.f_31539_.size(); ++j) {
-          ItemStack itemstack1 = this.f_31539_.get(j);
-          if (!itemstack1.m_41619_()) {
--            Block.m_49840_(this.f_19853_, this.m_142538_().m_7494_(), itemstack1);
-+            drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
-             this.f_31539_.set(j, ItemStack.f_41583_);
-          }
-       }
--
-+      this.m_6668_(p_31654_); // CraftBukkit - moved from above
-    }
- 
-    private void m_31566_() {
-@@ -585,7 +_,16 @@
+@@ -585,6 +_,14 @@
        return this.m_31666_();
     }
  
@@ -173,10 +131,8 @@
 +
 +
     public void m_6074_() {
-+      org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.m_142687_(Entity.RemovalReason.KILLED);
     }
- 
 @@ -597,7 +_,7 @@
        return this.m_31677_() ? PushReaction.IGNORE : super.m_7752_();
     }

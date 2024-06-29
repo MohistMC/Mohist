@@ -75,12 +75,12 @@
 -
 -         if (this.f_31985_ != -32768) {
 -            ++this.f_31985_;
-+/* CraftBukkit start - moved up
++         /* CraftBukkit start - moved up
 +         if (this.age != -32768) {
 +            ++this.age;
           }
 -
-+ // CraftBukkit end */
++         // CraftBukkit end */
           this.f_19812_ |= this.m_20073_();
           if (!this.f_19853_.f_46443_) {
              double d0 = this.m_20184_().m_82546_(vec3).m_82556_();
