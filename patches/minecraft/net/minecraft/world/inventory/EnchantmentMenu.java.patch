@@ -63,7 +63,7 @@
           }
        });
  
-@@ -79,30 +_,34 @@
+@@ -79,6 +_,9 @@
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 0));
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 1));
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 2));
@@ -73,10 +73,9 @@
     }
  
     public void m_6199_(Container p_39461_) {
-       if (p_39461_ == this.f_39449_) {
+@@ -86,23 +_,24 @@
           ItemStack itemstack = p_39461_.m_8020_(0);
--         if (!itemstack.m_41619_() && itemstack.m_41792_()) {
-+         if (!itemstack.m_41619_()) { // CraftBukkit - relax condition
+          if (!itemstack.m_41619_() && itemstack.m_41792_()) {
              this.f_39450_.m_39292_((p_39485_, p_39486_) -> {
 -               int j = 0;
 +               float j = 0;
