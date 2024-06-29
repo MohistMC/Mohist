@@ -100,6 +100,15 @@
           for(ContainerListener containerlistener : this.f_38848_) {
              containerlistener.m_7934_(this, p_150408_, itemstack1);
           }
+@@ -285,7 +_,7 @@
+    }
+ 
+    public ItemStack m_7648_(Player p_38941_, int p_38942_) {
+-      return this.f_38839_.get(p_38942_).m_7993_();
++      return ItemStack.f_41583_; // CraftBukkit - previous implementation was useless and broken
+    }
+ 
+    public void m_150399_(int p_150400_, int p_150401_, ClickType p_150402_, Player p_150403_) {
 @@ -333,7 +_,7 @@
              }
           } else if (this.f_38846_ == 2) {
