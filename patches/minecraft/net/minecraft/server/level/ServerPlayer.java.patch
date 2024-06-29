@@ -576,7 +576,7 @@
              this.f_8906_.m_9829_(new ClientboundPlayerAbilitiesPacket(this.m_150110_()));
              playerlist.m_11229_(this, p_9180_);
              playerlist.m_11292_(this);
-@@ -763,27 +_,55 @@
+@@ -763,27 +_,54 @@
                 this.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(this.m_19879_(), mobeffectinstance));
              }
  
@@ -612,8 +612,8 @@
  
     private void m_9006_(ServerLevel p_9007_, BlockPos p_9008_) {
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_9008_.m_122032_();
+-
 +      BlockStateListPopulator blockList = new BlockStateListPopulator(p_9007_); // CraftBukkit
- 
        for(int i = -2; i <= 2; ++i) {
           for(int j = -2; j <= 2; ++j) {
              for(int k = -1; k < 3; ++k) {

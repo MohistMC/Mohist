@@ -62,6 +62,14 @@
     public JukeboxBlockEntity(BlockPos p_155613_, BlockState p_155614_) {
        super(BlockEntityType.f_58921_, p_155613_, p_155614_);
     }
+@@ -63,6 +_,7 @@
+    }
+ 
+    private void m_271871_(@Nullable Entity p_273308_, boolean p_273038_) {
++      if (this.f_58857_ == null) return; // Mohist - fix npe
+       if (this.f_58857_.m_8055_(this.m_58899_()) == this.m_58900_()) {
+          this.f_58857_.m_7731_(this.m_58899_(), this.m_58900_().m_61124_(JukeboxBlock.f_54254_, Boolean.valueOf(p_273038_)), 2);
+          this.f_58857_.m_220407_(GameEvent.f_157792_, this.m_58899_(), GameEvent.Context.m_223719_(p_273308_, this.m_58900_()));
 @@ -139,7 +_,7 @@
     }
  

@@ -1153,6 +1153,8 @@ public final class PluginDescriptionFile {
 
         if (map.get("api-version") != null) {
             apiVersion = map.get("api-version").toString();
+        } else {
+            apiVersion ="1.20";
         }
 
         if (map.get("libraries") != null) {

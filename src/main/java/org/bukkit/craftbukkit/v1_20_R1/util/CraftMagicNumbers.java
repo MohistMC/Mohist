@@ -399,7 +399,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public boolean isSupportedApiVersion(String apiVersion) {
-        return apiVersion != null && SUPPORTED_API.contains(apiVersion);
+        return true;
     }
 
     // Paper start
