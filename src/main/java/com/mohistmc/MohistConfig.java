@@ -236,7 +236,9 @@ public class MohistConfig {
     public static boolean recipe_warn;
 
     public static boolean tpa_enable;
+    public static boolean tpa_permissions_enable;
     public static boolean back_enable;
+    public static boolean back_permissions_enable;
     public static boolean permissions_debug_console;
     public static boolean permissions_send_player;
 
@@ -294,7 +296,9 @@ public class MohistConfig {
 
         recipe_warn = getBoolean("recipe.warn", false);
         tpa_enable = getBoolean("tpa.enable", false);
+        tpa_permissions_enable = getBoolean("tpa.permissions", true);
         back_enable = getBoolean("back.enable", false);
+        back_permissions_enable = getBoolean("back.permissions", true);
 
         permissions_debug_console = getBoolean("permissions.debug.console", false);
         permissions_send_player = getBoolean("permissions.debug.player", false);

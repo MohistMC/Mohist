@@ -1,5 +1,7 @@
 package com.mohistmc.plugins.tpa;
 
+import com.mohistmc.MohistConfig;
+import com.mohistmc.util.I18n;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,7 +12,9 @@ public class TpadenyCommands extends Command {
     public TpadenyCommands(String name) {
         super(name);
         this.usageMessage = "/tpadeny";
-        this.setPermission("mohist.command.tpa");
+        if (MohistConfig.tpa_permissions_enable) {
+            this.setPermission("mohist.command.tpa");
+        }
     }
 
     @Override
@@ -18,12 +22,12 @@ public class TpadenyCommands extends Command {
         if (sender instanceof Player player) {
             if (TpaComamands.tpa.containsKey(player)) {
                 final Player a = TpaComamands.tpa.get(player);
-                a.sendMessage("You've rejected the other party's delivery request!");
-                player.sendMessage("Your teleportation request has been denied!");
+                a.sendMessage(I18n.as("tpadenycommands.successfully.you"));
+                player.sendMessage(I18n.as("tpadenycommands.successfully.me"));
                 TpaComamands.tpa.remove(player);
             }
             else {
-                sender.sendMessage("The request no longer exists!");
+                sender.sendMessage(I18n.as("tpadenycommands.nokey"));
             }
         }
         return false;

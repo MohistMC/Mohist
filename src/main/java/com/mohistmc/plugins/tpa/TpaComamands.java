@@ -1,5 +1,7 @@
 package com.mohistmc.plugins.tpa;
 
+import com.mohistmc.MohistConfig;
+import com.mohistmc.util.I18n;
 import java.util.HashMap;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -18,7 +20,9 @@ public class TpaComamands extends Command {
     public TpaComamands(String name) {
         super(name);
         this.usageMessage = "/tpa <player_name>";
-        this.setPermission("mohist.command.tpa");
+        if (MohistConfig.tpa_permissions_enable) {
+            this.setPermission("mohist.command.tpa");
+        }
     }
 
     @Override
@@ -29,23 +33,23 @@ public class TpaComamands extends Command {
         if (sender instanceof Player player) {
             Player a = Bukkit.getPlayer(args[0]);
             if (a == null) {
-                player.sendMessage("The player does not exist");
+                player.sendMessage(I18n.as("tpacommands.noplayer"));
                 return false;
             }
             if (a == player) {
-                player.sendMessage("You can't send a request to yourself");
+                player.sendMessage(I18n.as("tpacommands.yourself"));
                 return false;
             }
             TextComponent accept = new TextComponent("§f/tpaccept");
-            accept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§fClick Accept Request!")));
+            accept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(I18n.as("tpacommands.hover.accept"))));
             accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept"));
             TextComponent deny = new TextComponent("§f/tpadeny");
-            deny.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§fClick Reject Request!")));
+            deny.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(I18n.as("tpacommands.hover.reject"))));
             deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny"));
-            a.sendMessage("Player %s sent you a TPA request!".formatted(player.getName()));
+            a.sendMessage(I18n.as("tpacommands.sent", player.getName()));
             a.spigot().sendMessage(accept);
             a.spigot().sendMessage(deny);
-            player.sendMessage("The request was sent successfully");
+            player.sendMessage(I18n.as("tpacommands.successfully"));
             tpa.remove(a);
             tpa.put(a, player);
             return true;
