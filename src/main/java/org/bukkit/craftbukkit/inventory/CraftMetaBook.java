@@ -308,7 +308,8 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
 
         private String componentsToPage(BaseComponent[] components) {
             // Convert component to plain String:
-            return CraftChatMessage.fromJSONComponent(ComponentSerializer.toString(components));
+            Component component = CraftChatMessage.fromJSONOrNull(ComponentSerializer.toString(components));
+            return CraftChatMessage.fromComponent(component);
         }
 
         @Override

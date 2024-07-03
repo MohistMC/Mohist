@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/TrialSpawnerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/TrialSpawnerBlockEntity.java
+@@ -22,7 +_,7 @@
+ 
+ public class TrialSpawnerBlockEntity extends BlockEntity implements Spawner, TrialSpawner.StateAccessor {
+     private static final Logger LOGGER = LogUtils.getLogger();
+-    private TrialSpawner trialSpawner;
++    public TrialSpawner trialSpawner;
+ 
+     public TrialSpawnerBlockEntity(BlockPos p_309527_, BlockState p_312341_) {
+         super(BlockEntityType.TRIAL_SPAWNER, p_309527_, p_312341_);

@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
++++ b/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
+@@ -52,16 +_,16 @@
+     private static final int MAX_MOB_TRACKING_DISTANCE = 47;
+     private static final int MAX_MOB_TRACKING_DISTANCE_SQR = Mth.square(47);
+     private static final float SPAWNING_AMBIENT_SOUND_CHANCE = 0.02F;
+-    private final TrialSpawnerConfig normalConfig;
+-    private final TrialSpawnerConfig ominousConfig;
++    public TrialSpawnerConfig normalConfig;
++    public TrialSpawnerConfig ominousConfig;
+     private final TrialSpawnerData data;
+-    private final int requiredPlayerRange;
+-    private final int targetCooldownLength;
++    public int requiredPlayerRange;
++    public int targetCooldownLength;
+     private final TrialSpawner.StateAccessor stateAccessor;
+     private PlayerDetector playerDetector;
+     private final PlayerDetector.EntitySelector entitySelector;
+     private boolean overridePeacefulAndMobSpawnRule;
+-    private boolean isOminous;
++    public boolean isOminous;
+ 
+     public Codec<TrialSpawner> codec() {
+         return RecordCodecBuilder.create(
+@@ -235,6 +_,12 @@
+                                 spawndata.getEquipment().ifPresent(mob::equip);
+                             }
+ 
++                            // CraftBukkit start
++                            if (org.bukkit.craftbukkit.event.CraftEventFactory.callTrialSpawnerSpawnEvent(entity, p_313108_).isCancelled()) {
++                                return Optional.empty();
++                            }
++
++                            entity.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.TRIAL_SPAWNER); // Mohist craftbukkit
+                             if (!p_312690_.tryAddFreshEntityWithPassengers(entity)) {
+                                 return Optional.empty();
+                             } else {

@@ -230,33 +230,10 @@ public final class CraftChatMessage {
     }
 
     public static Component fromJSONOrString(String message, boolean nullable, boolean keepNewlines) {
-        if (message == null) message = "";
-        if (nullable && message.isEmpty()) return null;
-        Component component = CraftChatMessage.fromJSONOrNull(message);
-        if (component != null) {
-            return component;
-        } else {
-            return CraftChatMessage.fromString(message, keepNewlines)[0];
-        }
+        return fromJSONOrString(message, nullable, keepNewlines, Integer.MAX_VALUE, false);
     }
 
-    public static String fromJSONOrStringToJSON(String message) {
-        return CraftChatMessage.fromJSONOrStringToJSON(message, false);
-    }
-
-    public static String fromJSONOrStringToJSON(String message, boolean keepNewlines) {
-        return CraftChatMessage.fromJSONOrStringToJSON(message, false, keepNewlines, Integer.MAX_VALUE, false);
-    }
-
-    public static String fromJSONOrStringOrNullToJSON(String message) {
-        return CraftChatMessage.fromJSONOrStringOrNullToJSON(message, false);
-    }
-
-    public static String fromJSONOrStringOrNullToJSON(String message, boolean keepNewlines) {
-        return CraftChatMessage.fromJSONOrStringToJSON(message, true, keepNewlines, Integer.MAX_VALUE, false);
-    }
-
-    public static String fromJSONOrStringToJSON(String message, boolean nullable, boolean keepNewlines, int maxLength, boolean checkJsonContentLength) {
+    public static Component fromJSONOrString(String message, boolean nullable, boolean keepNewlines, int maxLength, boolean checkJsonContentLength) {
         if (message == null) message = "";
         if (nullable && message.isEmpty()) return null;
         // If the input can be parsed as JSON, we use that:
@@ -265,16 +242,15 @@ public final class CraftChatMessage {
             if (checkJsonContentLength) {
                 String content = CraftChatMessage.fromComponent(component);
                 String trimmedContent = CraftChatMessage.trimMessage(content, maxLength);
-                if (content != trimmedContent) { // identity comparison is fine here
+                if (content != trimmedContent) { // Identity comparison is fine here
                     // Note: The resulting text has all non-plain text features stripped.
-                    return CraftChatMessage.fromStringToJSON(trimmedContent, keepNewlines);
+                    return fromString(trimmedContent, keepNewlines)[0];
                 }
             }
-            return message;
+            return component;
         } else {
-            // Else we interpret the input as legacy text:
             message = CraftChatMessage.trimMessage(message, maxLength);
-            return CraftChatMessage.fromStringToJSON(message, keepNewlines);
+            return fromString(message, keepNewlines)[0];
         }
     }
 
@@ -284,25 +260,6 @@ public final class CraftChatMessage {
         } else {
             return message;
         }
-    }
-
-    public static String fromStringToJSON(String message) {
-        return CraftChatMessage.fromStringToJSON(message, false);
-    }
-
-    public static String fromStringToJSON(String message, boolean keepNewlines) {
-        Component component = CraftChatMessage.fromString(message, keepNewlines)[0];
-        return CraftChatMessage.toJSON(component);
-    }
-
-    public static String fromStringOrNullToJSON(String message) {
-        Component component = CraftChatMessage.fromStringOrNull(message);
-        return CraftChatMessage.toJSONOrNull(component);
-    }
-
-    public static String fromJSONComponent(String jsonMessage) {
-        Component component = CraftChatMessage.fromJSONOrNull(jsonMessage);
-        return CraftChatMessage.fromComponent(component);
     }
 
     public static String fromComponent(Component component) {

@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/entity/trialspawner/TrialSpawnerData.java
++++ b/net/minecraft/world/level/block/entity/trialspawner/TrialSpawnerData.java
+@@ -60,12 +_,12 @@
+                 )
+                 .apply(p_313188_, TrialSpawnerData::new)
+     );
+-    protected final Set<UUID> detectedPlayers = new HashSet<>();
+-    protected final Set<UUID> currentMobs = new HashSet<>();
++    public final Set<UUID> detectedPlayers = new HashSet<>();
++    public final Set<UUID> currentMobs = new HashSet<>();
+     protected long cooldownEndsAt;
+     protected long nextMobSpawnsAt;
+     protected int totalMobsSpawned;
+-    protected Optional<SpawnData> nextSpawnData;
++    public Optional<SpawnData> nextSpawnData;
+     protected Optional<ResourceKey<LootTable>> ejectingLootTable;
+     @Nullable
+     protected Entity displayEntity;
