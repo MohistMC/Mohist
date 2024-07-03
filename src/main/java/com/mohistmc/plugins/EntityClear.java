@@ -41,6 +41,11 @@ public class EntityClear {
         }
     }
 
+    public static void stop() {
+        ENTITYCLEAR_ITEM.shutdown();
+        ENTITYCLEAR_MONSTER.shutdown();
+    }
+
     public static void run_item() {
         AtomicInteger size_item = new AtomicInteger(0);
         for (World world : Bukkit.getWorlds()) {
