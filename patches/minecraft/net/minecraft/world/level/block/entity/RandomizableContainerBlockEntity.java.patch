@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
+@@ -95,6 +_,12 @@
+ 
+    public ItemStack m_8020_(int p_59611_) {
+       this.m_59640_((Player)null);
++      // Mohist start - TODO fix RotomPhoneCobblemon
++      int size = this.m_7086_().size();
++      if (p_59611_ >= size) {
++         p_59611_ = size - 1;
++      }
++      // Mohist end
+       return this.m_7086_().get(p_59611_);
+    }
+ 
