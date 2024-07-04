@@ -49,13 +49,18 @@ public class MohistCommand extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
-            for (String param : params) {
-                if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
-                    list.add(param);
+        if ((sender.isOp() || testPermission(sender))) {
+            if (args.length == 1) {
+                for (String param : params) {
+                    if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
+                        list.add(param);
+                    }
                 }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("playermods")) {
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             }
         }
+
 
         return list;
     }
