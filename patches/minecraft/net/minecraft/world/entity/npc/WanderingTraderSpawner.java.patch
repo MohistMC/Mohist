@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/entity/npc/WanderingTraderSpawner.java
++++ b/net/minecraft/world/entity/npc/WanderingTraderSpawner.java
+@@ -106,6 +_,7 @@
+                return false;
+             }
+ 
++            EntityType.f_20494_.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit // Mohist
+             WanderingTrader wanderingtrader = EntityType.f_20494_.m_20600_(p_35916_, (CompoundTag)null, (Component)null, (Player)null, blockpos2, MobSpawnType.EVENT, false, false);
+             if (wanderingtrader != null) {
+                for(int j = 0; j < 2; ++j) {
+@@ -113,7 +_,7 @@
+                }
+ 
+                this.f_35909_.m_8115_(wanderingtrader.m_20148_());
+-               wanderingtrader.m_35891_(48000);
++               // wanderingtrader.setDespawnDelay(48000); // CraftBukkit - moved to EntityVillagerTrader constructor. This lets the value be modified by plugins on CreatureSpawnEvent
+                wanderingtrader.m_35883_(blockpos1);
+                wanderingtrader.m_21446_(blockpos1, 16);
+                return true;
+@@ -127,6 +_,7 @@
+    private void m_35917_(ServerLevel p_35918_, WanderingTrader p_35919_, int p_35920_) {
+       BlockPos blockpos = this.m_35928_(p_35918_, p_35919_.m_20183_(), p_35920_);
+       if (blockpos != null) {
++         EntityType.f_20488_.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit // Mohist
+          TraderLlama traderllama = EntityType.f_20488_.m_20600_(p_35918_, (CompoundTag)null, (Component)null, (Player)null, blockpos, MobSpawnType.EVENT, false, false);
+          if (traderllama != null) {
+             traderllama.m_21463_(p_35919_, true);
