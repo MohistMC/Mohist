@@ -972,7 +972,7 @@
           ServerLevel.this.m_7726_().m_8443_(p_143375_);
           if (p_143375_ instanceof ServerPlayer serverplayer) {
              ServerLevel.this.f_8546_.remove(serverplayer);
-@@ -1500,17 +_,49 @@
+@@ -1500,17 +_,48 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  
@@ -985,6 +985,8 @@
           }
  
           p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
++         p_143375_.onRemovedFromWorld();
++         MinecraftForge.EVENT_BUS.post(new EntityLeaveLevelEvent(p_143375_, ServerLevel.this));
 +         // CraftBukkit start
 +         p_143375_.valid = false;
 +         if (!(p_143375_ instanceof ServerPlayer)) {
@@ -993,9 +995,6 @@
 +            }
 +         }
 +         // CraftBukkit end
-+
-+         p_143375_.onRemovedFromWorld();
-+         MinecraftForge.EVENT_BUS.post(new EntityLeaveLevelEvent(p_143375_, ServerLevel.this));
        }
  
        public void m_214006_(Entity p_215086_) {
