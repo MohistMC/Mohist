@@ -175,7 +175,7 @@
        this.f_19826_ = BlockPos.f_121853_;
        this.f_185933_ = ChunkPos.f_186419_;
 +      // Spigot start
-+      if (p_19871_ != null) {
++      if (p_19871_ != null && p_19871_ instanceof ServerLevel) {
 +         this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, p_19871_.spigotConfig);
 +      } else {
 +         this.defaultActivationState = false;
