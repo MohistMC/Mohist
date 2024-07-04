@@ -255,7 +255,27 @@ public final class CraftMagicNumbers implements UnsafeValues {
         JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "advancement");
         net.minecraft.advancements.Advancement nms = net.minecraft.advancements.Advancement.fromJson(jsonobject, new DeserializationContext(minecraftkey, MinecraftServer.getServer().getLootData()));
         if (nms != null) {
-            MinecraftServer.getServer().getAdvancements().advancements.put(minecraftkey, new AdvancementHolder(minecraftkey, nms));
+            // Paper start - Fix throw UnsupportedOperationException
+            //MinecraftServer.getServer().getAdvancements().advancements.put(minecraftkey, new AdvancementHolder(minecraftkey, nms));
+            final com.google.common.collect.ImmutableMap.Builder<ResourceLocation, AdvancementHolder> mapBuilder = com.google.common.collect.ImmutableMap.builder();
+            mapBuilder.putAll(MinecraftServer.getServer().getAdvancements().advancements);
+
+            final AdvancementHolder holder = new AdvancementHolder(minecraftkey, nms);
+            mapBuilder.put(minecraftkey, holder);
+
+            MinecraftServer.getServer().getAdvancements().advancements = mapBuilder.build();
+            final net.minecraft.advancements.AdvancementTree tree = MinecraftServer.getServer().getAdvancements().tree();
+            tree.addAll(List.of(holder));
+
+            // recalculate advancement position
+            final net.minecraft.advancements.AdvancementNode node = tree.get(minecraftkey);
+            if (node != null) {
+                final net.minecraft.advancements.AdvancementNode root = node.root();
+                if (root.holder().value().display().isPresent()) {
+                    net.minecraft.advancements.TreeNodePosition.run(root);
+                }
+            }
+            // Paper end - Fix throw UnsupportedOperationException
             Advancement bukkit = Bukkit.getAdvancement(key);
 
             if (bukkit != null) {
