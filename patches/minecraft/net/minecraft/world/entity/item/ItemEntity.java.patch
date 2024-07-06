@@ -115,7 +115,7 @@
              this.hasImpulse = this.hasImpulse | this.updateInWaterStateAndDoFluidPushing();
              if (!this.level().isClientSide) {
                  double d0 = this.getDeltaMovement().subtract(vec3).lengthSqr();
-@@ -185,14 +_,30 @@
+@@ -185,7 +_,23 @@
                  }
              }
  
@@ -140,14 +140,6 @@
                  this.discard();
              }
          }
-     }
- 
-     @Override
--    public BlockPos getBlockPosBelowThatAffectsMyMovement() {
-+    protected BlockPos getBlockPosBelowThatAffectsMyMovement() {
-         return this.getOnPos(0.999999F);
-     }
- 
 @@ -203,13 +_,16 @@
  
      private void setUnderLavaMovement() {

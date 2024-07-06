@@ -41,15 +41,6 @@
      public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
          super(p_38290_, p_38291_);
          this.blocksBuilding = true;
-@@ -137,7 +_,7 @@
-     }
- 
-     @Override
--    public Vec3 getRelativePortalPosition(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
-+    protected Vec3 getRelativePortalPosition(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
-         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_38335_, p_38336_));
-     }
- 
 @@ -161,9 +_,55 @@
                  0.0, this.getVariant() == Boat.Type.BAMBOO ? (double)(p_299244_.height() * 0.8888889F) : (double)(p_299244_.height() / 3.0F), (double)f
              )

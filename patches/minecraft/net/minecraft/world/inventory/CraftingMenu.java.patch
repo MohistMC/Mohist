@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.inventory;
+ 
++import com.mohistmc.mohist.plugins.ban.bans.BanItem;
+ import java.util.Optional;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
 @@ -12,10 +_,16 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.CraftingInput;
@@ -17,7 +24,7 @@
  
  public class CraftingMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
      public static final int RESULT_SLOT = 0;
-@@ -25,11 +_,24 @@
+@@ -25,12 +_,26 @@
      private static final int INV_SLOT_END = 37;
      private static final int USE_ROW_SLOT_START = 37;
      private static final int USE_ROW_SLOT_END = 46;
@@ -25,12 +32,12 @@
 -    public final ResultContainer resultSlots = new ResultContainer();
 -    public final ContainerLevelAccess access;
 -    private final Player player;
--    private boolean placingRecipe;
 +   	public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
 +   	public final ResultContainer resultSlots = new ResultContainer();
 +   	public final ContainerLevelAccess access;
 +   	private final Player player;
-+
+     private boolean placingRecipe;
+ 
 +    // CraftBukkit start
 +    private CraftInventoryView bukkitEntity = null;
 +    @Override
@@ -44,9 +51,10 @@
 +        return bukkitEntity;
 +    }
 +    // CraftBukkit end
- 
++
      public CraftingMenu(int p_39353_, Inventory p_39354_) {
          this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
+     }
 @@ -39,6 +_,8 @@
          super(MenuType.CRAFTING, p_39356_);
          this.access = p_39358_;

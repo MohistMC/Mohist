@@ -1,7 +1,11 @@
 --- a/net/minecraft/server/level/GenerationChunkHolder.java
 +++ b/net/minecraft/server/level/GenerationChunkHolder.java
-@@ -33,6 +_,9 @@
-     private final AtomicReferenceArray<CompletableFuture<ChunkResult<ChunkAccess>>> futures = new AtomicReferenceArray<>(CHUNK_STATUSES.size());
+@@ -30,9 +_,12 @@
+     @Nullable
+     private volatile ChunkStatus highestAllowedStatus;
+     private final AtomicReference<ChunkStatus> startedWork = new AtomicReference<>();
+-    private final AtomicReferenceArray<CompletableFuture<ChunkResult<ChunkAccess>>> futures = new AtomicReferenceArray<>(CHUNK_STATUSES.size());
++    public final AtomicReferenceArray<CompletableFuture<ChunkResult<ChunkAccess>>> futures = new AtomicReferenceArray<>(CHUNK_STATUSES.size());
      private final AtomicReference<ChunkGenerationTask> task = new AtomicReference<>();
      private final AtomicInteger generationRefCount = new AtomicInteger();
 +    /** Forge: Used to bypass the future chain when loading chunks, because modders can do weird things that cause deadlocks, modders should never touch this **/

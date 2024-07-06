@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.BaseFireBlock;

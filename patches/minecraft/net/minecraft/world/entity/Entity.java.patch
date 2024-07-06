@@ -149,15 +149,6 @@
      private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
      public int invulnerableTime;
      protected boolean firstTick = true;
-@@ -221,7 +_,7 @@
-     public boolean hasImpulse;
-     @Nullable
-     public PortalProcessor portalProcess;
--    public int portalCooldown;
-+    private int portalCooldown;
-     private boolean invulnerable;
-     protected UUID uuid = Mth.createInsecureUUID(this.random);
-     protected String stringUUID = this.uuid.toString();
 @@ -238,17 +_,89 @@
      private boolean onGroundNoBlocks = false;
      private float crystalSoundIntensity;
@@ -451,7 +442,7 @@
 +    // Mohist start
 +    public AtomicBoolean igniteForSeconds$callEvent = new AtomicBoolean(true);
 +
-+    public final void igniteForSeconds(int p_332057_) {
++    public final void igniteForSeconds(float p_332057_) {
 +        if (igniteForSeconds$callEvent.getAndSet(true)) {
 +            EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_332057_);
 +            this.level.getCraftServer().getPluginManager().callEvent(event);
@@ -462,12 +453,12 @@
 +
 +            p_332057_ = event.getDuration();
 +        }
-+        this.igniteForTicks(p_332057_ * 20);
++        this.igniteForTicks(Mth.floor(p_332057_ * 20.0F));
 +    }
 +
-+    public void igniteForSeconds(int i, boolean callEvent) {
++    public void igniteForSeconds(float i, boolean callEvent) {
 +        this.igniteForSeconds$callEvent.set(callEvent);
-+        igniteForTicks(i);
++        igniteForSeconds(i);
 +    }
 +    // Mohist end
  

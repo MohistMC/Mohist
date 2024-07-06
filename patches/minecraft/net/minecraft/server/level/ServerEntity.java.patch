@@ -37,10 +37,13 @@
          this.level = p_8528_;
          this.broadcast = p_8532_;
          this.entity = p_8529_;
-@@ -227,8 +_,39 @@
+@@ -227,8 +_,28 @@
  
          this.tickCount++;
          if (this.entity.hurtMarked) {
+-            this.entity.hurtMarked = false;
+-            this.broadcastAndSend(new ClientboundSetEntityMotionPacket(this.entity));
++		    this.entity.hurtMarked = false;
 +            // CraftBukkit start - Create PlayerVelocity event
 +            boolean cancelled = false;
 +
@@ -62,19 +65,6 @@
 +                this.broadcastAndSend(new ClientboundSetEntityMotionPacket(this.entity));
 +            }
 +            // CraftBukkit end
-+            if (this.entity instanceof AbstractHurtingProjectile abstracthurtingprojectile) {
-+                this.broadcastAndSend(
-+                    new ClientboundProjectilePowerPacket(
-+                        abstracthurtingprojectile.getId(),
-+                        abstracthurtingprojectile.xPower,
-+                        abstracthurtingprojectile.yPower,
-+                        abstracthurtingprojectile.zPower
-+                    )
-+                );
-+            }
-+
-             this.entity.hurtMarked = false;
--            this.broadcastAndSend(new ClientboundSetEntityMotionPacket(this.entity));
          }
      }
  
@@ -86,7 +76,7 @@
      }
  
      public void addPairing(ServerPlayer p_8542_) {
-@@ -246,14 +_,19 @@
+@@ -246,11 +_,15 @@
          this.sendPairingData(p_8542_, list::add);
          p_8542_.connection.send(new ClientboundBundlePacket(list));
          this.entity.startSeenByPlayer(p_8542_);
@@ -102,18 +92,11 @@
 +            // CraftBukkit end
          }
  
--        Packet<ClientGamePacketListener> packet = this.entity.getAddEntityPacket(this);
-+        Packet<ClientGamePacketListener> packet = this.entity.getAddEntityPacket();
-+        this.yHeadRotp = Mth.floor(this.entity.getYHeadRot() * 256.0F / 360.0F);
-         p_289563_.accept(packet);
-         if (this.trackedDataValues != null) {
-             p_289563_.accept(new ClientboundSetEntityDataPacket(this.entity.getId(), this.trackedDataValues));
-@@ -261,7 +_,12 @@
- 
+         Packet<ClientGamePacketListener> packet = this.entity.getAddEntityPacket(this);
+@@ -262,6 +_,11 @@
          boolean flag = this.trackDelta;
          if (this.entity instanceof LivingEntity) {
--            Collection<AttributeInstance> collection = ((LivingEntity)this.entity).getAttributes().getSyncableAttributes();
-+            Collection<AttributeInstance> collection = ((LivingEntity) this.entity).getAttributes().getSyncableAttributes();
+             Collection<AttributeInstance> collection = ((LivingEntity)this.entity).getAttributes().getSyncableAttributes();
 +            // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
 +            if (this.entity.getId() == p_289562_.getId()) {
 +                ((ServerPlayer) this.entity).getBukkitEntity().injectScaledMaxHealth(collection, false);

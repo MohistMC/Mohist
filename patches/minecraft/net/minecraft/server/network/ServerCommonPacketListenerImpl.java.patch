@@ -206,23 +206,12 @@
          if (p_300325_.isTerminal()) {
              this.close();
          }
-@@ -158,15 +_,62 @@
-         }
+@@ -163,10 +_,56 @@
      }
  
-+    // CraftBukkit start
-+    @Deprecated
-     public void disconnect(Component p_299122_) {
--        this.disconnect(new DisconnectionDetails(p_299122_));
-+        disconnect(CraftChatMessage.fromComponent(p_299122_));
-     }
--
--    public void disconnect(DisconnectionDetails p_345473_) {
+     public void disconnect(DisconnectionDetails p_345473_) {
 -        this.connection
 -            .send(new ClientboundDisconnectPacket(p_345473_.reason()), PacketSendListener.thenRun(() -> this.connection.disconnect(p_345473_)));
-+    // CraftBukkit end
-+
-+    public void disconnect(String s) {
 +        // CraftBukkit start - fire PlayerKickEvent
 +        if (this.processedDisconnect) {
 +            return;
@@ -231,7 +220,7 @@
 +            Waitable waitable = new Waitable() {
 +                @Override
 +                protected Object evaluate() {
-+                    ServerCommonPacketListenerImpl.this.disconnect(s);
++                    ServerCommonPacketListenerImpl.this.disconnect(p_345473_);
 +                    return null;
 +                }
 +            };
@@ -250,7 +239,7 @@
 +
 +        String leaveMessage = ChatFormatting.YELLOW + this.player.getScoreboardName() + " left the game.";
 +
-+        PlayerKickEvent event = new PlayerKickEvent(this.player.getBukkitEntity(), s, leaveMessage);
++        PlayerKickEvent event = new PlayerKickEvent(this.player.getBukkitEntity(), CraftChatMessage.fromComponent(p_345473_.reason()), leaveMessage);
 +
 +        if (this.cserver.getServer().isRunning()) {
 +            this.cserver.getPluginManager().callEvent(event);
@@ -262,12 +251,14 @@
 +        }
 +        this.player.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +        // Send the possibly modified leave message
-+        final Component ichatbasecomponent = CraftChatMessage.fromString(event.getReason(), true)[0];
-+        // CraftBukkit end
-+        this.connection.send(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.thenRun(() -> {
-+            this.connection.disconnect(ichatbasecomponent);
++        disconnect0(new DisconnectionDetails(CraftChatMessage.fromString(event.getReason(), true)[0], p_345473_.report(), p_345473_.bugReportLink()));
++    }
++
++    private void disconnect0(DisconnectionDetails disconnectiondetails) {
++        this.connection.send(new ClientboundDisconnectPacket(disconnectiondetails.reason()), PacketSendListener.thenRun(() -> {
++            this.connection.disconnect(disconnectiondetails);
 +        }));
-+        this.onDisconnect(ichatbasecomponent); // CraftBukkit - fire quit instantly
++        this.onDisconnect(disconnectiondetails); // CraftBukkit - fire quit instantly
          this.connection.setReadOnly();
 -        this.server.executeBlocking(this.connection::handleDisconnection);
 +        // CraftBukkit - Don't wait

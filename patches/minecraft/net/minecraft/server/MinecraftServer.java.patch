@@ -10,7 +10,7 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
-@@ -16,13 +_,13 @@
+@@ -16,6 +_,7 @@
  import it.unimi.dsi.fastutil.objects.ObjectArraySet;
  import java.awt.image.BufferedImage;
  import java.io.ByteArrayOutputStream;
@@ -18,13 +18,6 @@
  import java.io.IOException;
  import java.io.Writer;
  import java.lang.management.ManagementFactory;
- import java.lang.management.ThreadInfo;
- import java.lang.management.ThreadMXBean;
- import java.net.Proxy;
--import java.nio.file.FileStore;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.security.KeyPair;
 @@ -35,19 +_,26 @@
  import java.util.Map;
  import java.util.Objects;

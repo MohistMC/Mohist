@@ -349,13 +349,9 @@ public enum Material implements Keyed, Translatable {
     WAXED_EXPOSED_COPPER(27989),
     WAXED_WEATHERED_COPPER(5960),
     WAXED_OXIDIZED_COPPER(25626),
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     WAXED_CHISELED_COPPER(7500),
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     WAXED_EXPOSED_CHISELED_COPPER(30658),
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     WAXED_WEATHERED_CHISELED_COPPER(5970),
-    @MinecraftExperimental(Requires.UPDATE_1_21)
     WAXED_OXIDIZED_CHISELED_COPPER(7735),
     WAXED_CUT_COPPER(11030),
     WAXED_EXPOSED_CUT_COPPER(30043),
