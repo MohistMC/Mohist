@@ -8,11 +8,9 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.Stats;
-@@ -29,8 +_,12 @@
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.Level;
+@@ -31,6 +_,11 @@
  import net.minecraft.world.level.gameevent.GameEvent;
--import net.minecraft.world.level.portal.DimensionTransition;
+ import net.minecraft.world.level.portal.DimensionTransition;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPickupItemEvent;

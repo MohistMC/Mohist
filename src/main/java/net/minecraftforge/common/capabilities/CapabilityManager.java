@@ -89,12 +89,12 @@ public final class CapabilityManager {
     @ApiStatus.Internal
     public static void injectCapabilities(ModList modlist) {
         var autos = modlist.getAllScanData().stream()
-                .flatMap(e -> e.getAnnotations().stream())
-                .filter(a -> AUTO_REGISTER.equals(a.annotationType()))
-                .map(a -> a.clazz())
-                .distinct()
-                .sorted(Comparator.comparing(Type::toString))
-                .toList();
+            .flatMap(e -> e.getAnnotations().stream())
+            .filter(a -> AUTO_REGISTER.equals(a.annotationType()))
+            .map(a -> a.clazz())
+            .distinct()
+            .sorted(Comparator.comparing(Type::toString))
+            .toList();
 
         for (var auto : autos) {
             LOGGER.debug(Logging.CAPABILITIES, "Attempting to automatically register: " + auto);

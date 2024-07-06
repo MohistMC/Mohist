@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -30,6 +_,7 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.Projectile;
- import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
- import net.minecraft.world.level.block.BaseFireBlock;
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.state.BlockState;
 @@ -38,6 +_,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.HitResult;

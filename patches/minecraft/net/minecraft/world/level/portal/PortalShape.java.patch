@@ -47,48 +47,21 @@
          this.level = p_77695_;
          this.axis = p_77697_;
          this.rightDir = p_77697_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
-@@ -88,24 +_,26 @@
-         return i >= 2 && i <= 21 ? i : 0;
-     }
- 
--    private int getDistanceUntilEdgeAboveFrame(BlockPos p_77736_, Direction p_77737_) {
--        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
--
--        for (int i = 0; i <= 21; i++) {
--            blockpos$mutableblockpos.set(p_77736_).move(p_77737_, i);
--            BlockState blockstate = this.level.getBlockState(blockpos$mutableblockpos);
--            if (!isEmpty(blockstate)) {
--                if (FRAME.test(blockstate, this.level, blockpos$mutableblockpos)) {
--                    return i;
--                }
--                break;
--            }
--
--            BlockState blockstate1 = this.level.getBlockState(blockpos$mutableblockpos.move(Direction.DOWN));
--            if (!FRAME.test(blockstate1, this.level, blockpos$mutableblockpos)) {
--                break;
--            }
+@@ -96,6 +_,7 @@
+             BlockState blockstate = this.level.getBlockState(blockpos$mutableblockpos);
+             if (!isEmpty(blockstate)) {
+                 if (FRAME.test(blockstate, this.level, blockpos$mutableblockpos)) {
++               		blocks.setBlock(blockpos$mutableblockpos, blockstate, 18); // CraftBukkit - lower left / right
+                     return i;
+                 }
+                 break;
+@@ -105,7 +_,8 @@
+             if (!FRAME.test(blockstate1, this.level, blockpos$mutableblockpos)) {
+                 break;
+             }
 -        }
-+   private int getDistanceUntilEdgeAboveFrame(BlockPos p_77736_, Direction p_77737_) {
-+      BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+
-+      for(int i = 0; i <= 21; ++i) {
-+         blockpos$mutableblockpos.set(p_77736_).move(p_77737_, i);
-+         BlockState blockstate = this.level.getBlockState(blockpos$mutableblockpos);
-+         if (!isEmpty(blockstate)) {
-+            if (FRAME.test(blockstate, this.level, blockpos$mutableblockpos)) {
-+               blocks.setBlock(blockpos$mutableblockpos, blockstate, 18); // CraftBukkit - lower left / right
-+               return i;
-+            }
-+            break;
-+         }
-+
-+         BlockState blockstate1 = this.level.getBlockState(blockpos$mutableblockpos.move(Direction.DOWN));
-+         if (!FRAME.test(blockstate1, this.level, blockpos$mutableblockpos)) {
-+            break;
-+         }
-+         blocks.setBlock(blockpos$mutableblockpos, blockstate1, 18); // CraftBukkit - bottom row
-+      }
++         	blocks.setBlock(blockpos$mutableblockpos, blockstate1, 18); // CraftBukkit - bottom row
++      	}
  
          return 0;
      }
@@ -100,24 +73,17 @@
          }
  
          return true;
-@@ -150,10 +_,14 @@
+@@ -150,6 +_,10 @@
                      this.numPortalBlocks++;
                  }
              }
--        }
 +         // CraftBukkit start - left and right
 +         blocks.setBlock(p_77729_.set(this.bottomLeft).move(Direction.UP, i).move(this.rightDir, -1), this.level.getBlockState(p_77729_), 18);
 +         blocks.setBlock(p_77729_.set(this.bottomLeft).move(Direction.UP, i).move(this.rightDir, this.width), this.level.getBlockState(p_77729_), 18);
 +         // CraftBukkit end
-+      }
+         }
  
--        return 21;
--    }
-+      return 21;
-+   }
- 
-     private static boolean isEmpty(BlockState p_77718_) {
-         return p_77718_.isAir() || p_77718_.is(BlockTags.FIRE) || p_77718_.is(Blocks.NETHER_PORTAL);
+         return 21;
 @@ -163,11 +_,31 @@
          return this.bottomLeft != null && this.width >= 2 && this.width <= 21 && this.height >= 3 && this.height <= 21;
      }

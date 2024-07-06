@@ -18,7 +18,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
-@@ -67,20 +_,23 @@
+@@ -67,16 +_,20 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;
  import net.minecraft.server.ServerScoreboard;
@@ -39,10 +39,6 @@
  import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
--import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
 @@ -89,7 +_,6 @@
  import net.minecraft.world.level.border.BorderChangeListener;
  import net.minecraft.world.level.border.WorldBorder;
@@ -128,7 +124,7 @@
          ServerLevel serverlevel = this.server.getLevel(resourcekey);
          ServerLevel serverlevel1;
          if (serverlevel == null) {
-@@ -164,37 +_,42 @@
+@@ -164,15 +_,20 @@
  
          p_11263_.setServerLevel(serverlevel1);
          String s1 = p_11262_.getLoggableAddress(this.server.logIPs());
@@ -158,10 +154,7 @@
          LevelData leveldata = serverlevel1.getLevelData();
          p_11263_.loadGameTypes(optional1.orElse(null));
          ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.server, p_11262_, p_11263_, p_297215_);
--        p_11262_.setupInboundProtocol(GameProtocols.SERVERBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(this.server.registryAccess())), servergamepacketlistenerimpl);
-+        p_11262_.setupInboundProtocol(GameProtocols.SERVERBOUND.bind(RegistryFriendlyByteBuf.decorator(this.server.registryAccess())), servergamepacketlistenerimpl);
-         GameRules gamerules = serverlevel1.getGameRules();
-         boolean flag = gamerules.getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN);
+@@ -182,19 +_,19 @@
          boolean flag1 = gamerules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO);
          boolean flag2 = gamerules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
          servergamepacketlistenerimpl.send(

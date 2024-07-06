@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/item/LeadItem.java
 +++ b/net/minecraft/world/item/LeadItem.java
-@@ -1,12 +_,12 @@
+@@ -1,12 +_,15 @@
  package net.minecraft.world.item;
  
  import java.util.List;
--import java.util.function.Predicate;
 +import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
  import net.minecraft.core.BlockPos;
  import net.minecraft.tags.BlockTags;
 +import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
--import net.minecraft.world.entity.Entity;
--import net.minecraft.world.entity.Leashable;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.Leashable;
 +import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
  import net.minecraft.world.entity.player.Player;

@@ -8,7 +8,7 @@
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-@@ -8,6 +_,7 @@
+@@ -8,13 +_,16 @@
  import java.awt.GraphicsEnvironment;
  import java.io.File;
  import java.io.IOException;
@@ -16,12 +16,28 @@
  import java.io.UncheckedIOException;
  import java.net.Proxy;
  import java.nio.file.Files;
-@@ -58,14 +_,17 @@
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
++import java.util.Arrays;
+ import java.util.Optional;
+ import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BooleanSupplier;
+ import javax.annotation.Nullable;
+ import joptsimple.OptionParser;
+@@ -33,6 +_,7 @@
+ import net.minecraft.nbt.ReportedNbtException;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.obfuscate.DontObfuscate;
++import net.minecraft.server.WorldLoader.DataLoadContext;
+ import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.dedicated.DedicatedServerProperties;
+ import net.minecraft.server.dedicated.DedicatedServerSettings;
+@@ -58,14 +_,16 @@
  import net.minecraft.world.level.storage.LevelSummary;
  import net.minecraft.world.level.storage.PrimaryLevelData;
  import net.minecraft.world.level.storage.WorldData;
 +import org.bukkit.configuration.file.YamlConfiguration;
-+import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
  
  public class Main {
@@ -151,7 +167,7 @@
  
              PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
  
-+         	AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
++         	AtomicReference<DataLoadContext> worldLoader = new AtomicReference<>();
 +            if (dynamic != null) {
 +                net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(levelstoragesource$levelstorageaccess, levelstoragesource$levelstorageaccess.getLevelDirectory());
 +            }

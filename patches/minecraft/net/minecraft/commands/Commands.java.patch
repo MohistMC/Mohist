@@ -19,14 +19,6 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
-@@ -97,6 +_,7 @@
- import net.minecraft.server.commands.RandomCommand;
- import net.minecraft.server.commands.RecipeCommand;
- import net.minecraft.server.commands.ReloadCommand;
-+import net.minecraft.server.commands.ResetChunksCommand;
- import net.minecraft.server.commands.ReturnCommand;
- import net.minecraft.server.commands.RideCommand;
- import net.minecraft.server.commands.SaveAllCommand;
 @@ -136,6 +_,8 @@
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;

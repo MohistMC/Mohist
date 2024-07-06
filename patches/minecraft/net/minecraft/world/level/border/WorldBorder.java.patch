@@ -8,16 +8,14 @@
  import com.mojang.serialization.DynamicLike;
  import java.util.List;
  import net.minecraft.Util;
-@@ -9,8 +_,8 @@
+@@ -9,6 +_,7 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.ChunkPos;
 +import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.AABB;
--import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
 @@ -28,6 +_,7 @@
      int absoluteMaxSize = 29999984;
      private WorldBorder.BorderExtent extent = new WorldBorder.StaticBorderExtent(5.999997E7F);

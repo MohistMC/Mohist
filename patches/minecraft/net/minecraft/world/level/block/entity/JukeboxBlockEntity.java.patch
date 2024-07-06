@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.google.common.annotations.VisibleForTesting;
++import java.util.Collections;
++import java.util.List;
+ import java.util.Optional;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Holder;
 @@ -19,12 +_,51 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;

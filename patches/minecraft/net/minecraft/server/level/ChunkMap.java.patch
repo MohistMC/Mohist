@@ -30,22 +30,6 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.NbtException;
-@@ -60,7 +_,6 @@
- import net.minecraft.server.network.ServerPlayerConnection;
- import net.minecraft.util.CsvOutput;
- import net.minecraft.util.Mth;
--import net.minecraft.util.StaticCache2D;
- import net.minecraft.util.profiling.ProfilerFiller;
- import net.minecraft.util.thread.BlockableEventLoop;
- import net.minecraft.util.thread.ProcessorHandle;
-@@ -80,7 +_,6 @@
- import net.minecraft.world.level.chunk.ProtoChunk;
- import net.minecraft.world.level.chunk.UpgradeData;
- import net.minecraft.world.level.chunk.status.ChunkStatus;
--import net.minecraft.world.level.chunk.status.ChunkStep;
- import net.minecraft.world.level.chunk.status.ChunkType;
- import net.minecraft.world.level.chunk.status.WorldGenContext;
- import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 @@ -96,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.phys.Vec3;

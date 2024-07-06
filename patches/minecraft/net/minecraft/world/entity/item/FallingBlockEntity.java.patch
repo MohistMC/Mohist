@@ -8,23 +8,15 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.CrashReportCategory;
-@@ -17,11 +_,8 @@
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
--import net.minecraft.resources.ResourceKey;
--import net.minecraft.server.level.ServerEntity;
+@@ -21,7 +_,6 @@
+ import net.minecraft.server.level.ServerEntity;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.tags.BlockTags;
 -import net.minecraft.tags.FluidTags;
  import net.minecraft.util.Mth;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
-@@ -43,10 +_,11 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.material.Fluids;
--import net.minecraft.world.level.portal.DimensionTransition;
+@@ -47,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;

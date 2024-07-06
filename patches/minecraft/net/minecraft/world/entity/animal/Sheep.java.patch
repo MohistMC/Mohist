@@ -1,21 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -3,7 +_,6 @@
- import com.google.common.collect.Maps;
- import java.util.Arrays;
- import java.util.EnumMap;
--import java.util.List;
- import java.util.Map;
- import java.util.stream.Collectors;
- import javax.annotation.Nullable;
-@@ -19,7 +_,6 @@
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.tags.ItemTags;
--import net.minecraft.util.FastColor;
- import net.minecraft.util.Mth;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.DifficultyInstance;
 @@ -27,9 +_,12 @@
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.damagesource.DamageSource;
@@ -29,7 +13,7 @@
  import net.minecraft.world.entity.Shearable;
  import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-@@ -45,11 +_,15 @@
+@@ -45,6 +_,11 @@
  import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
@@ -41,11 +25,6 @@
  import net.minecraft.world.item.DyeColor;
  import net.minecraft.world.item.DyeItem;
  import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
--import net.minecraft.world.item.crafting.CraftingInput;
- import net.minecraft.world.item.crafting.RecipeHolder;
- import net.minecraft.world.item.crafting.RecipeType;
- import net.minecraft.world.level.ItemLike;
 @@ -60,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
