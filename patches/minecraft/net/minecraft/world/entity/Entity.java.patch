@@ -49,27 +49,14 @@
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.ServerEntity;
-@@ -85,7 +_,8 @@
- import net.minecraft.world.entity.vehicle.Boat;
- import net.minecraft.world.item.Item;
- import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.item.Items;
-+import net.minecraft.world.item.enchantment.EnchantmentHelper;
-+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
- import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.ClipContext;
-@@ -103,7 +_,10 @@
- import net.minecraft.world.level.block.Rotation;
- import net.minecraft.world.level.block.SoundType;
- import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.border.WorldBorder;
-+import net.minecraft.world.level.dimension.DimensionType;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.entity.EntityAccess;
- import net.minecraft.world.level.entity.EntityInLevelCallback;
- import net.minecraft.world.level.gameevent.DynamicGameEventListener;
+@@ -95,7 +_,6 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.block.FenceGateBlock;
+ import net.minecraft.world.level.block.HoneyBlock;
+ import net.minecraft.world.level.block.Mirror;
+ import net.minecraft.world.level.block.Portal;
 @@ -126,9 +_,42 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreHolder;

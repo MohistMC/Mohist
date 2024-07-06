@@ -362,16 +362,6 @@ tasks.register("downloadServerShim", DownloadMavenArtifact) {
     artifact = libs.bootstrap.shim.get().toString()
     changing = true
 }
-tasks.register("downloadMCPConfig", DownloadMavenArtifact) {
-    artifact = MCP_ARTIFACT
-}
-tasks.register('extractMCPConfigMappings', net.minecraftforge.gradle.common.tasks.JarExec) {
-    ext.output = file('build/mcp_mappings.tsrg')
-    tool = INSTALLER_TOOLS + ':fatjar'
-    args = ['--task', 'MCP_DATA', '--key', 'mappings', '--input', downloadMCPConfig.output.get().asFile.absolutePath, '--output', output.absolutePath]
-    outputs.file(output)
-    inputs.file(downloadMCPConfig.output)
-}
 tasks.register('downloadClientMappings', net.minecraftforge.gradle.common.tasks.JarExec) {
     ext.output = file('build/client_mappings.tsrg')
     tool = INSTALLER_TOOLS + ':fatjar'

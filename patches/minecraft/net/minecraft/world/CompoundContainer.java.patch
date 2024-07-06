@@ -61,3 +61,12 @@
  
      public CompoundContainer(Container p_18913_, Container p_18914_) {
          this.container1 = p_18913_;
+@@ -54,7 +_,7 @@
+ 
+     @Override
+     public int getMaxStackSize() {
+-        return this.container1.getMaxStackSize();
++        return Math.min(this.container1.getMaxStackSize(), this.container2.getMaxStackSize()); // CraftBukkit - check both sides
+     }
+ 
+     @Override
