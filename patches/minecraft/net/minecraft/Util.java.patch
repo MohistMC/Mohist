@@ -21,3 +21,39 @@
           if (SharedConstants.f_136183_) {
              throw illegalargumentexception;
           }
+@@ -428,7 +_,7 @@
+    }
+ 
+    public static void m_143785_(String p_143786_) {
+-      f_137446_.error(p_143786_);
++      // LOGGER.error(p_143786_);
+       if (SharedConstants.f_136183_) {
+          m_183984_(p_143786_);
+       }
+@@ -436,7 +_,7 @@
+    }
+ 
+    public static void m_200890_(String p_200891_, Throwable p_200892_) {
+-      f_137446_.error(p_200891_, p_200892_);
++      // LOGGER.error(p_200891_, p_200892_);
+       if (SharedConstants.f_136183_) {
+          m_183984_(p_200891_);
+       }
+@@ -445,7 +_,7 @@
+ 
+    public static <T extends Throwable> T m_137570_(T p_137571_) {
+       if (SharedConstants.f_136183_) {
+-         f_137446_.error("Trying to throw a fatal exception, pausing in IDE", p_137571_);
++         // LOGGER.error("Trying to throw a fatal exception, pausing in IDE", p_137571_);
+          m_183984_(p_137571_.getMessage());
+       }
+ 
+@@ -458,7 +_,7 @@
+ 
+    private static void m_183984_(String p_183985_) {
+       Instant instant = Instant.now();
+-      f_137446_.warn("Did you remember to set a breakpoint here?");
++      // LOGGER.warn("Did you remember to set a breakpoint here?");
+       boolean flag = Duration.between(instant, Instant.now()).toMillis() > 500L;
+       if (!flag) {
+          f_183937_.accept(p_183985_);

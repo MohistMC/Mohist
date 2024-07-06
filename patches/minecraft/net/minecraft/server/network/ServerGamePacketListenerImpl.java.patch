@@ -284,11 +284,12 @@
     }
  
     private <T, R> CompletableFuture<R> m_243080_(T p_243240_, BiFunction<TextFilter, T, CompletableFuture<R>> p_243271_) {
-@@ -402,7 +_,32 @@
+@@ -402,8 +_,33 @@
              double d8 = d5 - this.f_9762_;
              double d9 = entity.m_20184_().m_82556_();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
 -            if (d10 - d9 > 100.0D && !this.m_9956_()) {
+-               f_9744_.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), d6, d7, d8);
 +            // CraftBukkit start - handle custom speeds and skipped ticks
 +            this.allowedPlayerTicks += (System.currentTimeMillis() / 50) - this.lastTick;
 +            this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
@@ -315,17 +316,19 @@
 +            speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
 +            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.m_9956_()) {
 +               // CraftBukkit end
-                f_9744_.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), d6, d7, d8);
++               // LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8); // Mohist
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
+             }
 @@ -430,10 +_,11 @@
              d8 = d5 - entity.m_20189_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
 -            if (d10 > 0.0625D) {
-+            if (d10 >org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
++            if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
                 flag2 = true;
-                f_9744_.warn("{} (vehicle of {}) moved wrongly! {}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), Math.sqrt(d10));
+-               f_9744_.warn("{} (vehicle of {}) moved wrongly! {}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), Math.sqrt(d10));
++               // LOGGER.warn("{} (vehicle of {}) moved wrongly! {}", entity.getName().getString(), this.player.getName().getString(), Math.sqrt(d10));
              }
 +            Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
