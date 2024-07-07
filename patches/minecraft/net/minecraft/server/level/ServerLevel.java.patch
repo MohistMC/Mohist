@@ -11,10 +11,11 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-@@ -10,16 +_,23 @@
+@@ -9,17 +_,23 @@
+ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongSet;
  import it.unimi.dsi.fastutil.longs.LongSets;
- import it.unimi.dsi.fastutil.objects.Object2IntMap;
+-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 +import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
  import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -44,19 +45,21 @@
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
  import java.util.function.Predicate;
-@@ -40,6 +_,8 @@
+@@ -39,7 +_,8 @@
+ import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.core.Holder;
- import net.minecraft.core.HolderSet;
+-import net.minecraft.core.HolderSet;
 +import net.minecraft.core.HolderSet.Named;
 +import net.minecraft.core.RegistryAccess;
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.ParticleOptions;
  import net.minecraft.core.registries.BuiltInRegistries;
-@@ -68,6 +_,7 @@
+@@ -67,7 +_,7 @@
+ import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.tags.TagKey;
- import net.minecraft.util.AbortableIterationConsumer;
+-import net.minecraft.util.AbortableIterationConsumer;
 +import net.minecraft.util.AbortableIterationConsumer.Continuation;
  import net.minecraft.util.CsvOutput;
  import net.minecraft.util.Mth;
@@ -88,10 +91,11 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
  import net.minecraft.world.entity.npc.Npc;
  import net.minecraft.world.entity.player.Player;
-@@ -111,12 +_,16 @@
+@@ -110,13 +_,16 @@
+ import net.minecraft.world.level.ForcedChunksSavedData;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
- import net.minecraft.world.level.NaturalSpawner;
+-import net.minecraft.world.level.NaturalSpawner;
 +import net.minecraft.world.level.NaturalSpawner.SpawnState;
  import net.minecraft.world.level.StructureManager;
  import net.minecraft.world.level.WorldGenLevel;
@@ -113,33 +117,33 @@
  import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.entity.EntityPersistentStorage;
-@@ -135,8 +_,12 @@
+@@ -135,8 +_,11 @@
  import net.minecraft.world.level.entity.PersistentEntitySectionManager;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.gameevent.GameEvent.Context;
  import net.minecraft.world.level.gameevent.GameEventDispatcher;
+-import net.minecraft.world.level.levelgen.Heightmap;
 +import net.minecraft.world.level.levelgen.FlatLevelSource;
- import net.minecraft.world.level.levelgen.Heightmap;
 +import net.minecraft.world.level.levelgen.Heightmap.Types;
 +import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
  import net.minecraft.world.level.levelgen.structure.BoundingBox;
  import net.minecraft.world.level.levelgen.structure.Structure;
  import net.minecraft.world.level.levelgen.structure.StructureCheck;
-@@ -146,8 +_,12 @@
+@@ -146,8 +_,11 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 +import net.minecraft.world.level.saveddata.maps.MapItemSavedData.HoldingPlayer;
 +import net.minecraft.world.level.storage.DerivedLevelData;
  import net.minecraft.world.level.storage.DimensionDataStorage;
- import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.LevelStorageSource;
 +import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 +import net.minecraft.world.level.storage.PrimaryLevelData;
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,7 +_,45 @@
+@@ -155,7 +_,44 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -165,7 +169,6 @@
 +import org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.LightningStrike;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 +import org.bukkit.event.server.MapInitializeEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
@@ -185,7 +188,7 @@
  
  public class ServerLevel extends Level implements WorldGenLevel {
     public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
-@@ -188,24 +_,86 @@
+@@ -188,24 +_,87 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -217,8 +220,9 @@
 +
 +   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
++      // CraftBukkit start
 +      this.pvpMode = p_214999_.m_129799_();
-+      convertable = p_215001_;
++      this.convertable = p_215001_;
 +      // Mohist start
 +      File worldFile = DimensionType.m_196975_(p_215003_, p_215001_.f_230867_.f_230850_()).toFile();
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
