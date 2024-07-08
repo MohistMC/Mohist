@@ -183,7 +183,7 @@
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registry.f_122819_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
 -            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false);
-+            String name = resourcekey == LevelStem.f_63972_ ? "DIM1" : "DIM-1";
++            String name = resourcekey == LevelStem.f_63972_ ? "DIM-1" : "DIM1";
 +            if (resourcekey == LevelStem.f_63972_) {
 +               if (!this.m_7079_()) {
 +                  continue;

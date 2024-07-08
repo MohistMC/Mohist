@@ -18,11 +18,10 @@
  import java.io.IOException;
  import java.io.Writer;
  import java.nio.file.Files;
-@@ -28,6 +_,8 @@
+@@ -28,6 +_,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
-+import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
@@ -72,12 +71,11 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -147,7 +_,29 @@
+@@ -147,7 +_,27 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
 +import net.minecraftforge.common.util.LevelCapabilityData;
-+import net.minecraftforge.event.level.LevelEvent;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.World;
@@ -98,7 +96,6 @@
 +import org.bukkit.generator.WorldInfo;
  import org.slf4j.Logger;
 +import org.spigotmc.AsyncCatcher;
-+import org.spigotmc.SpigotWorldConfig;
  
  public class ServerLevel extends Level implements WorldGenLevel {
     public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
@@ -566,18 +563,22 @@
        this.f_220350_.m_214152_(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -955,9 +_,8 @@
-    }
+@@ -956,12 +_,13 @@
  
     public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {
--      Explosion explosion = new Explosion(this, p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
+       Explosion explosion = new Explosion(this, p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
 -      explosion.m_46061_();
 -      explosion.m_46075_(false);
-+      Explosion explosion = super.m_7703_(p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
 +      if (explosion.wasCanceled || net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
           explosion.m_46080_();
        }
+ 
++      explosion.m_46061_();
++      explosion.m_46075_(false);
+       for(ServerPlayer serverplayer : this.f_8546_) {
+          if (serverplayer.m_20275_(p_8656_, p_8657_, p_8658_) < 4096.0D) {
+             serverplayer.f_8906_.m_9829_(new ClientboundExplodePacket(p_8656_, p_8657_, p_8658_, p_8659_, explosion.m_46081_(), explosion.m_46078_().get(serverplayer)));
 @@ -1032,6 +_,21 @@
        return i;
     }
