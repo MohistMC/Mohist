@@ -1065,15 +1065,20 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
-@@ -3015,6 +_,12 @@
+@@ -3015,6 +_,17 @@
        return this.f_20937_;
     }
  
-+   private AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> tpCause = new AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   // Mohist start
++   private final AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> tpCause = new AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   public void tpCause(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      tpCause.set(cause);
++   }
 +   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
 +      tpCause.set(cause);
 +      return Optional.of(m_20984_(p_20985_, p_20986_, p_20987_, p_20988_));
 +   }
++   // Mohist end
 +
     public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
        double d0 = this.m_20185_();
