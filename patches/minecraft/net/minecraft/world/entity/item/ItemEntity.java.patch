@@ -63,17 +63,6 @@
              }
  
              this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));
-@@ -138,10 +_,6 @@
-             this.m_32069_();
-          }
- 
--         if (this.f_31985_ != -32768) {
--            ++this.f_31985_;
--         }
--
-          this.f_19812_ |= this.m_20073_();
-          if (!this.f_19853_.f_46443_) {
-             double d0 = this.m_20184_().m_82546_(vec3).m_82556_();
 @@ -150,7 +_,14 @@
              }
           }
@@ -184,6 +173,9 @@
           int i = itemstack.m_41613_();
 -         if (this.f_31986_ == 0 && (this.f_31982_ == null || this.f_31982_.equals(p_32040_.m_20148_())) && p_32040_.m_150109_().m_36054_(itemstack)) {
 +
++         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
++         if (hook < 0) return;
++
 +         // CraftBukkit start - fire PlayerPickupItemEvent
 +         int canHold = p_32040_.m_150109_().canHold(itemstack);
 +         int remaining = i - canHold;
@@ -218,14 +210,11 @@
 +
 +            // Possibly < 0; fix here so we do not have to modify code below
 +            this.f_31986_ = 0;
-+         } else if (this.f_31986_ == 0) {
++         } else if (this.f_31986_ == 0 && hook != 1) {
 +            // ensure that the code below isn't triggered if canHold says we can't pick the items up
 +            this.f_31986_ = -1;
 +         }
 +         // CraftBukkit end
-+
-+         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
-+         if (hook < 0) return;
 +
 +         ItemStack copy = itemstack.m_41777_();
 +         if (this.f_31986_ == 0 && (this.f_31982_ == null || lifespan - this.f_31985_ <= 200 || this.f_31982_.equals(p_32040_.m_20148_())) && (hook == 1 || i <= 0 || p_32040_.m_150109_().m_36054_(itemstack))) {

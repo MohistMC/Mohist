@@ -1,10 +1,12 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -71,7 +_,7 @@
+@@ -70,8 +_,8 @@
+    });
     private final PacketFlow f_129466_;
     private final Queue<Connection.PacketHolder> f_129467_ = Queues.newConcurrentLinkedQueue();
-    private Channel f_129468_;
+-   private Channel f_129468_;
 -   private SocketAddress f_129469_;
++   public Channel f_129468_;
 +   public SocketAddress f_129469_;
     private PacketListener f_129470_;
     private Component f_129471_;

@@ -38,6 +38,45 @@
     public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140047_(ChunkStatus p_140048_) {
        CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.f_140001_.get(p_140048_.m_62445_());
        return completablefuture == null ? f_139996_ : completablefuture;
+@@ -154,6 +_,8 @@
+       LevelChunk levelchunk = this.m_140085_();
+       if (levelchunk != null) {
+          int i = this.f_142983_.m_151564_(p_140057_.m_123342_());
++
++         if (i < 0 || i >= this.f_140011_.length) return; // CraftBukkit - SPIGOT-6086, SPIGOT-6296
+          if (this.f_140011_[i] == null) {
+             this.f_140010_ = true;
+             this.f_140011_[i] = new ShortOpenHashSet();
+@@ -353,6 +_,29 @@
+       boolean flag1 = this.f_140007_ <= ChunkMap.f_140127_;
+       ChunkHolder.FullChunkStatus chunkholder$fullchunkstatus = m_140083_(this.f_140006_);
+       ChunkHolder.FullChunkStatus chunkholder$fullchunkstatus1 = m_140083_(this.f_140007_);
++      // CraftBukkit start
++      // ChunkUnloadEvent: Called before the chunk is unloaded: isChunkLoaded is still true and chunk can still be modified by plugins.
++      if (chunkholder$fullchunkstatus.m_140114_(ChunkHolder.FullChunkStatus.BORDER) && !chunkholder$fullchunkstatus1.m_140114_(ChunkHolder.FullChunkStatus.BORDER)) {
++         this.m_140047_(ChunkStatus.f_62326_).thenAccept((either) -> {
++            LevelChunk chunk = (LevelChunk)either.left().orElse(null);
++            if (chunk != null) {
++               p_143004_.callbackExecutor.execute(() -> {
++                  // Minecraft will apply the chunks tick lists to the world once the chunk got loaded, and then store the tick
++                  // lists again inside the chunk once the chunk becomes inaccessible and set the chunk's needsSaving flag.
++                  // These actions may however happen deferred, so we manually set the needsSaving flag already here.
++                  chunk.m_8092_(true);
++                  chunk.unloadCallback();
++               });
++            }
++         }).exceptionally((throwable) -> {
++            // ensure exceptions are printed, by default this is not the case
++            return null;
++         });
++
++         // Run callback right away if the future was already done
++         p_143004_.callbackExecutor.run();
++      }
++      // CraftBukkit end
+       if (flag) {
+          Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = Either.right(new ChunkHolder.ChunkLoadingFailure() {
+             public String toString() {
 @@ -418,6 +_,25 @@
  
        this.f_140015_.m_6250_(this.f_140009_, this::m_140094_, this.f_140007_, this::m_140086_);
