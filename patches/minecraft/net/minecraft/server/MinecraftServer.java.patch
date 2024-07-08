@@ -229,7 +229,7 @@
 -            DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo);
 -            ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
 +            DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo, DimensionType.func_236031_a_(registrykey1, this.field_71310_m.getWorldDir().toFile()).getName());
-+            String name = (registrykey1 == World.field_234919_h_ ? "DIM1" : "DIM-1");
++            String name = (registrykey1 == World.field_234919_h_ ? "DIM-1" : "DIM1");
 +            if (registrykey1 == World.field_234919_h_) {
 +               if (!this.func_71255_r()) {
 +                  continue;
