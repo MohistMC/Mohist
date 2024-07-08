@@ -170,24 +170,23 @@
           }
  
        }
-@@ -946,7 +_,12 @@
+@@ -946,7 +_,7 @@
  
     private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
        return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
 -         return p_214907_.map(this::m_214947_);
-+         return p_214907_.map(new Function<CompoundTag, CompoundTag>() {
-+            @Override
-+            public CompoundTag apply(CompoundTag compoundTag) {
-+               return m_214947_(compoundTag);
-+            }
-+         });
++         return p_214907_.map((nbttagcompound) -> upgradeChunkTag(nbttagcompound, p_214964_)); // CraftBukkit
        }, Util.m_183991_());
     }
  
-@@ -954,12 +_,27 @@
+@@ -954,12 +_,31 @@
        return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
     }
  
++   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos chunkcoordintpair) {
++      return this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_(), chunkcoordintpair, f_140133_);
++   }
++
 +   // Mohist start - fix mixin
 +   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
 +   public boolean anyPlayerCloseEnoughForSpawning(ChunkPos pChunkPos, boolean reducedRange) {

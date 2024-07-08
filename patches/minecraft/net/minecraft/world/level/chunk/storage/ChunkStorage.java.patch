@@ -23,12 +23,10 @@
  import net.minecraft.world.level.levelgen.structure.LegacyStructureDataHandler;
  import net.minecraft.world.level.storage.DimensionDataStorage;
  
-@@ -33,6 +_,37 @@
- 
-    public boolean m_223451_(ChunkPos p_223452_, int p_223453_) {
+@@ -35,8 +_,64 @@
        return this.f_63495_.m_223471_(p_223452_, p_223453_);
-+   }
-+
+    }
+ 
 +   // CraftBukkit start
 +   private boolean check(ServerChunkCache cps, int x, int z) {
 +      ChunkPos pos = new ChunkPos(x, z);
@@ -58,6 +56,35 @@
 +      }
 +
 +      return false;
-    }
- 
++   }
++
++   // Mohist start
++   public ChunkPos pos;
++   @Nullable
++   LevelAccessor generatoraccess;
++
++   public CompoundTag upgradeChunkTag(ResourceKey<Level> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_, ChunkPos pos, @Nullable LevelAccessor generatoraccess) {
++      this.pos = pos;
++      this.generatoraccess = generatoraccess;
++      return m_188288_(p_188289_, p_188290_, p_188291_, p_188292_);
++   }
++   // Mohist end
++
     public CompoundTag m_188288_(ResourceKey<Level> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_) {
+       int i = m_63505_(p_188291_);
++
++      // CraftBukkit start
++      if (i < 1466 && pos != null) {
++         CompoundTag level = p_188291_.m_128469_("Level");
++         if (level.m_128471_("TerrainPopulated") && !level.m_128471_("LightPopulated")) {
++            ServerChunkCache cps = (generatoraccess == null) ? null : ((ServerLevel) generatoraccess).m_7726_();
++            if (check(cps, pos.f_45578_ - 1, pos.f_45579_) && check(cps, pos.f_45578_ - 1, pos.f_45579_ - 1) && check(cps, pos.f_45578_, pos.f_45579_ - 1)) {
++               level.m_128379_("LightPopulated", true);
++            }
++         }
++      }
++      // CraftBukkit end
++
+       if (i < 1493) {
+          p_188291_ = DataFixTypes.CHUNK.m_264226_(this.f_63496_, p_188291_, i, 1493);
+          if (p_188291_.m_128469_("Level").m_128471_("hasLegacyStructureData")) {

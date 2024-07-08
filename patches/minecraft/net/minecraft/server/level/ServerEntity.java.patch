@@ -68,6 +68,16 @@
           m_277180_(list, this.f_8523_).forEach((p_289307_) -> {
              if (p_289307_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.f_8906_.m_9774_(serverplayer1.m_20185_(), serverplayer1.m_20186_(), serverplayer1.m_20189_(), serverplayer1.m_146908_(), serverplayer1.m_146909_());
+@@ -96,7 +_,8 @@
+                Integer integer = MapItem.m_151131_(itemstack);
+                MapItemSavedData mapitemsaveddata = MapItem.m_151128_(integer, this.f_8509_);
+                if (mapitemsaveddata != null) {
+-                  for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
++                  for(ServerPlayerConnection serverPlayerConnection : this.trackedPlayers) {
++                     ServerPlayer serverplayer = serverPlayerConnection.m_142253_();
+                      mapitemsaveddata.m_77918_(serverplayer, itemstack);
+                      Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
+                      if (packet != null) {
 @@ -200,7 +_,27 @@
  
        ++this.f_8521_;
@@ -144,7 +154,7 @@
 +
 +      // CraftBukkit start - MC-109346: Fix for nonsensical head yaw
 +      if (this.f_8510_ instanceof ServerPlayer) {
-+         p_289563_.accept(new ClientboundRotateHeadPacket(this.f_8510_, (byte) Math.floor(this.f_8510_.m_6080_() * 256.0F / 360.0F)));
++         p_289563_.accept(new ClientboundRotateHeadPacket(this.f_8510_, (byte) Mth.m_14143_(this.f_8510_.m_6080_() * 256.0F / 360.0F)));
 +      }
 +      // CraftBukkit end
  
