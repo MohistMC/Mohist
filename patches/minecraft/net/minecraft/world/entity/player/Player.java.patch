@@ -61,15 +61,6 @@
     private static final Logger f_219722_ = LogUtils.getLogger();
     public static final int f_150082_ = 16;
     public static final int f_150083_ = 20;
-@@ -137,7 +_,7 @@
-    protected static final EntityDataAccessor<CompoundTag> f_36092_ = SynchedEntityData.m_135353_(Player.class, EntityDataSerializers.f_135042_);
-    private long f_36109_;
-    private final Inventory f_36093_ = new Inventory(this);
--   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer();
-+   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer(this); // CraftBukkit - add "this" to constructor
-    public final InventoryMenu f_36095_;
-    public AbstractContainerMenu f_36096_;
-    protected FoodData f_36097_ = new FoodData();
 @@ -157,7 +_,7 @@
     public int f_36078_;
     public int f_36079_;
@@ -99,11 +90,12 @@
  
     public Player(Level p_250508_, BlockPos p_250289_, float p_251702_, GameProfile p_252153_) {
        super(EntityType.f_20532_, p_250508_);
-@@ -177,6 +_,7 @@
+@@ -177,6 +_,8 @@
        this.f_36096_ = this.f_36095_;
        this.m_7678_((double)p_250289_.m_123341_() + 0.5D, (double)(p_250289_.m_123342_() + 1), (double)p_250289_.m_123343_() + 0.5D, p_251702_, 0.0F);
        this.f_20896_ = 180.0F;
 +      this.f_36097_.entityhuman = this;
++      this.f_36094_.setOwner(this);
     }
  
     public boolean m_36187_(Level p_36188_, BlockPos p_36189_, GameType p_36190_) {
