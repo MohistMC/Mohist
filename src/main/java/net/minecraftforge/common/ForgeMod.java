@@ -5,10 +5,12 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -181,6 +183,7 @@ public class ForgeMod
         {
             ModelLoaderRegistry.init();
         }
+        MohistMC.init();
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)

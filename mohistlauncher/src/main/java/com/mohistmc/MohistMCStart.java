@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 
 public class MohistMCStart {
 
-
     public static String MCVERSION;
     public static List<String> mainArgs = new ArrayList<>();
     public static com.mohistmc.i18n.i18n i18n;
@@ -66,7 +65,10 @@ public class MohistMCStart {
                     
                     %s - %s, Java(%s) %s
                     """;
-            System.out.println(test.formatted(i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
+            System.out.printf((test) + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
+            if (i18n.isCN()) {
+                System.out.printf("官方交流QQ群: 158638%n");
+            }
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
