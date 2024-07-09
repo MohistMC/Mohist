@@ -65,7 +65,7 @@ public class MohistMCStart {
                     ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
             );
             if (i18n.isCN()) {
-                System.out.printf("官方交流群 QQ: 158638%n");
+                System.out.printf("官方交流QQ群: 158638%n");
             }
         }
 
