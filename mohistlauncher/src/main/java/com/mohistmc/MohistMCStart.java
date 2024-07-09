@@ -64,6 +64,9 @@ public class MohistMCStart {
                     System.getProperty("java.class.version"),
                     ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
             );
+            if (i18n.isCN()) {
+                System.out.printf("官方交流群 QQ: 158638%n");
+            }
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
