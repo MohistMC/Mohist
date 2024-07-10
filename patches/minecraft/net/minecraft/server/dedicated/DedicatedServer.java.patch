@@ -190,7 +190,7 @@
 +         this.dediLanPinger = null;
 +      }
 +
-+      Runtime.getRuntime().halt(0);
++      System.exit(0);
     }
  
     public void m_5703_(BooleanSupplier p_139661_) {
