@@ -974,9 +974,49 @@
           }
  
           if (p_21194_ <= 0.0F) {
-@@ -1583,26 +_,219 @@
+@@ -1582,27 +_,242 @@
+    }
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
++      if (injectedHurt) {
++         canDamage.set(damageEntity0(p_21240_, p_21241_));
++      } else {
++         if (!this.m_6673_(p_21240_)) {
++            p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
++            if (p_21241_ <= 0) return;
++            p_21241_ = this.m_21161_(p_21240_, p_21241_);
++            p_21241_ = this.m_6515_(p_21240_, p_21241_);
++            float f1 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
++            this.m_7911_(this.m_6103_() - (p_21241_ - f1));
++            float f = p_21241_ - f1;
++            if (f > 0.0F && f < 3.4028235E37F) {
++               Entity entity = p_21240_.m_7639_();
++               if (entity instanceof ServerPlayer) {
++                  ServerPlayer serverplayer = (ServerPlayer) entity;
++                  serverplayer.m_36222_(Stats.f_12929_, Math.round(f * 10.0F));
++               }
++            }
++
++            f1 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, f1);
++            if (f1 != 0.0F) {
++               this.m_21231_().m_289194_(p_21240_, f1);
++               this.m_21153_(this.m_21223_() - f1);
++               this.m_7911_(this.m_6103_() - f1);
++               this.m_146850_(GameEvent.f_223706_);
++            }
++         }
++      }
++   }
++
++   protected boolean injectedHurt = true;
++   public AtomicBoolean canDamage = new AtomicBoolean(true);
++   public boolean canDamage() {
++      return canDamage.getAndSet(true);
++   }
++   // Mohist end
++
++   // CraftBukkit start
++   protected boolean damageEntity0(final DamageSource p_21240_, float p_21241_) { // void -> boolean, add final
        if (!this.m_6673_(p_21240_)) {
 -         p_21241_ = this.m_21161_(p_21240_, p_21241_);
 -         p_21241_ = this.m_6515_(p_21240_, p_21241_);
@@ -1001,8 +1041,7 @@
 +         p_21241_ = ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
 +         // If the damage is negative return true
 +         if (p_21241_ < 0) {
-+            this.canDamage.set(true);
-+            return;
++            return true;
 +         }
 +         final float originalDamage = p_21241_;
 +
@@ -1100,7 +1139,7 @@
 +         }
 +         if (event.isCancelled()) {
 +            this.canDamage.set(false);
-+            return;
++            return false;
 +         }
 +
 +         p_21241_ = (float) event.getFinalDamage();
@@ -1171,8 +1210,7 @@
 +               this.m_7911_(this.m_6103_() - p_21241_);
 +            }
 +            this.m_146852_(GameEvent.f_223706_, p_21240_.m_7639_());
-+            this.canDamage.set(true);
-+            return;
++            return true;
 +         } else {
 +            // Duplicate triggers if blocking
 +            if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
@@ -1186,29 +1224,14 @@
 +               if (p_21240_.m_7639_() instanceof ServerPlayer serverPlayer) {
 +                  CriteriaTriggers.f_10573_.m_60112_(serverPlayer, this, p_21240_, p_21241_, originalDamage, true);
 +               }
-+               this.canDamage.set(false);
-+               return;
++               return false ;
 +            } else {
-+               boolean flag = originalDamage > 0;
-+               this.canDamage.set(flag);
-+               return;
++                return originalDamage > 0;
 +            }
 +            // CraftBukkit end
           }
        }
-+      this.canDamage.set(false);
-+   }
-+
-+   public AtomicBoolean canDamage = new AtomicBoolean(true);
-+   public boolean canDamage() {
-+      return canDamage.getAndSet(true);
-+   }
-+   // Mohist end
-+
-+   // CraftBukkit start
-+   protected boolean damageEntity0(final DamageSource pDamageSource, float pDamageAmount) { // void -> boolean, add final
-+      this.m_6475_(pDamageSource, pDamageAmount);
-+      return canDamage();
++      return false;
     }
  
     public CombatTracker m_21231_() {
