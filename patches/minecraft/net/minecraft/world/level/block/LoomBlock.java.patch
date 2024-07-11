@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/LoomBlock.java
++++ b/net/minecraft/world/level/block/LoomBlock.java
+@@ -36,7 +_,7 @@
+ 
+    public MenuProvider m_7246_(BlockState p_54796_, Level p_54797_, BlockPos p_54798_) {
+       return new SimpleMenuProvider((p_54783_, p_54784_, p_54785_) -> {
+-         return new LoomMenu(p_54783_, p_54784_, ContainerLevelAccess.m_39289_(p_54797_, p_54798_));
++         return new LoomMenu(p_54783_, p_54784_, ContainerLevelAccess.createFix(p_54797_, p_54798_));
+       }, f_54774_);
+    }
+ 

@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mohistmc.MohistConfig;
+import com.mohistmc.MohistMC;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -92,8 +93,9 @@ public class LanguageHook
 
     public static void loadForgeAndMCLangs() {
         modTable = new HashMap<>(5000);
-        final InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/minecraft/lang/en_us.json");
-        final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
+        String lang = MohistConfig.mohist_lang().equalsIgnoreCase("zh_cn") ? "zh_cn" : "en_us";
+        final InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream(String.format(Locale.ROOT, "assets/minecraft/lang/%s.json", lang));
+        final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream(String.format(Locale.ROOT, "assets/forge/lang/%s.json", lang));
         loadLocaleData(mc);
         loadLocaleData(forge);
         capturedTables.forEach(t->t.putAll(modTable));

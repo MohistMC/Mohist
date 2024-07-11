@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CartographyTableBlock.java
++++ b/net/minecraft/world/level/block/CartographyTableBlock.java
+@@ -36,7 +_,7 @@
+    @Nullable
+    public MenuProvider m_7246_(BlockState p_51364_, Level p_51365_, BlockPos p_51366_) {
+       return new SimpleMenuProvider((p_51353_, p_51354_, p_51355_) -> {
+-         return new CartographyTableMenu(p_51353_, p_51354_, ContainerLevelAccess.m_39289_(p_51365_, p_51366_));
++         return new CartographyTableMenu(p_51353_, p_51354_, ContainerLevelAccess.createFix(p_51365_, p_51366_));
+       }, f_51346_);
+    }
+ }

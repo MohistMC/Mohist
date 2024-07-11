@@ -9,3 +9,12 @@
     }
  
     public boolean m_7923_(BlockState p_52997_) {
+@@ -91,7 +_,7 @@
+       if (blockentity instanceof EnchantmentTableBlockEntity) {
+          Component component = ((Nameable)blockentity).m_5446_();
+          return new SimpleMenuProvider((p_207906_, p_207907_, p_207908_) -> {
+-            return new EnchantmentMenu(p_207906_, p_207907_, ContainerLevelAccess.m_39289_(p_52994_, p_52995_));
++            return new EnchantmentMenu(p_207906_, p_207907_, ContainerLevelAccess.createFix(p_52994_, p_52995_));
+          }, component);
+       } else {
+          return null;

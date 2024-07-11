@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/SmithingTableBlock.java
++++ b/net/minecraft/world/level/block/SmithingTableBlock.java
+@@ -24,7 +_,7 @@
+ 
+    public MenuProvider m_7246_(BlockState p_56435_, Level p_56436_, BlockPos p_56437_) {
+       return new SimpleMenuProvider((p_277304_, p_277305_, p_277306_) -> {
+-         return new SmithingMenu(p_277304_, p_277305_, ContainerLevelAccess.m_39289_(p_56436_, p_56437_));
++         return new SmithingMenu(p_277304_, p_277305_, ContainerLevelAccess.createFix(p_56436_, p_56437_));
+       }, f_56417_);
+    }
+ 
