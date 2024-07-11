@@ -1,6 +1,7 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.util.I18n;
 import org.bukkit.Server;
 import org.bukkit.Warning;
 import org.bukkit.Warning.WarningState;
@@ -321,7 +322,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
 
         if (!plugin.isEnabled()) {
-            plugin.getLogger().info("Enabling " + plugin.getDescription().getFullName());
+            plugin.getLogger().info(I18n.as("minecraftserver.plugin.load.enabling",plugin.getDescription().getFullName()));
 
             JavaPlugin jPlugin = (JavaPlugin) plugin;
 
@@ -353,8 +354,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
 
         if (plugin.isEnabled()) {
-            String message = String.format("Disabling %s", plugin.getDescription().getFullName());
-            plugin.getLogger().info(message);
+            plugin.getLogger().info(I18n.as("minecraftserver.plugin.load.disabling",plugin.getDescription().getFullName()));
 
             server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
 
