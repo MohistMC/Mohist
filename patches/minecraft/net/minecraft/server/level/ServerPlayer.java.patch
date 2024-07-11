@@ -565,7 +565,7 @@
              serverlevel.m_46473_().m_6180_("placing");
              this.m_284127_(p_9180_);
 -            this.f_8906_.m_9774_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, portalinfo.f_77679_);
-+            this.f_8906_.teleport(exit);
++            this.f_8906_.teleport(exit); // CraftBukkit - use internal teleport without event
              this.f_8906_.m_9953_();
              p_9180_.m_8817_(this);
              serverlevel.m_46473_().m_7238_();
