@@ -28,6 +28,10 @@ public class ServerAPI {
     public static Map< EntityType, net.minecraft.world.entity.EntityType<?>> entityTypeMap0 = new ConcurrentHashMap<>();
     public static Map<Integer, EnderDragon.Phase> phasetypeMap = new ConcurrentHashMap<>();
 
+    public static boolean yes_steve_model() {
+        return modlists_All.contains("yes_steve_model");
+    };
+
     static {
         for (IModInfo modInfo : ModLoader.getModList().getMods()) {
             modlists_All.add(modInfo.getModId());
