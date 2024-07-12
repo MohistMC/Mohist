@@ -8,12 +8,7 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-@@ -23,10 +_,12 @@
- import java.io.FileOutputStream;
- import java.io.IOException;
- import java.nio.charset.StandardCharsets;
-+import java.util.ConcurrentModificationException;
- import java.util.Iterator;
+@@ -27,6 +_,7 @@
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
@@ -30,35 +25,6 @@
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
-@@ -114,10 +_,24 @@
-       }
- 
-       if (!this.f_140765_.isEmpty()) {
--         this.f_140765_.forEach((p_183908_) -> {
--            p_183908_.m_143003_(p_140806_, this.f_140770_);
--         });
--         this.f_140765_.clear();
-+         // CraftBukkit start
-+         // Iterate pending chunk updates with protection against concurrent modification exceptions
-+         java.util.Iterator<ChunkHolder> iter = this.f_140765_.iterator();
-+         int expectedSize = this.f_140765_.size();
-+         do {
-+            ChunkHolder playerchunk = iter.next();
-+            iter.remove();
-+            expectedSize--;
-+
-+            playerchunk.m_143003_(p_140806_, this.f_140770_);
-+
-+            // Reset iterator if set was modified using add()
-+            if (this.f_140765_.size() != expectedSize) {
-+               expectedSize = this.f_140765_.size();
-+               iter = this.f_140765_.iterator();
-+            }
-+         } while (iter.hasNext());
-+         // CraftBukkit end
-          return true;
-       } else {
-          if (!this.f_140769_.isEmpty()) {
 @@ -150,6 +_,9 @@
        }
     }
