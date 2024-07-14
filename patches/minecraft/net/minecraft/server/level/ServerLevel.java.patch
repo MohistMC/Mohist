@@ -146,10 +146,10 @@
 +      if (typeKey != null) {
 +         this.typeKey = typeKey;
 +      } else {
-+         var dimensions = p_214999_.m_206579_().m_175515_(Registry.f_122820_);
-+         var key = dimensions.m_7854_(p_215004_);
-+         if (key.isPresent()) {
-+            this.typeKey = key.get();
++         var dimensions = p_214999_.m_129910_().m_5961_().m_204655_();
++         var key = dimensions.m_7981_(p_215004_);
++         if (key != null) {
++            this.typeKey = ResourceKey.m_135785_(Registry.f_122820_, key);
 +         } else {
 +            this.typeKey = ResourceKey.m_135785_(Registry.f_122820_, f_46421_.m_135782_());
 +         }
