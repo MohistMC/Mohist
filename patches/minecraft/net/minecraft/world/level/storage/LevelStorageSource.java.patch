@@ -34,7 +34,7 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean m_230843_() {
           return this.f_230840_.isEmpty();
-@@ -327,7 +_,7 @@
+@@ -327,14 +_,24 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock f_78270_;
@@ -42,7 +42,24 @@
 +      public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
++      public ResourceKey<LevelStem> dimensionType;
  
+       public LevelStorageAccess(String p_78276_) throws IOException {
+          this.f_78272_ = p_78276_;
+          this.f_230867_ = new LevelStorageSource.LevelDirectory(LevelStorageSource.this.f_78194_.resolve(p_78276_));
+          this.f_78270_ = DirectoryLock.m_13640_(this.f_230867_.f_230850_());
++         this.dimensionType = null;
++      }
++
++      public LevelStorageAccess(String s, Path path, ResourceKey<LevelStem> dimensionType) throws IOException {
++         this.dimensionType = dimensionType;
++         // CraftBukkit end
++         this.f_78272_ = s;
++         this.f_230867_ = new LevelStorageSource.LevelDirectory(path);
++         this.f_78270_ = DirectoryLock.m_13640_(path);
+       }
+ 
+       public String m_78277_() {
 @@ -372,6 +_,19 @@
           return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_211737_(p_211748_, p_211749_, p_211750_));
        }
