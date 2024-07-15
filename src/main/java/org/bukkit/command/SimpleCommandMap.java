@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleCommandMap implements CommandMap {
-    protected final Map<String, Command> knownCommands = new HashMap<String, Command>();
+    public final Map<String, Command> knownCommands = new HashMap<String, Command>();
     private final Server server;
 
     public SimpleCommandMap(@NotNull final Server server) {

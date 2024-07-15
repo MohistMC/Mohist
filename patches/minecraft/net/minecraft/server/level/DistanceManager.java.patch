@@ -72,7 +72,7 @@
  
     void m_140818_(long p_140819_, Ticket<?> p_140820_) {
        SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(p_140819_);
-@@ -171,31 +_,72 @@
+@@ -171,31 +_,70 @@
        }
  
        this.f_140762_.m_140715_(p_140819_, m_140797_(sortedarrayset), false);
@@ -144,8 +144,6 @@
 +      return removed;
 +   }
 +   // CraftBukkit end
-+
-+
 +
     private SortedArraySet<Ticket<?>> m_140857_(long p_140858_) {
        return this.f_140761_.computeIfAbsent(p_140858_, (p_183923_) -> {

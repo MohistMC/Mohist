@@ -50,11 +50,11 @@ import java.util.regex.Pattern;
 public final class SimplePluginManager implements PluginManager {
     private final Server server;
     private final Map<Pattern, PluginLoader> fileAssociations = new HashMap<Pattern, PluginLoader>();
-    private final List<Plugin> plugins = new ArrayList<Plugin>();
-    private final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
+    public final List<Plugin> plugins = new ArrayList<Plugin>();
+    public final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
     private MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();
     private File updateDirectory;
-    private final SimpleCommandMap commandMap;
+    public final SimpleCommandMap commandMap;
     private final Map<String, Permission> permissions = new HashMap<String, Permission>();
     private final Map<Boolean, Set<Permission>> defaultPerms = new LinkedHashMap<Boolean, Set<Permission>>();
     private final Map<String, Map<Permissible, Boolean>> permSubs = new HashMap<String, Map<Permissible, Boolean>>();
@@ -889,6 +889,6 @@ public final class SimplePluginManager implements PluginManager {
      * @param use True if per event timing code should be used
      */
     public void useTimings(boolean use) {
-        useTimings = use;
+        useTimings = false;
     }
 }

@@ -136,13 +136,14 @@ public class WorldsCommands extends Command {
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
                 String worldName = args[1];
-                if (Bukkit.getWorld(worldName) == null) {
+                World world = Bukkit.getWorld(worldName);
+                if (world == null) {
                     return false;
                 }
-                for (Player all2 : Bukkit.getWorld(worldName).getPlayers()) {
+                for (Player all2 : world.getPlayers()) {
                     all2.teleport(Bukkit.getWorld("world").getSpawnLocation());
                 }
-                Bukkit.unloadWorld(Bukkit.getWorld(worldName), true);
+                Bukkit.unloadWorld(world, true);
                 ConfigByWorlds.removeWorld(worldName);
                 player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.worldUnload"));
             }
@@ -196,11 +197,11 @@ public class WorldsCommands extends Command {
                 for (Player target : Bukkit.getOnlinePlayers()) {
                     String name = target.getName();
                     String argsname = args[1];
-                    if (Bukkit.getPlayer(argsname) == null) {
+                    Player target1 = Bukkit.getPlayer(name);
+                    if (target1 == null) {
                         return false;
                     }
                     if (argsname.equals(name)) {
-                        Player target1 = Bukkit.getServer().getPlayer(argsname);
                         String worldName = args[2];
                         World world = Bukkit.getWorld(worldName);
                         if (world == null) {
