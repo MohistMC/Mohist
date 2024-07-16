@@ -22,7 +22,7 @@
  public interface Container extends Clearable {
      float DEFAULT_DISTANCE_BUFFER = 4.0F;
  
-@@ -91,4 +_,47 @@
+@@ -91,4 +_,40 @@
              return level.getBlockEntity(blockpos) != p_272877_ ? false : p_272670_.canInteractWithBlock(blockpos, (double)p_328395_);
          }
      }
@@ -58,13 +58,6 @@
 +        } else {
 +            return null;
 +        }
-+    }
-+
-+    default RecipeHolder<?> getCurrentRecipe() {
-+        return null;
-+    }
-+
-+    default void setCurrentRecipe(RecipeHolder<?> recipe) {
 +    }
 +
 +    int MAX_STACK = 99;

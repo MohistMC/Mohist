@@ -50,3 +50,17 @@
      }
  
      public DamageSource sonicBoom(Entity p_270401_) {
+@@ -255,7 +_,12 @@
+     }
+ 
+     public DamageSource badRespawnPointExplosion(Vec3 p_270175_) {
+-        return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), p_270175_);
++        return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), p_270175_).directBlockState(null);
++    }
++
++    public DamageSource badRespawnPointExplosion(Vec3 vec3d, org.bukkit.block.BlockState blockState) {
++        return new DamageSource(this.damageTypes.getHolderOrThrow(DamageTypes.BAD_RESPAWN_POINT), vec3d).directBlockState(blockState);
++        // CraftBukkit end
+     }
+ 
+     public DamageSource outOfBorder() {
