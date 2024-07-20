@@ -35,7 +35,7 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -68,23 +_,49 @@
+@@ -68,23 +_,50 @@
     private MinecraftServerGui f_139605_;
     @Nullable
     private final TextFilterClient f_139606_;
@@ -46,7 +46,8 @@
        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
        this.f_139604_ = p_214793_;
 -      this.f_139602_ = new RconConsoleSource(this);
-+      this.f_139602_ = new RconConsoleSource(this, new InetSocketAddress(this.f_139604_.m_139777_().f_139748_));
++      this.rconPort = p_214793_.m_139777_().f_139748_;
++      this.f_139602_ = new RconConsoleSource(this, new InetSocketAddress(rconPort));
        this.f_139606_ = TextFilterClient.m_143736_(p_214793_.m_139777_().f_139724_);
     }
  

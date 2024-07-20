@@ -63,7 +63,7 @@
     private PlayerList f_129763_;
     private volatile boolean f_129764_ = true;
     private boolean f_129765_;
-@@ -237,24 +_,42 @@
+@@ -237,24 +_,44 @@
     private final FrameTimer f_129735_ = new FrameTimer();
     private boolean f_129736_;
     private float f_129737_;
@@ -94,6 +94,8 @@
 +   private static final int SAMPLE_INTERVAL = 20; // Paper
 +   public final double[] recentTps = new double[ 4 ]; // Purpur
 +   // Spigot end
++
++   public int rconPort;
 +
     public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
