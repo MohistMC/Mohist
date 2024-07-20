@@ -152,10 +152,14 @@
              this.write(chunkpos, compoundtag);
              this.markPosition(chunkpos, chunkstatus.getChunkType());
              return true;
-@@ -955,11 +_,26 @@
+@@ -955,11 +_,30 @@
        return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
     }
  
++   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos chunkcoordintpair) {
++      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), chunkcoordintpair, level);
++   }
++
 +   // Mohist start - fix mixin
 +   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
 +   public boolean anyPlayerCloseEnoughForSpawning(ChunkPos pChunkPos, boolean reducedRange) {
