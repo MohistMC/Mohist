@@ -170,15 +170,6 @@
           }
  
        }
-@@ -946,7 +_,7 @@
- 
-    private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
-       return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
--         return p_214907_.map(this::m_214947_);
-+         return p_214907_.map((nbttagcompound) -> upgradeChunkTag(nbttagcompound, p_214964_)); // CraftBukkit
-       }, Util.m_183991_());
-    }
- 
 @@ -954,12 +_,31 @@
        return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
     }
@@ -247,6 +238,24 @@
           if (i != 0) {
              int j = entitytype.m_20682_();
              if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
+@@ -1178,7 +_,7 @@
+    protected void m_140421_() {
+       List<ServerPlayer> list = Lists.newArrayList();
+       List<ServerPlayer> list1 = this.f_140133_.m_6907_();
+-
++      try {
+       for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+          SectionPos sectionpos = chunkmap$trackedentity.f_140474_;
+          SectionPos sectionpos1 = SectionPos.m_235861_(chunkmap$trackedentity.f_140472_);
+@@ -1203,7 +_,7 @@
+             chunkmap$trackedentity1.m_140487_(list);
+          }
+       }
+-
++   } catch (Exception ignored) {}
+    }
+ 
+    public void m_140201_(Entity p_140202_, Packet<?> p_140203_) {
 @@ -1282,6 +_,7 @@
           }
        }

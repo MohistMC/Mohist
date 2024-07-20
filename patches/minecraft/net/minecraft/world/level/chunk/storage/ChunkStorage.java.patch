@@ -74,7 +74,7 @@
        int i = m_63505_(p_188291_);
 +
 +      // CraftBukkit start
-+      if (i < 1466 && pos != null) {
++      if (pos != null && i < 1466) {
 +         CompoundTag level = p_188291_.m_128469_("Level");
 +         if (level.m_128471_("TerrainPopulated") && !level.m_128471_("LightPopulated")) {
 +            ServerChunkCache cps = (generatoraccess == null) ? null : ((ServerLevel) generatoraccess).m_7726_();

@@ -1,12 +1,13 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -74,12 +_,15 @@
+@@ -74,12 +_,16 @@
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
  import org.apache.commons.lang3.mutable.MutableBoolean;
 +import org.bukkit.craftbukkit.v1_20_R1.generator.CraftLimitedRegion;
 +import org.bukkit.craftbukkit.v1_20_R1.util.RandomSourceWrapper;
 +import org.bukkit.generator.BlockPopulator;
++import org.spigotmc.AsyncCatcher;
  
  public abstract class ChunkGenerator {
     public static final Codec<ChunkGenerator> f_62136_ = BuiltInRegistries.f_256914_.m_194605_().dispatchStable(ChunkGenerator::m_6909_, Function.identity());
@@ -71,18 +72,20 @@
     }
  
     private static BoundingBox m_187717_(ChunkAccess p_187718_) {
-@@ -480,6 +_,14 @@
+@@ -480,6 +_,16 @@
        Predicate<Holder<Biome>> predicate = holderset::m_203333_;
        StructureStart structurestart = structure.m_226596_(p_223107_, this, this.f_62137_, p_223108_, p_223109_, p_223110_, p_223112_, i, p_223111_, predicate);
        if (structurestart.m_73603_()) {
-+         // CraftBukkit start
-+         BoundingBox box = structurestart.m_73601_();
-+         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.f_220460_.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructure.minecraftToBukkit(structure, p_223107_), new org.bukkit.util.BoundingBox(box.m_162395_(), box.m_162396_(), box.m_162398_(), box.m_162399_(), box.m_162400_(), box.m_162401_()), p_223112_.f_45578_, p_223112_.f_45579_);
-+         org.bukkit.Bukkit.getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            return true;
++         if (AsyncCatcher.catchAsync()) {
++            // CraftBukkit start
++            BoundingBox box = structurestart.m_73601_();
++            org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.f_220460_.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructure.minecraftToBukkit(structure, p_223107_), new org.bukkit.util.BoundingBox(box.m_162395_(), box.m_162396_(), box.m_162398_(), box.m_162399_(), box.m_162400_(), box.m_162401_()), p_223112_.f_45578_, p_223112_.f_45579_);
++            org.bukkit.Bukkit.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               return true;
++            }
++            // CraftBukkit end
 +         }
-+         // CraftBukkit end
           p_223106_.m_220516_(p_223113_, structure, structurestart, p_223111_);
           return true;
        } else {
