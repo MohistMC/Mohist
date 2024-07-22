@@ -974,7 +974,7 @@
           }
  
           if (p_21194_ <= 0.0F) {
-@@ -1582,27 +_,242 @@
+@@ -1582,27 +_,245 @@
     }
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
@@ -1210,6 +1210,7 @@
 +               this.m_7911_(this.m_6103_() - p_21241_);
 +            }
 +            this.m_146852_(GameEvent.f_223706_, p_21240_.m_7639_());
++            this.canDamage.set(true);
 +            return true;
 +         } else {
 +            // Duplicate triggers if blocking
@@ -1224,6 +1225,7 @@
 +               if (p_21240_.m_7639_() instanceof ServerPlayer serverPlayer) {
 +                  CriteriaTriggers.f_10573_.m_60112_(serverPlayer, this, p_21240_, p_21241_, originalDamage, true);
 +               }
++               this.canDamage.set(false);
 +               return false ;
 +            } else {
 +                return originalDamage > 0;
@@ -1231,6 +1233,7 @@
 +            // CraftBukkit end
           }
        }
++      this.canDamage.set(false);
 +      return false;
     }
  

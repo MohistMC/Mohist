@@ -1228,7 +1228,7 @@
 +      }
 +      // Spigot end
 +      // this.chatSpamTickCount += 20;
-+      if (this.f_9750_.addAndGet(20) > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
++      if (counted && this.f_9750_.addAndGet(20) > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
 +         // CraftBukkit end
           this.m_9942_(Component.m_237115_("disconnect.spam"));
        }
