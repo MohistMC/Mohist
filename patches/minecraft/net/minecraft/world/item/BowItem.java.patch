@@ -47,7 +47,7 @@
  
 -                  p_40668_.m_7967_(abstractarrow);
 +                  // CraftBukkit start
-+                  if (event.getProjectile() == p_40669_.getBukkitEntity()) {
++                  if (event.getProjectile() == abstractarrow.getBukkitEntity()) {
 +                     if (!p_40668_.m_7967_(abstractarrow)) {
 +                        if (player instanceof net.minecraft.server.level.ServerPlayer) {
 +                           ((net.minecraft.server.level.ServerPlayer) player).getBukkitEntity().updateInventory();
