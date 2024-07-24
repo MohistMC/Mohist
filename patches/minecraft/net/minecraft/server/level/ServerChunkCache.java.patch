@@ -163,21 +163,3 @@
     }
  
     final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
-@@ -535,12 +_,17 @@
-       }
- 
-       public boolean m_7245_() {
-+         try {
-          if (ServerChunkCache.this.m_8489_()) {
-             return true;
-          } else {
-             ServerChunkCache.this.f_8331_.m_9409_();
-             return super.m_7245_();
-          }
-+         } finally {
-+            f_8325_.callbackExecutor.run();
-+         }
-+         // CraftBukkit end
-       }
-    }
- }

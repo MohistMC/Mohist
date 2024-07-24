@@ -112,7 +112,7 @@ public class FMLConfig
             throw new RuntimeException("Failed to load FML config from " + configFile, e);
         }
         if (!configSpec.isCorrect(configData)) {
-            LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
+            LOGGER.debug(CORE, "Configuration file {} is not correct. Correcting", configFile);
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
                     LOGGER.debug(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
         }

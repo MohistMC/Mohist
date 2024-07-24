@@ -19,6 +19,9 @@ public class AutoDeleteMods {
             "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
             "me.wesley1808.servercore.common.ServerCore" /*ServerCore*/,
             "i18nupdatemod.I18nUpdateMod" /*I18nUpdateMod*/,
+            "net.irisshaders.iris.Iris" /*oculus*/,
+            "com.nakuring.enhanced_boss_bars.EnhancedBossBars" /*enhanced_boss_bars*/,
+            "me.flashyreese.mods.sodiumextra.EmbeddiumExtraMod" /*embeddium_extra*/,
             "optifine.Differ" /*OptiFine*/));
 
     public static void jar() throws Exception {
