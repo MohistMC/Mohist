@@ -249,8 +249,8 @@ public class MohistConfig {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
         check_update = getBoolean("mohist.check_update", true);
-        watchdog_spigot = getBoolean("mohist.watchdog_spigot", false);
-        watchdog_mohist = getBoolean("mohist.watchdog_mohist", true);
+        watchdog_spigot = getBoolean("mohist.watchdog_spigot", true);
+        watchdog_mohist = getBoolean("mohist.watchdog_mohist", false);
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
