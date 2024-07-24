@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -16,16 +_,21 @@
+@@ -16,17 +_,23 @@
  import java.util.Queue;
  import java.util.Set;
  import java.util.UUID;
@@ -20,8 +20,10 @@
 +import net.minecraft.world.level.chunk.storage.EntityStorage;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
  public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
+    static final Logger f_157490_ = LogUtils.getLogger();
 @@ -51,6 +_,16 @@
        this.f_157496_ = new LevelEntityGetterAdapter<>(this.f_157494_, this.f_157495_);
     }
@@ -139,7 +141,7 @@
     }
  
     private void m_157582_() {
-@@ -247,8 +_,13 @@
+@@ -247,8 +_,15 @@
        while((chunkentities = this.f_157500_.poll()) != null) {
           chunkentities.m_156792_().forEach((p_157593_) -> {
              this.m_157538_(p_157593_, true);
@@ -147,8 +149,10 @@
           });
           this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
 +         // CraftBukkit start - call entity load event
-+         List<Entity> entities = getEntities(chunkentities.m_156791_());
-+         CraftEventFactory.callEntitiesLoadEvent(((EntityStorage) f_157493_).f_156538_, chunkentities.m_156791_(), entities);
++         if (!AsyncCatcher.catchAsync()) {
++            List<Entity> entities = getEntities(chunkentities.m_156791_());
++            CraftEventFactory.callEntitiesLoadEvent(((EntityStorage) f_157493_).f_156538_, chunkentities.m_156791_(), entities);
++         }
 +         // CraftBukkit end
        }
  
