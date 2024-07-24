@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -6,6 +_,9 @@
+@@ -6,6 +_,10 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
 +import com.mohistmc.MohistConfig;
++import com.mohistmc.WatchMohist;
 +import com.mohistmc.forge.ForgeInjectBukkit;
 +import com.mohistmc.util.I18n;
  import com.mojang.authlib.GameProfile;
@@ -365,7 +366,7 @@
        if (p_129887_) {
           for(ServerLevel serverlevel1 : this.m_129785_()) {
              f_129750_.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)serverlevel1.m_7726_().f_8325_.m_182285_());
-@@ -537,12 +_,34 @@
+@@ -537,12 +_,35 @@
        this.m_7041_();
     }
  
@@ -392,6 +393,7 @@
        }
  
        f_129750_.info("Stopping server");
++      WatchMohist.stop();
 +      // CraftBukkit start
 +      if (this.server != null) {
 +         this.server.disablePlugins();
@@ -640,11 +642,12 @@
           f_129750_.debug("Autosave started");
           this.f_129754_.m_6180_("save");
           this.m_195514_(true, false, false);
-@@ -819,11 +_,23 @@
+@@ -819,11 +_,24 @@
        long k = Util.m_137569_();
        this.f_129735_.m_13755_(k - i);
        this.f_129754_.m_7238_();
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
++      WatchMohist.update();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +   }
 +

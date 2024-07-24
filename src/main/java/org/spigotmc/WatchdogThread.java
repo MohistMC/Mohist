@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import com.mohistmc.MohistConfig;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 
@@ -30,22 +31,23 @@ public class WatchdogThread extends Thread
         return System.nanoTime() / 1000000L;
     }
 
-    public static void doStart(int timeoutTime, boolean restart)
-    {
-        if ( instance == null )
-        {
-            instance = new WatchdogThread( timeoutTime * 1000L, restart );
-            instance.start();
-        } else
-        {
-            instance.timeoutTime = timeoutTime * 1000L;
-            instance.restart = restart;
+    public static void doStart(int timeoutTime, boolean restart) {
+        if (MohistConfig.watchdog_spigot) {
+            if (instance == null) {
+                instance = new WatchdogThread(timeoutTime * 1000L, restart);
+                instance.start();
+            } else {
+                instance.timeoutTime = timeoutTime * 1000L;
+                instance.restart = restart;
+            }
         }
     }
 
     public static void tick()
     {
-        instance.lastTick = monotonicMillis();
+        if (MohistConfig.watchdog_spigot) {
+            instance.lastTick = monotonicMillis();
+        }
     }
 
     public static void doStop()
