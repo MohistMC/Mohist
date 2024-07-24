@@ -22,6 +22,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -234,8 +235,12 @@ public class WorldsCommands extends Command {
             }
         }
 
-        if (args.length == 2 && args[0].equals("item")) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("item")) {
             list.add("info");
+        }
+
+        if (args.length >= 2 && args[0].equalsIgnoreCase("tp")) {
+            list.addAll(((CraftServer)Bukkit.getServer()).getWorldsByName().stream().toList());
         }
 
         return list;
