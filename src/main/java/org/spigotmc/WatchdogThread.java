@@ -32,14 +32,12 @@ public class WatchdogThread extends Thread
     }
 
     public static void doStart(int timeoutTime, boolean restart) {
-        if (MohistConfig.watchdog_spigot) {
-            if (instance == null) {
-                instance = new WatchdogThread(timeoutTime * 1000L, restart);
-                instance.start();
-            } else {
-                instance.timeoutTime = timeoutTime * 1000L;
-                instance.restart = restart;
-            }
+        if (instance == null) {
+            instance = new WatchdogThread(timeoutTime * 1000L, restart);
+            instance.start();
+        } else {
+            instance.timeoutTime = timeoutTime * 1000L;
+            instance.restart = restart;
         }
     }
 
