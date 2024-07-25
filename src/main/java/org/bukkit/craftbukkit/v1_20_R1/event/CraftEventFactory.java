@@ -1728,7 +1728,8 @@ public class CraftEventFactory {
     public static LootGenerateEvent callLootGenerateEvent(Container inventory, LootTable lootTable, LootContext lootInfo, List<ItemStack> loot, boolean plugin) {
         CraftWorld world = lootInfo.getLevel().getWorld();
         Entity entity = lootInfo.getParamOrNull(LootContextParams.THIS_ENTITY);
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(lootTable.getLootTableId()); // TODO Mohist use forge method
+        ResourceLocation resourceLocation = lootTable.getLootTableId();
+        NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation != null ? resourceLocation : lootTable.craftLootTable); // TODO Mohist use forge method
         CraftLootTable craftLootTable = new CraftLootTable(key, lootTable);
         List<org.bukkit.inventory.ItemStack> bukkitLoot = loot.stream().map(CraftItemStack::asCraftMirror).collect(Collectors.toCollection(ArrayList::new));
 
