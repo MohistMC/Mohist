@@ -269,7 +269,7 @@
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
 -         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
-+         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_, f_140475_); // CraftBukkit
++         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_).seenBy(f_140475_); // CraftBukkit
           this.f_140472_ = p_140478_;
           this.f_140473_ = p_140479_;
           this.f_140474_ = SectionPos.m_235861_(p_140478_);
