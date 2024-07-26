@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/game/ClientboundAddEntityPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundAddEntityPacket.java
+@@ -98,7 +_,7 @@
+         this.za = (int)(Mth.clamp(p_237555_.z, -3.9, 3.9) * 8000.0);
+     }
+ 
+-    private ClientboundAddEntityPacket(RegistryFriendlyByteBuf p_327810_) {
++    public ClientboundAddEntityPacket(RegistryFriendlyByteBuf p_327810_) {
+         this.id = p_327810_.readVarInt();
+         this.uuid = p_327810_.readUUID();
+         this.type = ByteBufCodecs.registry(Registries.ENTITY_TYPE).decode(p_327810_);

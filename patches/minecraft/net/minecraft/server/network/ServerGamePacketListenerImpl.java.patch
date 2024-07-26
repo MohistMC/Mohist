@@ -241,7 +241,7 @@
      public void handleEditBook(ServerboundEditBookPacket p_9862_) {
 +        // CraftBukkit start
 +        if (this.lastBookTick + 20 > MinecraftServer.currentTick) {
-+            this.disconnect("Book edited too quickly!");
++            this.disconnect(Component.literal("Book edited too quickly!"));
 +            return;
 +        }
 +        this.lastBookTick = MinecraftServer.currentTick;
@@ -441,30 +441,15 @@
                                  this.player.absMoveTo(d0, d1, d2, f, f1);
                                  boolean flag3 = this.player.isAutoSpinAttack();
                                  this.clientIsFloating = d7 >= -0.03125
-@@ -924,17 +_,18 @@
-                                     && !flag3
-                                     && this.noBlocksAround(this.player);
-                                 this.player.serverLevel().getChunkSource().move(this.player);
--                                Vec3 vec3 = new Vec3(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5);
--                                this.player.setOnGroundWithMovement(p_9874_.isOnGround(), vec3);
+@@ -927,7 +_,7 @@
+                                 Vec3 vec3 = new Vec3(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5);
+                                 this.player.setOnGroundWithMovement(p_9874_.isOnGround(), vec3);
                                  this.player
-                                     .doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
--                                this.player.setKnownMovement(vec3);
-+                                this.player
-+                                    .setOnGroundWithKnownMovement(
-+                                        p_9874_.isOnGround(), new Vec3(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5)
-+                                    );
+-                                    .doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
++                                        .doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
+                                 this.player.setKnownMovement(vec3);
                                  if (flag4) {
                                      this.player.resetFallDistance();
-                                 }
- 
--                                if (p_9874_.isOnGround() || this.player.hasLandedInLiquid() || this.player.onClimbable() || this.player.isSpectator() || flag || flag3) {
--                                    this.player.tryResetCurrentImpulseContext();
-+                                if (p_9874_.isOnGround() || this.player.isInLiquid() || this.player.onClimbable() || this.player.isSpectator() || flag || flag3) {
-+                                    this.player.resetCurrentImpulseContext();
-                                 }
- 
-                                 this.player.checkMovementStatistics(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5);
 @@ -942,7 +_,7 @@
                                  this.lastGoodY = this.player.getY();
                                  this.lastGoodZ = this.player.getZ();
@@ -638,7 +623,7 @@
 +                        this.dropCount++;
 +                        if (this.dropCount >= 20) {
 +                            LOGGER.warn(this.player.getScoreboardName() + " dropped their items too quickly!");
-+                            this.disconnect("You dropped your items too quickly (Hacking?)");
++                            this.disconnect(Component.literal("You dropped your items too quickly (Hacking?)"));
 +                            return;
 +                        }
 +                    }
@@ -758,13 +743,10 @@
                      return;
                  }
              }
-@@ -1155,18 +_,29 @@
-     }
+@@ -1156,6 +_,13 @@
  
      @Override
--    public void onDisconnect(DisconnectionDetails p_342442_) {
--        LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_342442_.reason().getString());
-+    public void onDisconnect(Component p_9825_) {
+     public void onDisconnect(DisconnectionDetails p_342442_) {
 +        // CraftBukkit start - Rarely it would send a disconnect line twice
 +        if (this.processedDisconnect) {
 +            return;
@@ -772,11 +754,10 @@
 +            this.processedDisconnect = true;
 +        }
 +        // CraftBukkit end
-+        LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_9825_.getString());
+         LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_342442_.reason().getString());
          this.removePlayerFromWorld();
--        super.onDisconnect(p_342442_);
-+        super.onDisconnect(p_9825_);
-     }
+         super.onDisconnect(p_342442_);
+@@ -1163,10 +_,14 @@
  
      private void removePlayerFromWorld() {
          this.chatMessageChain.close();
@@ -1065,7 +1046,7 @@
          final Entity entity = p_9866_.getTarget(serverlevel);
 +        // Spigot Start
 +        if (entity == player && !player.isSpectator()) {
-+            disconnect("Cannot interact with self!");
++            disconnect(Component.literal("Cannot interact with self!"));
 +            return;
 +        }
 +        // Spigot End
@@ -1098,7 +1079,7 @@
 +
 +                            // Entity in bucket - SPIGOT-4048 and SPIGOT-6859a
 +                            if ((entity instanceof Bucketable && entity instanceof LivingEntity && origItem != null && origItem.asItem() == Items.WATER_BUCKET) && (event.isCancelled() || player.getInventory().getSelected() == null || player.getInventory().getSelected().getItem() != origItem)) {
-+                                send(new ClientboundAddEntityPacket(entity));
++                                entity.getBukkitEntity().update(player);
 +                                player.containerMenu.sendAllDataToRemote();
 +                            }
 +

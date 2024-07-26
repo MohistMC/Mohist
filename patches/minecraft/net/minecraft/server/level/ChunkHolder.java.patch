@@ -27,7 +27,7 @@
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelHeightAccessor;
-@@ -24,19 +_,21 @@
+@@ -24,14 +_,16 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.chunk.ChunkAccess;
@@ -45,12 +45,6 @@
      private final LevelHeightAccessor levelHeightAccessor;
      private volatile CompletableFuture<ChunkResult<LevelChunk>> fullChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
      private volatile CompletableFuture<ChunkResult<LevelChunk>> tickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
-     private volatile CompletableFuture<ChunkResult<LevelChunk>> entityTickingChunkFuture = UNLOADED_LEVEL_CHUNK_FUTURE;
--    public int oldTicketLevel;
-+    private int oldTicketLevel;
-     private int ticketLevel;
-     private int queueLevel;
-     private boolean hasChangedSections;
 @@ -50,6 +_,7 @@
      private CompletableFuture<?> pendingFullStateConfirmation = CompletableFuture.completedFuture(null);
      private CompletableFuture<?> sendSync = CompletableFuture.completedFuture(null);
@@ -89,7 +83,7 @@
      public CompletableFuture<ChunkResult<LevelChunk>> getTickingChunkFuture() {
          return this.tickingChunkFuture;
      }
-@@ -254,48 +_,86 @@
+@@ -254,38 +_,76 @@
      }
  
      protected void updateFutures(ChunkMap p_143004_, Executor p_143005_) {
@@ -143,8 +137,7 @@
 +        if (!flag5 && flag6) {
              this.fullChunkFuture = p_143004_.prepareAccessibleChunk(this);
              this.scheduleFullChunkPromotion(p_143004_, this.fullChunkFuture, p_143005_, FullChunkStatus.FULL);
--            this.addSaveDependency(this.fullChunkFuture);
-+            this.updateChunkToSave(this.fullChunkFuture, "full");
+             this.addSaveDependency(this.fullChunkFuture);
          }
  
 -        if (flag && !flag1) {
@@ -161,8 +154,7 @@
 +        if (!flag7 && flag2) {
              this.tickingChunkFuture = p_143004_.prepareTickingChunk(this);
              this.scheduleFullChunkPromotion(p_143004_, this.tickingChunkFuture, p_143005_, FullChunkStatus.BLOCK_TICKING);
--            this.addSaveDependency(this.tickingChunkFuture);
-+            this.updateChunkToSave(this.tickingChunkFuture, "ticking");
+             this.addSaveDependency(this.tickingChunkFuture);
          }
  
 -        if (flag2 && !flag3) {
@@ -180,11 +172,8 @@
              if (this.entityTickingChunkFuture != UNLOADED_LEVEL_CHUNK_FUTURE) {
                  throw (IllegalStateException)Util.pauseInIde(new IllegalStateException());
              }
- 
-             this.entityTickingChunkFuture = p_143004_.prepareEntityTickingChunk(this);
-             this.scheduleFullChunkPromotion(p_143004_, this.entityTickingChunkFuture, p_143005_, FullChunkStatus.ENTITY_TICKING);
--            this.addSaveDependency(this.entityTickingChunkFuture);
-+            this.updateChunkToSave(this.entityTickingChunkFuture, "entity ticking");
+@@ -295,7 +_,7 @@
+             this.addSaveDependency(this.entityTickingChunkFuture);
          }
  
 -        if (flag4 && !flag5) {

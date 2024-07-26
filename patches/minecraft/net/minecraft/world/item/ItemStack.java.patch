@@ -17,15 +17,6 @@
      public static final Codec<Holder<Item>> ITEM_NON_AIR_CODEC = BuiltInRegistries.ITEM
          .holderByNameCodec()
          .validate(
-@@ -179,7 +_,7 @@
-     private int popTime;
-     @Deprecated
-     @Nullable
--    private Item item;
-+    private final Item item;
-     final PatchedDataComponentMap components;
-     @Nullable
-     private Entity entityRepresentation;
 @@ -347,13 +_,22 @@
      }
  
@@ -87,6 +78,20 @@
              return list;
          }
      }
+@@ -940,6 +_,13 @@
+         EnchantmentHelper.forEachModifier(this, p_331036_, p_334430_);
+     }
+ 
++    // CraftBukkit start
++    @Deprecated
++    public void setItem(Item item) {
++        this.item = item;
++    }
++    // CraftBukkit end
++
+     public Component getDisplayName() {
+         MutableComponent mutablecomponent = Component.empty().append(this.getHoverName());
+         if (this.has(DataComponents.CUSTOM_NAME)) {
 @@ -1011,6 +_,7 @@
          this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
      }

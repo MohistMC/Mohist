@@ -1,19 +1,32 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1,10 +_,13 @@
+@@ -1,16 +_,26 @@
  package net.minecraft.world.level;
  
  import com.google.common.collect.Lists;
 +import com.mohistmc.mohist.forge.ForgeInjectBukkit;
++import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Codec;
++import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
  import java.io.IOException;
++import java.util.ArrayList;
++import java.util.Collection;
++import java.util.EnumSet;
 +import java.util.HashMap;
  import java.util.Iterator;
++import java.util.LinkedHashMap;
  import java.util.List;
 +import java.util.Map;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
++import net.minecraft.ReportType;
+ import net.minecraft.ReportedException;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
 @@ -21,7 +_,13 @@
  import net.minecraft.core.particles.ParticleTypes;
  import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +41,15 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
-@@ -41,6 +_,7 @@
+@@ -30,6 +_,7 @@
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.util.AbortableIterationConsumer;
++import net.minecraft.util.AbortableIterationConsumer.Continuation;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.StringRepresentable;
+@@ -41,12 +_,17 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -36,7 +57,17 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.alchemy.PotionBrewing;
-@@ -54,11 +_,13 @@
+ import net.minecraft.world.item.component.FireworkExplosion;
+ import net.minecraft.world.item.crafting.RecipeManager;
++import net.minecraft.world.level.Explosion.BlockInteraction;
++import net.minecraft.world.level.GameRules.BooleanValue;
++import net.minecraft.world.level.GameRules.Key;
+ import net.minecraft.world.level.biome.Biome;
++import net.minecraft.world.level.biome.Biome.Precipitation;
+ import net.minecraft.world.level.biome.BiomeManager;
+ import net.minecraft.world.level.block.BaseFireBlock;
+ import net.minecraft.world.level.block.Block;
+@@ -54,15 +_,20 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.TickingBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
@@ -44,17 +75,31 @@
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.chunk.ChunkAccess;
  import net.minecraft.world.level.chunk.LevelChunk;
++import net.minecraft.world.level.chunk.LevelChunk.EntityCreationType;
  import net.minecraft.world.level.chunk.status.ChunkStatus;
  import net.minecraft.world.level.dimension.DimensionType;
 +import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -75,8 +_,17 @@
++import net.minecraft.world.level.gameevent.GameEvent.Context;
+ import net.minecraft.world.level.levelgen.Heightmap;
++import net.minecraft.world.level.levelgen.Heightmap.Types;
+ import net.minecraft.world.level.lighting.LevelLightEngine;
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.level.material.Fluids;
+@@ -75,8 +_,27 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
++import net.minecraftforge.common.ForgeConfig;
++import net.minecraftforge.common.capabilities.CapabilityProvider;
++import net.minecraftforge.common.extensions.IForgeLevel;
++import net.minecraftforge.common.util.BlockSnapshot;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.server.timings.TimeTracker;
 +import org.bukkit.Bukkit;
++import org.bukkit.World.Environment;
 +import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.craftbukkit.CraftWorld;
 +import org.bukkit.craftbukkit.block.CapturedBlockState;
@@ -63,9 +108,12 @@
 +import org.bukkit.craftbukkit.util.CraftSpawnCategory;
 +import org.bukkit.entity.SpawnCategory;
 +import org.bukkit.event.block.BlockPhysicsEvent;
++import org.bukkit.generator.BiomeProvider;
++import org.bukkit.generator.ChunkGenerator;
++import org.spigotmc.SpigotWorldConfig;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
-+public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
++public abstract class Level extends CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, IForgeLevel {
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("the_nether"));
@@ -98,27 +146,27 @@
 -    ) {
 +    public boolean restoringBlockSnapshots = false;
 +    public boolean captureBlockSnapshots = false;
-+    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
-+    private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
-+    private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
++    public ArrayList<BlockSnapshot> capturedBlockSnapshots = new ArrayList<>();
++    private final ArrayList<BlockEntity> freshBlockEntities = new ArrayList<>();
++    private final ArrayList<BlockEntity> pendingFreshBlockEntities = new ArrayList<>();
 +
 +    // CraftBukkit start Added the following
 +    public CraftWorld world;
 +    public boolean pvpMode;
 +    public boolean keepSpawnInMemory = true;
-+    public static org.bukkit.generator.ChunkGenerator generator;
-+    public static org.bukkit.World.Environment environment;
-+    public static org.bukkit.generator.BiomeProvider biomeProvider;
++    public static ChunkGenerator generator;
++    public static Environment environment;
++    public static BiomeProvider biomeProvider;
 +
 +    public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +    public boolean captureBlockStates = false;
 +    public boolean captureTreeGeneration = false;
-+    public Map<BlockPos, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
++    public Map<BlockPos, CapturedBlockState> capturedBlockStates = new LinkedHashMap<>();
 +    public Map<BlockPos, BlockEntity> capturedTileEntities = new HashMap<>();
 +    public List<ItemEntity> captureDrops;
-+    public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
++    public final Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new Object2LongOpenHashMap<>();
 +    public boolean populating;
-+    public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++    public SpigotWorldConfig spigotConfig; // Spigot
 +    public static BlockPos lastPhysicsProblem; // Spigot
 +
 +    public CraftWorld getWorld() {
@@ -133,7 +181,7 @@
 +        return Registries.levelToLevelStem(dimension);
 +    }
 +
-+    public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
++    public static void craftWorldData(ChunkGenerator gen, Environment env, BiomeProvider bp) {
 +        generator = gen;
 +        environment = env;
 +        biomeProvider = bp;
@@ -262,9 +310,9 @@
 +            // CraftBukkit end
 +
 +            p_46605_ = p_46605_.immutable(); // Forge - prevent mutable BlockPos leaks
-+            net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
++            BlockSnapshot blockSnapshot = null;
 +            if (this.captureBlockSnapshots && !this.isClientSide) {
-+                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.dimension, this, p_46605_, p_46607_);
++                blockSnapshot = BlockSnapshot.create(this.dimension, this, p_46605_, p_46607_);
 +                this.capturedBlockSnapshots.add(blockSnapshot);
 +            }
 +
@@ -314,14 +362,32 @@
              }
          }
      }
+@@ -281,7 +_,7 @@
+ 
+             boolean flag = this.setBlock(p_46626_, fluidstate.createLegacyBlock(), 3, p_46629_);
+             if (flag) {
+-                this.gameEvent(GameEvent.BLOCK_DESTROY, p_46626_, GameEvent.Context.of(p_46628_, blockstate));
++                this.gameEvent(GameEvent.BLOCK_DESTROY, p_46626_, Context.of(p_46628_, blockstate));
+             }
+ 
+             return flag;
 @@ -301,6 +_,7 @@
      }
  
      public void updateNeighborsAt(BlockPos p_46673_, Block p_46674_) {
-+        net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_46673_, this.getBlockState(p_46673_), java.util.EnumSet.allOf(Direction.class), false).isCanceled();
++        ForgeEventFactory.onNeighborNotify(this, p_46673_, this.getBlockState(p_46673_), EnumSet.allOf(Direction.class), false).isCanceled();
      }
  
      public void updateNeighborsAtExceptFromFacing(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
+@@ -318,7 +_,7 @@
+     }
+ 
+     @Override
+-    public int getHeight(Heightmap.Types p_46571_, int p_46572_, int p_46573_) {
++    public int getHeight(Types p_46571_, int p_46572_, int p_46573_) {
+         int i;
+         if (p_46572_ >= -30000000 && p_46573_ >= -30000000 && p_46572_ < 30000000 && p_46573_ < 30000000) {
+             if (this.hasChunk(SectionPos.blockToSectionCoord(p_46572_), SectionPos.blockToSectionCoord(p_46573_))) {
 @@ -340,6 +_,14 @@
  
      @Override
@@ -341,7 +407,7 @@
          (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
      }
  
-+    public void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {
++    public void addFreshBlockEntities(Collection<BlockEntity> beList) {
 +        if (this.tickingBlockEntities) {
 +            this.pendingFreshBlockEntities.addAll(beList);
 +        } else {
@@ -377,42 +443,112 @@
  
      public <T extends Entity> void guardEntityTick(Consumer<T> p_46654_, T p_46655_) {
          try {
-+            net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
++            TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
              p_46654_.accept(p_46655_);
          } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking entity");
              CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being ticked");
              p_46655_.fillCrashReportCategory(crashreportcategory);
-+            if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
-+                com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.getFriendlyReport(net.minecraft.ReportType.CRASH));
++            if (ForgeConfig.SERVER.removeErroringEntities.get()) {
++                LogUtils.getLogger().error("{}", crashreport.getFriendlyReport(ReportType.CRASH));
 +                p_46655_.discard();
 +            } else
              throw new ReportedException(crashreport);
 +        } finally {
-+            net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
++            TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
          }
      }
  
-@@ -669,7 +_,7 @@
-         Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
-             case NONE -> Explosion.BlockInteraction.KEEP;
+@@ -537,7 +_,7 @@
+     }
+ 
+     public Explosion explode(
+-        @Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_
++        @Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, ExplosionInteraction p_256178_
+     ) {
+         return this.explode(
+             p_256599_,
+@@ -562,7 +_,7 @@
+         double p_256538_,
+         float p_255674_,
+         boolean p_256634_,
+-        Level.ExplosionInteraction p_256111_
++        ExplosionInteraction p_256111_
+     ) {
+         return this.explode(
+             p_255682_,
+@@ -587,7 +_,7 @@
+         Vec3 p_256001_,
+         float p_255963_,
+         boolean p_256099_,
+-        Level.ExplosionInteraction p_256371_
++        ExplosionInteraction p_256371_
+     ) {
+         return this.explode(
+             p_255653_,
+@@ -614,7 +_,7 @@
+         double p_255746_,
+         float p_256647_,
+         boolean p_256098_,
+-        Level.ExplosionInteraction p_256104_
++        ExplosionInteraction p_256104_
+     ) {
+         return this.explode(
+             p_256145_,
+@@ -641,7 +_,7 @@
+         double p_255717_,
+         float p_256013_,
+         boolean p_256228_,
+-        Level.ExplosionInteraction p_255784_,
++        ExplosionInteraction p_255784_,
+         ParticleOptions p_312617_,
+         ParticleOptions p_309714_,
+         Holder<SoundEvent> p_328054_
+@@ -660,18 +_,19 @@
+         double p_310505_,
+         float p_310209_,
+         boolean p_309445_,
+-        Level.ExplosionInteraction p_310628_,
++        ExplosionInteraction p_310628_,
+         boolean p_309655_,
+         ParticleOptions p_311889_,
+         ParticleOptions p_311434_,
+         Holder<SoundEvent> p_328498_
+     ) {
+-        Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
+-            case NONE -> Explosion.BlockInteraction.KEEP;
++        BlockInteraction explosion$blockinteraction = switch (p_310628_) {
++            case NONE -> BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
 -            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
-+            case MOB -> net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
++            case MOB -> ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
-             case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
+-            case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
++            case TRIGGER -> BlockInteraction.TRIGGER_BLOCK;
++            case STANDARD -> null;
          };
-@@ -688,6 +_,9 @@
+         Explosion explosion = new Explosion(
+             this,
+@@ -688,13 +_,16 @@
              p_311434_,
              p_328498_
          );
-+        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) {
++        if (ForgeEventFactory.onExplosionStart(this, explosion)) {
 +            return explosion;
 +        }
          explosion.explode();
          explosion.finalizeExplosion(p_309655_);
          return explosion;
-@@ -702,6 +_,16 @@
+     }
+ 
+-    private Explosion.BlockInteraction getDestroyType(GameRules.Key<GameRules.BooleanValue> p_256250_) {
+-        return this.getGameRules().getBoolean(p_256250_) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
++    private BlockInteraction getDestroyType(Key<BooleanValue> p_256250_) {
++        return this.getGameRules().getBoolean(p_256250_) ? BlockInteraction.DESTROY_WITH_DECAY : BlockInteraction.DESTROY;
+     }
+ 
+     public abstract String gatherChunkSourceStats();
+@@ -702,18 +_,34 @@
      @Nullable
      @Override
      public BlockEntity getBlockEntity(BlockPos p_46716_) {
@@ -429,7 +565,13 @@
          if (this.isOutsideBuildHeight(p_46716_)) {
              return null;
          } else {
-@@ -714,6 +_,12 @@
+             return !this.isClientSide && Thread.currentThread() != this.thread
+                 ? null
+-                : this.getChunkAt(p_46716_).getBlockEntity(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
++                : this.getChunkAt(p_46716_).getBlockEntity(p_46716_, EntityCreationType.IMMEDIATE);
+         }
+     }
+ 
      public void setBlockEntity(BlockEntity p_151524_) {
          BlockPos blockpos = p_151524_.getBlockPos();
          if (!this.isOutsideBuildHeight(blockpos)) {
@@ -450,6 +592,15 @@
      }
  
      public boolean isLoaded(BlockPos p_46750_) {
+@@ -759,7 +_,7 @@
+     public BlockPos getSharedSpawnPos() {
+         BlockPos blockpos = this.levelData.getSpawnPos();
+         if (!this.getWorldBorder().isWithinBounds(blockpos)) {
+-            blockpos = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, BlockPos.containing(this.getWorldBorder().getCenterX(), 0.0, this.getWorldBorder().getCenterZ()));
++            blockpos = this.getHeightmapPos(Types.MOTION_BLOCKING, BlockPos.containing(this.getWorldBorder().getCenterX(), 0.0, this.getWorldBorder().getCenterZ()));
+         }
+ 
+         return blockpos;
 @@ -798,8 +_,8 @@
                  list.add(p_151522_);
              }
@@ -461,7 +612,12 @@
                      if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
                          list.add(enderdragonpart);
                      }
-@@ -832,8 +_,8 @@
+@@ -828,23 +_,23 @@
+             if (p_261688_.test(p_261454_)) {
+                 p_262071_.add(p_261454_);
+                 if (p_262071_.size() >= p_261858_) {
+-                    return AbortableIterationConsumer.Continuation.ABORT;
++                    return Continuation.ABORT;
                  }
              }
  
@@ -472,6 +628,33 @@
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
+                         if (p_262071_.size() >= p_261858_) {
+-                            return AbortableIterationConsumer.Continuation.ABORT;
++                            return Continuation.ABORT;
+                         }
+                     }
+                 }
+             }
+ 
+-            return AbortableIterationConsumer.Continuation.CONTINUE;
++            return Continuation.CONTINUE;
+         });
+     }
+ 
+@@ -931,11 +_,11 @@
+             return false;
+         } else if (!this.canSeeSky(p_46759_)) {
+             return false;
+-        } else if (this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, p_46759_).getY() > p_46759_.getY()) {
++        } else if (this.getHeightmapPos(Types.MOTION_BLOCKING, p_46759_).getY() > p_46759_.getY()) {
+             return false;
+         } else {
+             Biome biome = this.getBiome(p_46759_).value();
+-            return biome.getPrecipitationAt(p_46759_) == Biome.Precipitation.RAIN;
++            return biome.getPrecipitationAt(p_46759_) == Precipitation.RAIN;
+         }
+     }
+ 
 @@ -972,16 +_,15 @@
      public abstract Scoreboard getScoreboard();
  
@@ -502,7 +685,7 @@
  
      @Override
      public long nextSubTickCount() {
-@@ -1093,6 +_,20 @@
+@@ -1093,14 +_,29 @@
  
      public abstract PotionBrewing potionBrewing();
  
@@ -523,6 +706,17 @@
      public static enum ExplosionInteraction implements StringRepresentable {
          NONE("none"),
          BLOCK("block"),
+         MOB("mob"),
+         TNT("tnt"),
+-        TRIGGER("trigger");
++        TRIGGER("trigger"),
++        STANDARD("standard"); // CraftBukkit - Add STANDARD which will always use Explosion.Effect.DESTROY
+ 
+-        public static final Codec<Level.ExplosionInteraction> CODEC = StringRepresentable.fromEnum(Level.ExplosionInteraction::values);
++        public static final Codec<ExplosionInteraction> CODEC = StringRepresentable.fromEnum(ExplosionInteraction::values);
+         private final String id;
+ 
+         private ExplosionInteraction(String p_344888_) {
 @@ -1112,4 +_,54 @@
              return this.id;
          }

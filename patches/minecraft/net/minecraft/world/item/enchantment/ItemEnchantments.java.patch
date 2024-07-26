@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/item/enchantment/ItemEnchantments.java
 +++ b/net/minecraft/world/item/enchantment/ItemEnchantments.java
+@@ -49,7 +_,7 @@
+         ItemEnchantments::new
+     );
+     final Object2IntOpenHashMap<Holder<Enchantment>> enchantments;
+-    final boolean showInTooltip;
++    public final boolean showInTooltip;
+ 
+     ItemEnchantments(Object2IntOpenHashMap<Holder<Enchantment>> p_329796_, boolean p_331323_) {
+         this.enchantments = p_329796_;
 @@ -144,7 +_,7 @@
  
      public static class Mutable {

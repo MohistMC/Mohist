@@ -281,8 +281,8 @@ public class ForgeInjectBukkit {
     public static void addEnumArt() {
         int i = Art.values().length;
         for (var entry : ForgeRegistries.PAINTING_VARIANTS) {
-            int width = entry.getWidth();
-            int height = entry.getHeight();
+            int width = entry.width();
+            int height = entry.height();
             ResourceLocation resourceLocation = ForgeRegistries.PAINTING_VARIANTS.getKey(entry);
             if (isMods(resourceLocation)) {
                 int id = i - 1;

@@ -10,15 +10,11 @@
  public class SmallFireball extends Fireball {
      public SmallFireball(EntityType<? extends SmallFireball> p_37364_, Level p_37365_) {
          super(p_37364_, p_37365_);
-@@ -25,23 +_,33 @@
-         super(EntityType.SMALL_FIREBALL, p_342424_, p_344527_, p_37367_);
-     }
+@@ -27,7 +_,10 @@
  
--    public SmallFireball(Level p_37375_, double p_37377_, double p_37378_, double p_37379_, Vec3 p_343728_) {
--        super(EntityType.SMALL_FIREBALL, p_37377_, p_37378_, p_37379_, p_343728_, p_37375_);
+     public SmallFireball(Level p_37375_, double p_37377_, double p_37378_, double p_37379_, Vec3 p_343728_) {
+         super(EntityType.SMALL_FIREBALL, p_37377_, p_37378_, p_37379_, p_343728_, p_37375_);
 -    }
-+    public SmallFireball(Level p_37367_, double p_37368_, double p_37369_, double p_37370_, double p_37371_, double p_37372_, double p_37373_) {
-+        super(EntityType.SMALL_FIREBALL, p_37368_, p_37369_, p_37370_, p_37371_, p_37372_, p_37373_, p_37367_);
 +        // CraftBukkit start
 +        isIncendiary = !(this.getOwner() instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner()); // Mohist
 +        // CraftBukkit end
@@ -26,37 +22,23 @@
  
      @Override
      protected void onHitEntity(EntityHitResult p_37386_) {
-         super.onHitEntity(p_37386_);
--        if (this.level() instanceof ServerLevel serverlevel) {
--            Entity entity1 = p_37386_.getEntity();
--            Entity $$4 = this.getOwner();
--            int $$5 = entity1.getRemainingFireTicks();
+@@ -36,7 +_,15 @@
+             Entity entity1 = p_37386_.getEntity();
+             Entity $$4 = this.getOwner();
+             int $$5 = entity1.getRemainingFireTicks();
 -            entity1.igniteForSeconds(5.0F);
--            DamageSource $$6 = this.damageSources().fireball(this, $$4);
--            if (!entity1.hurt($$6, 5.0F)) {
--                entity1.setRemainingFireTicks($$5);
--            } else {
--                EnchantmentHelper.doPostAttackEffects(serverlevel, entity1, $$6);
-+        if (!this.level().isClientSide) {
-+            Entity entity = p_37386_.getEntity();
-+            Entity entity1 = this.getOwner();
-+            int i = entity.getRemainingFireTicks();
 +
 +            // CraftBukkit start - Entity damage by entity event + combust event
-+            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
-+            entity.level().getCraftServer().getPluginManager().callEvent(event);
++            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity1.getBukkitEntity(), 5);
++            entity1.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
-+                entity.igniteForSeconds(event.getDuration(), false);
++                entity1.igniteForSeconds(event.getDuration(), false);
 +            }
 +            // CraftBukkit end
-+            if (!entity.hurt(this.damageSources().fireball(this, entity1), 5.0F)) {
-+                entity.setRemainingFireTicks(i);
-+            } else if (entity1 instanceof LivingEntity) {
-+                this.doEnchantDamageEffects((LivingEntity) entity1, entity);
-             }
-         }
-     }
+             DamageSource $$6 = this.damageSources().fireball(this, $$4);
+             if (!entity1.hurt($$6, 5.0F)) {
+                 entity1.setRemainingFireTicks($$5);
 @@ -51,9 +_,9 @@
          super.onHitBlock(p_37384_);
          if (!this.level().isClientSide) {

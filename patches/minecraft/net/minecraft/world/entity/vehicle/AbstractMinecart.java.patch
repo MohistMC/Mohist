@@ -56,7 +56,7 @@
  
      protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
          super(p_38087_, p_38088_);
-@@ -139,11 +_,11 @@
+@@ -139,7 +_,7 @@
  
      @Override
      public boolean isPushable() {
@@ -65,11 +65,6 @@
      }
  
      @Override
--    public Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
-+    protected Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
-         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(super.getRelativePortalPosition(p_38132_, p_38133_));
-     }
- 
 @@ -207,7 +_,55 @@
          }
      }

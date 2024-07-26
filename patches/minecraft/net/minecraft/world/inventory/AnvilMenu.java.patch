@@ -115,36 +115,6 @@
                          return;
                      }
  
-@@ -172,17 +_,17 @@
- 
-                     for (Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
-                         Holder<Enchantment> holder = entry.getKey();
--                        int i2 = itemenchantments$mutable.getLevel(holder);
-+                        Enchantment enchantment = holder.value();
-+                        int i2 = itemenchantments$mutable.getLevel(enchantment);
-                         int j2 = entry.getIntValue();
-                         j2 = i2 == j2 ? j2 + 1 : Math.max(j2, i2);
--                        Enchantment enchantment = holder.value();
-                         boolean flag1 = enchantment.canEnchant(itemstack);
-                         if (this.player.getAbilities().instabuild || itemstack.is(Items.ENCHANTED_BOOK)) {
-                             flag1 = true;
-                         }
- 
-                         for (Holder<Enchantment> holder1 : itemenchantments$mutable.keySet()) {
--                            if (!holder1.equals(holder) && !Enchantment.areCompatible(holder, holder1)) {
-+                            if (!holder1.equals(holder) && !enchantment.isCompatibleWith(holder1.value())) {
-                                 flag1 = false;
-                                 i++;
-                             }
-@@ -196,7 +_,7 @@
-                                 j2 = enchantment.getMaxLevel();
-                             }
- 
--                            itemenchantments$mutable.set(holder, j2);
-+                            itemenchantments$mutable.set(enchantment, j2);
-                             int l3 = enchantment.getAnvilCost();
-                             if (flag) {
-                                 l3 = Math.max(1, l3 / 2);
 @@ -210,8 +_,8 @@
                      }
  

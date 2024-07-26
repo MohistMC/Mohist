@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -2,16 +_,91 @@
+@@ -2,16 +_,81 @@
  
  import java.util.List;
  import net.minecraft.core.NonNullList;
@@ -71,16 +71,6 @@
 +    @Override
 +    public Location getLocation() {
 +        return this.menu instanceof CraftingMenu ? ((CraftingMenu) this.menu).access.getLocation() : this.owner.getBukkitEntity().getLocation();
-+    }
-+
-+    @Override
-+    public RecipeHolder<?> getCurrentRecipe() {
-+        return this.currentRecipe;
-+    }
-+
-+    @Override
-+    public void setCurrentRecipe(RecipeHolder<?> currentRecipe) {
-+        this.currentRecipe = currentRecipe;
 +    }
 +
 +    public TransientCraftingContainer(AbstractContainerMenu container, int i, int j, Player player) {

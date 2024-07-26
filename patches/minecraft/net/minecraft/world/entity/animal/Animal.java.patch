@@ -83,7 +83,7 @@
 +        this.finalizeSpawnChildFromBreeding(p_277963_, p_277357_, p_277516_, this.getRandom().nextInt(7) + 1);
 +    }
 +    
-+	public void finalizeSpawnChildFromBreeding(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_) {
++	public void finalizeSpawnChildFromBreeding(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_, int experience) {
 + 		Optional.ofNullable(this.getLoveCause()).or(() -> Optional.ofNullable(p_277357_.getLoveCause())).ifPresent(p_277486_ -> {
              p_277486_.awardStat(Stats.ANIMALS_BRED);
              CriteriaTriggers.BRED_ANIMALS.trigger(p_277486_, this, p_277357_, p_277516_);

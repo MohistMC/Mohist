@@ -131,7 +131,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         SimpleWeightedRandomList.Builder<SpawnData> builder = SimpleWeightedRandomList.builder();
         for (SpawnerEntry spawnerEntry : entries) {
             CompoundTag compoundTag = ((CraftEntitySnapshot) spawnerEntry.getSnapshot()).getData();
-            builder.add(new SpawnData(compoundTag, Optional.ofNullable(this.toMinecraftRule(spawnerEntry.getSpawnRule())), CraftCreatureSpawner.getEquipment(spawnerEntry.getEquipment())), spawnerEntry.getSpawnWeight());
+            builder.add(new SpawnData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnerEntry.getSpawnRule())), CraftCreatureSpawner.getEquipment(spawnerEntry.getEquipment())), spawnerEntry.getSpawnWeight());
         }
         spawner.spawnPotentials = builder.build();
     }

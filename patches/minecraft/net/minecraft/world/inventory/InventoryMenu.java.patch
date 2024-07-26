@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/inventory/InventoryMenu.java
 +++ b/net/minecraft/world/inventory/InventoryMenu.java
+@@ -2,6 +_,7 @@
+ 
+ import com.mojang.datafixers.util.Pair;
+ import java.util.Map;
++import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.Container;
+ import net.minecraft.world.entity.EquipmentSlot;
 @@ -12,6 +_,9 @@
  import net.minecraft.world.item.crafting.CraftingInput;
  import net.minecraft.world.item.crafting.CraftingRecipe;

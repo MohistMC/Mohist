@@ -37,7 +37,7 @@
                  }
              }
          }
-@@ -313,19 +_,19 @@
+@@ -313,14 +_,14 @@
          return this;
      }
  
@@ -54,9 +54,3 @@
          return this.getBrain().getMemory(MemoryModuleType.SNIFFER_EXPLORED_POSITIONS).stream().flatMap(Collection::stream);
      }
  
-     @Override
--    public void jumpFromGround() {
-+    protected void jumpFromGround() {
-         super.jumpFromGround();
-         double d0 = this.moveControl.getSpeedModifier();
-         if (d0 > 0.0) {

@@ -18,12 +18,3 @@
          ResourceLocation resourcelocation = RESOURCE_LISTER.idToFile(p_230428_);
          return this.load(
              () -> this.resourceManager.open(resourcelocation), p_230366_ -> LOGGER.error("Couldn't load structure {}", p_230428_, p_230366_)
-@@ -240,7 +_,7 @@
-         }
-     }
- 
--    public StructureTemplate readStructure(InputStream p_230378_) throws IOException {
-+    private StructureTemplate readStructure(InputStream p_230378_) throws IOException {
-         CompoundTag compoundtag = NbtIo.readCompressed(p_230378_, NbtAccounter.unlimitedHeap());
-         return this.readStructure(compoundtag);
-     }

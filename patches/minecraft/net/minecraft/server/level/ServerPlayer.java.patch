@@ -1346,7 +1346,7 @@
 +      this.awardStat(Stats.ITEM_BROKEN.get(p_344553_));
 +   }
 +
-+   static record RespawnPosAngle(Vec3 position, float yaw) {
++   public static record RespawnPosAngle(Vec3 position, float yaw) {
 +      public static ServerPlayer.RespawnPosAngle of(Vec3 p_342971_, BlockPos p_343580_) {
 +         return new ServerPlayer.RespawnPosAngle(p_342971_, calculateLookAtYaw(p_342971_, p_343580_));
 +      }

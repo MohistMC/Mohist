@@ -8,44 +8,46 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.world.InteractionHand;
-@@ -16,6 +_,9 @@
+@@ -16,6 +_,11 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.item.component.CustomData;
  import net.minecraft.world.level.Level;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.entity.EntityRemoveEvent;
++import org.bukkit.event.entity.EntityRemoveEvent.Cause;
 +import org.bukkit.event.player.PlayerBucketEntityEvent;
  
  public interface Bucketable {
      boolean fromBucket();
-@@ -85,12 +_,24 @@
-         }
-     }
- 
--    static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player p_148829_, InteractionHand p_148830_, T p_148831_) {
--        ItemStack itemstack = p_148829_.getItemInHand(p_148830_);
--        if (itemstack.getItem() == Items.WATER_BUCKET && p_148831_.isAlive()) {
+@@ -88,16 +_,28 @@
+     static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player p_148829_, InteractionHand p_148830_, T p_148831_) {
+         ItemStack itemstack = p_148829_.getItemInHand(p_148830_);
+         if (itemstack.getItem() == Items.WATER_BUCKET && p_148831_.isAlive()) {
 -            p_148831_.playSound(p_148831_.getPickupSound(), 1.0F, 1.0F);
--            ItemStack itemstack1 = p_148831_.getBucketItemStack();
--            p_148831_.saveToBucketTag(itemstack1);
-+   static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player p_148829_, InteractionHand p_148830_, T p_148831_) {
-+      ItemStack itemstack = p_148829_.getItemInHand(p_148830_);
-+      if (itemstack.getItem() == Items.WATER_BUCKET && p_148831_.isAlive()) {
-+         // pEntity.playSound(pEntity.getPickupSound(), 1.0F, 1.0F); // CraftBukkit - moved down
-+         ItemStack itemstack1 = p_148831_.getBucketItemStack();
-+         p_148831_.saveToBucketTag(itemstack1);
++            // pEntity.playSound(pEntity.getPickupSound(), 1.0F, 1.0F); // CraftBukkit - moved down
+             ItemStack itemstack1 = p_148831_.getBucketItemStack();
+             p_148831_.saveToBucketTag(itemstack1);
 +
-+         PlayerBucketEntityEvent playerBucketFishEvent = CraftEventFactory.callPlayerFishBucketEvent(p_148831_, p_148829_, itemstack, itemstack1, p_148830_);
-+         itemstack1 = CraftItemStack.asNMSCopy(playerBucketFishEvent.getEntityBucket());
-+         if (playerBucketFishEvent.isCancelled()) {
-+            ((ServerPlayer) p_148829_).containerMenu.sendAllDataToRemote(); // We need to update inventory to resync client's bucket
-+            ((ServerPlayer) p_148829_).connection.send(new ClientboundAddEntityPacket(p_148831_)); // We need to play out these packets as the client assumes the fish is gone
-+            p_148831_.refreshEntityData((ServerPlayer) p_148829_); // Need to send data such as the display name to client
-+            return Optional.of(InteractionResult.FAIL);
-+         }
-+         p_148831_.playSound(p_148831_.getPickupSound(), 1.0F, 1.0F);
-+         // CraftBukkit end
-+
++            PlayerBucketEntityEvent playerBucketFishEvent = CraftEventFactory.callPlayerFishBucketEvent(p_148831_, p_148829_, itemstack, itemstack1, p_148830_);
++            itemstack1 = CraftItemStack.asNMSCopy(playerBucketFishEvent.getEntityBucket());
++            if (playerBucketFishEvent.isCancelled()) {
++                ((ServerPlayer) p_148829_).containerMenu.sendAllDataToRemote(); // We need to update inventory to resync client's bucket
++                p_148831_.getBukkitEntity().update((ServerPlayer) p_148829_); // We need to play out these packets as the client assumes the fish is gone
++                p_148831_.refreshEntityData((ServerPlayer) p_148829_); // Need to send data such as the display name to client
++                return Optional.of(InteractionResult.FAIL);
++            }
++            p_148831_.playSound(p_148831_.getPickupSound(), 1.0F, 1.0F);
++            // CraftBukkit end
              ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, p_148829_, itemstack1, false);
              p_148829_.setItemInHand(p_148830_, itemstack2);
              Level level = p_148831_.level();
+             if (!level.isClientSide) {
+-                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)p_148829_, itemstack1);
++                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) p_148829_, itemstack1);
+             }
+ 
++            p_148831_.remove$cause(Cause.PICKUP); // CraftBukkit - add Bukkit remove cause
+             p_148831_.discard();
+             return Optional.of(InteractionResult.sidedSuccess(level.isClientSide));
+         } else {

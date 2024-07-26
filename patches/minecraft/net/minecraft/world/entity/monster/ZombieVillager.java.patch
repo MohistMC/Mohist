@@ -27,76 +27,115 @@
  import org.slf4j.Logger;
  
  public class ZombieVillager extends Zombie implements VillagerDataHolder {
-@@ -58,14 +_,15 @@
-     private static final int VILLAGER_CONVERSION_WAIT_MAX = 6000;
-     private static final int MAX_SPECIAL_BLOCKS_COUNT = 14;
-     private static final int SPECIAL_BLOCK_RADIUS = 4;
--    public int villagerConversionTime;
--    @Nullable
--    public UUID conversionStarter;
-+   	public int villagerConversionTime;
-+   	@Nullable
-+   	public UUID conversionStarter;
-     @Nullable
-     private Tag gossips;
+@@ -66,6 +_,7 @@
      @Nullable
      private MerchantOffers tradeOffers;
      private int villagerXp;
-+   	private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
      public ZombieVillager(EntityType<? extends ZombieVillager> p_34368_, Level p_34369_) {
          super(p_34368_, p_34369_);
+@@ -83,9 +_,9 @@
+     public void addAdditionalSaveData(CompoundTag p_34397_) {
+         super.addAdditionalSaveData(p_34397_);
+         VillagerData.CODEC
+-            .encodeStart(NbtOps.INSTANCE, this.getVillagerData())
+-            .resultOrPartial(LOGGER::error)
+-            .ifPresent(p_204072_ -> p_34397_.put("VillagerData", p_204072_));
++                .encodeStart(NbtOps.INSTANCE, this.getVillagerData())
++                .resultOrPartial(LOGGER::error)
++                .ifPresent(p_204072_ -> p_34397_.put("VillagerData", p_204072_));
+         if (this.tradeOffers != null) {
+             p_34397_.put("Offers", MerchantOffers.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.tradeOffers).getOrThrow());
+         }
+@@ -112,9 +_,9 @@
+ 
+         if (p_34387_.contains("Offers")) {
+             MerchantOffers.CODEC
+-                .parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), p_34387_.get("Offers"))
+-                .resultOrPartial(Util.prefix("Failed to load offers: ", LOGGER::warn))
+-                .ifPresent(p_327013_ -> this.tradeOffers = p_327013_);
++                    .parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), p_34387_.get("Offers"))
++                    .resultOrPartial(Util.prefix("Failed to load offers: ", LOGGER::warn))
++                    .ifPresent(p_327013_ -> this.tradeOffers = p_327013_);
+         }
+ 
+         if (p_34387_.contains("Gossips", 9)) {
 @@ -134,13 +_,18 @@
      public void tick() {
          if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
              int i = this.getConversionProgress();
-+         	// CraftBukkit start - Use wall time instead of ticks for villager conversion
-+         	int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+         	i *= elapsedTicks;
-+         	// CraftBukkit end
++            // CraftBukkit start - Use wall time instead of ticks for villager conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            i *= elapsedTicks;
++            // CraftBukkit end
              this.villagerConversionTime -= i;
 -            if (this.villagerConversionTime <= 0) {
+-                this.finishConversion((ServerLevel)this.level());
 +            if (this.villagerConversionTime <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.VILLAGER, (timer) -> this.villagerConversionTime = timer)) {
-                 this.finishConversion((ServerLevel)this.level());
++                this.finishConversion((ServerLevel) this.level());
              }
          }
  
          super.tick();
-+      	this.lastTick = MinecraftServer.currentTick; // CraftBukkit
++        this.lastTick = MinecraftServer.currentTick; // CraftBukkit
      }
  
      @Override
-@@ -176,14 +_,16 @@
+@@ -176,13 +_,15 @@
          return this.getEntityData().get(DATA_CONVERTING_ID);
      }
  
 -    private void startConverting(@Nullable UUID p_34384_, int p_34385_) {
--        this.conversionStarter = p_34384_;
--        this.villagerConversionTime = p_34385_;
--        this.getEntityData().set(DATA_CONVERTING_ID, true);
++    public void startConverting(@Nullable UUID p_34384_, int p_34385_) {
+         this.conversionStarter = p_34384_;
+         this.villagerConversionTime = p_34385_;
+         this.getEntityData().set(DATA_CONVERTING_ID, true);
 -        this.removeEffect(MobEffects.WEAKNESS);
 -        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level().getDifficulty().getId() - 1, 0)));
 -        this.level().broadcastEntityEvent(this, (byte)16);
--    }
-+   public void startConverting(@Nullable UUID p_34384_, int p_34385_) {
-+      this.conversionStarter = p_34384_;
-+      this.villagerConversionTime = p_34385_;
-+      this.getEntityData().set(DATA_CONVERTING_ID, true);
-+      // CraftBukkit start
-+      this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
-+      this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level.getDifficulty().getId() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
-+      // CraftBukkit end
-+      this.level().broadcastEntityEvent(this, (byte)16);
-+   }
- 
-     @Override
-     public void handleEntityEvent(byte p_34372_) {
-@@ -206,39 +_,57 @@
-         }
++        // CraftBukkit start
++        this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
++        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level.getDifficulty().getId() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
++        // CraftBukkit end
++        this.level().broadcastEntityEvent(this, (byte) 16);
      }
  
--    private void finishConversion(ServerLevel p_34399_) {
--        Villager villager = this.convertTo(EntityType.VILLAGER, false);
+     @Override
+@@ -190,16 +_,16 @@
+         if (p_34372_ == 16) {
+             if (!this.isSilent()) {
+                 this.level()
+-                    .playLocalSound(
+-                        this.getX(),
+-                        this.getEyeY(),
+-                        this.getZ(),
+-                        SoundEvents.ZOMBIE_VILLAGER_CURE,
+-                        this.getSoundSource(),
+-                        1.0F + this.random.nextFloat(),
+-                        this.random.nextFloat() * 0.7F + 0.3F,
+-                        false
+-                    );
++                        .playLocalSound(
++                                this.getX(),
++                                this.getEyeY(),
++                                this.getZ(),
++                                SoundEvents.ZOMBIE_VILLAGER_CURE,
++                                this.getSoundSource(),
++                                1.0F + this.random.nextFloat(),
++                                this.random.nextFloat() * 0.7F + 0.3F,
++                                false
++                        );
+             }
+         } else {
+             super.handleEntityEvent(p_34372_);
+@@ -207,38 +_,45 @@
+     }
+ 
+     private void finishConversion(ServerLevel p_34399_) {
++        // CraftBukkit start
++        this.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED); // Mohist
+         Villager villager = this.convertTo(EntityType.VILLAGER, false);
 -        if (villager != null) {
 -            for (EquipmentSlot equipmentslot : this.dropPreservedEquipment(p_341444_ -> !EnchantmentHelper.has(p_341444_, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE))) {
 -                SlotAccess slotaccess = villager.getSlot(equipmentslot.getIndex() + 300);
@@ -120,34 +159,23 @@
 -                if (player instanceof ServerPlayer) {
 -                    CriteriaTriggers.CURED_ZOMBIE_VILLAGER.trigger((ServerPlayer)player, this, villager);
 -                    p_34399_.onReputationEvent(ReputationEventType.ZOMBIE_VILLAGER_CURED, player, villager);
-+   private void finishConversion(ServerLevel p_34399_) {
-+      // CraftBukkit start
-+      this.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED); // Mohist
-+      Villager villager = this.convertTo(EntityType.VILLAGER, false);
-+      if (villager == null) {
-+         ((org.bukkit.entity.ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
-+         return;
-+      }
-+      // CraftBukkit end
-+
-+      for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-+         ItemStack itemstack = this.getItemBySlot(equipmentslot);
-+         if (!itemstack.isEmpty()) {
-+            if (EnchantmentHelper.hasBindingCurse(itemstack)) {
-+               villager.getSlot(equipmentslot.getIndex() + 300).set(itemstack);
-+            } else {
-+               double d0 = (double)this.getEquipmentDropChance(equipmentslot);
-+               if (d0 > 1.0D) {
-+                  this.forceDrops = true; // CraftBukkit
-+                  this.spawnAtLocation(itemstack);
-+                  this.forceDrops = false; // CraftBukkit
-+                    }
-                 }
-             }
+-                }
+-            }
 -
 -            villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
 -            if (!this.isSilent()) {
 -                p_34399_.levelEvent(null, 1027, this.blockPosition(), 0);
+-            }
+-        }
++        if (villager == null) {
++            ((org.bukkit.entity.ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
++            return;
++        }
++        // CraftBukkit end
++
++        for (EquipmentSlot equipmentslot : this.dropPreservedEquipment(p_341444_ -> !EnchantmentHelper.has(p_341444_, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE))) {
++            SlotAccess slotaccess = villager.getSlot(equipmentslot.getIndex() + 300);
++            slotaccess.set(this.getItemBySlot(equipmentslot));
 +        }
 +
 +        villager.setVillagerData(this.getVillagerData());
@@ -165,10 +193,10 @@
 +        if (this.conversionStarter != null) {
 +            Player player = p_34399_.getPlayerByUUID(this.conversionStarter);
 +            if (player instanceof ServerPlayer) {
-+                CriteriaTriggers.CURED_ZOMBIE_VILLAGER.trigger((ServerPlayer)player, this, villager);
++                CriteriaTriggers.CURED_ZOMBIE_VILLAGER.trigger((ServerPlayer) player, this, villager);
 +                p_34399_.onReputationEvent(ReputationEventType.ZOMBIE_VILLAGER_CURED, player, villager);
-             }
-         }
++            }
++        }
 +
 +        villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
 +        if (!this.isSilent()) {
@@ -178,3 +206,27 @@
      }
  
      private int getConversionProgress() {
+@@ -247,9 +_,9 @@
+             int j = 0;
+             BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+ 
+-            for (int k = (int)this.getX() - 4; k < (int)this.getX() + 4 && j < 14; k++) {
+-                for (int l = (int)this.getY() - 4; l < (int)this.getY() + 4 && j < 14; l++) {
+-                    for (int i1 = (int)this.getZ() - 4; i1 < (int)this.getZ() + 4 && j < 14; i1++) {
++            for (int k = (int) this.getX() - 4; k < (int) this.getX() + 4 && j < 14; k++) {
++                for (int l = (int) this.getY() - 4; l < (int) this.getY() + 4 && j < 14; l++) {
++                    for (int i1 = (int) this.getZ() - 4; i1 < (int) this.getZ() + 4 && j < 14; i1++) {
+                         BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos.set(k, l, i1));
+                         if (blockstate.is(Blocks.IRON_BARS) || blockstate.getBlock() instanceof BedBlock) {
+                             if (this.random.nextFloat() < 0.3F) {
+@@ -269,8 +_,8 @@
+     @Override
+     public float getVoicePitch() {
+         return this.isBaby()
+-            ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 2.0F
+-            : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
++                ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 2.0F
++                : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
+     }
+ 
+     @Override

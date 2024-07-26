@@ -8,13 +8,11 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.state.BlockBehaviour;
-@@ -27,8 +_,8 @@
- 
+@@ -28,7 +_,7 @@
      @Override
      public void stepOn(Level p_153777_, BlockPos p_153778_, BlockState p_153779_, Entity p_153780_) {
--        if (!p_153780_.isSteppingCarefully() && p_153780_ instanceof LivingEntity) {
+         if (!p_153780_.isSteppingCarefully() && p_153780_ instanceof LivingEntity) {
 -            p_153780_.hurt(p_153777_.damageSources().hotFloor(), 1.0F);
-+        if (!p_153780_.isSteppingCarefully() && p_153780_ instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)p_153780_)) {
 +         p_153780_.hurt(p_153777_.damageSources().hotFloor().directBlock(p_153777_, p_153778_), 1.0F); // CraftBukkit
          }
  

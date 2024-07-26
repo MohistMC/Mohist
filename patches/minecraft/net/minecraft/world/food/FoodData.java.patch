@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,21 +_,43 @@
+@@ -1,21 +_,44 @@
  package net.minecraft.world.food;
  
 +import net.minecraft.core.component.DataComponents;
  import net.minecraft.nbt.CompoundTag;
--import net.minecraft.util.Mth;
 +import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 +import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.Mth;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.entity.player.Player;
 +import net.minecraft.world.item.Item;

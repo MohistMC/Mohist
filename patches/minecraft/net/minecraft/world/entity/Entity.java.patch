@@ -375,7 +375,7 @@
 +    public void postTick() {
 +        // No clean way to break out of ticking once the entity has been copied to a new world, so instead we move the portalling later in the tick cycle
 +        if (!(this instanceof ServerPlayer)) {
-+            this.handleNetherPortal();
++            this.handlePortal();
 +        }
 +    }
 +    // CraftBukkit end
@@ -388,7 +388,7 @@
          this.xRotO = this.getXRot();
          this.yRotO = this.getYRot();
 -        this.handlePortal();
-+        if (this instanceof ServerPlayer) this.handleNetherPortal(); // CraftBukkit - // Moved up to postTick
++        if (this instanceof ServerPlayer) this.handlePortal(); // CraftBukkit - // Moved up to postTick
          if (this.canSpawnSprintParticle()) {
              this.spawnSprintParticle();
          }
@@ -1170,7 +1170,7 @@
      }
  
      public boolean is(Entity p_20356_) {
-@@ -2627,6 +_,30 @@
+@@ -2627,6 +_,21 @@
          return (p_343600_ || !this.isPassenger()) && this.isAlive();
      }
  
@@ -1187,15 +1187,6 @@
 +            return null;
 +        }
 +        return new CraftPortalEvent(event);
-+    }
-+
-+    protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {
-+        return p_185935_.getPortalForcer().findPortalAround(p_185936_, p_185937_, p_185938_);
-+    }
-+
-+    protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel pDestination, BlockPos pFindFrom, boolean pIsToNether, WorldBorder pWorldBorder, int searchRadius, boolean canCreatePortal, int createRadius) {
-+        return pDestination.getPortalForcer().findPortalAround(pFindFrom, pWorldBorder, searchRadius);
-+        // CraftBukkit end
 +    }
 +
      public boolean canChangeDimensions(Level p_342413_, Level p_345364_) {

@@ -13,7 +13,7 @@
  import java.util.function.IntFunction;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
-@@ -35,12 +_,13 @@
+@@ -35,10 +_,12 @@
  import net.minecraft.world.effect.MobEffects;
  import net.minecraft.world.entity.AgeableMob;
  import net.minecraft.world.entity.Entity;
@@ -24,10 +24,8 @@
  import net.minecraft.world.entity.PathfinderMob;
 +import net.minecraft.world.entity.Pose;
  import net.minecraft.world.entity.SpawnGroupData;
--import net.minecraft.world.entity.TamableAnimal;
+ import net.minecraft.world.entity.TamableAnimal;
  import net.minecraft.world.entity.VariantHolder;
- import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
- import net.minecraft.world.entity.ai.attributes.Attributes;
 @@ -50,13 +_,16 @@
  import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
  import net.minecraft.world.entity.ai.goal.LandOnOwnersShoulderGoal;
