@@ -123,6 +123,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Note;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
+import org.bukkit.Server;
 import org.bukkit.ServerLinks;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
@@ -1142,10 +1143,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         BlockPos bed = this.getHandle().getRespawnPosition();
 
         if (world != null && bed != null) {
-            Optional<ServerPlayer.RespawnPosAngle> spawnLoc = net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(world, bed, this.getHandle().getRespawnAngle(), this.getHandle().isRespawnForced(), true);
+            Optional<ServerPlayer.RespawnPosAngle> spawnLoc = ServerPlayer.findRespawnAndUseSpawnBlock(world, bed, this.getHandle().getRespawnAngle(), this.getHandle().isRespawnForced(), true);
             if (spawnLoc.isPresent()) {
-                Vec3 vec = spawnLoc.get();
-                return CraftLocation.toBukkit(vec, world.getWorld(), this.getHandle().getRespawnAngle(), 0);
+                ServerPlayer.RespawnPosAngle vec = spawnLoc.get();
+                return CraftLocation.toBukkit(vec.position(), world.getWorld(), this.getHandle().getRespawnAngle(), 0);
             }
         }
         return null;

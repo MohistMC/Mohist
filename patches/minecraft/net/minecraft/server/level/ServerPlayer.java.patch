@@ -75,7 +75,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.RespawnAnchorBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -158,11 +_,37 @@
+@@ -158,11 +_,38 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreAccess;
  import net.minecraft.world.scores.ScoreHolder;
@@ -84,6 +84,7 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
++import org.bukkit.Server;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.CraftWorld;
 +import org.bukkit.craftbukkit.CraftWorldBorder;
@@ -372,7 +373,7 @@
 +         if (this.respawnDimension != null) {
 +            world = this.server.getLevel(this.respawnDimension);
 +            if (world != null && this.getRespawnPosition() != null) {
-+               position = ServerPlayer.findRespawnAndUseSpawnBlock((ServerLevel) world, this.getRespawnPosition(), this.getRespawnAngle(), false, false).orElse(null);
++               position = ServerPlayer.findRespawnAndUseSpawnBlock((ServerLevel) world, this.getRespawnPosition(), this.getRespawnAngle(), false, false).map(ServerPlayer.RespawnPosAngle::position).orElse(null);
 +            }
 +         }
 +         if (world == null || position == null) {
@@ -502,7 +503,7 @@
 -            this.dropAllDeathLoot(this.serverLevel(), p_9035_);
 +        // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
 +        if (!event.getKeepInventory()) {
-+            dropAllDeathLoot(p_9035_);
++            this.getInventory().clearContent();
          }
  
 -        this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
@@ -552,6 +553,17 @@
  
      public DimensionTransition findRespawnPositionAndUseSpawnBlock(boolean p_342433_, DimensionTransition.PostDimensionTransition p_343860_) {
          BlockPos blockpos = this.getRespawnPosition();
+@@ -801,8 +_,8 @@
+         }
+     }
+ 
+-    private static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
+-        ServerLevel p_343173_, BlockPos p_345429_, float p_342316_, boolean p_345318_, boolean p_343357_
++    public static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(
++            ServerLevel p_343173_, BlockPos p_345429_, float p_342316_, boolean p_345318_, boolean p_343357_
+     ) {
+         BlockState blockstate = p_343173_.getBlockState(p_345429_);
+         Block block = blockstate.getBlock();
 @@ -849,6 +_,7 @@
      @Nullable
      @Override

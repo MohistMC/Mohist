@@ -9,7 +9,7 @@
  import java.util.Optional;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Holder;
-@@ -19,12 +_,51 @@
+@@ -19,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.ticks.ContainerSingleItem;
@@ -19,10 +19,10 @@
  
  public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem.BlockContainerSingleItem {
      public static final String SONG_ITEM_TAG_ID = "RecordItem";
-     public static final String TICKS_SINCE_SONG_STARTED_TAG_ID = "ticks_since_song_started";
+@@ -26,6 +_,42 @@
      private ItemStack item = ItemStack.EMPTY;
      private final JukeboxSongPlayer jukeboxSongPlayer = new JukeboxSongPlayer(this::onSongChanged, this.getBlockPos());
-+
+ 
 +   // CraftBukkit start - add fields and methods
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -58,6 +58,18 @@
 +      return new org.bukkit.Location(level.getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
 +   }
 +   // CraftBukkit end
- 
++
      public JukeboxBlockEntity(BlockPos p_155613_, BlockState p_155614_) {
          super(BlockEntityType.JUKEBOX, p_155613_, p_155614_);
+     }
+@@ -147,6 +_,10 @@
+         JukeboxSong.fromStack(this.level.registryAccess(), p_343692_).ifPresent(p_343857_ -> this.jukeboxSongPlayer.setSongWithoutPlaying((Holder<JukeboxSong>)p_343857_, 0L));
+         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
+         this.setChanged();
++    }
++
++    public void setSongItemWithoutPlaying(ItemStack itemstack, long ticksSinceSongStarted) { // CraftBukkit - add argument
++        setSongItemWithoutPlaying(itemstack);
+     }
+ 
+     @VisibleForTesting

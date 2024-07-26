@@ -153,7 +153,7 @@ public class CraftContainer extends AbstractContainerMenu {
             case GRINDSTONE:
                 return MenuType.GRINDSTONE;
             case STONECUTTER:
-                setupStoneCutter(top, bottom); // SPIGOT-7757 - manual setup required for individual slots
+                return MenuType.STONECUTTER;
             case SMITHING:
             case SMITHING_NEW:
                 return MenuType.SMITHING;
@@ -228,7 +228,7 @@ public class CraftContainer extends AbstractContainerMenu {
                 this.delegate = new GrindstoneMenu(windowId, bottom);
                 break;
             case STONECUTTER:
-                this.delegate = new StonecutterMenu(windowId, bottom);
+                setupStoneCutter(top, bottom); // SPIGOT-7757 - manual setup required for individual slots
                 break;
             case MERCHANT:
                 this.delegate = new MerchantMenu(windowId, bottom);

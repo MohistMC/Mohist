@@ -105,9 +105,12 @@
      protected int fallFlyTicks;
      private BlockPos lastPos;
      private Optional<BlockPos> lastClimbablePos = Optional.empty();
-@@ -247,7 +_,20 @@
+@@ -245,9 +_,22 @@
+     private float swimAmount;
+     private float swimAmountO;
      protected Brain<?> brain;
-     private boolean skipDropExperience;
+-    private boolean skipDropExperience;
++    public boolean skipDropExperience;
      private final Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>> activeLocationDependentEnchantments = new Reference2ObjectArrayMap<>();
 -    protected float appliedScale = 1.0F;
 +	protected float appliedScale = 1.0F;
@@ -1274,7 +1277,7 @@
                  this.playSound(soundtype.getFallSound(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
              }
          }
-@@ -1626,76 +_,239 @@
+@@ -1626,56 +_,58 @@
              }
          }
      }
@@ -1333,26 +1336,6 @@
 -            }
 -        }
 -    }
--
--    protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
--        if (!this.isInvulnerableTo(p_21240_)) {
--            p_21241_ = this.getDamageAfterArmorAbsorb(p_21240_, p_21241_);
--            p_21241_ = this.getDamageAfterMagicAbsorb(p_21240_, p_21241_);
--            float f1 = Math.max(p_21241_ - this.getAbsorptionAmount(), 0.0F);
--            this.setAbsorptionAmount(this.getAbsorptionAmount() - (p_21241_ - f1));
--            float f = p_21241_ - f1;
--            if (f > 0.0F && f < 3.4028235E37F && p_21240_.getEntity() instanceof ServerPlayer serverplayer) {
--                serverplayer.awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f * 10.0F));
--            }
--
--            if (f1 != 0.0F) {
--                this.getCombatTracker().recordDamage(p_21240_, f1);
--                this.setHealth(this.getHealth() - f1);
--                this.setAbsorptionAmount(this.getAbsorptionAmount() - f1);
--                this.gameEvent(GameEvent.ENTITY_DAMAGE);
--            }
--        }
--    }
 +   protected float getDamageAfterMagicAbsorb(DamageSource p_21193_, float p_21194_) {
 +      if (p_21193_.is(DamageTypeTags.BYPASSES_EFFECTS)) {
 +         return p_21194_;
@@ -1396,176 +1379,13 @@
 +          }
 +      }
 +   }
-+
-+   protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
-+      if (!this.isInvulnerableTo(p_21240_)) {
-+         // Check if entity is a "human" aka player
-+         final boolean human = this instanceof Player;
-+         p_21241_ = ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
-+         // If the damage is negative return true
-+         if (p_21241_ < 0) {
-+            this.canDamage.set(true);
-+            return;
-+         }
-+         final float originalDamage = p_21241_;
-+
-+          Function<Double, Double> hardHat = f -> {
-+            if (p_21240_.is(DamageTypeTags.DAMAGES_HELMET)  && !LivingEntity.this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
-+               return -(f - (f * 0.75F));
-+            }
-+            return -0.0;
-+         };
-+         float hardHatModifier = hardHat.apply((double) p_21241_).floatValue();
-+         p_21241_ += hardHatModifier;
-+
-+         Function<Double, Double> blocking;
-+         boolean shieldTakesDamage = false;
-+         if (this.isDamageSourceBlocked(p_21240_)) {
-+            var shieldEvent = ForgeEventFactory.onShieldBlock(this, p_21240_, p_21241_);
-+            if (!shieldEvent.isCanceled()) {
-+               var blocked = shieldEvent.getBlockedDamage();
-+               shieldTakesDamage = shieldEvent.shieldTakesDamage();
-+               blocking = f13 -> -(double) blocked;
-+            } else {
-+               blocking = f13 -> 0d;
-+            }
-+         } else {
-+            blocking = f13 -> 0d;
-+         }
-+         float blockingModifier = blocking.apply((double) p_21241_).floatValue();
-+         p_21241_ += blockingModifier;
-+
-+         Function<Double, Double> armor = f -> -(f - LivingEntity.this.getDamageAfterArmorAbsorb(p_21240_, f.floatValue()));
-+         float armorModifier = armor.apply((double) p_21241_).floatValue();
-+         p_21241_ += armorModifier;
-+
-+         Function<Double, Double> resistance = f -> {
-+            if (!p_21240_.is(DamageTypeTags.BYPASSES_EFFECTS) && LivingEntity.this.hasEffect(MobEffects.DAMAGE_RESISTANCE) && !p_21240_.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
-+               int i = (LivingEntity.this.getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 5;
-+               int j = 25 - i;
-+               float f1 = f.floatValue() * (float) j;
-+               return -(f - (f1 / 25.0F));
-+            }
-+            return -0.0;
-+         };
-+         float resistanceModifier = resistance.apply((double) p_21241_).floatValue();
-+         p_21241_ += resistanceModifier;
-+
-+         // Mohist start
-+         float mohist = this.getDamageAfterMagicAbsorb(p_21240_, p_21241_);
-+         float magicModifier = -(p_21241_ - mohist);
-+         Function<Double, Double> magic = f -> (double) magicModifier;
-+         p_21241_ += magicModifier;
-+         // Mohist end
-+
-+         Function<Double, Double> absorption = f -> -(Math.max(f - Math.max(f - LivingEntity.this.getAbsorptionAmount(), 0.0F), 0.0F));
-+         float absorptionModifier = absorption.apply((double) p_21241_).floatValue();
-+
-+         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, p_21240_, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
-+         if (p_21240_.getEntity() instanceof Player) {
-+            ((Player) p_21240_.getEntity()).resetAttackStrengthTicker(); // Moved from Player in order to make the cooldown reset get called after the damage event is fired
-+         }
-+         if (event.isCancelled()) {
-+            this.canDamage.set(false);
-+            return;
-+         }
-+
-+         p_21241_ = (float) event.getFinalDamage();
-+
-+         // Resistance
-+         if (event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) < 0) {
-+            float f3 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE);
-+            if (f3 > 0.0F && f3 < 3.4028235E37F) {
-+               if (this instanceof ServerPlayer) {
-+                  ((ServerPlayer) this).awardStat(Stats.DAMAGE_RESISTED, Math.round(f3 * 10.0F));
-+               } else if (p_21240_.getEntity() instanceof ServerPlayer serverPlayer) {
-+                  serverPlayer.awardStat(Stats.DAMAGE_DEALT_RESISTED, Math.round(f3 * 10.0F));
-+               }
-+            }
-+         }
-+
-+         // Apply damage to helmet
-+         if (p_21240_.is(DamageTypeTags.DAMAGES_HELMET) && !this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
-+            this.hurtHelmet(p_21240_, p_21241_);
-+         }
-+
-+         // Apply damage to armor
-+         if (!p_21240_.is(DamageTypeTags.BYPASSES_ARMOR)) {
-+            float armorDamage = (float) (event.getDamage() + event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) + event.getDamage(EntityDamageEvent.DamageModifier.HARD_HAT));
-+            this.hurtArmor(p_21240_, armorDamage);
-+         }
-+
-+         // Apply blocking code // PAIL: steal from above
-+         if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
-+            this.level().broadcastEntityEvent(this, (byte) 29); // SPIGOT-4635 - shield damage sound
-+            if (shieldTakesDamage) {
-+               this.hurtCurrentlyUsedShield((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
-+            }
-+            Entity entity = p_21240_.getDirectEntity();
-+            if (entity instanceof LivingEntity living) {
-+               this.blockUsingShield(living);
-+            }
-+         }
-+
-+         absorptionModifier = (float) -event.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
-+         this.setAbsorptionAmount(Math.max(this.getAbsorptionAmount() - absorptionModifier, 0.0F));
-+         float f2 = absorptionModifier;
-+
-+         if (f2 > 0.0F && f2 < 3.4028235E37F && this instanceof Player) {
-+            ((Player) this).awardStat(Stats.DAMAGE_ABSORBED, Math.round(f2 * 10.0F));
-+         }
-+         if (f2 > 0.0F && f2 < 3.4028235E37F && p_21240_.getEntity() instanceof ServerPlayer) {
-+            ((ServerPlayer) p_21240_.getEntity()).awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f2 * 10.0F));
-+         }
-+
-+         p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, p_21241_);
-+
-+         if (p_21241_ > 0 || !human) {
-+            if (human) {
-+               // PAIL: Be sure to drag all this code from the Player subclass each update.
-+               ((Player) this).exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
-+               ((Player) this).causeFoodExhaustion(p_21240_.getFoodExhaustion());
-+               if (p_21241_ < 3.4028235E37F) {
-+                  ((Player) this).awardStat(Stats.DAMAGE_TAKEN, Math.round(p_21241_ * 10.0F));
-+               }
-+            }
-+            // CraftBukkit end
-+            float f1 = this.getHealth();
-+            this.getCombatTracker().recordDamage(p_21240_, p_21241_);
-+            this.setHealth(f1 - p_21241_); // Forge: moved to fix MC-121048
-+            // CraftBukkit start
-+            if (!human) {
-+               this.setAbsorptionAmount(this.getAbsorptionAmount() - p_21241_);
-+            }
-+            this.gameEvent(GameEvent.ENTITY_DAMAGE, p_21240_.getEntity());
-+            this.canDamage.set(true);
-+            return;
-+         } else {
-+            // Duplicate triggers if blocking
-+            if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
-+               if (this instanceof ServerPlayer serverPlayer) {
-+                  CriteriaTriggers.ENTITY_HURT_PLAYER.trigger(serverPlayer, p_21240_, p_21241_, originalDamage, true);
-+                  f2 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
-+                  if (f2 > 0.0F && f2 < 3.4028235E37F) {
-+                     serverPlayer.awardStat(Stats.DAMAGE_BLOCKED_BY_SHIELD, Math.round(originalDamage * 10.0F));
-+                  }
-+               }
-+               if (p_21240_.getEntity() instanceof ServerPlayer serverPlayer) {
-+                  CriteriaTriggers.PLAYER_HURT_ENTITY.trigger(serverPlayer, this, p_21240_, p_21241_, originalDamage, true);
-+               }
-+               this.canDamage.set(false);
-+               return;
-+            } else {
-+               boolean flag = originalDamage > 0;
-+               this.canDamage.set(flag);
-+               return;
-+            }
-+            // CraftBukkit end
-+         }
-+      }
-+      this.canDamage.set(false);
-+   }
-+
+ 
+     protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
+         if (!this.isInvulnerableTo(p_21240_)) {
+@@ -1697,6 +_,18 @@
+         }
+     }
+ 
 +   public AtomicBoolean canDamage = new AtomicBoolean(true);
 +   public boolean canDamage() {
 +      return canDamage.getAndSet(true);
@@ -1577,9 +1397,10 @@
 +      this.actuallyHurt(pDamageSource, pDamageAmount);
 +      return canDamage();
 +   }
- 
++
      public CombatTracker getCombatTracker() {
          return this.combatTracker;
+     }
 @@ -1722,9 +_,25 @@
          return this.entityData.get(DATA_ARROW_COUNT_ID);
      }
@@ -1963,7 +1784,7 @@
          if (!this.level().isClientSide) {
              boolean flag = this.isUsingItem();
              this.setLivingEntityFlag(1, false);
-@@ -3170,7 +_,8 @@
+@@ -3170,11 +_,59 @@
      public boolean isBlocking() {
          if (this.isUsingItem() && !this.useItem.isEmpty()) {
              Item item = this.useItem.getItem();
@@ -1973,6 +1794,57 @@
          } else {
              return false;
          }
+     }
++
++    // Paper start
++    public HitResult getRayTrace(int maxDistance, ClipContext.Fluid fluidCollisionOption) {
++        if (maxDistance < 1 || maxDistance > 120) {
++            throw new IllegalArgumentException("maxDistance must be between 1-120");
++        }
++
++        Vec3 start = new Vec3(getX(), getY() + getEyeHeight(), getZ());
++        org.bukkit.util.Vector dir = getBukkitEntity().getLocation().getDirection().multiply(maxDistance);
++        Vec3 end = new Vec3(start.x + dir.getX(), start.y + dir.getY(), start.z + dir.getZ());
++        ClipContext raytrace = new ClipContext(start, end, ClipContext.Block.OUTLINE, fluidCollisionOption, this);
++
++        return this.level().clip(raytrace);
++    }
++
++    public @Nullable EntityHitResult getTargetEntity(int maxDistance) {
++        if (maxDistance < 1 || maxDistance > 120) {
++            throw new IllegalArgumentException("maxDistance must be between 1-120");
++        }
++
++        Vec3 start = this.getEyePosition(1.0F);
++        Vec3 direction = this.getLookAngle();
++        Vec3 end = start.add(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance);
++
++        List<Entity> entityList = this.level().getEntities(this, getBoundingBox().expandTowards(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance).inflate(1.0D, 1.0D, 1.0D), EntitySelector.NO_SPECTATORS.and(Entity::isPickable));
++
++        double distance = 0.0D;
++        EntityHitResult result = null;
++
++        for (Entity entity : entityList) {
++            final double inflationAmount = (double) entity.getPickRadius();
++            AABB aabb = entity.getBoundingBox().inflate(inflationAmount, inflationAmount, inflationAmount);
++            Optional<Vec3> rayTraceResult = aabb.clip(start, end);
++
++            if (rayTraceResult.isPresent()) {
++                Vec3 rayTrace = rayTraceResult.get();
++                double distanceTo = start.distanceToSqr(rayTrace);
++                if (distanceTo < distance || distance == 0.0D) {
++                    result = new EntityHitResult(entity, rayTrace);
++                    distance = distanceTo;
++                }
++            }
++        }
++
++        return result;
++    }
++    // Paper end
+ 
+     public boolean isSuppressingSlidingDownLadder() {
+         return this.isShiftKeyDown();
 @@ -3193,51 +_,77 @@
          return this.fallFlyTicks;
      }

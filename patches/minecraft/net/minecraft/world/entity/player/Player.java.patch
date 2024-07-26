@@ -401,7 +401,7 @@
              if (!this.level().isClientSide) {
                  this.awardStat(Stats.ITEM_USED.get(this.useItem.getItem()));
              }
-@@ -947,30 +_,178 @@
+@@ -947,30 +_,33 @@
          }
      }
  
@@ -435,171 +435,26 @@
 +
 +   protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
 +       if (!this.isInvulnerableTo(p_36312_)) {
-+           // Check if entity is a "human" aka player
-+           final boolean human = this instanceof Player;
-+           p_36313_ = ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);
-+           // If the damage is negative return true
-+           if (p_36313_ < 0) {
-+               this.canDamage.set(true);
-+               return;
++           p_36313_ = this.getDamageAfterArmorAbsorb(p_36312_, p_36313_);
++           p_36313_ = this.getDamageAfterMagicAbsorb(p_36312_, p_36313_);
++           float f1 = Math.max(p_36313_ - this.getAbsorptionAmount(), 0.0F);
++           this.setAbsorptionAmount(this.getAbsorptionAmount() - (p_36313_ - f1));
++           float f = p_36313_ - f1;
++           if (f > 0.0F && f < 3.4028235E37F) {
++               this.awardStat(Stats.DAMAGE_ABSORBED, Math.round(f * 10.0F));
 +           }
-+           final float originalDamage = p_36313_;
 +
-+           Function<Double, Double> hardHat = f -> {
-+               if (p_36312_.is(DamageTypeTags.DAMAGES_HELMET) && !this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
-+                   return -(f - (f * 0.75F));
++           if (f1 != 0.0F) {
++               this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
++               this.getCombatTracker().recordDamage(p_36312_, f1);
++               this.setHealth(this.getHealth() - f1);
++               if (f1 < 3.4028235E37F) {
++                   this.awardStat(Stats.DAMAGE_TAKEN, Math.round(f1 * 10.0F));
 +               }
-+               return -0.0;
-+           };
-+           float hardHatModifier = hardHat.apply((double) p_36313_).floatValue();
-+           p_36313_ += hardHatModifier;
 +
-+           Function<Double, Double> blocking;
-+           boolean shieldTakesDamage = false;
-+           if (this.isDamageSourceBlocked(p_36312_)) {
-+               var shieldEvent = ForgeEventFactory.onShieldBlock(this, p_36312_, p_36313_);
-+               if (!shieldEvent.isCanceled()) {
-+                   var blocked = shieldEvent.getBlockedDamage();
-+                   shieldTakesDamage = shieldEvent.shieldTakesDamage();
-+                   blocking = f13 -> -(double) blocked;
-+               } else {
-+                   blocking = f13 -> 0d;
-+               }
-+           } else {
-+               blocking = f13 -> 0d;
-+           }
-+           float blockingModifier = blocking.apply((double) p_36313_).floatValue();
-+           p_36313_ += blockingModifier;
-+
-+           Function<Double, Double> armor = f -> -(f - this.getDamageAfterArmorAbsorb(p_36312_, f.floatValue()));
-+           float armorModifier = armor.apply((double) p_36313_).floatValue();
-+           p_36313_ += armorModifier;
-+
-+           Function<Double, Double> resistance = f -> {
-+               if (!p_36312_.is(DamageTypeTags.BYPASSES_EFFECTS) && this.hasEffect(MobEffects.DAMAGE_RESISTANCE) && !p_36312_.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
-+                   int i = (this.getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 5;
-+                   int j = 25 - i;
-+                   float f1 = f.floatValue() * (float) j;
-+                   return -(f - (f1 / 25.0F));
-+               }
-+               return -0.0;
-+           };
-+           float resistanceModifier = resistance.apply((double) p_36313_).floatValue();
-+           p_36313_ += resistanceModifier;
-+
-+           // Mohist start
-+           float mohist = this.getDamageAfterMagicAbsorb(p_36312_, p_36313_);
-+           float magicModifier = -(p_36313_ - mohist);
-+           Function<Double, Double> magic = f -> (double) magicModifier;
-+           p_36313_ += magicModifier;
-+           // Mohist end
-+
-+           Function<Double, Double> absorption = f -> -(Math.max(f - Math.max(f - this.getAbsorptionAmount(), 0.0F), 0.0F));
-+           float absorptionModifier = absorption.apply((double) p_36313_).floatValue();
-+
-+           EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, p_36312_, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
-+           if (p_36312_.getEntity() instanceof Player) {
-+               ((Player) p_36312_.getEntity()).resetAttackStrengthTicker(); // Moved from Player in order to make the cooldown reset get called after the damage event is fired
-+           }
-+           if (event.isCancelled()) {
-+               this.canDamage.set(false);
-+               return;
-+           }
-+
-+           p_36313_ = (float) event.getFinalDamage();
-+
-+           // Resistance
-+           if (event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) < 0) {
-+               float f3 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE);
-+               if (f3 > 0.0F && f3 < 3.4028235E37F) {
-+                   if (this instanceof ServerPlayer) {
-+                       ((ServerPlayer) this).awardStat(Stats.DAMAGE_RESISTED, Math.round(f3 * 10.0F));
-+                   } else if (p_36312_.getEntity() instanceof ServerPlayer serverPlayer) {
-+                       serverPlayer.awardStat(Stats.DAMAGE_DEALT_RESISTED, Math.round(f3 * 10.0F));
-+                   }
-+               }
-+           }
-+
-+           // Apply damage to helmet
-+           if (p_36312_.is(DamageTypeTags.DAMAGES_HELMET) && !this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
-+               this.hurtHelmet(p_36312_, p_36313_);
-+           }
-+
-+           // Apply damage to armor
-+           if (!p_36312_.is(DamageTypeTags.BYPASSES_ARMOR)) {
-+               float armorDamage = (float) (event.getDamage() + event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) + event.getDamage(EntityDamageEvent.DamageModifier.HARD_HAT));
-+               this.hurtArmor(p_36312_, armorDamage);
-+           }
-+
-+           // Apply blocking code // PAIL: steal from above
-+           if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
-+               this.level().broadcastEntityEvent(this, (byte) 29); // SPIGOT-4635 - shield damage sound
-+               if (shieldTakesDamage) {
-+                   this.hurtCurrentlyUsedShield((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
-+               }
-+               Entity entity = p_36312_.getDirectEntity();
-+               if (entity instanceof LivingEntity living) {
-+                   this.blockUsingShield(living);
-+               }
-+           }
-+
-+           absorptionModifier = (float) -event.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
-+           this.setAbsorptionAmount(Math.max(this.getAbsorptionAmount() - absorptionModifier, 0.0F));
-+           float f2 = absorptionModifier;
-+
-+           if (f2 > 0.0F && f2 < 3.4028235E37F && this instanceof Player) {
-+               ((Player) this).awardStat(Stats.DAMAGE_ABSORBED, Math.round(f2 * 10.0F));
-+           }
-+           if (f2 > 0.0F && f2 < 3.4028235E37F && p_36312_.getEntity() instanceof ServerPlayer) {
-+               ((ServerPlayer) p_36312_.getEntity()).awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f2 * 10.0F));
-+           }
-+
-+           p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_36312_, p_36313_);
-+
-+           if (p_36313_ > 0 || !human) {
-+               if (human) {
-+                   // PAIL: Be sure to drag all this code from the Player subclass each update.
-+                   this.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
-+                   this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
-+                   if (p_36313_ < 3.4028235E37F) {
-+                       this.awardStat(Stats.DAMAGE_TAKEN, Math.round(p_36313_ * 10.0F));
-+                   }
-+               }
-+               // CraftBukkit end
-+               float f1 = this.getHealth();
-+               this.getCombatTracker().recordDamage(p_36312_, p_36313_);
-+               this.setHealth(f1 - p_36313_); // Forge: moved to fix MC-121048
-+               // CraftBukkit start
-+               if (!human) {
-+                   this.setAbsorptionAmount(this.getAbsorptionAmount() - p_36313_);
-+               }
-+               this.gameEvent(GameEvent.ENTITY_DAMAGE, p_36312_.getEntity());
-+               this.canDamage.set(true);
-+               return;
-+           } else {
-+               // Duplicate triggers if blocking
-+               if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
-+                   if (this instanceof ServerPlayer serverPlayer) {
-+                       CriteriaTriggers.ENTITY_HURT_PLAYER.trigger(serverPlayer, p_36312_, p_36313_, originalDamage, true);
-+                       f2 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
-+                       if (f2 > 0.0F && f2 < 3.4028235E37F) {
-+                           serverPlayer.awardStat(Stats.DAMAGE_BLOCKED_BY_SHIELD, Math.round(originalDamage * 10.0F));
-+                       }
-+                   }
-+                   if (p_36312_.getEntity() instanceof ServerPlayer serverPlayer) {
-+                       CriteriaTriggers.PLAYER_HURT_ENTITY.trigger(serverPlayer, this, p_36312_, p_36313_, originalDamage, true);
-+                   }
-+                   this.canDamage.set(false);
-+                   return;
-+               } else {
-+                   boolean flag = originalDamage > 0;
-+                   this.canDamage.set(flag);
-+                   return;
-+               }
-+               // CraftBukkit end
++               this.gameEvent(GameEvent.ENTITY_DAMAGE);
 +           }
 +       }
-+       this.canDamage.set(false);
 +   }
  
      public boolean isTextFilteringEnabled() {
