@@ -187,7 +187,7 @@
                  DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
 +                String name = resourcekey == LevelStem.NETHER ? "DIM1" : "DIM-1";
 +                if (resourcekey == LevelStem.NETHER) {
-+                    if (!this.isNetherEnabled()) {
++                    if (!this.server.getAllowNether()) {
 +                        continue;
 +                    }
 +                } else if (resourcekey == LevelStem.END) {

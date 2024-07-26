@@ -1,14 +1,18 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -7,6 +_,7 @@
- import com.google.common.collect.Iterables;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
-+import com.mohistmc.mohist.plugins.ban.bans.BanItem;
- import com.mojang.datafixers.util.Pair;
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.entity;
+ 
++import com.google.common.base.Function;
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.base.Objects;
+ import com.google.common.collect.ImmutableList;
+@@ -11,17 +_,20 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DataResult;
-@@ -16,12 +_,15 @@
+ import com.mojang.serialization.Dynamic;
+-import it.unimi.dsi.fastutil.doubles.DoubleDoubleImmutablePair;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
  import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
  import java.util.Collection;
  import java.util.ConcurrentModificationException;
@@ -16,6 +20,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
++import java.util.Map.Entry;
  import java.util.Optional;
  import java.util.Set;
 -import java.util.Map.Entry;
@@ -404,91 +409,81 @@
 -        return this.addEffect(p_21165_, null);
 -    }
 -
--    public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
--        if (!this.canBeAffected(p_147208_)) {
--            return false;
--        } else {
--            MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
--            boolean flag = false;
--            if (mobeffectinstance == null) {
--                this.activeEffects.put(p_147208_.getEffect(), p_147208_);
--                this.onEffectAdded(p_147208_, p_147209_);
--                flag = true;
--                p_147208_.onEffectAdded(this);
--            } else if (mobeffectinstance.update(p_147208_)) {
--                this.onEffectUpdated(mobeffectinstance, true, p_147209_);
--                flag = true;
 +        return this.addEffect(p_21165_, (Entity)null);
 +    }
 +
-+   // CraftBukkit start
-+   public boolean addEffect(MobEffectInstance pEffectInstance, EntityPotionEffectEvent.Cause cause) {
-+      return addEffect(pEffectInstance, (Entity) null, cause);
-+   }
++    // CraftBukkit start
++    public boolean addEffect(MobEffectInstance pEffectInstance, EntityPotionEffectEvent.Cause cause) {
++        return addEffect(pEffectInstance, (Entity) null, cause);
++    }
 +
-+   // Mohist start
-+   private static final AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
-+   public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
++    // Mohist start
++    private static final AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++    public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
 +       addEffectCause.set(cause);
 +   }
 +    public static void addEffectCausePublic(EntityPotionEffectEvent.Cause cause) {
 +        addEffectCause.set(cause);
 +    }
-+   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
-+      boolean isAsync = AsyncCatcher.catchAsync();
-+      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
-+         return true;
-+      }
-+      // CraftBukkit end
-+      if (!this.canBeAffected(p_147208_)) {
-+         return false;
-+      } else {
-+         MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
-+         // CraftBukkit start
-+         boolean override = false;
-+         if (mobeffectinstance != null) {
-+            override = new MobEffectInstance(mobeffectinstance).update(p_147208_);
-+         }
+     public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
++        boolean isAsync = AsyncCatcher.catchAsync();
++        if (isTickingEffects) {
++            effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
++            return true;
++        }
++        // CraftBukkit end
+         if (!this.canBeAffected(p_147208_)) {
+             return false;
+         } else {
+             MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
+-            boolean flag = false;
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
++            // CraftBukkit start
++            boolean override = false;
++            if (mobeffectinstance != null) {
++                override = new MobEffectInstance(mobeffectinstance).update(p_147208_);
++            }
 +
-+         if (!isAsync) {
-+            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
-+            if (event.isCancelled()) {
-+               return false;
-             }
-+            override = event.isOverride();
-+         }
-+         // CraftBukkit end
-+         if (mobeffectinstance == null) {
-+            this.activeEffects.put(p_147208_.getEffect(), p_147208_);
-+            this.onEffectAdded(p_147208_, p_147209_);
-+            return true;
-+         } else if (override) {
-+            mobeffectinstance.update(p_147208_);
-+            this.onEffectUpdated(mobeffectinstance, true, p_147209_);
++            if (!isAsync) {
++                EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
++                if (event.isCancelled()) {
++                    return false;
++                }
++                override = event.isOverride();
++            }
 +            // CraftBukkit end
-+            return true;
-+         } else {
-+            return false;
-+         }
-+      }
-+   }
- 
+             if (mobeffectinstance == null) {
+                 this.activeEffects.put(p_147208_.getEffect(), p_147208_);
+                 this.onEffectAdded(p_147208_, p_147209_);
+-                flag = true;
+-                p_147208_.onEffectAdded(this);
+-            } else if (mobeffectinstance.update(p_147208_)) {
++                return true;
++            } else if (override) {
++                mobeffectinstance.update(p_147208_);
+                 this.onEffectUpdated(mobeffectinstance, true, p_147209_);
+-                flag = true;
++                // CraftBukkit end
++                return true;
++            } else {
++                return false;
+             }
+-
 -            p_147208_.onEffectStarted(this);
 -            return flag;
--        }
--    }
-+   public boolean addEffect(MobEffectInstance pEffectInstance, @Nullable Entity pEntity, EntityPotionEffectEvent.Cause cause) {
-+      addEffectCause.set(cause);
-+      return addEffect(pEffectInstance, pEntity);
-+   }
-+   // Mohist end
+         }
+     }
++
++    public boolean addEffect(MobEffectInstance pEffectInstance, @Nullable Entity pEntity, EntityPotionEffectEvent.Cause cause) {
++        addEffectCause.set(cause);
++        return addEffect(pEffectInstance, pEntity);
++    }
++    // Mohist end
  
      public boolean canBeAffected(MobEffectInstance p_21197_) {
-+        var event = net.minecraftforge.event.ForgeEventFactory.onLivingEffectCanApply(this, p_21197_);
-+        if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) {
-+            return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++        var eventResult = net.minecraftforge.event.ForgeEventFactory.onLivingEffectCanApply(this, p_21197_).getResult();
++        if (!eventResult.isDefault()) {
++            return eventResult.isAllowed();
 +        }
          if (this.getType().is(EntityTypeTags.IMMUNE_TO_INFESTED)) {
              return !p_21197_.is(MobEffects.INFESTED);
@@ -1122,13 +1117,13 @@
      }
  
 +    // CraftBukkit start
-+    public int getExpReward() {
-+        if (this.level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
-+            int i = this.getExperienceReward();
-+            return i;
-+        } else {
-+            return 0;
++    public int getExpReward(@Nullable Entity entity) {
++        if (this.level() instanceof ServerLevel serverlevel
++                && !this.wasExperienceConsumed()
++                && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
++                return this.getExperienceReward(serverlevel, entity);
 +        }
++        return 0;
 +    }
 +    // CraftBukkit end
 +
@@ -1142,17 +1137,6 @@
          }
      }
  
-@@ -1427,8 +_,8 @@
-             .withParameter(LootContextParams.THIS_ENTITY, this)
-             .withParameter(LootContextParams.ORIGIN, this.position())
-             .withParameter(LootContextParams.DAMAGE_SOURCE, p_21021_)
--            .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, p_21021_.getEntity())
--            .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, p_21021_.getDirectEntity());
-+            .withOptionalParameter(LootContextParams.KILLER_ENTITY, p_21021_.getEntity())
-+            .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, p_21021_.getDirectEntity());
-         if (p_21022_ && this.lastHurtByPlayer != null) {
-             lootparams$builder = lootparams$builder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, this.lastHurtByPlayer).withLuck(this.lastHurtByPlayer.getLuck());
-         }
 @@ -1437,23 +_,33 @@
          loottable.getRandomItems(lootparams, this.getLootTableSeed(), this::spawnAtLocation);
      }
@@ -1290,7 +1274,7 @@
                  this.playSound(soundtype.getFallSound(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
              }
          }
-@@ -1626,76 +_,233 @@
+@@ -1626,76 +_,239 @@
              }
          }
      }
@@ -1303,7 +1287,7 @@
 +   protected float getDamageAfterArmorAbsorb(DamageSource p_21162_, float p_21163_) {
 +      if (!p_21162_.is(DamageTypeTags.BYPASSES_ARMOR)) {
 +         // this.hurtArmor(pDamageSource, pDamageAmount); // CraftBukkit - Moved into damageEntity0(DamageSource, float)
-+          p_21163_ = CombatRules.getDamageAfterAbsorb(p_21163_, p_21162_, (float)this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
++          p_21163_ = CombatRules.getDamageAfterAbsorb(this, p_21163_, p_21162_, (float)this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
 +      }
  
          return p_21163_;
@@ -1392,18 +1376,24 @@
 +            */
 +         }
 +
-+         if (p_21194_ <= 0.0F) {
-+            return 0.0F;
-+         } else if (p_21193_.is(DamageTypeTags.BYPASSES_ENCHANTMENTS)) {
-+            return p_21194_;
-+         } else {
-+            int k = EnchantmentHelper.getDamageProtection(this.getArmorSlots(), p_21193_);
-+            if (k > 0) {
-+               p_21194_ = CombatRules.getDamageAfterMagicAbsorb(p_21194_, (float)k);
-+            }
++          if (p_21194_ <= 0.0F) {
++              return 0.0F;
++          } else if (p_21193_.is(DamageTypeTags.BYPASSES_ENCHANTMENTS)) {
++              return p_21194_;
++          } else {
++              float f3;
++              if (this.level() instanceof ServerLevel serverlevel) {
++                  f3 = EnchantmentHelper.getDamageProtection(serverlevel, this, p_21193_);
++              } else {
++                  f3 = 0.0F;
++              }
 +
-+            return p_21194_;
-+         }
++              if (f3 > 0.0F) {
++                  p_21194_ = CombatRules.getDamageAfterMagicAbsorb(p_21194_, f3);
++              }
++
++              return p_21194_;
++          }
 +      }
 +   }
 +
@@ -1419,7 +1409,7 @@
 +         }
 +         final float originalDamage = p_21241_;
 +
-+         Function<Double, Double> hardHat = f -> {
++          Function<Double, Double> hardHat = f -> {
 +            if (p_21240_.is(DamageTypeTags.DAMAGES_HELMET)  && !LivingEntity.this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
 +               return -(f - (f * 0.75F));
 +            }

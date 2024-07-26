@@ -173,7 +173,7 @@
 +           return;
 +       }
 +       var event = net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(player, p_215120_, p_215122_, p_215121_);
-+       if (event.isCanceled() || (!this.isCreative() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
++       if (event.isCanceled() || (!this.isCreative() && event.getResult().isDenied())) {
 +           return;
 +       }
 +       if (!this.player.canInteractWithBlock(p_215120_, 1.0)) {

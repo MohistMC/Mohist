@@ -122,6 +122,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
@@ -491,8 +492,7 @@ public final class ForgeHooks {
                 }
             } else {
                 // Change the stack to its new content
-                if (!player.isCreative())
-                    player.setItemInHand(context.getHand(), postUse);
+                player.setItemInHand(context.getHand(), postUse);
 
                 for (BlockSnapshot snap : blockSnapshots) {
                     int updateFlag = snap.getFlag();
@@ -639,9 +639,8 @@ public final class ForgeHooks {
     }
 
     public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def) {
-        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(level,pos,state);
-        MinecraftForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+        var result = MinecraftForge.EVENT_BUS.fire(new BlockEvent.CropGrowEvent.Pre(level,pos,state)).getResult();
+        return (result.isAllowed() || (def && result.isDefault()));
     }
 
     public static void onCropsGrowPost(Level level, BlockPos pos, BlockState state) {

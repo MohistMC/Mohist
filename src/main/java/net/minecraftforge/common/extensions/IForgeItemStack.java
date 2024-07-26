@@ -8,6 +8,7 @@ package net.minecraftforge.common.extensions;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.AABB;
@@ -402,5 +403,12 @@ public interface IForgeItemStack {
      */
     default boolean canGrindstoneRepair() {
         return self().getItem().canGrindstoneRepair(self());
+    }
+
+    /**
+     * ItemStack and Slot sensitive version of {@link Item#getItemAttributeModifiers}
+     */
+    default ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return self().getItem().getDefaultAttributeModifiers(self());
     }
 }

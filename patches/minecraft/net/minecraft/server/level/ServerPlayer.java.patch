@@ -900,7 +900,7 @@
 +   public void openHorseInventory(AbstractHorse p_9059_, Container p_9060_) {
 +      // CraftBukkit start - Inventory open hook
 +      this.nextContainerCounter();
-+      AbstractContainerMenu container = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_);
++      AbstractContainerMenu container = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_, p_9059_.getInventoryColumns());
 +      container.setTitle(p_9059_.getDisplayName());
 +      container = CraftEventFactory.callInventoryOpenEvent(this, container);
 +

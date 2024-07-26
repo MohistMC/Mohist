@@ -20,3 +20,14 @@
          Validate.notNull(p_31793_);
          this.direction = p_31793_;
          if (p_31793_.getAxis().isHorizontal()) {
+@@ -94,6 +_,10 @@
+         double d1 = direction$axis == Direction.Axis.Y ? 0.0625 : 0.75;
+         double d2 = direction$axis == Direction.Axis.Z ? 0.0625 : 0.75;
+         return AABB.ofSize(vec3, d0, d1, d2);
++    }
++
++    public static AABB calculateBoundingBoxStatic(BlockPos blockposition, Direction enumdirection) {
++        return calculateBoundingBoxStatic(blockposition, enumdirection);
+     }
+ 
+     @Override

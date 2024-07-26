@@ -72,6 +72,10 @@ public class VersionChecker {
         public boolean isAnimated() {
             return animated;
         }
+
+        public boolean isOutdated() {
+            return this == OUTDATED || this == BETA_OUTDATED;
+        }
     }
 
     public record CheckResult(VersionChecker.Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url) {}
