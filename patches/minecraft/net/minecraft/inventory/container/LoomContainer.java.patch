@@ -44,7 +44,7 @@
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return field_217033_c.getLocation();
++         return LoomContainer.this.field_217033_c.getLocation();
 +      }
 +      // CraftBukkit end
     };
@@ -56,7 +56,7 @@
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return field_217033_c.getLocation();
++         return LoomContainer.this.field_217033_c.getLocation();
 +      }
 +      // CraftBukkit end
     };
