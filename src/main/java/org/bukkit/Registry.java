@@ -387,7 +387,6 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
         }
 
         @ApiStatus.Internal
-        @Deprecated(since = "1.20.6", forRemoval = true)
         public Class<T> getType() {
             return this.type;
         }

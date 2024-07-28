@@ -540,14 +540,12 @@
              }
          }
      }
-@@ -777,9 +_,9 @@
-         return !this.isPvpAllowed() ? false : super.canHarmPlayer(p_9064_);
+@@ -778,8 +_,8 @@
      }
  
--    private boolean isPvpAllowed() {
+     private boolean isPvpAllowed() {
 -        return this.server.isPvpAllowed();
 -    }
-+   private boolean isPvpAllowed() {
 +      return this.level().pvpMode;
 +   }
  
@@ -1168,20 +1166,17 @@
  
      @Nullable
      public BlockPos getRespawnPosition() {
-@@ -1728,11 +_,38 @@
-         return this.respawnForced;
+@@ -1732,7 +_,37 @@
+         this.setRespawnPosition(p_344968_.getRespawnDimension(), p_344968_.getRespawnPosition(), p_344968_.getRespawnAngle(), p_344968_.isRespawnForced(), false);
      }
  
--    public void copyRespawnPosition(ServerPlayer p_344968_) {
--        this.setRespawnPosition(p_344968_.getRespawnDimension(), p_344968_.getRespawnPosition(), p_344968_.getRespawnAngle(), p_344968_.isRespawnForced(), false);
-+
 +    public PlayerSpawnChangeEvent.Cause cause = PlayerSpawnChangeEvent.Cause.UNKNOWN;
 +
 +    public void setRespawnPosition(ResourceKey<Level> resourcekey, @Nullable BlockPos blockposition, float f, boolean flag, boolean flag1, PlayerSpawnChangeEvent.Cause cause) {
 +       this.cause = cause;
 +       this.setRespawnPosition(resourcekey, blockposition, f, flag, flag1);
-     }
- 
++    }
++
      public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
 +        if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.OVERWORLD : p_9159_, p_9160_, p_9162_))
 +            return;

@@ -2362,7 +2362,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         {
             if ( CraftPlayer.this.getHealth() <= 0 && CraftPlayer.this.isOnline() )
             {
-                CraftPlayer.this.server.getServer().getPlayerList().respawn( CraftPlayer.this.getHandle(), false, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.PLUGIN );
+                // CraftPlayer.this.server.getServer().getPlayerList().respawn( CraftPlayer.this.getHandle(), false, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.PLUGIN ); Mohist TODO
             }
         }
 

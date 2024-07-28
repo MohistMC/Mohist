@@ -1212,22 +1212,20 @@
      public void handleClientCommand(ServerboundClientCommandPacket p_9843_) {
          PacketUtils.ensureRunningOnSameThread(p_9843_, this, this.player.serverLevel());
          this.player.resetLastActionTime();
-@@ -1570,17 +_,19 @@
+@@ -1570,6 +_,7 @@
              case PERFORM_RESPAWN:
                  if (this.player.wonGame) {
                      this.player.wonGame = false;
--                    this.player = this.server.getPlayerList().respawn(this.player, true, Entity.RemovalReason.CHANGED_DIMENSION);
 +                    this.server.getPlayerList().mohist$reason = PlayerRespawnEvent.RespawnReason.END_PORTAL; // Mohist
-+                    this.player = this.server.getPlayerList().respawn(this.player, true);
+                     this.player = this.server.getPlayerList().respawn(this.player, true, Entity.RemovalReason.CHANGED_DIMENSION);
                      CriteriaTriggers.CHANGED_DIMENSION.trigger(this.player, Level.END, Level.OVERWORLD);
                  } else {
-                     if (this.player.getHealth() > 0.0F) {
+@@ -1577,10 +_,11 @@
                          return;
                      }
  
--                    this.player = this.server.getPlayerList().respawn(this.player, false, Entity.RemovalReason.KILLED);
 +                    this.server.getPlayerList().mohist$reason = PlayerRespawnEvent.RespawnReason.DEATH; // Mohist
-+                    this.player = this.server.getPlayerList().respawn(this.player, false);
+                     this.player = this.server.getPlayerList().respawn(this.player, false, Entity.RemovalReason.KILLED);
                      if (this.server.isHardcore()) {
                          this.player.setGameMode(GameType.SPECTATOR);
 -                        this.player.level().getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(false, this.server);

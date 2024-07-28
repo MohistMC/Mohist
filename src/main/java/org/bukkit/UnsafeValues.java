@@ -106,7 +106,6 @@ public interface UnsafeValues {
      * @return an internal potion data
      */
     @ApiStatus.Internal
-    @Deprecated(since = "1.20.2", forRemoval = true)
     PotionType.InternalPotionData getInternalPotionData(NamespacedKey key);
 
     @ApiStatus.Internal
