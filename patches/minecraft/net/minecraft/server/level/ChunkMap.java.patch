@@ -95,27 +95,24 @@
                 }
  
                 this.m_140258_(p_203002_);
-@@ -685,7 +_,24 @@
+@@ -685,7 +_,21 @@
  
     private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
 -         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter(new Predicate<Entity>() {
-+            @Override
-+            public boolean test(Entity entity) {
-+               boolean needsRemoval = false;
-+               net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+               if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+                  entity.m_146870_();
-+                  needsRemoval = true;
-+               }
-+               if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+                  entity.m_146870_();
-+                  needsRemoval = true;
-+               }
-+               return !needsRemoval;
++         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter(entity -> {
++            boolean needsRemoval = false;
++            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++               entity.m_146870_();
++               needsRemoval = true;
 +            }
++            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            return !needsRemoval;
 +         }));
 +         // CraftBukkit end
        }
