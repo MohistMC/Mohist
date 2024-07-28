@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/level/redstone/NeighborUpdater.java
 +++ b/net/minecraft/world/level/redstone/NeighborUpdater.java
-@@ -12,6 +_,11 @@
+@@ -8,10 +_,16 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;
@@ -12,21 +17,24 @@
  
  public interface NeighborUpdater {
      Direction[] UPDATE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH};
-@@ -40,6 +_,17 @@
+@@ -40,6 +_,20 @@
  
      static void executeUpdate(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
          try {
 +         	// CraftBukkit start
-+         	CraftWorld cworld = p_230764_.getWorld();
-+         	if (cworld != null) {
-+                BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(p_230764_, p_230766_), CraftBlockData.fromData(p_230765_), CraftBlock.at(p_230764_, p_230768_));
-+                Bukkit.getPluginManager().callEvent(event);
++            if (p_230764_ instanceof ServerLevel serverLevel) { // Mohist
++                CraftWorld cworld = serverLevel.getWorld();
++                if (cworld != null) {
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(serverLevel, p_230766_), CraftBlockData.fromData(p_230765_), CraftBlock.at(serverLevel, p_230768_));
++                    Bukkit.getPluginManager().callEvent(event);
 +
-+                if (event.isCancelled()) {
-+                    return;
++                    if (event.isCancelled()) {
++                        return;
++                    }
 +                }
++                // CraftBukkit end
 +            }
-+         	// CraftBukkit end
++
              p_230765_.handleNeighborChanged(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
          } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception while updating neighbours");

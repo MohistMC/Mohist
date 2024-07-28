@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -24,30 +_,32 @@
+@@ -24,30 +_,33 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
  import org.slf4j.Logger;
  
  public abstract class BaseSpawner {
@@ -53,7 +54,7 @@
  
      private boolean isNearPlayer(Level p_151344_, BlockPos p_151345_) {
          return p_151344_.hasNearbyAlivePlayer(
-@@ -149,13 +_,15 @@
+@@ -149,18 +_,24 @@
  
                          entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
                          if (entity instanceof Mob mob) {
@@ -72,6 +73,15 @@
                              }
  
                              spawndata.getEquipment().ifPresent(mob::equip);
+                         }
+ 
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
++                            continue;
++                        }
++                        entity.spawnReason(SpawnReason.SPAWNER);
+                         if (!p_151312_.tryAddFreshEntityWithPassengers(entity)) {
+                             this.delay(p_151312_, p_151313_);
+                             return;
 @@ -305,5 +_,15 @@
  
      public double getoSpin() {

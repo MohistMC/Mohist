@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/ClipContext.java
++++ b/net/minecraft/world/level/ClipContext.java
+@@ -21,7 +_,7 @@
+     private final CollisionContext collisionContext;
+ 
+     public ClipContext(Vec3 p_45688_, Vec3 p_45689_, ClipContext.Block p_45690_, ClipContext.Fluid p_45691_, Entity p_45692_) {
+-        this(p_45688_, p_45689_, p_45690_, p_45691_, CollisionContext.of(p_45692_));
++        this(p_45688_, p_45689_, p_45690_, p_45691_, p_45692_ == null ? CollisionContext.empty() :CollisionContext.of(p_45692_)); // CraftBukkit
+     }
+ 
+     public ClipContext(Vec3 p_312751_, Vec3 p_311517_, ClipContext.Block p_311464_, ClipContext.Fluid p_311910_, CollisionContext p_310522_) {
