@@ -111,7 +111,7 @@
 +      p_78547_.m_128359_("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.f_78443_.getLifecycle()));
 +      p_78547_.m_128379_("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
 +
-+      if (Bukkit.getServer() != null) {
++      if (Bukkit.getServer() != null && world != null) {
 +         p_78547_.m_128359_("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
 +         world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
 +      }

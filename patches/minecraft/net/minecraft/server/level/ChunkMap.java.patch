@@ -1,13 +1,15 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -5,6 +_,7 @@
+@@ -5,7 +_,9 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
 +import com.google.common.util.concurrent.AtomicDouble;
  import com.google.gson.JsonElement;
++import com.mohistmc.bukkit.CallbackExecutor;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Either;
+ import com.mojang.logging.LogUtils;
 @@ -40,12 +_,9 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
@@ -39,29 +41,12 @@
  import org.slf4j.Logger;
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -144,6 +_,27 @@
+@@ -144,6 +_,10 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
     int f_140126_;
  
 +   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
 +   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
-+   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
-+
-+      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
-+
-+      @Override
-+      public void execute(Runnable runnable) {
-+         queue.add(runnable);
-+      }
-+
-+      @Override
-+      public void run() {
-+         Runnable task;
-+         while ((task = queue.poll()) != null) {
-+            task.run();
-+         }
-+      }
-+   };
 +   // CraftBukkit end
 +
     public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
@@ -79,62 +64,657 @@
        RegistryAccess registryaccess = p_214836_.m_9598_();
        long i = p_214836_.m_7328_();
        if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
-@@ -398,6 +_,7 @@
-             this.f_140140_ = true;
+@@ -270,22 +_,22 @@
+    private CompletableFuture<Either<List<ChunkAccess>, ChunkHolder.ChunkLoadingFailure>> m_280541_(ChunkHolder p_281446_, int p_282030_, IntFunction<ChunkStatus> p_282923_) {
+       if (p_282030_ == 0) {
+          ChunkStatus chunkstatus1 = p_282923_.apply(0);
+-         return p_281446_.m_140049_(chunkstatus1, this).thenApply((p_214893_) -> {
++         return p_281446_.getOrScheduleFuture(chunkstatus1, this).thenApply((p_214893_) -> {
+             return p_214893_.mapLeft(List::of);
+          });
+       } else {
+          List<CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>> list = new ArrayList<>();
+          List<ChunkHolder> list1 = new ArrayList<>();
+-         ChunkPos chunkpos = p_281446_.m_140092_();
+-         int i = chunkpos.f_45578_;
+-         int j = chunkpos.f_45579_;
++         ChunkPos chunkpos = p_281446_.getPos();
++         int i = chunkpos.x;
++         int j = chunkpos.z;
+ 
+          for(int k = -p_282030_; k <= p_282030_; ++k) {
+             for(int l = -p_282030_; l <= p_282030_; ++l) {
+                int i1 = Math.max(Math.abs(l), Math.abs(k));
+                final ChunkPos chunkpos1 = new ChunkPos(i + l, j + k);
+-               long j1 = chunkpos1.m_45588_();
+-               ChunkHolder chunkholder = this.m_140174_(j1);
++               long j1 = chunkpos1.toLong();
++               ChunkHolder chunkholder = this.getUpdatingChunkIfPresent(j1);
+                if (chunkholder == null) {
+                   return CompletableFuture.completedFuture(Either.right(new ChunkHolder.ChunkLoadingFailure() {
+                      public String toString() {
+@@ -295,20 +_,20 @@
+                }
+ 
+                ChunkStatus chunkstatus = p_282923_.apply(i1);
+-               CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = chunkholder.m_140049_(chunkstatus, this);
++               CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = chunkholder.getOrScheduleFuture(chunkstatus, this);
+                list1.add(chunkholder);
+                list.add(completablefuture);
+             }
           }
  
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.f_140133_, p_140177_, p_140180_, p_140178_, p_140179_);
+-         CompletableFuture<List<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>> completablefuture1 = Util.m_137567_(list);
++         CompletableFuture<List<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>> completablefuture1 = Util.sequence(list);
+          CompletableFuture<Either<List<ChunkAccess>, ChunkHolder.ChunkLoadingFailure>> completablefuture2 = completablefuture1.thenApply((p_183730_) -> {
+             List<ChunkAccess> list2 = Lists.newArrayList();
+             int k1 = 0;
+ 
+             for(final Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either : p_183730_) {
+                if (either == null) {
+-                  throw this.m_203751_(new IllegalStateException("At least one of the chunk futures were null"), "n/a");
++                  throw this.debugFuturesAndCreateReportedException(new IllegalStateException("At least one of the chunk futures were null"), "n/a");
+                }
+ 
+                Optional<ChunkAccess> optional = either.left();
+@@ -329,92 +_,93 @@
+          });
+ 
+          for(ChunkHolder chunkholder1 : list1) {
+-            chunkholder1.m_200416_("getChunkRangeFuture " + chunkpos + " " + p_282030_, completablefuture2);
++            chunkholder1.addSaveDependency("getChunkRangeFuture " + chunkpos + " " + p_282030_, completablefuture2);
+          }
+ 
+          return completablefuture2;
+       }
+    }
+ 
+-   public ReportedException m_203751_(IllegalStateException p_203752_, String p_203753_) {
++   public ReportedException debugFuturesAndCreateReportedException(IllegalStateException p_203752_, String p_203753_) {
+       StringBuilder stringbuilder = new StringBuilder();
+       Consumer<ChunkHolder> consumer = (p_203756_) -> {
+-         p_203756_.m_202980_().forEach((p_203760_) -> {
++         p_203756_.getAllFutures().forEach((p_203760_) -> {
+             ChunkStatus chunkstatus = p_203760_.getFirst();
+             CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = p_203760_.getSecond();
+             if (completablefuture != null && completablefuture.isDone() && completablefuture.join() == null) {
+-               stringbuilder.append((Object)p_203756_.m_140092_()).append(" - status: ").append((Object)chunkstatus).append(" future: ").append((Object)completablefuture).append(System.lineSeparator());
++               stringbuilder.append((Object)p_203756_.getPos()).append(" - status: ").append((Object)chunkstatus).append(" future: ").append((Object)completablefuture).append(System.lineSeparator());
+             }
+ 
+          });
+       };
+       stringbuilder.append("Updating:").append(System.lineSeparator());
+-      this.f_140129_.values().forEach(consumer);
++      this.updatingChunkMap.values().forEach(consumer);
+       stringbuilder.append("Visible:").append(System.lineSeparator());
+-      this.f_140130_.values().forEach(consumer);
+-      CrashReport crashreport = CrashReport.m_127521_(p_203752_, "Chunk loading");
+-      CrashReportCategory crashreportcategory = crashreport.m_127514_("Chunk loading");
+-      crashreportcategory.m_128159_("Details", p_203753_);
+-      crashreportcategory.m_128159_("Futures", stringbuilder);
++      this.visibleChunkMap.values().forEach(consumer);
++      CrashReport crashreport = CrashReport.forThrowable(p_203752_, "Chunk loading");
++      CrashReportCategory crashreportcategory = crashreport.addCategory("Chunk loading");
++      crashreportcategory.setDetail("Details", p_203753_);
++      crashreportcategory.setDetail("Futures", stringbuilder);
+       return new ReportedException(crashreport);
+    }
+ 
+-   public CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> m_280208_(ChunkHolder p_281455_) {
+-      return this.m_280541_(p_281455_, 2, (p_203078_) -> {
+-         return ChunkStatus.f_62326_;
++   public CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> prepareEntityTickingChunk(ChunkHolder p_281455_) {
++      return this.getChunkRangeFuture(p_281455_, 2, (p_203078_) -> {
++         return ChunkStatus.FULL;
+       }).thenApplyAsync((p_212878_) -> {
+          return p_212878_.mapLeft((p_203092_) -> {
+             return (LevelChunk)p_203092_.get(p_203092_.size() / 2);
+          });
+-      }, this.f_140135_);
++      }, this.mainThreadExecutor);
+    }
+ 
+    @Nullable
+-   ChunkHolder m_140176_(long p_140177_, int p_140178_, @Nullable ChunkHolder p_140179_, int p_140180_) {
+-      if (!ChunkLevel.m_287217_(p_140180_) && !ChunkLevel.m_287217_(p_140178_)) {
++   ChunkHolder updateChunkScheduling(long p_140177_, int p_140178_, @Nullable ChunkHolder p_140179_, int p_140180_) {
++      if (!ChunkLevel.isLoaded(p_140180_) && !ChunkLevel.isLoaded(p_140178_)) {
+          return p_140179_;
+       } else {
+          if (p_140179_ != null) {
+-            p_140179_.m_140027_(p_140178_);
++            p_140179_.setTicketLevel(p_140178_);
+          }
+ 
+          if (p_140179_ != null) {
+-            if (!ChunkLevel.m_287217_(p_140178_)) {
+-               this.f_140139_.add(p_140177_);
++            if (!ChunkLevel.isLoaded(p_140178_)) {
++               this.toDrop.add(p_140177_);
+             } else {
+-               this.f_140139_.remove(p_140177_);
++               this.toDrop.remove(p_140177_);
+             }
+          }
+ 
+-         if (ChunkLevel.m_287217_(p_140178_) && p_140179_ == null) {
+-            p_140179_ = this.f_140131_.remove(p_140177_);
++         if (ChunkLevel.isLoaded(p_140178_) && p_140179_ == null) {
++            p_140179_ = this.pendingUnloads.remove(p_140177_);
+             if (p_140179_ != null) {
+-               p_140179_.m_140027_(p_140178_);
++               p_140179_.setTicketLevel(p_140178_);
+             } else {
+-               p_140179_ = new ChunkHolder(new ChunkPos(p_140177_), p_140178_, this.f_140133_, this.f_140134_, this.f_140141_, this);
++               p_140179_ = new ChunkHolder(new ChunkPos(p_140177_), p_140178_, this.level, this.lightEngine, this.queueSorter, this);
+             }
+ 
+-            this.f_140129_.put(p_140177_, p_140179_);
+-            this.f_140140_ = true;
++            this.updatingChunkMap.put(p_140177_, p_140179_);
++            this.modified = true;
+          }
+ 
++         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.level, p_140177_, p_140180_, p_140178_, p_140179_);
           return p_140179_;
        }
     }
-@@ -503,6 +_,7 @@
-             if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
+ 
+    public void close() throws IOException {
+       try {
+-         this.f_140141_.close();
+-         this.f_140138_.close();
++         this.queueSorter.close();
++         this.poiManager.close();
+       } finally {
+          super.close();
+       }
+ 
+    }
+ 
+-   protected void m_140318_(boolean p_140319_) {
++   protected void saveAllChunks(boolean p_140319_) {
+       if (p_140319_) {
+-         List<ChunkHolder> list = this.f_140130_.values().stream().filter(ChunkHolder::m_140095_).peek(ChunkHolder::m_140096_).collect(Collectors.toList());
++         List<ChunkHolder> list = this.visibleChunkMap.values().stream().filter(ChunkHolder::wasAccessibleSinceLastSave).peek(ChunkHolder::refreshAccessibility).collect(Collectors.toList());
+          MutableBoolean mutableboolean = new MutableBoolean();
+ 
+          do {
+@@ -422,373 +_,402 @@
+             list.stream().map((p_203102_) -> {
+                CompletableFuture<ChunkAccess> completablefuture;
+                do {
+-                  completablefuture = p_203102_.m_140090_();
+-                  this.f_140135_.m_18701_(completablefuture::isDone);
+-               } while(completablefuture != p_203102_.m_140090_());
++                  completablefuture = p_203102_.getChunkToSave();
++                  this.mainThreadExecutor.managedBlock(completablefuture::isDone);
++               } while(completablefuture != p_203102_.getChunkToSave());
+ 
+                return completablefuture.join();
+             }).filter((p_203088_) -> {
+                return p_203088_ instanceof ImposterProtoChunk || p_203088_ instanceof LevelChunk;
+-            }).filter(this::m_140258_).forEach((p_203051_) -> {
++            }).filter(this::save).forEach((p_203051_) -> {
+                mutableboolean.setTrue();
+             });
+          } while(mutableboolean.isTrue());
+ 
+-         this.m_140353_(() -> {
++         this.processUnloads(() -> {
+             return true;
+          });
+-         this.m_63514_();
++         this.flushWorker();
+       } else {
+-         this.f_140130_.values().forEach(this::m_198874_);
+-      }
+-
+-   }
+-
+-   protected void m_140280_(BooleanSupplier p_140281_) {
+-      ProfilerFiller profilerfiller = this.f_140133_.m_46473_();
+-      profilerfiller.m_6180_("poi");
+-      this.f_140138_.m_6202_(p_140281_);
+-      profilerfiller.m_6182_("chunk_unload");
+-      if (!this.f_140133_.m_7441_()) {
+-         this.m_140353_(p_140281_);
+-      }
+-
+-      profilerfiller.m_7238_();
+-   }
+-
+-   public boolean m_201907_() {
+-      return this.f_140134_.m_75808_() || !this.f_140131_.isEmpty() || !this.f_140129_.isEmpty() || this.f_140138_.m_202164_() || !this.f_140139_.isEmpty() || !this.f_140125_.isEmpty() || this.f_140141_.m_201909_() || this.f_140145_.m_201911_();
+-   }
+-
+-   private void m_140353_(BooleanSupplier p_140354_) {
+-      LongIterator longiterator = this.f_140139_.iterator();
+-
+-      for(int i = 0; longiterator.hasNext() && (p_140354_.getAsBoolean() || i < 200 || this.f_140139_.size() > 2000); longiterator.remove()) {
++         this.visibleChunkMap.values().forEach(this::saveChunkIfNeeded);
++      }
++
++   }
++
++   protected void tick(BooleanSupplier p_140281_) {
++      ProfilerFiller profilerfiller = this.level.getProfiler();
++      profilerfiller.push("poi");
++      this.poiManager.tick(p_140281_);
++      profilerfiller.popPush("chunk_unload");
++      if (!this.level.noSave()) {
++         this.processUnloads(p_140281_);
++      }
++
++      profilerfiller.pop();
++   }
++
++   public boolean hasWork() {
++      return this.lightEngine.hasLightWork() || !this.pendingUnloads.isEmpty() || !this.updatingChunkMap.isEmpty() || this.poiManager.hasWork() || !this.toDrop.isEmpty() || !this.unloadQueue.isEmpty() || this.queueSorter.hasWork() || this.distanceManager.hasTickets();
++   }
++
++   private void processUnloads(BooleanSupplier p_140354_) {
++      LongIterator longiterator = this.toDrop.iterator();
++
++      for(int i = 0; longiterator.hasNext() && (p_140354_.getAsBoolean() || i < 200 || this.toDrop.size() > 2000); longiterator.remove()) {
+          long j = longiterator.nextLong();
+-         ChunkHolder chunkholder = this.f_140129_.remove(j);
++         ChunkHolder chunkholder = this.updatingChunkMap.remove(j);
+          if (chunkholder != null) {
+-            this.f_140131_.put(j, chunkholder);
+-            this.f_140140_ = true;
++            this.pendingUnloads.put(j, chunkholder);
++            this.modified = true;
+             ++i;
+-            this.m_140181_(j, chunkholder);
++            this.scheduleUnload(j, chunkholder);
+          }
+       }
+ 
+-      int k = Math.max(0, this.f_140125_.size() - 2000);
++      int k = Math.max(0, this.unloadQueue.size() - 2000);
+ 
+       Runnable runnable;
+-      while((p_140354_.getAsBoolean() || k > 0) && (runnable = this.f_140125_.poll()) != null) {
++      while((p_140354_.getAsBoolean() || k > 0) && (runnable = this.unloadQueue.poll()) != null) {
+          --k;
+          runnable.run();
+       }
+ 
+       int l = 0;
+-      ObjectIterator<ChunkHolder> objectiterator = this.f_140130_.values().iterator();
++      ObjectIterator<ChunkHolder> objectiterator = this.visibleChunkMap.values().iterator();
+ 
+       while(l < 20 && p_140354_.getAsBoolean() && objectiterator.hasNext()) {
+-         if (this.m_198874_(objectiterator.next())) {
++         if (this.saveChunkIfNeeded(objectiterator.next())) {
+             ++l;
+          }
+       }
+ 
+    }
+ 
+-   private void m_140181_(long p_140182_, ChunkHolder p_140183_) {
+-      CompletableFuture<ChunkAccess> completablefuture = p_140183_.m_140090_();
++   private void scheduleUnload(long p_140182_, ChunkHolder p_140183_) {
++      CompletableFuture<ChunkAccess> completablefuture = p_140183_.getChunkToSave();
+       completablefuture.thenAcceptAsync((p_203002_) -> {
+-         CompletableFuture<ChunkAccess> completablefuture1 = p_140183_.m_140090_();
++         CompletableFuture<ChunkAccess> completablefuture1 = p_140183_.getChunkToSave();
+          if (completablefuture1 != completablefuture) {
+-            this.m_140181_(p_140182_, p_140183_);
++            this.scheduleUnload(p_140182_, p_140183_);
+          } else {
+-            if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
++            if (this.pendingUnloads.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
-                   ((LevelChunk)p_203002_).m_62913_(false);
+-                  ((LevelChunk)p_203002_).m_62913_(false);
++                  ((LevelChunk)p_203002_).setLoaded(false);
 +                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(p_203002_));
                 }
  
-                this.m_140258_(p_203002_);
-@@ -685,7 +_,21 @@
+-               this.m_140258_(p_203002_);
+-               if (this.f_140132_.remove(p_140182_) && p_203002_ instanceof LevelChunk) {
++               this.save(p_203002_);
++               if (this.entitiesInLevel.remove(p_140182_) && p_203002_ instanceof LevelChunk) {
+                   LevelChunk levelchunk = (LevelChunk)p_203002_;
+-                  this.f_140133_.m_8712_(levelchunk);
++                  this.level.unload(levelchunk);
+                }
  
-    private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
+-               this.f_140134_.m_9330_(p_203002_.m_7697_());
+-               this.f_140134_.m_9409_();
+-               this.f_140144_.m_5511_(p_203002_.m_7697_(), (ChunkStatus)null);
+-               this.f_202981_.remove(p_203002_.m_7697_().m_45588_());
++               this.lightEngine.updateChunkStatus(p_203002_.getPos());
++               this.lightEngine.tryScheduleUpdate();
++               this.progressListener.onStatusChange(p_203002_.getPos(), (ChunkStatus)null);
++               this.chunkSaveCooldowns.remove(p_203002_.getPos().toLong());
+             }
+ 
+          }
+-      }, this.f_140125_::add).whenComplete((p_202996_, p_202997_) -> {
++      }, this.unloadQueue::add).whenComplete((p_202996_, p_202997_) -> {
+          if (p_202997_ != null) {
+-            f_140128_.error("Failed to save chunk {}", p_140183_.m_140092_(), p_202997_);
++            LOGGER.error("Failed to save chunk {}", p_140183_.getPos(), p_202997_);
+          }
+ 
+       });
+    }
+ 
+-   protected boolean m_140324_() {
+-      if (!this.f_140140_) {
++   protected boolean promoteChunkMap() {
++      if (!this.modified) {
+          return false;
+       } else {
+-         this.f_140130_ = this.f_140129_.clone();
+-         this.f_140140_ = false;
++         this.visibleChunkMap = this.updatingChunkMap.clone();
++         this.modified = false;
+          return true;
+       }
+    }
+ 
+-   public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140292_(ChunkHolder p_140293_, ChunkStatus p_140294_) {
+-      ChunkPos chunkpos = p_140293_.m_140092_();
+-      if (p_140294_ == ChunkStatus.f_62314_) {
+-         return this.m_140417_(chunkpos);
++   public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> schedule(ChunkHolder p_140293_, ChunkStatus p_140294_) {
++      ChunkPos chunkpos = p_140293_.getPos();
++      if (p_140294_ == ChunkStatus.EMPTY) {
++         return this.scheduleChunkLoad(chunkpos);
+       } else {
+-         if (p_140294_ == ChunkStatus.f_62323_) {
+-            this.f_140145_.m_140792_(TicketType.f_9446_, chunkpos, ChunkLevel.m_287141_(ChunkStatus.f_62323_), chunkpos);
++         if (p_140294_ == ChunkStatus.LIGHT) {
++            this.distanceManager.addTicket(TicketType.LIGHT, chunkpos, ChunkLevel.byStatus(ChunkStatus.LIGHT), chunkpos);
+          }
+ 
+-         if (!p_140294_.m_280148_()) {
+-            Optional<ChunkAccess> optional = p_140293_.m_140049_(p_140294_.m_62482_(), this).getNow(ChunkHolder.f_139995_).left();
+-            if (optional.isPresent() && optional.get().m_6415_().m_62427_(p_140294_)) {
+-               CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = p_140294_.m_223244_(this.f_140133_, this.f_214833_, this.f_140134_, (p_203081_) -> {
+-                  return this.m_140383_(p_140293_);
++         if (!p_140294_.hasLoadDependencies()) {
++            Optional<ChunkAccess> optional = p_140293_.getOrScheduleFuture(p_140294_.getParent(), this).getNow(ChunkHolder.UNLOADED_CHUNK).left();
++            if (optional.isPresent() && optional.get().getStatus().isOrAfter(p_140294_)) {
++               CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = p_140294_.load(this.level, this.structureTemplateManager, this.lightEngine, (p_203081_) -> {
++                  return this.protoChunkToFullChunk(p_140293_);
+                }, optional.get());
+-               this.f_140144_.m_5511_(chunkpos, p_140294_);
++               this.progressListener.onStatusChange(chunkpos, p_140294_);
+                return completablefuture;
+             }
+          }
+ 
+-         return this.m_140360_(p_140293_, p_140294_);
++         return this.scheduleChunkGeneration(p_140293_, p_140294_);
+       }
+    }
+ 
+-   private CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140417_(ChunkPos p_140418_) {
+-      return this.m_214963_(p_140418_).thenApply((p_214925_) -> {
++   private CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> scheduleChunkLoad(ChunkPos p_140418_) {
++      return this.readChunk(p_140418_).thenApply((p_214925_) -> {
+          return p_214925_.filter((p_214928_) -> {
+-            boolean flag = m_214940_(p_214928_);
++            boolean flag = isChunkDataValid(p_214928_);
+             if (!flag) {
+-               f_140128_.error("Chunk file at {} is missing level data, skipping", (Object)p_140418_);
++               LOGGER.error("Chunk file at {} is missing level data, skipping", (Object)p_140418_);
+             }
+ 
+             return flag;
+          });
+       }).<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>thenApplyAsync((p_269770_) -> {
+-         this.f_140133_.m_46473_().m_6174_("chunkLoad");
++         this.level.getProfiler().incrementCounter("chunkLoad");
+          if (p_269770_.isPresent()) {
+-            ChunkAccess chunkaccess = ChunkSerializer.m_188230_(this.f_140133_, this.f_140138_, p_140418_, p_269770_.get());
+-            this.m_140229_(p_140418_, chunkaccess.m_6415_().m_62494_());
++            ChunkAccess chunkaccess = ChunkSerializer.read(this.level, this.poiManager, p_140418_, p_269770_.get());
++            this.markPosition(p_140418_, chunkaccess.getStatus().getChunkType());
+             return Either.left(chunkaccess);
+          } else {
+-            return Either.left(this.m_214961_(p_140418_));
++            return Either.left(this.createEmptyChunk(p_140418_));
+          }
+-      }, this.f_140135_).exceptionallyAsync((p_214888_) -> {
+-         return this.m_214901_(p_214888_, p_140418_);
+-      }, this.f_140135_);
+-   }
+-
+-   private static boolean m_214940_(CompoundTag p_214941_) {
+-      return p_214941_.m_128425_("Status", 8);
+-   }
+-
+-   private Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> m_214901_(Throwable p_214902_, ChunkPos p_214903_) {
++      }, this.mainThreadExecutor).exceptionallyAsync((p_214888_) -> {
++         return this.handleChunkLoadFailure(p_214888_, p_140418_);
++      }, this.mainThreadExecutor);
++   }
++
++   private static boolean isChunkDataValid(CompoundTag p_214941_) {
++      return p_214941_.contains("Status", 8);
++   }
++
++   private Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> handleChunkLoadFailure(Throwable p_214902_, ChunkPos p_214903_) {
+       if (p_214902_ instanceof ReportedException reportedexception) {
+          Throwable throwable = reportedexception.getCause();
+          if (!(throwable instanceof IOException)) {
+-            this.m_140422_(p_214903_);
++            this.markPositionReplaceable(p_214903_);
+             throw reportedexception;
+          }
+ 
+-         f_140128_.error("Couldn't load chunk {}", p_214903_, throwable);
++         LOGGER.error("Couldn't load chunk {}", p_214903_, throwable);
+       } else if (p_214902_ instanceof IOException) {
+-         f_140128_.error("Couldn't load chunk {}", p_214903_, p_214902_);
++         LOGGER.error("Couldn't load chunk {}", p_214903_, p_214902_);
+       }
+ 
+-      return Either.left(this.m_214961_(p_214903_));
+-   }
+-
+-   private ChunkAccess m_214961_(ChunkPos p_214962_) {
+-      this.m_140422_(p_214962_);
+-      return new ProtoChunk(p_214962_, UpgradeData.f_63320_, this.f_140133_, this.f_140133_.m_9598_().m_175515_(Registries.f_256952_), (BlendingData)null);
+-   }
+-
+-   private void m_140422_(ChunkPos p_140423_) {
+-      this.f_140151_.put(p_140423_.m_45588_(), (byte)-1);
+-   }
+-
+-   private byte m_140229_(ChunkPos p_140230_, ChunkStatus.ChunkType p_140231_) {
+-      return this.f_140151_.put(p_140230_.m_45588_(), (byte)(p_140231_ == ChunkStatus.ChunkType.PROTOCHUNK ? -1 : 1));
+-   }
+-
+-   private CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140360_(ChunkHolder p_140361_, ChunkStatus p_140362_) {
+-      ChunkPos chunkpos = p_140361_.m_140092_();
+-      CompletableFuture<Either<List<ChunkAccess>, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.m_280541_(p_140361_, p_140362_.m_62488_(), (p_214935_) -> {
+-         return this.m_140262_(p_140362_, p_214935_);
++      return Either.left(this.createEmptyChunk(p_214903_));
++   }
++
++   private ChunkAccess createEmptyChunk(ChunkPos p_214962_) {
++      this.markPositionReplaceable(p_214962_);
++      return new ProtoChunk(p_214962_, UpgradeData.EMPTY, this.level, this.level.registryAccess().registryOrThrow(Registries.BIOME), (BlendingData)null);
++   }
++
++   private void markPositionReplaceable(ChunkPos p_140423_) {
++      this.chunkTypeCache.put(p_140423_.toLong(), (byte)-1);
++   }
++
++   private byte markPosition(ChunkPos p_140230_, ChunkStatus.ChunkType p_140231_) {
++      return this.chunkTypeCache.put(p_140230_.toLong(), (byte)(p_140231_ == ChunkStatus.ChunkType.PROTOCHUNK ? -1 : 1));
++   }
++
++   private CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> scheduleChunkGeneration(ChunkHolder p_140361_, ChunkStatus p_140362_) {
++      ChunkPos chunkpos = p_140361_.getPos();
++      CompletableFuture<Either<List<ChunkAccess>, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.getChunkRangeFuture(p_140361_, p_140362_.getRange(), (p_214935_) -> {
++         return this.getDependencyStatus(p_140362_, p_214935_);
+       });
+-      this.f_140133_.m_46473_().m_6525_(() -> {
++      this.level.getProfiler().incrementCounter(() -> {
+          return "chunkGenerate " + p_140362_;
+       });
+       Executor executor = (p_214958_) -> {
+-         this.f_140142_.m_6937_(ChunkTaskPriorityQueueSorter.m_140642_(p_140361_, p_214958_));
++         this.worldgenMailbox.tell(ChunkTaskPriorityQueueSorter.message(p_140361_, p_214958_));
+       };
+       return completablefuture.thenComposeAsync((p_214873_) -> {
+          return p_214873_.map((p_280971_) -> {
+             try {
+                ChunkAccess chunkaccess = p_280971_.get(p_280971_.size() / 2);
+                CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture1;
+-               if (chunkaccess.m_6415_().m_62427_(p_140362_)) {
+-                  completablefuture1 = p_140362_.m_223244_(this.f_140133_, this.f_214833_, this.f_140134_, (p_214919_) -> {
+-                     return this.m_140383_(p_140361_);
++               if (chunkaccess.getStatus().isOrAfter(p_140362_)) {
++                  completablefuture1 = p_140362_.load(this.level, this.structureTemplateManager, this.lightEngine, (p_214919_) -> {
++                     return this.protoChunkToFullChunk(p_140361_);
+                   }, chunkaccess);
+                } else {
+-                  completablefuture1 = p_140362_.m_280308_(executor, this.f_140133_, this.f_140136_, this.f_214833_, this.f_140134_, (p_280966_) -> {
+-                     return this.m_140383_(p_140361_);
++                  completablefuture1 = p_140362_.generate(executor, this.level, this.generator, this.structureTemplateManager, this.lightEngine, (p_280966_) -> {
++                     return this.protoChunkToFullChunk(p_140361_);
+                   }, p_280971_);
+                }
+ 
+-               this.f_140144_.m_5511_(chunkpos, p_140362_);
++               this.progressListener.onStatusChange(chunkpos, p_140362_);
+                return completablefuture1;
+             } catch (Exception exception) {
+                exception.getStackTrace();
+-               CrashReport crashreport = CrashReport.m_127521_(exception, "Exception generating new chunk");
+-               CrashReportCategory crashreportcategory = crashreport.m_127514_("Chunk to be generated");
+-               crashreportcategory.m_128159_("Location", String.format(Locale.ROOT, "%d,%d", chunkpos.f_45578_, chunkpos.f_45579_));
+-               crashreportcategory.m_128159_("Position hash", ChunkPos.m_45589_(chunkpos.f_45578_, chunkpos.f_45579_));
+-               crashreportcategory.m_128159_("Generator", this.f_140136_);
+-               this.f_140135_.execute(() -> {
++               CrashReport crashreport = CrashReport.forThrowable(exception, "Exception generating new chunk");
++               CrashReportCategory crashreportcategory = crashreport.addCategory("Chunk to be generated");
++               crashreportcategory.setDetail("Location", String.format(Locale.ROOT, "%d,%d", chunkpos.x, chunkpos.z));
++               crashreportcategory.setDetail("Position hash", ChunkPos.asLong(chunkpos.x, chunkpos.z));
++               crashreportcategory.setDetail("Generator", this.generator);
++               this.mainThreadExecutor.execute(() -> {
+                   throw new ReportedException(crashreport);
+                });
+                throw new ReportedException(crashreport);
+             }
+          }, (p_214867_) -> {
+-            this.m_140375_(chunkpos);
++            this.releaseLightTicket(chunkpos);
+             return CompletableFuture.completedFuture(Either.right(p_214867_));
+          });
+       }, executor);
+    }
+ 
+-   protected void m_140375_(ChunkPos p_140376_) {
+-      this.f_140135_.m_6937_(Util.m_137474_(() -> {
+-         this.f_140145_.m_140823_(TicketType.f_9446_, p_140376_, ChunkLevel.m_287141_(ChunkStatus.f_62323_), p_140376_);
++   protected void releaseLightTicket(ChunkPos p_140376_) {
++      this.mainThreadExecutor.tell(Util.name(() -> {
++         this.distanceManager.removeTicket(TicketType.LIGHT, p_140376_, ChunkLevel.byStatus(ChunkStatus.LIGHT), p_140376_);
+       }, () -> {
+          return "release light ticket " + p_140376_;
+       }));
+    }
+ 
+-   private ChunkStatus m_140262_(ChunkStatus p_140263_, int p_140264_) {
++   private ChunkStatus getDependencyStatus(ChunkStatus p_140263_, int p_140264_) {
+       ChunkStatus chunkstatus;
+       if (p_140264_ == 0) {
+-         chunkstatus = p_140263_.m_62482_();
++         chunkstatus = p_140263_.getParent();
+       } else {
+-         chunkstatus = ChunkStatus.m_156185_(ChunkStatus.m_62370_(p_140263_) + p_140264_);
++         chunkstatus = ChunkStatus.getStatusAroundFullChunk(ChunkStatus.getDistance(p_140263_) + p_140264_);
+       }
+ 
+       return chunkstatus;
+    }
+-
+-   private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
++0
++   private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
 -         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter(entity -> {
-+            boolean needsRemoval = false;
-+            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+               entity.m_146870_();
-+               needsRemoval = true;
-+            }
-+            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+               entity.m_146870_();
-+               needsRemoval = true;
-+            }
-+            return !needsRemoval;
++         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter(new Predicate<Entity>() {
++             @Override
++             public boolean test(Entity entity) {
++                 boolean needsRemoval = false;
++                 net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++                 if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++                     entity.discard();
++                     needsRemoval = true;
++                 }
++                 if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++                     entity.discard();
++                     needsRemoval = true;
++                 }
++                 return !needsRemoval;
++             }
 +         }));
 +         // CraftBukkit end
        }
  
     }
-@@ -710,11 +_,22 @@
-             levelchunk.m_62879_(() -> {
-                return ChunkLevel.m_287264_(p_140384_.m_140093_());
+ 
+-   private CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140383_(ChunkHolder p_140384_) {
+-      CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = p_140384_.m_140047_(ChunkStatus.f_62326_.m_62482_());
++   private CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> protoChunkToFullChunk(ChunkHolder p_140384_) {
++      CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = p_140384_.getFutureIfPresentUnchecked(ChunkStatus.FULL.getParent());
+       return completablefuture.thenApplyAsync((p_287363_) -> {
+-         ChunkStatus chunkstatus = ChunkLevel.m_287158_(p_140384_.m_140093_());
+-         return !chunkstatus.m_62427_(ChunkStatus.f_62326_) ? ChunkHolder.f_139995_ : p_287363_.mapLeft((p_214856_) -> {
+-            ChunkPos chunkpos = p_140384_.m_140092_();
++         ChunkStatus chunkstatus = ChunkLevel.generationStatus(p_140384_.getTicketLevel());
++         return !chunkstatus.isOrAfter(ChunkStatus.FULL) ? ChunkHolder.UNLOADED_CHUNK : p_287363_.mapLeft((p_214856_) -> {
++            ChunkPos chunkpos = p_140384_.getPos();
+             ProtoChunk protochunk = (ProtoChunk)p_214856_;
+             LevelChunk levelchunk;
+             if (protochunk instanceof ImposterProtoChunk) {
+-               levelchunk = ((ImposterProtoChunk)protochunk).m_62768_();
++               levelchunk = ((ImposterProtoChunk)protochunk).getWrapped();
+             } else {
+-               levelchunk = new LevelChunk(this.f_140133_, protochunk, (p_214900_) -> {
+-                  m_143064_(this.f_140133_, protochunk.m_63293_());
++               levelchunk = new LevelChunk(this.level, protochunk, (p_214900_) -> {
++                  postLoadProtoChunk(this.level, protochunk.getEntities());
+                });
+-               p_140384_.m_140052_(new ImposterProtoChunk(levelchunk, false));
++               p_140384_.replaceProtoChunk(new ImposterProtoChunk(levelchunk, false));
+             }
+ 
+-            levelchunk.m_62879_(() -> {
+-               return ChunkLevel.m_287264_(p_140384_.m_140093_());
++            levelchunk.setFullStatus(() -> {
++               return ChunkLevel.fullStatus(p_140384_.getTicketLevel());
              });
 -            levelchunk.m_62952_();
+-            if (this.f_140132_.add(chunkpos.m_45588_())) {
+-               levelchunk.m_62913_(true);
+-               levelchunk.m_156369_();
+-               levelchunk.m_187958_(this.f_140133_);
 +            try {
 +               p_140384_.currentlyLoading = levelchunk; // Neo: bypass the future chain when getChunk is called, this prevents deadlocks.
-+               levelchunk.m_62952_();
++               levelchunk.runPostLoad();
 +            }  finally {
 +               p_140384_.currentlyLoading = null; // Neo: Stop bypassing the future chain.
 +            }
-             if (this.f_140132_.add(chunkpos.m_45588_())) {
-                levelchunk.m_62913_(true);
++            if (this.entitiesInLevel.add(chunkpos.toLong())) {
++               levelchunk.setLoaded(true);
 +               try {
 +               p_140384_.currentlyLoading = levelchunk; // Neo: bypass the future chain when getChunk is called, this prevents deadlocks.
-                levelchunk.m_156369_();
-                levelchunk.m_187958_(this.f_140133_);
++               levelchunk.registerAllBlockEntitiesAfterLevelLoad();
++               levelchunk.registerTickContainerInLevel(this.level);
 +               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
 +               } finally {
 +                   p_140384_.currentlyLoading = null; // Neo - Stop bypassing the future chain.
@@ -142,144 +722,1047 @@
              }
  
              return levelchunk;
-@@ -797,7 +_,7 @@
+          });
+       }, (p_214951_) -> {
+-         this.f_140143_.m_6937_(ChunkTaskPriorityQueueSorter.m_140624_(p_214951_, p_140384_.m_140092_().m_45588_(), p_140384_::m_140093_));
++         this.mainThreadMailbox.tell(ChunkTaskPriorityQueueSorter.message(p_214951_, p_140384_.getPos().toLong(), p_140384_::getTicketLevel));
+       });
+    }
+ 
+-   public CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> m_143053_(ChunkHolder p_143054_) {
+-      CompletableFuture<Either<List<ChunkAccess>, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.m_280541_(p_143054_, 1, (p_214916_) -> {
+-         return ChunkStatus.f_62326_;
++   public CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> prepareTickingChunk(ChunkHolder p_143054_) {
++      CompletableFuture<Either<List<ChunkAccess>, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.getChunkRangeFuture(p_143054_, 1, (p_214916_) -> {
++         return ChunkStatus.FULL;
+       });
+       CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> completablefuture1 = completablefuture.thenApplyAsync((p_280964_) -> {
+          return p_280964_.mapLeft((p_214939_) -> {
+             return (LevelChunk)p_214939_.get(p_214939_.size() / 2);
+          });
+       }, (p_214944_) -> {
+-         this.f_140143_.m_6937_(ChunkTaskPriorityQueueSorter.m_140642_(p_143054_, p_214944_));
++         this.mainThreadMailbox.tell(ChunkTaskPriorityQueueSorter.message(p_143054_, p_214944_));
+       }).thenApplyAsync((p_214930_) -> {
+          return p_214930_.ifLeft((p_214960_) -> {
+-            p_214960_.m_62812_();
+-            this.f_140133_.m_184102_(p_214960_);
++            p_214960_.postProcessGeneration();
++            this.level.startTickingChunk(p_214960_);
+          });
+-      }, this.f_140135_);
++      }, this.mainThreadExecutor);
+       completablefuture1.handle((p_287364_, p_287365_) -> {
+-         this.f_140146_.getAndIncrement();
++         this.tickingGenerated.getAndIncrement();
+          return null;
+       });
+       completablefuture1.thenAcceptAsync((p_214882_) -> {
+          p_214882_.ifLeft((p_287368_) -> {
+             MutableObject<ClientboundLevelChunkWithLightPacket> mutableobject = new MutableObject<>();
+-            this.m_183262_(p_143054_.m_140092_(), false).forEach((p_214911_) -> {
+-               this.m_183760_(p_214911_, mutableobject, p_287368_);
++            this.getPlayers(p_143054_.getPos(), false).forEach((p_214911_) -> {
++               this.playerLoadedChunk(p_214911_, mutableobject, p_287368_);
+             });
+          });
+       }, (p_214922_) -> {
+-         this.f_140143_.m_6937_(ChunkTaskPriorityQueueSorter.m_140642_(p_143054_, p_214922_));
++         this.mainThreadMailbox.tell(ChunkTaskPriorityQueueSorter.message(p_143054_, p_214922_));
+       });
+       return completablefuture1;
+    }
+ 
+-   public CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> m_143109_(ChunkHolder p_143110_) {
+-      return this.m_280541_(p_143110_, 1, ChunkStatus::m_156185_).thenApplyAsync((p_203086_) -> {
++   public CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> prepareAccessibleChunk(ChunkHolder p_143110_) {
++      return this.getChunkRangeFuture(p_143110_, 1, ChunkStatus::getStatusAroundFullChunk).thenApplyAsync((p_203086_) -> {
+          return p_203086_.mapLeft((p_214905_) -> {
+             return (LevelChunk)p_214905_.get(p_214905_.size() / 2);
+          });
+       }, (p_214859_) -> {
+-         this.f_140143_.m_6937_(ChunkTaskPriorityQueueSorter.m_140642_(p_143110_, p_214859_));
++         this.mainThreadMailbox.tell(ChunkTaskPriorityQueueSorter.message(p_143110_, p_214859_));
+       });
+    }
+ 
+-   public int m_140368_() {
+-      return this.f_140146_.get();
++   public int getTickingGenerated() {
++      return this.tickingGenerated.get();
+    }
+ 
+-   private boolean m_198874_(ChunkHolder p_198875_) {
+-      if (!p_198875_.m_140095_()) {
++   private boolean saveChunkIfNeeded(ChunkHolder p_198875_) {
++      if (!p_198875_.wasAccessibleSinceLastSave()) {
+          return false;
+       } else {
+-         ChunkAccess chunkaccess = p_198875_.m_140090_().getNow((ChunkAccess)null);
++         ChunkAccess chunkaccess = p_198875_.getChunkToSave().getNow((ChunkAccess)null);
+          if (!(chunkaccess instanceof ImposterProtoChunk) && !(chunkaccess instanceof LevelChunk)) {
+             return false;
+          } else {
+-            long i = chunkaccess.m_7697_().m_45588_();
+-            long j = this.f_202981_.getOrDefault(i, -1L);
++            long i = chunkaccess.getPos().toLong();
++            long j = this.chunkSaveCooldowns.getOrDefault(i, -1L);
+             long k = System.currentTimeMillis();
+             if (k < j) {
+                return false;
+             } else {
+-               boolean flag = this.m_140258_(chunkaccess);
+-               p_198875_.m_140096_();
++               boolean flag = this.save(chunkaccess);
++               p_198875_.refreshAccessibility();
+                if (flag) {
+-                  this.f_202981_.put(i, k + 10000L);
++                  this.chunkSaveCooldowns.put(i, k + 10000L);
+                }
+ 
+                return flag;
+@@ -797,139 +_,141 @@
        }
     }
  
 -   private boolean m_140258_(ChunkAccess p_140259_) {
-+   public boolean m_140258_(ChunkAccess p_140259_) {
-       this.f_140138_.m_63796_(p_140259_.m_7697_());
-       if (!p_140259_.m_6344_()) {
+-      this.f_140138_.m_63796_(p_140259_.m_7697_());
+-      if (!p_140259_.m_6344_()) {
++   public boolean save(ChunkAccess p_140259_) {
++      this.poiManager.flush(p_140259_.getPos());
++      if (!p_140259_.isUnsaved()) {
           return false;
-@@ -819,6 +_,7 @@
+       } else {
+-         p_140259_.m_8092_(false);
+-         ChunkPos chunkpos = p_140259_.m_7697_();
++         p_140259_.setUnsaved(false);
++         ChunkPos chunkpos = p_140259_.getPos();
  
-             this.f_140133_.m_46473_().m_6174_("chunkSave");
-             CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag));
-             this.m_63502_(chunkpos, compoundtag);
-             this.m_140229_(chunkpos, chunkstatus.m_62494_());
+          try {
+-            ChunkStatus chunkstatus = p_140259_.m_6415_();
+-            if (chunkstatus.m_62494_() != ChunkStatus.ChunkType.LEVELCHUNK) {
+-               if (this.m_140425_(chunkpos)) {
++            ChunkStatus chunkstatus = p_140259_.getStatus();
++            if (chunkstatus.getChunkType() != ChunkStatus.ChunkType.LEVELCHUNK) {
++               if (this.isExistingChunkFull(chunkpos)) {
+                   return false;
+                }
+ 
+-               if (chunkstatus == ChunkStatus.f_62314_ && p_140259_.m_6633_().values().stream().noneMatch(StructureStart::m_73603_)) {
++               if (chunkstatus == ChunkStatus.EMPTY && p_140259_.getAllStarts().values().stream().noneMatch(StructureStart::isValid)) {
+                   return false;
+                }
+             }
+ 
+-            this.f_140133_.m_46473_().m_6174_("chunkSave");
+-            CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
+-            this.m_63502_(chunkpos, compoundtag);
+-            this.m_140229_(chunkpos, chunkstatus.m_62494_());
++            this.level.getProfiler().incrementCounter("chunkSave");
++            CompoundTag compoundtag = ChunkSerializer.write(this.level, p_140259_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.level, compoundtag));
++            this.write(chunkpos, compoundtag);
++            this.markPosition(chunkpos, chunkstatus.getChunkType());
              return true;
-@@ -889,6 +_,7 @@
+          } catch (Exception exception) {
+-            f_140128_.error("Failed to save chunk {},{}", chunkpos.f_45578_, chunkpos.f_45579_, exception);
++            LOGGER.error("Failed to save chunk {},{}", chunkpos.x, chunkpos.z, exception);
+             return false;
+          }
+       }
+    }
+ 
+-   private boolean m_140425_(ChunkPos p_140426_) {
+-      byte b0 = this.f_140151_.get(p_140426_.m_45588_());
++   private boolean isExistingChunkFull(ChunkPos p_140426_) {
++      byte b0 = this.chunkTypeCache.get(p_140426_.toLong());
+       if (b0 != 0) {
+          return b0 == 1;
+       } else {
+          CompoundTag compoundtag;
+          try {
+-            compoundtag = this.m_214963_(p_140426_).join().orElse((CompoundTag)null);
++            compoundtag = this.readChunk(p_140426_).join().orElse((CompoundTag)null);
+             if (compoundtag == null) {
+-               this.m_140422_(p_140426_);
++               this.markPositionReplaceable(p_140426_);
+                return false;
+             }
+          } catch (Exception exception) {
+-            f_140128_.error("Failed to read chunk {}", p_140426_, exception);
+-            this.m_140422_(p_140426_);
++            LOGGER.error("Failed to read chunk {}", p_140426_, exception);
++            this.markPositionReplaceable(p_140426_);
+             return false;
+          }
+ 
+-         ChunkStatus.ChunkType chunkstatus$chunktype = ChunkSerializer.m_63485_(compoundtag);
+-         return this.m_140229_(p_140426_, chunkstatus$chunktype) == 1;
++         ChunkStatus.ChunkType chunkstatus$chunktype = ChunkSerializer.getChunkTypeFromTag(compoundtag);
++         return this.markPosition(p_140426_, chunkstatus$chunktype) == 1;
+       }
+    }
+ 
+-   protected void m_140167_(int p_140168_) {
+-      int i = Mth.m_14045_(p_140168_, 2, 32);
+-      if (i != this.f_140126_) {
+-         int j = this.f_140126_;
+-         this.f_140126_ = i;
+-         this.f_140145_.m_140777_(this.f_140126_);
++   protected void setViewDistance(int p_140168_) {
++      int i = Mth.clamp(p_140168_, 2, 32);
++      if (i != this.viewDistance) {
++         int j = this.viewDistance;
++         this.viewDistance = i;
++         this.distanceManager.updatePlayerTickets(this.viewDistance);
+ 
+-         for(ChunkHolder chunkholder : this.f_140129_.values()) {
+-            ChunkPos chunkpos = chunkholder.m_140092_();
++         for(ChunkHolder chunkholder : this.updatingChunkMap.values()) {
++            ChunkPos chunkpos = chunkholder.getPos();
+             MutableObject<ClientboundLevelChunkWithLightPacket> mutableobject = new MutableObject<>();
+-            this.m_183262_(chunkpos, false).forEach((p_214864_) -> {
+-               SectionPos sectionpos = p_214864_.m_8965_();
+-               boolean flag = m_200878_(chunkpos.f_45578_, chunkpos.f_45579_, sectionpos.m_123170_(), sectionpos.m_123222_(), j);
+-               boolean flag1 = m_200878_(chunkpos.f_45578_, chunkpos.f_45579_, sectionpos.m_123170_(), sectionpos.m_123222_(), this.f_140126_);
+-               this.m_183754_(p_214864_, chunkpos, mutableobject, flag, flag1);
++            this.getPlayers(chunkpos, false).forEach((p_214864_) -> {
++               SectionPos sectionpos = p_214864_.getLastSectionPos();
++               boolean flag = isChunkInRange(chunkpos.x, chunkpos.z, sectionpos.x(), sectionpos.z(), j);
++               boolean flag1 = isChunkInRange(chunkpos.x, chunkpos.z, sectionpos.x(), sectionpos.z(), this.viewDistance);
++               this.updateChunkTracking(p_214864_, chunkpos, mutableobject, flag, flag1);
+             });
+          }
+       }
+ 
+    }
+ 
+-   protected void m_183754_(ServerPlayer p_183755_, ChunkPos p_183756_, MutableObject<ClientboundLevelChunkWithLightPacket> p_183757_, boolean p_183758_, boolean p_183759_) {
+-      if (p_183755_.m_9236_() == this.f_140133_) {
++   protected void updateChunkTracking(ServerPlayer p_183755_, ChunkPos p_183756_, MutableObject<ClientboundLevelChunkWithLightPacket> p_183757_, boolean p_183758_, boolean p_183759_) {
++      if (p_183755_.level() == this.level) {
+          if (p_183759_ && !p_183758_) {
+-            ChunkHolder chunkholder = this.m_140327_(p_183756_.m_45588_());
++            ChunkHolder chunkholder = this.getVisibleChunkIfPresent(p_183756_.toLong());
+             if (chunkholder != null) {
+-               LevelChunk levelchunk = chunkholder.m_140085_();
++               LevelChunk levelchunk = chunkholder.getTickingChunk();
+                if (levelchunk != null) {
+-                  this.m_183760_(p_183755_, p_183757_, levelchunk);
++                  this.playerLoadedChunk(p_183755_, p_183757_, levelchunk);
+                }
+ 
+-               DebugPackets.m_133676_(this.f_140133_, p_183756_);
++               DebugPackets.sendPoiPacketsForChunk(this.level, p_183756_);
+             }
+          }
  
           if (!p_183759_ && p_183758_) {
-             p_183755_.m_9088_(p_183756_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.f_140133_);
+-            p_183755_.m_9088_(p_183756_);
++            p_183755_.untrackChunk(p_183756_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.level);
           }
  
        }
-@@ -954,12 +_,31 @@
-       return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
     }
  
+-   public int m_140394_() {
+-      return this.f_140130_.size();
+-   }
+-
+-   public net.minecraft.server.level.DistanceManager m_143145_() {
+-      return this.f_140145_;
+-   }
+-
+-   protected Iterable<ChunkHolder> m_140416_() {
+-      return Iterables.unmodifiableIterable(this.f_140130_.values());
+-   }
+-
+-   void m_140274_(Writer p_140275_) throws IOException {
+-      CsvOutput csvoutput = CsvOutput.m_13619_().m_13630_("x").m_13630_("z").m_13630_("level").m_13630_("in_memory").m_13630_("status").m_13630_("full_status").m_13630_("accessible_ready").m_13630_("ticking_ready").m_13630_("entity_ticking_ready").m_13630_("ticket").m_13630_("spawning").m_13630_("block_entity_count").m_13630_("ticking_ticket").m_13630_("ticking_level").m_13630_("block_ticks").m_13630_("fluid_ticks").m_13628_(p_140275_);
+-      TickingTracker tickingtracker = this.f_140145_.m_183915_();
+-
+-      for(Long2ObjectMap.Entry<ChunkHolder> entry : this.f_140130_.long2ObjectEntrySet()) {
++   public int size() {
++      return this.visibleChunkMap.size();
++   }
++
++   public net.minecraft.server.level.DistanceManager getDistanceManager() {
++      return this.distanceManager;
++   }
++
++   protected Iterable<ChunkHolder> getChunks() {
++      return Iterables.unmodifiableIterable(this.visibleChunkMap.values());
++   }
++
++   void dumpChunks(Writer p_140275_) throws IOException {
++      CsvOutput csvoutput = CsvOutput.builder().addColumn("x").addColumn("z").addColumn("level").addColumn("in_memory").addColumn("status").addColumn("full_status").addColumn("accessible_ready").addColumn("ticking_ready").addColumn("entity_ticking_ready").addColumn("ticket").addColumn("spawning").addColumn("block_entity_count").addColumn("ticking_ticket").addColumn("ticking_level").addColumn("block_ticks").addColumn("fluid_ticks").build(p_140275_);
++      TickingTracker tickingtracker = this.distanceManager.tickingTracker();
++
++      for(Long2ObjectMap.Entry<ChunkHolder> entry : this.visibleChunkMap.long2ObjectEntrySet()) {
+          long i = entry.getLongKey();
+          ChunkPos chunkpos = new ChunkPos(i);
+          ChunkHolder chunkholder = entry.getValue();
+-         Optional<ChunkAccess> optional = Optional.ofNullable(chunkholder.m_140089_());
++         Optional<ChunkAccess> optional = Optional.ofNullable(chunkholder.getLastAvailable());
+          Optional<LevelChunk> optional1 = optional.flatMap((p_214932_) -> {
+             return p_214932_ instanceof LevelChunk ? Optional.of((LevelChunk)p_214932_) : Optional.empty();
+          });
+-         csvoutput.m_13624_(chunkpos.f_45578_, chunkpos.f_45579_, chunkholder.m_140093_(), optional.isPresent(), optional.map(ChunkAccess::m_6415_).orElse((ChunkStatus)null), optional1.map(LevelChunk::m_287138_).orElse((FullChunkStatus)null), m_140278_(chunkholder.m_140082_()), m_140278_(chunkholder.m_140026_()), m_140278_(chunkholder.m_140073_()), this.f_140145_.m_140838_(i), this.m_183879_(chunkpos), optional1.map((p_214953_) -> {
+-            return p_214953_.m_62954_().size();
+-         }).orElse(0), tickingtracker.m_184175_(i), tickingtracker.m_6172_(i), optional1.map((p_214946_) -> {
+-            return p_214946_.m_183531_().m_183574_();
++         csvoutput.writeRow(chunkpos.x, chunkpos.z, chunkholder.getTicketLevel(), optional.isPresent(), optional.map(ChunkAccess::getStatus).orElse((ChunkStatus)null), optional1.map(LevelChunk::getFullStatus).orElse((FullChunkStatus)null), printFuture(chunkholder.getFullChunkFuture()), printFuture(chunkholder.getTickingChunkFuture()), printFuture(chunkholder.getEntityTickingChunkFuture()), this.distanceManager.getTicketDebugString(i), this.anyPlayerCloseEnoughForSpawning(chunkpos), optional1.map((p_214953_) -> {
++            return p_214953_.getBlockEntities().size();
++         }).orElse(0), tickingtracker.getTicketDebugString(i), tickingtracker.getLevel(i), optional1.map((p_214946_) -> {
++            return p_214946_.getBlockTicks().count();
+          }).orElse(0), optional1.map((p_214937_) -> {
+-            return p_214937_.m_183526_().m_183574_();
++            return p_214937_.getFluidTicks().count();
+          }).orElse(0));
+       }
+ 
+    }
+ 
+-   private static String m_140278_(CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> p_140279_) {
++   private static String printFuture(CompletableFuture<Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>> p_140279_) {
+       try {
+          Either<LevelChunk, ChunkHolder.ChunkLoadingFailure> either = p_140279_.getNow((Either<LevelChunk, ChunkHolder.ChunkLoadingFailure>)null);
+          return either != null ? either.map((p_214897_) -> {
+@@ -944,23 +_,42 @@
+       }
+    }
+ 
+-   private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
+-      return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
+-         return p_214907_.map(this::m_214947_);
+-      }, Util.m_183991_());
+-   }
+-
+-   private CompoundTag m_214947_(CompoundTag p_214948_) {
+-      return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
+-   }
+-
+-   boolean m_183879_(ChunkPos p_183880_) {
+-      long i = p_183880_.m_45588_();
+-      if (!this.f_140145_.m_140847_(i)) {
++   private CompletableFuture<Optional<CompoundTag>> readChunk(ChunkPos p_214964_) {
++      return this.read(p_214964_).thenApplyAsync((p_214907_) -> {
++         return p_214907_.map(this::upgradeChunkTag);
++      }, Util.backgroundExecutor());
++   }
++
++   private CompoundTag upgradeChunkTag(CompoundTag p_214948_) {
++      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
++   }
++
 +   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos chunkcoordintpair) {
-+      return this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_(), chunkcoordintpair, f_140133_);
++      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), chunkcoordintpair, level);
 +   }
 +
 +   // Mohist start - fix mixin
 +   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
 +   public boolean anyPlayerCloseEnoughForSpawning(ChunkPos pChunkPos, boolean reducedRange) {
 +      reducedRange0.set(reducedRange);
-+      return m_183879_(pChunkPos);
++      return anyPlayerCloseEnoughForSpawning(pChunkPos);
 +   }
 +
-    boolean m_183879_(ChunkPos p_183880_) {
-+      int chunkRange = f_140133_.spigotConfig.mobSpawnRange;
-+      chunkRange = (chunkRange > f_140133_.spigotConfig.viewDistance) ? (byte) f_140133_.spigotConfig.viewDistance : chunkRange;
++   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
++      int chunkRange = level.spigotConfig.mobSpawnRange;
++      chunkRange = (chunkRange > level.spigotConfig.viewDistance) ? (byte) level.spigotConfig.viewDistance : chunkRange;
 +      chunkRange = Math.min(chunkRange, 8);
 +
 +      double blockRange = (reducedRange0.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
 +      // Spigot end
 +      // Mohist end
-       long i = p_183880_.m_45588_();
-       if (!this.f_140145_.m_140847_(i)) {
++      long i = p_183880_.toLong();
++      if (!this.distanceManager.hasPlayersNearby(i)) {
           return false;
        } else {
-          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+-         for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+-            if (this.m_183751_(serverplayer, p_183880_)) {
++         for(ServerPlayer serverplayer : this.playerMap.getPlayers(i)) {
 +            this.mobSpawnRange.set(blockRange);
-             if (this.m_183751_(serverplayer, p_183880_)) {
++            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_)) {
                 return true;
              }
-@@ -986,14 +_,22 @@
+          }
+@@ -969,15 +_,15 @@
        }
     }
  
+-   public List<ServerPlayer> m_183888_(ChunkPos p_183889_) {
+-      long i = p_183889_.m_45588_();
+-      if (!this.f_140145_.m_140847_(i)) {
++   public List<ServerPlayer> getPlayersCloseForSpawning(ChunkPos p_183889_) {
++      long i = p_183889_.toLong();
++      if (!this.distanceManager.hasPlayersNearby(i)) {
+          return List.of();
+       } else {
+          ImmutableList.Builder<ServerPlayer> builder = ImmutableList.builder();
+ 
+-         for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+-            if (this.m_183751_(serverplayer, p_183889_)) {
++         for(ServerPlayer serverplayer : this.playerMap.getPlayers(i)) {
++            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183889_)) {
+                builder.add(serverplayer);
+             }
+          }
+@@ -986,100 +_,108 @@
+       }
+    }
+ 
+-   private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
+-      if (p_183752_.m_5833_()) {
 +   // Mohist start - fix mixin
 +   public AtomicDouble mobSpawnRange = new AtomicDouble(16384.0D);
-    private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
-       if (p_183752_.m_5833_()) {
++   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
++      if (p_183752_.isSpectator()) {
           return false;
        } else {
-          double d0 = m_140226_(p_183753_, p_183752_);
+-         double d0 = m_140226_(p_183753_, p_183752_);
 -         return d0 < 16384.0D;
++         double d0 = euclideanDistanceSquared(p_183753_, p_183752_);
 +         return d0 < mobSpawnRange.getAndSet(16384.0D);
        }
     }
-+
+ 
+-   private boolean m_140329_(ServerPlayer p_140330_) {
+-      return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
+-   }
+-
+-   void m_140192_(ServerPlayer p_140193_, boolean p_140194_) {
+-      boolean flag = this.m_140329_(p_140193_);
+-      boolean flag1 = this.f_140149_.m_8260_(p_140193_);
+-      int i = SectionPos.m_123171_(p_140193_.m_146903_());
+-      int j = SectionPos.m_123171_(p_140193_.m_146907_());
 +   private boolean playerIsCloseEnoughForSpawning(ServerPlayer pPlayer, ChunkPos pChunkPos, double range) { // Spigot
 +      mobSpawnRange.set(range);
-+      return m_183751_(pPlayer, pChunkPos);
++      return playerIsCloseEnoughForSpawning(pPlayer, pChunkPos);
 +   }
 +   // Mohist end
++
++   private boolean skipPlayer(ServerPlayer p_140330_) {
++      return p_140330_.isSpectator() && !this.level.getGameRules().getBoolean(GameRules.RULE_SPECTATORSGENERATECHUNKS);
++   }
++
++   void updatePlayerStatus(ServerPlayer p_140193_, boolean p_140194_) {
++      boolean flag = this.skipPlayer(p_140193_);
++      boolean flag1 = this.playerMap.ignoredOrUnknown(p_140193_);
++      int i = SectionPos.blockToSectionCoord(p_140193_.getBlockX());
++      int j = SectionPos.blockToSectionCoord(p_140193_.getBlockZ());
+       if (p_140194_) {
+-         this.f_140149_.m_8252_(ChunkPos.m_45589_(i, j), p_140193_, flag);
+-         this.m_140373_(p_140193_);
++         this.playerMap.addPlayer(ChunkPos.asLong(i, j), p_140193_, flag);
++         this.updatePlayerPos(p_140193_);
+          if (!flag) {
+-            this.f_140145_.m_140802_(SectionPos.m_235861_(p_140193_), p_140193_);
++            this.distanceManager.addPlayer(SectionPos.of(p_140193_), p_140193_);
+          }
+       } else {
+-         SectionPos sectionpos = p_140193_.m_8965_();
+-         this.f_140149_.m_8249_(sectionpos.m_123251_().m_45588_(), p_140193_);
++         SectionPos sectionpos = p_140193_.getLastSectionPos();
++         this.playerMap.removePlayer(sectionpos.chunk().toLong(), p_140193_);
+          if (!flag1) {
+-            this.f_140145_.m_140828_(sectionpos, p_140193_);
++            this.distanceManager.removePlayer(sectionpos, p_140193_);
+          }
+       }
  
-    private boolean m_140329_(ServerPlayer p_140330_) {
-       return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
-@@ -1132,9 +_,10 @@
+-      for(int l = i - this.f_140126_ - 1; l <= i + this.f_140126_ + 1; ++l) {
+-         for(int k = j - this.f_140126_ - 1; k <= j + this.f_140126_ + 1; ++k) {
+-            if (m_200878_(l, k, i, j, this.f_140126_)) {
++      for(int l = i - this.viewDistance - 1; l <= i + this.viewDistance + 1; ++l) {
++         for(int k = j - this.viewDistance - 1; k <= j + this.viewDistance + 1; ++k) {
++            if (isChunkInRange(l, k, i, j, this.viewDistance)) {
+                ChunkPos chunkpos = new ChunkPos(l, k);
+-               this.m_183754_(p_140193_, chunkpos, new MutableObject<>(), !p_140194_, p_140194_);
++               this.updateChunkTracking(p_140193_, chunkpos, new MutableObject<>(), !p_140194_, p_140194_);
+             }
+          }
+       }
+ 
     }
  
-    protected void m_140199_(Entity p_140200_) {
+-   private SectionPos m_140373_(ServerPlayer p_140374_) {
+-      SectionPos sectionpos = SectionPos.m_235861_(p_140374_);
+-      p_140374_.m_9119_(sectionpos);
+-      p_140374_.f_8906_.m_9829_(new ClientboundSetChunkCacheCenterPacket(sectionpos.m_123170_(), sectionpos.m_123222_()));
++   private SectionPos updatePlayerPos(ServerPlayer p_140374_) {
++      SectionPos sectionpos = SectionPos.of(p_140374_);
++      p_140374_.setLastSectionPos(sectionpos);
++      p_140374_.connection.send(new ClientboundSetChunkCacheCenterPacket(sectionpos.x(), sectionpos.z()));
+       return sectionpos;
+    }
+ 
+-   public void m_140184_(ServerPlayer p_140185_) {
+-      for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+-         if (chunkmap$trackedentity.f_140472_ == p_140185_) {
+-            chunkmap$trackedentity.m_140487_(this.f_140133_.m_6907_());
++   public void move(ServerPlayer p_140185_) {
++      for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.entityMap.values()) {
++         if (chunkmap$trackedentity.entity == p_140185_) {
++            chunkmap$trackedentity.updatePlayers(this.level.players());
+          } else {
+-            chunkmap$trackedentity.m_140497_(p_140185_);
++            chunkmap$trackedentity.updatePlayer(p_140185_);
+          }
+       }
+ 
+-      int j2 = SectionPos.m_123171_(p_140185_.m_146903_());
+-      int k2 = SectionPos.m_123171_(p_140185_.m_146907_());
+-      SectionPos sectionpos = p_140185_.m_8965_();
+-      SectionPos sectionpos1 = SectionPos.m_235861_(p_140185_);
+-      long i = sectionpos.m_123251_().m_45588_();
+-      long j = sectionpos1.m_123251_().m_45588_();
+-      boolean flag = this.f_140149_.m_8262_(p_140185_);
+-      boolean flag1 = this.m_140329_(p_140185_);
+-      boolean flag2 = sectionpos.m_123252_() != sectionpos1.m_123252_();
++      int j2 = SectionPos.blockToSectionCoord(p_140185_.getBlockX());
++      int k2 = SectionPos.blockToSectionCoord(p_140185_.getBlockZ());
++      SectionPos sectionpos = p_140185_.getLastSectionPos();
++      SectionPos sectionpos1 = SectionPos.of(p_140185_);
++      long i = sectionpos.chunk().toLong();
++      long j = sectionpos1.chunk().toLong();
++      boolean flag = this.playerMap.ignored(p_140185_);
++      boolean flag1 = this.skipPlayer(p_140185_);
++      boolean flag2 = sectionpos.asLong() != sectionpos1.asLong();
+       if (flag2 || flag != flag1) {
+-         this.m_140373_(p_140185_);
++         this.updatePlayerPos(p_140185_);
+          if (!flag) {
+-            this.f_140145_.m_140828_(sectionpos, p_140185_);
++            this.distanceManager.removePlayer(sectionpos, p_140185_);
+          }
+ 
+          if (!flag1) {
+-            this.f_140145_.m_140802_(sectionpos1, p_140185_);
++            this.distanceManager.addPlayer(sectionpos1, p_140185_);
+          }
+ 
+          if (!flag && flag1) {
+-            this.f_140149_.m_8256_(p_140185_);
++            this.playerMap.ignorePlayer(p_140185_);
+          }
+ 
+          if (flag && !flag1) {
+-            this.f_140149_.m_8258_(p_140185_);
++            this.playerMap.unIgnorePlayer(p_140185_);
+          }
+ 
+          if (i != j) {
+-            this.f_140149_.m_8245_(i, j, p_140185_);
++            this.playerMap.updatePlayer(i, j, p_140185_);
+          }
+       }
+ 
+-      int k = sectionpos.m_123170_();
+-      int l = sectionpos.m_123222_();
+-      int i1 = this.f_140126_ + 1;
++      int k = sectionpos.x();
++      int l = sectionpos.z();
++      int i1 = this.viewDistance + 1;
+       if (Math.abs(k - j2) <= i1 * 2 && Math.abs(l - k2) <= i1 * 2) {
+          int i3 = Math.min(j2, k) - i1;
+          int k3 = Math.min(k2, l) - i1;
+@@ -1088,28 +_,28 @@
+ 
+          for(int l1 = i3; l1 <= l3; ++l1) {
+             for(int i2 = k3; i2 <= i4; ++i2) {
+-               boolean flag5 = m_200878_(l1, i2, k, l, this.f_140126_);
+-               boolean flag6 = m_200878_(l1, i2, j2, k2, this.f_140126_);
+-               this.m_183754_(p_140185_, new ChunkPos(l1, i2), new MutableObject<>(), flag5, flag6);
++               boolean flag5 = isChunkInRange(l1, i2, k, l, this.viewDistance);
++               boolean flag6 = isChunkInRange(l1, i2, j2, k2, this.viewDistance);
++               this.updateChunkTracking(p_140185_, new ChunkPos(l1, i2), new MutableObject<>(), flag5, flag6);
+             }
+          }
+       } else {
+          for(int j1 = k - i1; j1 <= k + i1; ++j1) {
+             for(int k1 = l - i1; k1 <= l + i1; ++k1) {
+-               if (m_200878_(j1, k1, k, l, this.f_140126_)) {
++               if (isChunkInRange(j1, k1, k, l, this.viewDistance)) {
+                   boolean flag3 = true;
+                   boolean flag4 = false;
+-                  this.m_183754_(p_140185_, new ChunkPos(j1, k1), new MutableObject<>(), true, false);
++                  this.updateChunkTracking(p_140185_, new ChunkPos(j1, k1), new MutableObject<>(), true, false);
+                }
+             }
+          }
+ 
+          for(int l2 = j2 - i1; l2 <= j2 + i1; ++l2) {
+             for(int j3 = k2 - i1; j3 <= k2 + i1; ++j3) {
+-               if (m_200878_(l2, j3, j2, k2, this.f_140126_)) {
++               if (isChunkInRange(l2, j3, j2, k2, this.viewDistance)) {
+                   boolean flag7 = false;
+                   boolean flag8 = true;
+-                  this.m_183754_(p_140185_, new ChunkPos(l2, j3), new MutableObject<>(), false, true);
++                  this.updateChunkTracking(p_140185_, new ChunkPos(l2, j3), new MutableObject<>(), false, true);
+                }
+             }
+          }
+@@ -1117,13 +_,13 @@
+ 
+    }
+ 
+-   public List<ServerPlayer> m_183262_(ChunkPos p_183801_, boolean p_183802_) {
+-      Set<ServerPlayer> set = this.f_140149_.m_183926_(p_183801_.m_45588_());
++   public List<ServerPlayer> getPlayers(ChunkPos p_183801_, boolean p_183802_) {
++      Set<ServerPlayer> set = this.playerMap.getPlayers(p_183801_.toLong());
+       ImmutableList.Builder<ServerPlayer> builder = ImmutableList.builder();
+ 
+       for(ServerPlayer serverplayer : set) {
+-         SectionPos sectionpos = serverplayer.m_8965_();
+-         if (p_183802_ && m_183828_(p_183801_.f_45578_, p_183801_.f_45579_, sectionpos.m_123170_(), sectionpos.m_123222_(), this.f_140126_) || !p_183802_ && m_200878_(p_183801_.f_45578_, p_183801_.f_45579_, sectionpos.m_123170_(), sectionpos.m_123222_(), this.f_140126_)) {
++         SectionPos sectionpos = serverplayer.getLastSectionPos();
++         if (p_183802_ && isChunkOnRangeBorder(p_183801_.x, p_183801_.z, sectionpos.x(), sectionpos.z(), this.viewDistance) || !p_183802_ && isChunkInRange(p_183801_.x, p_183801_.z, sectionpos.x(), sectionpos.z(), this.viewDistance)) {
+             builder.add(serverplayer);
+          }
+       }
+@@ -1131,25 +_,26 @@
+       return builder.build();
+    }
+ 
+-   protected void m_140199_(Entity p_140200_) {
 -      if (!(p_140200_ instanceof EnderDragonPart)) {
+-         EntityType<?> entitytype = p_140200_.m_6095_();
+-         int i = entitytype.m_20681_() * 16;
++   protected void addEntity(Entity p_140200_) {
 +      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
-          EntityType<?> entitytype = p_140200_.m_6095_();
-          int i = entitytype.m_20681_() * 16;
++         EntityType<?> entitytype = p_140200_.getType();
++         int i = entitytype.clientTrackingRange() * 16;
 +         i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_140200_, i); // Spigot
           if (i != 0) {
-             int j = entitytype.m_20682_();
-             if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
-@@ -1178,7 +_,7 @@
-    protected void m_140421_() {
+-            int j = entitytype.m_20682_();
+-            if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
+-               throw (IllegalStateException)Util.m_137570_(new IllegalStateException("Entity is already tracked!"));
++            int j = entitytype.updateInterval();
++            if (this.entityMap.containsKey(p_140200_.getId())) {
++               throw (IllegalStateException)Util.pauseInIde(new IllegalStateException("Entity is already tracked!"));
+             } else {
+-               ChunkMap.TrackedEntity chunkmap$trackedentity = new ChunkMap.TrackedEntity(p_140200_, i, j, entitytype.m_20683_());
+-               this.f_140150_.put(p_140200_.m_19879_(), chunkmap$trackedentity);
+-               chunkmap$trackedentity.m_140487_(this.f_140133_.m_6907_());
++               ChunkMap.TrackedEntity chunkmap$trackedentity = new ChunkMap.TrackedEntity(p_140200_, i, j, entitytype.trackDeltas());
++               this.entityMap.put(p_140200_.getId(), chunkmap$trackedentity);
++               chunkmap$trackedentity.updatePlayers(this.level.players());
+                if (p_140200_ instanceof ServerPlayer) {
+                   ServerPlayer serverplayer = (ServerPlayer)p_140200_;
+-                  this.m_140192_(serverplayer, true);
++                  this.updatePlayerStatus(serverplayer, true);
+ 
+-                  for(ChunkMap.TrackedEntity chunkmap$trackedentity1 : this.f_140150_.values()) {
+-                     if (chunkmap$trackedentity1.f_140472_ != serverplayer) {
+-                        chunkmap$trackedentity1.m_140497_(serverplayer);
++                  for(ChunkMap.TrackedEntity chunkmap$trackedentity1 : this.entityMap.values()) {
++                     if (chunkmap$trackedentity1.entity != serverplayer) {
++                        chunkmap$trackedentity1.updatePlayer(serverplayer);
+                      }
+                   }
+                }
+@@ -1159,82 +_,82 @@
+       }
+    }
+ 
+-   protected void m_140331_(Entity p_140332_) {
++   protected void removeEntity(Entity p_140332_) {
+       if (p_140332_ instanceof ServerPlayer serverplayer) {
+-         this.m_140192_(serverplayer, false);
++         this.updatePlayerStatus(serverplayer, false);
+ 
+-         for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+-            chunkmap$trackedentity.m_140485_(serverplayer);
++         for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.entityMap.values()) {
++            chunkmap$trackedentity.removePlayer(serverplayer);
+          }
+       }
+ 
+-      ChunkMap.TrackedEntity chunkmap$trackedentity1 = this.f_140150_.remove(p_140332_.m_19879_());
++      ChunkMap.TrackedEntity chunkmap$trackedentity1 = this.entityMap.remove(p_140332_.getId());
+       if (chunkmap$trackedentity1 != null) {
+-         chunkmap$trackedentity1.m_140482_();
++         chunkmap$trackedentity1.broadcastRemoved();
+       }
+ 
+    }
+ 
+-   protected void m_140421_() {
++   protected void tick() {
        List<ServerPlayer> list = Lists.newArrayList();
-       List<ServerPlayer> list1 = this.f_140133_.m_6907_();
+-      List<ServerPlayer> list1 = this.f_140133_.m_6907_();
 -
+-      for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+-         SectionPos sectionpos = chunkmap$trackedentity.f_140474_;
+-         SectionPos sectionpos1 = SectionPos.m_235861_(chunkmap$trackedentity.f_140472_);
++      List<ServerPlayer> list1 = this.level.players();
 +      try {
-       for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
-          SectionPos sectionpos = chunkmap$trackedentity.f_140474_;
-          SectionPos sectionpos1 = SectionPos.m_235861_(chunkmap$trackedentity.f_140472_);
-@@ -1203,7 +_,7 @@
-             chunkmap$trackedentity1.m_140487_(list);
++      for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.entityMap.values()) {
++         SectionPos sectionpos = chunkmap$trackedentity.lastSectionPos;
++         SectionPos sectionpos1 = SectionPos.of(chunkmap$trackedentity.entity);
+          boolean flag = !Objects.equals(sectionpos, sectionpos1);
+          if (flag) {
+-            chunkmap$trackedentity.m_140487_(list1);
+-            Entity entity = chunkmap$trackedentity.f_140472_;
++            chunkmap$trackedentity.updatePlayers(list1);
++            Entity entity = chunkmap$trackedentity.entity;
+             if (entity instanceof ServerPlayer) {
+                list.add((ServerPlayer)entity);
+             }
+ 
+-            chunkmap$trackedentity.f_140474_ = sectionpos1;
++            chunkmap$trackedentity.lastSectionPos = sectionpos1;
+          }
+ 
+-         if (flag || this.f_140145_.m_183913_(sectionpos1.m_123251_().m_45588_())) {
+-            chunkmap$trackedentity.f_140471_.m_8533_();
++         if (flag || this.distanceManager.inEntityTickingRange(sectionpos1.chunk().toLong())) {
++            chunkmap$trackedentity.serverEntity.sendChanges();
+          }
+       }
+ 
+       if (!list.isEmpty()) {
+-         for(ChunkMap.TrackedEntity chunkmap$trackedentity1 : this.f_140150_.values()) {
+-            chunkmap$trackedentity1.m_140487_(list);
++         for(ChunkMap.TrackedEntity chunkmap$trackedentity1 : this.entityMap.values()) {
++            chunkmap$trackedentity1.updatePlayers(list);
           }
        }
 -
+-   }
+-
+-   public void m_140201_(Entity p_140202_, Packet<?> p_140203_) {
+-      ChunkMap.TrackedEntity chunkmap$trackedentity = this.f_140150_.get(p_140202_.m_19879_());
+-      if (chunkmap$trackedentity != null) {
+-         chunkmap$trackedentity.m_140489_(p_140203_);
+-      }
+-
+-   }
+-
+-   protected void m_140333_(Entity p_140334_, Packet<?> p_140335_) {
+-      ChunkMap.TrackedEntity chunkmap$trackedentity = this.f_140150_.get(p_140334_.m_19879_());
+-      if (chunkmap$trackedentity != null) {
+-         chunkmap$trackedentity.m_140499_(p_140335_);
+-      }
+-
+-   }
+-
+-   public void m_274524_(List<ChunkAccess> p_275577_) {
 +   } catch (Exception ignored) {}
++   }
++
++   public void broadcast(Entity p_140202_, Packet<?> p_140203_) {
++      ChunkMap.TrackedEntity chunkmap$trackedentity = this.entityMap.get(p_140202_.getId());
++      if (chunkmap$trackedentity != null) {
++         chunkmap$trackedentity.broadcast(p_140203_);
++      }
++
++   }
++
++   protected void broadcastAndSend(Entity p_140334_, Packet<?> p_140335_) {
++      ChunkMap.TrackedEntity chunkmap$trackedentity = this.entityMap.get(p_140334_.getId());
++      if (chunkmap$trackedentity != null) {
++         chunkmap$trackedentity.broadcastAndSend(p_140335_);
++      }
++
++   }
++
++   public void resendBiomesForChunks(List<ChunkAccess> p_275577_) {
+       Map<ServerPlayer, List<LevelChunk>> map = new HashMap<>();
+ 
+       for(ChunkAccess chunkaccess : p_275577_) {
+-         ChunkPos chunkpos = chunkaccess.m_7697_();
++         ChunkPos chunkpos = chunkaccess.getPos();
+          LevelChunk levelchunk;
+          if (chunkaccess instanceof LevelChunk levelchunk1) {
+             levelchunk = levelchunk1;
+          } else {
+-            levelchunk = this.f_140133_.m_6325_(chunkpos.f_45578_, chunkpos.f_45579_);
++            levelchunk = this.level.getChunk(chunkpos.x, chunkpos.z);
+          }
+ 
+-         for(ServerPlayer serverplayer : this.m_183262_(chunkpos, false)) {
++         for(ServerPlayer serverplayer : this.getPlayers(chunkpos, false)) {
+             map.computeIfAbsent(serverplayer, (p_274834_) -> {
+                return new ArrayList();
+             }).add(levelchunk);
+@@ -1242,29 +_,29 @@
+       }
+ 
+       map.forEach((p_274835_, p_274836_) -> {
+-         p_274835_.f_8906_.m_9829_(ClientboundChunksBiomesPacket.m_274415_(p_274836_));
++         p_274835_.connection.send(ClientboundChunksBiomesPacket.forChunks(p_274836_));
+       });
     }
  
-    public void m_140201_(Entity p_140202_, Packet<?> p_140203_) {
-@@ -1282,6 +_,7 @@
+-   private void m_183760_(ServerPlayer p_183761_, MutableObject<ClientboundLevelChunkWithLightPacket> p_183762_, LevelChunk p_183763_) {
++   private void playerLoadedChunk(ServerPlayer p_183761_, MutableObject<ClientboundLevelChunkWithLightPacket> p_183762_, LevelChunk p_183763_) {
+       if (p_183762_.getValue() == null) {
+-         p_183762_.setValue(new ClientboundLevelChunkWithLightPacket(p_183763_, this.f_140134_, (BitSet)null, (BitSet)null));
++         p_183762_.setValue(new ClientboundLevelChunkWithLightPacket(p_183763_, this.lightEngine, (BitSet)null, (BitSet)null));
+       }
+ 
+-      p_183761_.m_184135_(p_183763_.m_7697_(), p_183762_.getValue());
+-      DebugPackets.m_133676_(this.f_140133_, p_183763_.m_7697_());
++      p_183761_.trackChunk(p_183763_.getPos(), p_183762_.getValue());
++      DebugPackets.sendPoiPacketsForChunk(this.level, p_183763_.getPos());
+       List<Entity> list = Lists.newArrayList();
+       List<Entity> list1 = Lists.newArrayList();
+ 
+-      for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+-         Entity entity = chunkmap$trackedentity.f_140472_;
+-         if (entity != p_183761_ && entity.m_146902_().equals(p_183763_.m_7697_())) {
+-            chunkmap$trackedentity.m_140497_(p_183761_);
+-            if (entity instanceof Mob && ((Mob)entity).m_21524_() != null) {
++      for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.entityMap.values()) {
++         Entity entity = chunkmap$trackedentity.entity;
++         if (entity != p_183761_ && entity.chunkPosition().equals(p_183763_.getPos())) {
++            chunkmap$trackedentity.updatePlayer(p_183761_);
++            if (entity instanceof Mob && ((Mob)entity).getLeashHolder() != null) {
+                list.add(entity);
+             }
+ 
+-            if (!entity.m_20197_().isEmpty()) {
++            if (!entity.getPassengers().isEmpty()) {
+                list1.add(entity);
+             }
+          }
+@@ -1272,28 +_,29 @@
+ 
+       if (!list.isEmpty()) {
+          for(Entity entity1 : list) {
+-            p_183761_.f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(entity1, ((Mob)entity1).m_21524_()));
++            p_183761_.connection.send(new ClientboundSetEntityLinkPacket(entity1, ((Mob)entity1).getLeashHolder()));
           }
        }
  
-+      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.f_140133_);
+       if (!list1.isEmpty()) {
+          for(Entity entity2 : list1) {
+-            p_183761_.f_8906_.m_9829_(new ClientboundSetPassengersPacket(entity2));
++            p_183761_.connection.send(new ClientboundSetPassengersPacket(entity2));
+          }
+       }
+ 
+-   }
+-
+-   protected PoiManager m_140424_() {
+-      return this.f_140138_;
+-   }
+-
+-   public String m_182285_() {
+-      return this.f_182284_;
+-   }
+-
+-   void m_287285_(ChunkPos p_287612_, FullChunkStatus p_287685_) {
+-      this.f_143031_.m_156794_(p_287612_, p_287685_);
++      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.level);
++   }
++
++   protected PoiManager getPoiManager() {
++      return this.poiManager;
++   }
++
++   public String getStorageName() {
++      return this.storageName;
++   }
++
++   void onFullChunkStatusChange(ChunkPos p_287612_, FullChunkStatus p_287685_) {
++      this.chunkStatusListener.onChunkStatusChange(p_287612_, p_287685_);
     }
  
-    protected PoiManager m_140424_() {
-@@ -1324,7 +_,7 @@
-       public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
+    class DistanceManager extends net.minecraft.server.level.DistanceManager {
+@@ -1301,114 +_,120 @@
+          super(p_140459_, p_140460_);
+       }
+ 
+-      protected boolean m_7009_(long p_140462_) {
+-         return ChunkMap.this.f_140139_.contains(p_140462_);
+-      }
+-
+-      @Nullable
+-      protected ChunkHolder m_7316_(long p_140469_) {
+-         return ChunkMap.this.m_140174_(p_140469_);
+-      }
+-
+-      @Nullable
+-      protected ChunkHolder m_7288_(long p_140464_, int p_140465_, @Nullable ChunkHolder p_140466_, int p_140467_) {
+-         return ChunkMap.this.m_140176_(p_140464_, p_140465_, p_140466_, p_140467_);
++      protected boolean isChunkToRemove(long p_140462_) {
++         return ChunkMap.this.toDrop.contains(p_140462_);
++      }
++
++      @Nullable
++      protected ChunkHolder getChunk(long p_140469_) {
++         return ChunkMap.this.getUpdatingChunkIfPresent(p_140469_);
++      }
++
++      @Nullable
++      protected ChunkHolder updateChunkScheduling(long p_140464_, int p_140465_, @Nullable ChunkHolder p_140466_, int p_140467_) {
++         return ChunkMap.this.updateChunkScheduling(p_140464_, p_140465_, p_140466_, p_140467_);
+       }
+    }
+ 
+    public class TrackedEntity {
+-      final ServerEntity f_140471_;
+-      final Entity f_140472_;
+-      private final int f_140473_;
+-      SectionPos f_140474_;
+-      public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
++      final ServerEntity serverEntity;
++      final Entity entity;
++      private final int range;
++      SectionPos lastSectionPos;
++      public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
 -         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
-+         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_).seenBy(f_140475_); // CraftBukkit
-          this.f_140472_ = p_140478_;
-          this.f_140473_ = p_140479_;
-          this.f_140474_ = SectionPos.m_235861_(p_140478_);
-@@ -1378,6 +_,12 @@
-             double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
+-         this.f_140472_ = p_140478_;
+-         this.f_140473_ = p_140479_;
+-         this.f_140474_ = SectionPos.m_235861_(p_140478_);
++         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast).seenBy(seenBy); // CraftBukkit
++         this.entity = p_140478_;
++         this.range = p_140479_;
++         this.lastSectionPos = SectionPos.of(p_140478_);
+       }
+ 
+       public boolean equals(Object p_140506_) {
+          if (p_140506_ instanceof ChunkMap.TrackedEntity) {
+-            return ((ChunkMap.TrackedEntity)p_140506_).f_140472_.m_19879_() == this.f_140472_.m_19879_();
++            return ((ChunkMap.TrackedEntity)p_140506_).entity.getId() == this.entity.getId();
+          } else {
+             return false;
+          }
+       }
+ 
+       public int hashCode() {
+-         return this.f_140472_.m_19879_();
+-      }
+-
+-      public void m_140489_(Packet<?> p_140490_) {
+-         for(ServerPlayerConnection serverplayerconnection : this.f_140475_) {
+-            serverplayerconnection.m_9829_(p_140490_);
+-         }
+-
+-      }
+-
+-      public void m_140499_(Packet<?> p_140500_) {
+-         this.m_140489_(p_140500_);
+-         if (this.f_140472_ instanceof ServerPlayer) {
+-            ((ServerPlayer)this.f_140472_).f_8906_.m_9829_(p_140500_);
+-         }
+-
+-      }
+-
+-      public void m_140482_() {
+-         for(ServerPlayerConnection serverplayerconnection : this.f_140475_) {
+-            this.f_140471_.m_8534_(serverplayerconnection.m_142253_());
+-         }
+-
+-      }
+-
+-      public void m_140485_(ServerPlayer p_140486_) {
+-         if (this.f_140475_.remove(p_140486_.f_8906_)) {
+-            this.f_140471_.m_8534_(p_140486_);
+-         }
+-
+-      }
+-
+-      public void m_140497_(ServerPlayer p_140498_) {
+-         if (p_140498_ != this.f_140472_) {
+-            Vec3 vec3 = p_140498_.m_20182_().m_82546_(this.f_140472_.m_20182_());
+-            double d0 = (double)Math.min(this.m_140496_(), ChunkMap.this.f_140126_ * 16);
+-            double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
++         return this.entity.getId();
++      }
++
++      public void broadcast(Packet<?> p_140490_) {
++         for(ServerPlayerConnection serverplayerconnection : this.seenBy) {
++            serverplayerconnection.send(p_140490_);
++         }
++
++      }
++
++      public void broadcastAndSend(Packet<?> p_140500_) {
++         this.broadcast(p_140500_);
++         if (this.entity instanceof ServerPlayer) {
++            ((ServerPlayer)this.entity).connection.send(p_140500_);
++         }
++
++      }
++
++      public void broadcastRemoved() {
++         for(ServerPlayerConnection serverplayerconnection : this.seenBy) {
++            this.serverEntity.removePairing(serverplayerconnection.getPlayer());
++         }
++
++      }
++
++      public void removePlayer(ServerPlayer p_140486_) {
++         if (this.seenBy.remove(p_140486_.connection)) {
++            this.serverEntity.removePairing(p_140486_);
++         }
++
++      }
++
++      public void updatePlayer(ServerPlayer p_140498_) {
++         if (p_140498_ != this.entity) {
++            Vec3 vec3 = p_140498_.position().subtract(this.entity.position());
++            double d0 = (double)Math.min(this.getEffectiveRange(), ChunkMap.this.viewDistance * 16);
++            double d1 = vec3.x * vec3.x + vec3.z * vec3.z;
              double d2 = d0 * d0;
-             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
+-            boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
++            boolean flag = d1 <= d2 && this.entity.broadcastToPlayer(p_140498_);
 +
 +            // CraftBukkit start - respect vanish API
-+            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {
++            if (!p_140498_.getBukkitEntity().canSee(this.entity.getBukkitEntity())) {
 +               flag = false;
 +            }
 +            // CraftBukkit end
              if (flag) {
-                if (this.f_140475_.add(p_140498_.f_8906_)) {
-                   this.f_140471_.m_8541_(p_140498_);
+-               if (this.f_140475_.add(p_140498_.f_8906_)) {
+-                  this.f_140471_.m_8541_(p_140498_);
++               if (this.seenBy.add(p_140498_.connection)) {
++                  this.serverEntity.addPairing(p_140498_);
+                }
+-            } else if (this.f_140475_.remove(p_140498_.f_8906_)) {
+-               this.f_140471_.m_8534_(p_140498_);
++            } else if (this.seenBy.remove(p_140498_.connection)) {
++               this.serverEntity.removePairing(p_140498_);
+             }
+ 
+          }
+       }
+ 
+-      private int m_140483_(int p_140484_) {
+-         return ChunkMap.this.f_140133_.m_7654_().m_7186_(p_140484_);
++      private int scaledRange(int p_140484_) {
++         return ChunkMap.this.level.getServer().getScaledTrackingDistance(p_140484_);
+       }
+ 
+-      private int m_140496_() {
+-         int i = this.f_140473_;
++      private int getEffectiveRange() {
++         int i = this.range;
+ 
+-         for(Entity entity : this.f_140472_.m_146897_()) {
+-            int j = entity.m_6095_().m_20681_() * 16;
++         for(Entity entity : this.entity.getIndirectPassengers()) {
++            int j = entity.getType().clientTrackingRange() * 16;
+             if (j > i) {
+                i = j;
+             }
+          }
+ 
+-         return this.m_140483_(i);
++         return this.scaledRange(i);
+       }
+ 
+-      public void m_140487_(List<ServerPlayer> p_140488_) {
++      public void updatePlayers(List<ServerPlayer> p_140488_) {
+          for(ServerPlayer serverplayer : p_140488_) {
+-            this.m_140497_(serverplayer);
++            this.updatePlayer(serverplayer);
+          }
+ 
+       }
