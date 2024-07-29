@@ -37,19 +37,17 @@
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -112,10 +_,21 @@
+@@ -112,10 +_,19 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
 -import net.minecraft.world.scores.Team;
-+import net.minecraftforge.common.ForgeHooks;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftVector;
 +import org.bukkit.entity.Item;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
-+import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
 +import org.bukkit.event.player.PlayerVelocityEvent;

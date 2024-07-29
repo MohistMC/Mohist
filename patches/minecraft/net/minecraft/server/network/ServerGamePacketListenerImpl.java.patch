@@ -90,7 +90,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -176,28 +_,83 @@
+@@ -176,28 +_,85 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -101,7 +101,9 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import net.minecraftforge.server.ServerLifecycleHooks;
 +import org.bukkit.Bukkit;
++import org.bukkit.Keyed;
 +import org.bukkit.Location;
++import org.bukkit.NamespacedKey;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
@@ -1764,7 +1766,7 @@
  
                 for(Int2ObjectMap.Entry<ItemStack> entry : Int2ObjectMaps.fastIterable(p_9856_.m_179582_())) {
                    this.f_9743_.f_36096_.m_182414_(entry.getIntKey(), entry.getValue());
-@@ -1558,8 +_,16 @@
+@@ -1558,8 +_,17 @@
           if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
              f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, this.f_9743_.f_36096_);
           } else {
@@ -1778,7 +1780,8 @@
 +            org.bukkit.event.player.PlayerRecipeBookClickEvent event = CraftEventFactory.callRecipeBookClickEvent(this.f_9743_, recipe, p_9882_.m_134253_());
 +
 +            // Cast to keyed should be safe as the recipe will never be a MerchantRecipe.
-+            this.f_9745_.m_129894_().m_44043_(CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((irecipe) -> {
++            NamespacedKey namespacedKey = event.getRecipe() instanceof Keyed ? ((Keyed) recipe).getKey() : CraftNamespacedKey.fromMinecraft(p_9882_.m_134252_());
++            this.f_9745_.m_129894_().m_44043_(CraftNamespacedKey.toMinecraft(namespacedKey)).ifPresent((irecipe) -> {
 +               ((RecipeBookMenu) this.f_9743_.f_36096_).m_6951_(event.isShiftClick(), irecipe, this.f_9743_);
              });
           }
