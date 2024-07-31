@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1,10 +_,13 @@
+@@ -1,10 +_,14 @@
  package net.minecraft.world.level;
  
  import com.google.common.collect.Lists;
@@ -11,6 +11,7 @@
  import java.util.Iterator;
  import java.util.List;
 +import java.util.Map;
++import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
@@ -208,9 +209,14 @@
     }
  
     public boolean m_5776_() {
-@@ -183,6 +_,17 @@
+@@ -182,7 +_,22 @@
+       return this.m_6933_(p_46601_, p_46602_, p_46603_, 512);
     }
  
++   // Mohist start - fix mixin
++   public AtomicBoolean captured = new AtomicBoolean(false);
++   // Mohist end
++
     public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
 +      // CraftBukkit start - tree generation
 +      if (this.captureTreeGeneration) {
@@ -230,14 +236,12 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
           Block block = p_46606_.m_60734_();
--         BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
 +
 +         // CraftBukkit start - capture blockstates
-+         boolean captured = false;
 +         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
 +            CapturedBlockState blockstate = CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
 +            this.capturedBlockStates.put(p_46605_.m_7949_(), blockstate);
-+            captured = true;
++            captured.set(true);
 +         }
 +         // CraftBukkit end
 +
@@ -252,11 +256,12 @@
 +         int oldLight = old.getLightEmission(this, p_46605_);
 +         int oldOpacity = old.m_60739_(this, p_46605_);
 +
-+         BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0, (p_46607_ & 1024) == 0); // CraftBukkit custom NO_PLACE flag
++         levelchunk.setBlockState$doPlace((p_46607_ & 1024) == 0); // CraftBukkit custom NO_PLACE flag
+          BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
 +
           if (blockstate == null) {
 +            // CraftBukkit start - remove blockstate if failed (or the same)
-+            if (this.captureBlockStates && captured) {
++            if (this.captureBlockStates && captured.getAndSet(false)) {
 +               this.capturedBlockStates.remove(p_46605_);
 +            }
 +            // CraftBukkit end

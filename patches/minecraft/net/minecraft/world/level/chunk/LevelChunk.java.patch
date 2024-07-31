@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -6,6 +_,7 @@
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import java.util.Map;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
 @@ -46,9 +_,11 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.ticks.LevelChunkTicks;
@@ -52,21 +60,26 @@
     }
  
     public TickContainerAccess<Block> m_183531_() {
-@@ -209,8 +_,14 @@
+@@ -209,6 +_,19 @@
        }
     }
  
-+   // CraftBukkit start
-    @Nullable
-    public BlockState m_6978_(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
-+      return this.setBlockState(p_62865_, p_62866_, p_62867_, true);
++   // Mohist start
++   private final AtomicBoolean setBlockState$doPlace = new AtomicBoolean(true);
++   public void setBlockState$doPlace(boolean doPlace) {
++      setBlockState$doPlace.set(doPlace);
 +   }
 +
 +   @Nullable
 +   public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, boolean doPlace) {
++      this.setBlockState$doPlace(doPlace);
++      return m_6978_(p_62865_, p_62866_, p_62867_);
++   }
++   // Mohist end
++
+    @Nullable
+    public BlockState m_6978_(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
        int i = p_62865_.m_123342_();
-       LevelChunkSection levelchunksection = this.m_183278_(this.m_151564_(i));
-       boolean flag = levelchunksection.m_188008_();
 @@ -237,14 +_,15 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {
@@ -81,7 +94,7 @@
              } else {
 -               if (!this.f_62776_.f_46443_) {
 +             // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-+               if (!this.f_62776_.f_46443_ && doPlace && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
++               if (!this.f_62776_.f_46443_ && setBlockState$doPlace.getAndSet(true) && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
                    p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
                 }
  
