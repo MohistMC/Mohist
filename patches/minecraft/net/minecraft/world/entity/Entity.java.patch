@@ -877,7 +877,7 @@
                 list.add(0, p_20349_);
              } else {
                 list.add(p_20349_);
-@@ -1946,10 +_,43 @@
+@@ -1946,10 +_,45 @@
        }
     }
  
@@ -887,37 +887,39 @@
        if (p_20352_.m_20202_() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
-+         // CraftBukkit start
-+         CraftEntity craft = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
-+         Entity orig = craft == null ? null : craft.getHandle();
-+         if (getBukkitEntity() instanceof Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
-+            VehicleExitEvent event = new VehicleExitEvent(
-+                    (Vehicle) getBukkitEntity(),
-+                    (org.bukkit.entity.LivingEntity) p_20352_.getBukkitEntity()
-+            );
++         if (!AsyncCatcher.catchAsync()) {
++            // CraftBukkit start
++            CraftEntity craft = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++            Entity orig = craft == null ? null : craft.getHandle();
++            if (getBukkitEntity() instanceof Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
++               VehicleExitEvent event = new VehicleExitEvent(
++                       (Vehicle) getBukkitEntity(),
++                       (org.bukkit.entity.LivingEntity) p_20352_.getBukkitEntity()
++               );
++               // Suppress during worldgen
++               if (this.valid) {
++                  Bukkit.getPluginManager().callEvent(event);
++               }
++               CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++               Entity n = craftn == null ? null : craftn.getHandle();
++               if (event.isCancelled() || n != orig) {
++                  removePassenger = false;
++                  return;
++               }
++            }
++            // CraftBukkit end
++            // Spigot start
++            org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(p_20352_.getBukkitEntity(), this.getBukkitEntity());
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
 +            }
-+            CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
-+            Entity n = craftn == null ? null : craftn.getHandle();
-+            if (event.isCancelled() || n != orig) {
++            if (event.isCancelled()) {
 +               removePassenger = false;
 +               return;
 +            }
++            // Spigot end
 +         }
-+         // CraftBukkit end
-+         // Spigot start
-+         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(p_20352_.getBukkitEntity(), this.getBukkitEntity());
-+         // Suppress during worldgen
-+         if (this.valid) {
-+            Bukkit.getPluginManager().callEvent(event);
-+         }
-+         if (event.isCancelled()) {
-+            removePassenger = false;
-+            return;
-+         }
-+         // Spigot end
           if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
              this.f_19823_ = ImmutableList.of();
           } else {
