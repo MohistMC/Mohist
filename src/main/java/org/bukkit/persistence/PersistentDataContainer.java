@@ -152,4 +152,51 @@ public interface PersistentDataContainer {
      */
     @NotNull
     PersistentDataAdapterContext getAdapterContext();
+
+    // Paper start
+    /**
+     * Returns if the persistent metadata provider has metadata registered
+     * matching the provided key.
+     *
+     * @param key the key for which existence should be checked.
+     *
+     * @return whether the key exists
+     *
+     * @throws NullPointerException if the key to look up is null
+     */
+    boolean has(@NotNull NamespacedKey key);
+
+    /**
+     * Serialize this {@link PersistentDataContainer} instance to a
+     * byte array.
+     *
+     * @return a binary representation of this container
+     * @throws java.io.IOException if we fail to write this container to a byte array
+     */
+    byte @NotNull [] serializeToBytes() throws java.io.IOException;
+
+    /**
+     * Read values from a serialised byte array into this
+     * {@link PersistentDataContainer} instance.
+     *
+     * @param bytes the byte array to read from
+     * @param clear if true, this {@link PersistentDataContainer} instance
+     *              will be cleared before reading
+     * @throws java.io.IOException if the byte array has an invalid format
+     */
+    void readFromBytes(byte @NotNull [] bytes, boolean clear) throws java.io.IOException;
+
+    /**
+     * Read values from a serialised byte array into this
+     * {@link PersistentDataContainer} instance.
+     * This method has the same effect as
+     * <code>PersistentDataContainer#readFromBytes(bytes, true)</code>
+     *
+     * @param bytes the byte array to read from
+     * @throws java.io.IOException if the byte array has an invalid format
+     */
+    default void readFromBytes(byte @NotNull [] bytes) throws java.io.IOException {
+        this.readFromBytes(bytes, true);
+    }
+    // Paper end
 }

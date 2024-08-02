@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/ai/attributes/AttributeSupplier.java
 +++ b/net/minecraft/world/entity/ai/attributes/AttributeSupplier.java
+@@ -15,7 +_,7 @@
+       this.f_22241_ = ImmutableMap.copyOf(p_22243_);
+    }
+ 
+-   private AttributeInstance m_22260_(Attribute p_22261_) {
++   public AttributeInstance m_22260_(Attribute p_22261_) {
+       AttributeInstance attributeinstance = this.f_22241_.get(p_22261_);
+       if (attributeinstance == null) {
+          throw new IllegalArgumentException("Can't find attribute " + BuiltInRegistries.f_256951_.m_7981_(p_22261_));
 @@ -69,6 +_,22 @@
     public static class Builder {
        private final Map<Attribute, AttributeInstance> f_22262_ = Maps.newHashMap();

@@ -171,4 +171,131 @@ public interface ItemFactory {
      */
     @Nullable
     Material getSpawnEgg(@NotNull EntityType type);
+
+    // Paper start - Adventure
+    /**
+     * Randomly enchants a copy of the provided {@link ItemStack} using the given experience levels.
+     *
+     * <p>If the provided ItemStack is already enchanted, the existing enchants will be removed before enchanting.</p>
+     *
+     * <p>Levels must be in range {@code [1, 30]}.</p>
+     *
+     * @param itemStack ItemStack to enchant
+     * @param levels levels to use for enchanting
+     * @param allowTreasure whether to allow enchantments where {@link org.bukkit.enchantments.Enchantment#isTreasure()} returns true
+     * @param random {@link java.util.Random} instance to use for enchanting
+     * @return enchanted copy of the provided ItemStack
+     * @throws IllegalArgumentException on bad arguments
+     */
+    @NotNull ItemStack enchantWithLevels(@NotNull ItemStack itemStack, @org.jetbrains.annotations.Range(from = 1, to = 30) int levels, boolean allowTreasure, @NotNull java.util.Random random);
+
+    /**
+     * Creates a hover event for the given item.
+     *
+     * @param item The item
+     * @return A hover event
+     */
+    @NotNull
+    net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final @NotNull ItemStack item, final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op);
+
+    /**
+     * Get the formatted display name of the {@link ItemStack}.
+     *
+     * @param itemStack the {@link ItemStack}
+     * @return display name of the {@link ItemStack}
+     */
+    @NotNull
+    net.kyori.adventure.text.Component displayName(@NotNull ItemStack itemStack);
+    // Paper end - Adventure
+
+    // Paper start - add getI18NDisplayName
+    /**
+     * Gets the Display name as seen in the Client.
+     * Currently, the server only supports the English language. To override this,
+     * You must replace the language file embedded in the server jar.
+     *
+     * @param item Item to return Display name of
+     * @return Display name of Item
+     * @deprecated {@link ItemStack} implements {@link net.kyori.adventure.translation.Translatable}; use that and
+     * {@link net.kyori.adventure.text.Component#translatable(net.kyori.adventure.translation.Translatable)} instead.
+     */
+    @Nullable
+    @Deprecated
+    String getI18NDisplayName(@Nullable ItemStack item);
+    // Paper end - add getI18NDisplayName
+
+    // Paper start - ensure server conversions API
+    /**
+     * Minecraft's updates are converting simple item stacks into more complex NBT oriented Item Stacks.
+     *
+     * Use this method to ensure any desired data conversions are processed.
+     * The input itemstack will not be the same as the returned itemstack.
+     *
+     * @param item The item to process conversions on
+     * @return A potentially Data-Converted-ItemStack
+     */
+    @NotNull
+    ItemStack ensureServerConversions(@NotNull ItemStack item);
+    // Paper end - ensure server conversions API
+
+    // Paper start - bungee hover events
+    /**
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that ItemStack for displaying.
+     *
+     * @param itemStack the itemstack
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that ItemStack
+     * @deprecated use {@link ItemStack#asHoverEvent()}
+     */
+    @NotNull
+    @Deprecated // Paper
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull ItemStack itemStack);
+
+    /**
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
+     * Uses the display name of the entity, if present.
+     *
+     * @param entity Entity to create the HoverEvent for
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent()}
+     */
+    @NotNull
+    @Deprecated
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity);
+
+    /**
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
+     *
+     * @param entity Entity to create the HoverEvent for
+     * @param customName a custom name that should be displayed, if not passed entity name will be displayed
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent(java.util.function.UnaryOperator)}
+     */
+    @NotNull
+    @Deprecated
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity, @Nullable String customName);
+
+    /**
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
+     *
+     * @param entity Entity to create the HoverEvent for
+     * @param customName a custom name that should be displayed, if not passed entity name will be displayed
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent(java.util.function.UnaryOperator)}
+     */
+    @NotNull
+    @Deprecated
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity, @Nullable net.md_5.bungee.api.chat.BaseComponent customName);
+
+    /**
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
+     *
+     * @param entity Entity to create the HoverEvent for
+     * @param customName a custom name that should be displayed, if not passed entity name will be displayed
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent(java.util.function.UnaryOperator)}
+     */
+    @NotNull
+    @Deprecated
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity, @NotNull net.md_5.bungee.api.chat.BaseComponent[] customName);
+    // Paper end - bungee hover events
 }

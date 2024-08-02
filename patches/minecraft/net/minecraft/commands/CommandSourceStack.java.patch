@@ -69,6 +69,21 @@
           this.f_81294_.m_213846_(component);
        }
  
+@@ -318,6 +_,14 @@
+ 
+    }
+ 
++   public void sendFailure(Component message, boolean withStyle) {
++      // Paper end
++      if (this.f_81288_.m_7028_() && !this.f_81295_) {
++         this.f_81288_.m_213846_(withStyle ? Component.m_237119_().m_7220_(message).m_130940_(ChatFormatting.RED) : message); // Paper
++      }
++
++   }
++
+    public void m_81342_(CommandContext<CommandSourceStack> p_81343_, boolean p_81344_, int p_81345_) {
+       if (this.f_81297_ != null) {
+          this.f_81297_.onCommandComplete(p_81343_, p_81344_, p_81345_);
 @@ -363,4 +_,10 @@
     public FeatureFlagSet m_245239_() {
        return this.f_81290_.m_246046_();

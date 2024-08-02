@@ -15,7 +15,7 @@
  
  public class LecternMenu extends AbstractContainerMenu {
     private static final int f_150610_ = 1;
-@@ -15,10 +_,30 @@
+@@ -15,10 +_,31 @@
     private final Container f_39819_;
     private final ContainerData f_39820_;
  
@@ -25,6 +25,7 @@
 +
 +   @Override
 +   public CraftInventoryView getBukkitView() {
++      if (player == null) return null;
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
@@ -76,15 +77,17 @@
     public boolean m_6366_(Player p_39833_, int p_39834_) {
        if (p_39834_ >= 100) {
           int k = p_39834_ - 100;
-@@ -54,6 +_,13 @@
+@@ -54,6 +_,15 @@
                    return false;
                 }
  
 +               // CraftBukkit start - Event for taking the book
-+               PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(player, ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
-+               Bukkit.getServer().getPluginManager().callEvent(event);
-+               if (event.isCancelled()) {
-+                  return false;
++               if (player != null) {
++                  PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(player, ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
++                  Bukkit.getServer().getPluginManager().callEvent(event);
++                  if (event.isCancelled()) {
++                     return false;
++                  }
 +               }
 +               // CraftBukkit end
                 ItemStack itemstack = this.f_39819_.m_8016_(0);

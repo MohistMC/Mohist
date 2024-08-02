@@ -40,7 +40,7 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -60,6 +_,41 @@
+@@ -60,6 +_,45 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
@@ -67,7 +67,11 @@
 +      if (this.title == null) {
 +         if (this.f_38843_ != null) {
 +            ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.f_38843_);
-+            return Component.m_237115_(key.toString());
++            if (key == null) {
++               this.title = Component.m_237113_(this.toString());
++            } else {
++               this.title = Component.m_237115_(key.toString());
++            }
 +         } else {
 +            this.title = Component.m_237113_(this.toString());
 +         }
@@ -217,102 +221,6 @@
           }
        }
  
-@@ -589,7 +_,23 @@
- 
-    public abstract boolean m_6875_(Player p_38874_);
- 
-+   // Mohist start - paper api
-+   protected AtomicBoolean isCheck = new AtomicBoolean(false);
-+   protected void isCheck(boolean is) {
-+      isCheck.set(is);
-+   }
-+
-+   protected boolean moveItemStackTo(ItemStack pStack, int pStartIndex, int pEndIndex, boolean pReverseDirection, boolean isCheck) {
-+      this.isCheck.set(isCheck);
-+      return m_38903_(pStack, pStartIndex, pEndIndex, pReverseDirection);
-+   }
-+
-    protected boolean m_38903_(ItemStack p_38904_, int p_38905_, int p_38906_, boolean p_38907_) {
-+      boolean isCheck0 = isCheck.getAndSet(false);
-+      if (isCheck0) {
-+         p_38904_ = p_38904_.m_41777_();
-+      }
-+      // Mohist end - paper api
-       boolean flag = false;
-       int i = p_38905_;
-       if (p_38907_) {
-@@ -608,17 +_,27 @@
- 
-             Slot slot = this.f_38839_.get(i);
-             ItemStack itemstack = slot.m_7993_();
-+            // Paper start - clone if only a check
-+            if (isCheck0) {
-+               itemstack = itemstack.m_41777_();
-+            }
-+            // Paper end
-             if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
-                int j = itemstack.m_41613_() + p_38904_.m_41613_();
--               if (j <= p_38904_.m_41741_()) {
-+               int maxSize = Math.min(slot.m_6641_(), p_38904_.m_41741_());
-+               if (j <= maxSize) {
-                   p_38904_.m_41764_(0);
-                   itemstack.m_41764_(j);
--                  slot.m_6654_();
-+                  if (!isCheck0) { // Paper - dont update if only a check
-+                     slot.m_6654_();
-+                  } // Paper
-                   flag = true;
--               } else if (itemstack.m_41613_() < p_38904_.m_41741_()) {
--                  p_38904_.m_41774_(p_38904_.m_41741_() - itemstack.m_41613_());
--                  itemstack.m_41764_(p_38904_.m_41741_());
--                  slot.m_6654_();
-+               } else if (itemstack.m_41613_() < maxSize) {
-+                  p_38904_.m_41774_(maxSize - itemstack.m_41613_());
-+                  itemstack.m_41764_(maxSize);
-+                  if (!isCheck0) { // Paper - dont update if only a check
-+                     slot.m_6654_();
-+                  } // Paper
-                   flag = true;
-                }
-             }
-@@ -649,14 +_,32 @@
- 
-             Slot slot1 = this.f_38839_.get(i);
-             ItemStack itemstack1 = slot1.m_7993_();
-+            // Paper start - clone if only a check
-+            if (isCheck0) {
-+               itemstack1 = itemstack1.m_41777_();
-+            }
-+            // Paper end
-             if (itemstack1.m_41619_() && slot1.m_5857_(p_38904_)) {
-                if (p_38904_.m_41613_() > slot1.m_6641_()) {
--                  slot1.m_269060_(p_38904_.m_41620_(slot1.m_6641_()));
-+                  // Paper start - dont set slot if only check
-+                  if (isCheck0) {
-+                     p_38904_.m_41774_(slot1.m_6641_());
-+                  } else {
-+                     // Paper end
-+                     slot1.m_269060_(p_38904_.m_41620_(slot1.m_6641_()));
-+                  } // Paper
-                } else {
--                  slot1.m_269060_(p_38904_.m_41620_(p_38904_.m_41613_()));
--               }
--
--               slot1.m_6654_();
-+                  // Paper start - dont set slot if only check
-+                  if (isCheck0) {
-+                     p_38904_.m_41774_(p_38904_.m_41613_());
-+                  } else {
-+                     // Paper end
-+                     slot1.m_269060_(p_38904_.m_41620_(p_38904_.m_41613_()));
-+                  } // Paper
-+               }
-+               if (!isCheck0) { // Paper - dont update if only check
-+                  slot1.m_6654_();
-+               }
-                flag = true;
-                break;
-             }
 @@ -718,7 +_,7 @@
              i = 1;
              break;

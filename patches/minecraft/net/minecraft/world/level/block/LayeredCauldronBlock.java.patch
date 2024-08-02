@@ -28,20 +28,23 @@
        }
  
     }
-@@ -66,15 +_,38 @@
+@@ -64,17 +_,39 @@
+    }
+ 
     public static void m_153559_(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
-       int i = p_153560_.m_61143_(f_153514_) - 1;
-       BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : p_153560_.m_61124_(f_153514_, Integer.valueOf(i));
+-      int i = p_153560_.m_61143_(f_153514_) - 1;
+-      BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : p_153560_.m_61124_(f_153514_, Integer.valueOf(i));
 -      p_153561_.m_46597_(p_153562_, blockstate);
 -      p_153561_.m_220407_(GameEvent.f_157792_, p_153562_, GameEvent.Context.m_223722_(blockstate));
 -   }
-+      changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
++      // CraftBukkit start
++      lowerFillLevel(p_153560_, p_153561_, p_153562_, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
 +   }
 +
 +   public static boolean lowerFillLevel(BlockState pState, Level pLevel, BlockPos pPos, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
 +      int i = pState.m_61143_(f_153514_) - 1;
 +      BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : pState.m_61124_(f_153514_, Integer.valueOf(i));
-+      return changeLevel(pState, pLevel, pPos, blockstate, null, reason);
++      return changeLevel(pState, pLevel, pPos, blockstate, entity, reason);
 +   }
 +
 +   // CraftBukkit start
@@ -50,7 +53,7 @@
 +      newState.setData(newBlock);
 +
 +      CauldronLevelChangeEvent event = new CauldronLevelChangeEvent(
-+              CraftBlock.at(world, blockposition),
++              world.getWorld().getBlockAt(blockposition.m_123341_(), blockposition.m_123342_(), blockposition.m_123343_()),
 +              (entity == null) ? null : entity.getBukkitEntity(), reason, newState
 +      );
 +      world.getCraftServer().getPluginManager().callEvent(event);

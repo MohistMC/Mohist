@@ -5,7 +5,7 @@
 
 package net.minecraftforge.registries;
 
-import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
+import com.mohistmc.bukkit.pluginfix.PluginDynamicRegistrFix;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -677,7 +677,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     @Override
     public boolean isLocked() {
-        return UltraCosmetics.canLock && this.isFrozen;
+        return PluginDynamicRegistrFix.canLock && this.isFrozen;
     }
 
     /**

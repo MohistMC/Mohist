@@ -157,4 +157,44 @@ public class CraftPersistentDataContainer implements PersistentDataContainer {
     public Map<String, Object> serialize() {
         return (Map<String, Object>) CraftNBTTagConfigSerializer.serialize(toTagCompound());
     }
+
+    // Paper start
+    public void clear() {
+        this.customDataTags.clear();
+    }
+
+    @Override
+    public boolean has(NamespacedKey key) {
+        Preconditions.checkArgument(key != null, "The provided key for the custom value was null");
+
+        return this.customDataTags.containsKey(key.toString());
+    }
+
+    @Override
+    public byte[] serializeToBytes() throws java.io.IOException {
+        net.minecraft.nbt.CompoundTag root = this.toTagCompound();
+        java.io.ByteArrayOutputStream byteArrayOutput = new java.io.ByteArrayOutputStream();
+        try (java.io.DataOutputStream dataOutput = new java.io.DataOutputStream(byteArrayOutput)) {
+            net.minecraft.nbt.NbtIo.write(root, dataOutput);
+            return byteArrayOutput.toByteArray();
+        }
+    }
+
+    @Override
+    public void readFromBytes(byte[] bytes, boolean clear) throws java.io.IOException {
+        if (clear) {
+            this.clear();
+        }
+        try (java.io.DataInputStream dataInput = new java.io.DataInputStream(new java.io.ByteArrayInputStream(bytes))) {
+            net.minecraft.nbt.CompoundTag compound = net.minecraft.nbt.NbtIo.read(dataInput);
+            this.putAll(compound);
+        }
+    }
+
+    public Map<String, Tag> getTagsCloned() {
+        final Map<String, Tag> tags = new HashMap<>();
+        this.customDataTags.forEach((key, tag) -> tags.put(key, tag.copy()));
+        return tags;
+    }
+    // Paper end
 }

@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.arguments.item.ItemParser;
@@ -18,6 +19,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class CraftItemFactory implements ItemFactory {
     static final Color DEFAULT_LEATHER_COLOR = Color.fromRGB(0xA06540);
@@ -103,10 +106,11 @@ public final class CraftItemFactory implements ItemFactory {
         case TURTLE_HELMET:
             return meta != null && meta.getClass().equals(CraftMetaArmor.class) ? meta : new CraftMetaArmor(meta);
         case LEATHER_HELMET:
-        case LEATHER_HORSE_ARMOR:
         case LEATHER_CHESTPLATE:
         case LEATHER_LEGGINGS:
         case LEATHER_BOOTS:
+            return meta instanceof CraftMetaColorableArmor ? meta : new CraftMetaColorableArmor(meta);
+        case LEATHER_HORSE_ARMOR:
             return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
         case POTION:
         case SPLASH_POTION:
@@ -453,4 +457,107 @@ public final class CraftItemFactory implements ItemFactory {
 
         return CraftMagicNumbers.getMaterial(nmsItem);
     }
+
+    // Paper start - Adventure
+    @Override
+    public ItemStack enchantWithLevels(ItemStack itemStack, int levels, boolean allowTreasure, java.util.Random random) {
+        Preconditions.checkArgument(itemStack != null, "Argument 'itemStack' must not be null");
+        Preconditions.checkArgument(itemStack.getType() != Material.AIR, "Argument 'itemStack' must not be of type AIR");
+        Preconditions.checkArgument(itemStack.getAmount() > 0, "Argument 'itemStack' amount must be greater than 0");
+        Preconditions.checkArgument(levels > 0 && levels <= 30, "Argument 'levels' must be in range [1, 30] (attempted " + levels + ")");
+        Preconditions.checkArgument(random != null, "Argument 'random' must not be null");
+        final net.minecraft.world.item.ItemStack internalStack = CraftItemStack.asNMSCopy(itemStack);
+        if (internalStack.getTag() != null) {
+            internalStack.getTag().remove(net.minecraft.world.item.ItemStack.TAG_ENCH);
+        }
+        final net.minecraft.world.item.ItemStack enchanted = net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(new org.bukkit.craftbukkit.v1_20_R1.util.RandomSourceWrapper(random), internalStack, levels, allowTreasure);
+        return CraftItemStack.asCraftMirror(enchanted);
+    }
+
+    @Override
+    public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final ItemStack item, final java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op) {
+        final net.minecraft.nbt.CompoundTag tag = CraftItemStack.asNMSCopy(item).getTag();
+        return net.kyori.adventure.text.event.HoverEvent.showItem(op.apply(net.kyori.adventure.text.event.HoverEvent.ShowItem.showItem(item.getType().getKey(), item.getAmount(), PaperAdventure.asBinaryTagHolder(tag))));
+    }
+
+    @NotNull
+    @Override
+    public net.kyori.adventure.text. Component displayName(@Nullable ItemStack itemStack) {
+        return PaperAdventure.asAdventure(CraftItemStack.asNMSCopy(itemStack).getDisplayName());
+    }
+    // Paper end - Adventure
+
+    // Paper start - ensure server conversions API
+    @Override
+    public ItemStack ensureServerConversions(ItemStack item) {
+        return CraftItemStack.asCraftMirror(CraftItemStack.asNMSCopy(item));
+    }
+    // Paper end - ensure server conversions API
+
+    // Paper start - add getI18NDisplayName
+    @Override
+    public String getI18NDisplayName(ItemStack item) {
+        net.minecraft.world.item.ItemStack nms = null;
+        if (item instanceof CraftItemStack) {
+            nms = ((CraftItemStack) item).handle;
+        }
+        if (nms == null) {
+            nms = CraftItemStack.asNMSCopy(item);
+        }
+
+        return nms != null ? net.minecraft.locale.Language.getInstance().getOrDefault(nms.getItem().getDescriptionId(nms)) : null;
+    }
+    // Paper end - add getI18NDisplayName
+
+    // Paper start - bungee hover events
+    @Override
+    public net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(ItemStack itemStack) {
+        net.md_5.bungee.api.chat.ItemTag itemTag = net.md_5.bungee.api.chat.ItemTag.ofNbt(CraftItemStack.asNMSCopy(itemStack).getOrCreateTag().toString());
+        return new net.md_5.bungee.api.chat.hover.content.Item(
+                itemStack.getType().getKey().toString(),
+                itemStack.getAmount(),
+                itemTag);
+    }
+
+    @Override
+    public net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(org.bukkit.entity.Entity entity) {
+        return hoverContentOf(entity, org.apache.commons.lang3.StringUtils.isBlank(entity.getCustomName()) ? null : new net.md_5.bungee.api.chat.TextComponent(entity.getCustomName()));
+    }
+
+    @Override
+    public net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(org.bukkit.entity.Entity entity, String customName) {
+        return hoverContentOf(entity, org.apache.commons.lang3.StringUtils.isBlank(customName) ? null : new net.md_5.bungee.api.chat.TextComponent(customName));
+    }
+
+    @Override
+    public net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(org.bukkit.entity.Entity entity, net.md_5.bungee.api.chat.BaseComponent customName) {
+        return new net.md_5.bungee.api.chat.hover.content.Entity(
+                entity.getType().getKey().toString(),
+                entity.getUniqueId().toString(),
+                customName);
+    }
+
+    @Override
+    public net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(org.bukkit.entity.Entity entity, net.md_5.bungee.api.chat.BaseComponent[] customName) {
+        return new net.md_5.bungee.api.chat.hover.content.Entity(
+                entity.getType().getKey().toString(),
+                entity.getUniqueId().toString(),
+                new net.md_5.bungee.api.chat.TextComponent(customName));
+    }
+    // Paper end - bungee hover events
+
+    // Paper start - old getSpawnEgg API
+    // @Override // used to override, upstream added conflicting method, is called via Commodore now
+    @Deprecated
+    public ItemStack getSpawnEgg0(org.bukkit.entity.EntityType type) {
+        if (type == null) {
+            return null;
+        }
+        String typeId = type.getKey().toString();
+        net.minecraft.resources.ResourceLocation typeKey = new net.minecraft.resources.ResourceLocation(typeId);
+        net.minecraft.world.entity.EntityType<?> nmsType = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.get(typeKey);
+        net.minecraft.world.item.SpawnEggItem eggItem = net.minecraft.world.item.SpawnEggItem.byId(nmsType);
+        return eggItem == null ? null : new net.minecraft.world.item.ItemStack(eggItem).asBukkitMirror();
+    }
+    // Paper end
 }

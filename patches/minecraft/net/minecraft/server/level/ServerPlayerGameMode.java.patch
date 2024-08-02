@@ -314,7 +314,7 @@
 +      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
 +      interactPosition = blockpos.m_7949_();
 +      interactHand = p_9269_;
-+      interactItemStack = p_9268_.m_41777_();
++      interactItemStack = p_9268_; // Mohist remove copy()
 +
 +      if (eventCB.useInteractedBlock() == Event.Result.DENY) {
 +         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
@@ -323,7 +323,7 @@
 +            p_9266_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.m_7494_() : blockpos.m_7495_()));
 +         } else if (blockstate.m_60734_() instanceof CakeBlock) {
 +            p_9266_.getBukkitEntity().sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
-+         } else if (interactItemStack.m_41720_() instanceof DoubleHighBlockItem) {
++         } else if (p_9268_.m_41720_() instanceof DoubleHighBlockItem) {
 +            // send a correcting update to the client, as it already placed the upper half of the bisected item
 +            p_9266_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_121945_(p_9270_.m_82434_()).m_7494_()));
 +

@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.EnchantingTable;
@@ -10,6 +11,19 @@ public class CraftEnchantingTable extends CraftBlockEntityState<EnchantmentTable
     public CraftEnchantingTable(World world, final EnchantmentTableBlockEntity te) {
         super(world, te);
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component customName() {
+        final EnchantmentTableBlockEntity be = this.getSnapshot();
+        return be.hasCustomName() ? PaperAdventure.asAdventure(be.getCustomName()) : null;
+    }
+
+    @Override
+    public void customName(final net.kyori.adventure.text.Component customName) {
+        this.getSnapshot().setCustomName(customName != null ? PaperAdventure.asVanilla(customName) : null);
+    }
+    // Paper end
 
     @Override
     public String getCustomName() {

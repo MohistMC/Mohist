@@ -1217,7 +1217,7 @@ public interface Server extends PluginMessageRecipient {
      * @throws IllegalArgumentException if the size is not a multiple of 9
      */
     @NotNull
-    Inventory createInventory(@Nullable InventoryHolder owner, int size, net.kyori.adventure.text.@NotNull Component title) throws IllegalArgumentException;
+    Inventory createInventory(@Nullable InventoryHolder owner, int size, @Nullable net.kyori.adventure.text.Component title) throws IllegalArgumentException;
     // Paper end
 
     /**

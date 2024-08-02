@@ -1,6 +1,7 @@
 package org.bukkit.inventory.meta;
 
 import com.google.common.collect.Multimap;
+import net.kyori.adventure.text.Component;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -40,14 +41,15 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @return the display name
      */
-    net.kyori.adventure.text.@Nullable Component displayName();
+    @Nullable
+    net.kyori.adventure.text.Component displayName();
 
     /**
      * Sets the display name.
      *
      * @param displayName the display name to set
      */
-    void displayName(final net.kyori.adventure.text.@Nullable Component displayName);
+    void displayName(final @Nullable net.kyori.adventure.text.Component displayName);
 
     /**
      * Gets the display name that is set.
@@ -80,6 +82,17 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * @param name the name to set
      */
     void setDisplayName(@Nullable String name);
+
+    // Paper start
+    /**
+     * Sets the display name.
+     *
+     * @param component the name component to set
+     * @deprecated use {@link #displayName(Component)}
+     */
+    @Deprecated
+    void setDisplayNameComponent(@Nullable net.md_5.bungee.api.chat.BaseComponent[] component);
+    // Paper end
 
     /**
      * Checks for existence of a localized name.
@@ -162,6 +175,17 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * @param lore the lore that will be set
      */
     void setLore(@Nullable List<String> lore);
+
+    /**
+     * Sets the lore for this item.
+     * Removes lore when given null.
+     *
+     * @param lore the lore that will be set
+     * @deprecated use {@link #lore(List)}
+     */
+    @Deprecated
+    void setLoreComponents(@Nullable List<net.md_5.bungee.api.chat.BaseComponent[]> lore);
+
 
     /**
      * Checks for existence of custom model data.

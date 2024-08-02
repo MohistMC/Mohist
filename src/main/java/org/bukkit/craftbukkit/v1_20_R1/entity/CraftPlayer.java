@@ -2253,6 +2253,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(components, position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR));
         }
 
+        // Paper start
+        @Override
+        public int getPing()
+        {
+            return getHandle().latency;
+        }
+        // Paper end
+
     };
 
     public Player.Spigot spigot()

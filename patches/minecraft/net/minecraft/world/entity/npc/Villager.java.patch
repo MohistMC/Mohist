@@ -169,12 +169,11 @@
              p_35409_.m_47205_(witch);
              this.m_35524_();
              this.m_146870_();
-@@ -816,7 +_,7 @@
+@@ -816,6 +_,7 @@
              return p_186293_.m_35392_(p_35399_);
           }).limit(5L).collect(Collectors.toList());
           if (list1.size() >= p_35400_) {
--            if (SpawnUtil.m_216403_(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_).isPresent()) {
-+            if (SpawnUtil.trySpawnMob(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isPresent()) {
++            SpawnUtil.trySpawnMob$reason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE); // Mohist
+             if (SpawnUtil.m_216403_(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_).isPresent()) {
                 list.forEach(GolemSensor::m_26649_);
              }
-          }

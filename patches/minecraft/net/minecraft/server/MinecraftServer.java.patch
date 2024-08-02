@@ -289,6 +289,7 @@
 +      ServerLevel serverlevel = prepareLevels$serverlevel.getAndSet(this.m_129783_());
 +      MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(serverlevel));
 +      this.forceTicks = true;
++      if (serverlevel.getWorld().getKeepSpawnInMemory()) {
        f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
        BlockPos blockpos = serverlevel.m_220360_();
        p_129941_.m_7647_(new ChunkPos(blockpos));
@@ -299,46 +300,43 @@
 -      while(serverchunkcache.m_8427_() != 441) {
 -         this.f_129726_ = Util.m_137550_() + 10L;
 -         this.m_130012_();
-+      while (serverchunkcache.m_8427_() != 441) {
-+         this.executeModerately();
-       }
- 
+-      }
+-
 -      this.f_129726_ = Util.m_137550_() + 10L;
 -      this.m_130012_();
 -
 -      for(ServerLevel serverlevel1 : this.f_129762_.values()) {
 -         ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
--         if (forcedchunkssaveddata != null) {
--            LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
--
--            while(longiterator.hasNext()) {
--               long i = longiterator.nextLong();
--               ChunkPos chunkpos = new ChunkPos(i);
--               serverlevel1.m_7726_().m_6692_(chunkpos, true);
++      while (serverchunkcache.m_8427_() != 441) {
++         this.executeModerately();
++      }
++      }
++
 +      this.executeModerately();
 +      for (ServerLevel serverLevel : this.f_129762_.values()) {
-+         if (serverLevel.getWorld().getKeepSpawnInMemory()) {
-+            ForcedChunksSavedData forcedchunkssaveddata = serverlevel.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
-+            if (forcedchunkssaveddata != null) {
-+               LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
-+
-+               while (longiterator.hasNext()) {
-+                  long i = longiterator.nextLong();
-+                  ChunkPos chunkpos = new ChunkPos(i);
-+                  serverlevel.m_7726_().m_6692_(chunkpos, true);
-+               }
-+               net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverlevel, forcedchunkssaveddata);
++         ForcedChunksSavedData forcedchunkssaveddata = serverLevel.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
+          if (forcedchunkssaveddata != null) {
+             LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
+ 
+-            while(longiterator.hasNext()) {
++            while (longiterator.hasNext()) {
+                long i = longiterator.nextLong();
+                ChunkPos chunkpos = new ChunkPos(i);
+-               serverlevel1.m_7726_().m_6692_(chunkpos, true);
++               serverLevel.m_7726_().m_6692_(chunkpos, true);
              }
++            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverLevel, forcedchunkssaveddata);
           }
        }
  
 -      this.f_129726_ = Util.m_137550_() + 10L;
 -      this.m_130012_();
+-      p_129941_.m_7646_();
+-      this.m_129962_();
 +      // CraftBukkit start
 +      this.executeModerately();
 +      // CraftBukkit end
-       p_129941_.m_7646_();
--      this.m_129962_();
++      if (serverlevel.getWorld().getKeepSpawnInMemory()) p_129941_.m_7646_();
 +      // CraftBukkit start
 +      serverlevel.m_46703_(this.m_7004_(), this.m_6998_());
 +      this.forceTicks = false;
@@ -346,17 +344,19 @@
     }
  
     public GameType m_130008_() {
-@@ -509,6 +_,13 @@
+@@ -509,6 +_,15 @@
        serverleveldata.m_7831_(serverlevel2.m_6857_().m_61970_());
        this.f_129749_.m_5917_(this.m_129901_().m_136307_());
        this.f_129744_.m_78290_(this.m_206579_(), this.f_129749_, this.m_6846_().m_6960_());
++      // CraftBukkit start
 +      for (ServerLevel world : this.m_129785_()) {
-+         if (world.convertable != this.f_129744_) {
++         if (!world.getWorld().isBukkit() && world.convertable != this.f_129744_) {
 +            world.K.m_7831_(world.m_6857_().m_61970_());
 +            world.K.m_5917_(this.m_129901_().m_136307_());
 +            world.convertable.m_78290_(this.m_206579_(), world.K, this.m_6846_().m_6960_());
 +         }
 +      }
++      // CraftBukkit end
        if (p_129887_) {
           for(ServerLevel serverlevel1 : this.m_129785_()) {
              f_129750_.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)serverlevel1.m_7726_().f_8325_.m_182285_());

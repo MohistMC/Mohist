@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -8,21 +_,27 @@
+@@ -8,21 +_,26 @@
  import com.mojang.serialization.Dynamic;
  import io.netty.buffer.Unpooled;
  import java.io.File;
@@ -11,7 +11,6 @@
  import java.text.SimpleDateFormat;
 -import java.time.Instant;
  import java.util.EnumSet;
-+import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
@@ -42,14 +41,6 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -85,6 +_,7 @@
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
-+import net.minecraft.world.entity.Mob;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.flag.FeatureFlags;
- import net.minecraft.world.level.GameRules;
 @@ -102,6 +_,19 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
@@ -408,7 +399,7 @@
        UUID uuid = UUIDUtil.m_235875_(p_215625_);
        List<ServerPlayer> list = Lists.newArrayList();
  
-@@ -415,76 +_,166 @@
+@@ -415,76 +_,167 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -496,6 +487,7 @@
        serverplayer.f_8906_ = p_11237_.f_8906_;
 +
        serverplayer.m_9015_(p_11237_, p_11238_);
++      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
        serverplayer.m_20234_(p_11237_.m_19879_());
        serverplayer.m_36163_(p_11237_.m_5737_());
  

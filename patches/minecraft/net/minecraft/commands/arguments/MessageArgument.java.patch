@@ -1,5 +1,20 @@
 --- a/net/minecraft/commands/arguments/MessageArgument.java
 +++ b/net/minecraft/commands/arguments/MessageArgument.java
+@@ -29,8 +_,12 @@
+    }
+ 
+    public static Component m_96835_(CommandContext<CommandSourceStack> p_96836_, String p_96837_) throws CommandSyntaxException {
+-      MessageArgument.Message messageargument$message = p_96836_.getArgument(p_96837_, MessageArgument.Message.class);
+-      return messageargument$message.m_232196_(p_96836_.getSource());
++      try {
++         MessageArgument.Message messageargument$message = p_96836_.getArgument(p_96837_, MessageArgument.Message.class);
++         return messageargument$message.m_232196_(p_96836_.getSource());
++      } catch (IllegalArgumentException e) {
++         return Component.m_237119_();
++      }
+    }
+ 
+    public static void m_245478_(CommandContext<CommandSourceStack> p_249433_, String p_248718_, Consumer<PlayerChatMessage> p_249460_) throws CommandSyntaxException {
 @@ -100,7 +_,7 @@
        }
  

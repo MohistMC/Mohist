@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.Namespaced;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +20,7 @@ import java.util.UUID;
  * underscores, hyphens, and forward slashes.
  *
  */
-public final class NamespacedKey implements net.kyori.adventure.key.Key, com.destroystokyo.paper.Namespaced { // Paper - implement Key and Namespaced
+public final class NamespacedKey implements net.kyori.adventure.key.Key, Namespaced { // Paper - implement Key and Namespaced
 
     /**
      * The namespace representing all inbuilt keys.

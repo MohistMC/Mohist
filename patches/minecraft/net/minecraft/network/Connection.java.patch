@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -86,6 +_,13 @@
+@@ -86,6 +_,14 @@
     private boolean f_129479_;
     @Nullable
     private volatile Component f_290021_;
@@ -11,6 +11,7 @@
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
 +   public boolean preparing = true;
 +   // Spigot End
++   private volatile boolean mohist$isClosing; //mohist
  
     public Connection(PacketFlow p_129482_) {
        this.f_129466_ = p_129482_;
@@ -37,7 +38,34 @@
     }
  
     public void channelInactive(ChannelHandlerContext p_129527_) {
-@@ -288,9 +_,11 @@
+@@ -125,7 +_,7 @@
+       } else {
+          boolean flag = !this.f_129479_;
+          this.f_129479_ = true;
+-         if (this.f_129468_.isOpen()) {
++         if (this.f_129468_.isOpen() && !this.mohist$isClosing) {
+             if (p_129534_ instanceof TimeoutException) {
+                f_129465_.debug("Timeout", p_129534_);
+                this.m_129507_(Component.m_237115_("disconnect.timeout"));
+@@ -150,7 +_,7 @@
+    }
+ 
+    protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
+-      if (this.f_129468_.isOpen()) {
++      if (this.f_129468_.isOpen() && !this.mohist$isClosing) {
+          try {
+             m_129517_(p_129488_, this.f_129470_);
+          } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
+@@ -241,7 +_,7 @@
+    }
+ 
+    private void m_129544_() {
+-      if (this.f_129468_ != null && this.f_129468_.isOpen()) {
++      if (this.f_129468_ != null && this.f_129468_.isOpen() && !this.mohist$isClosing) {
+          synchronized(this.f_129467_) {
+             Connection.PacketHolder connection$packetholder;
+             while((connection$packetholder = this.f_129467_.poll()) != null) {
+@@ -288,8 +_,11 @@
        if (this.f_129468_ == null) {
           this.f_290021_ = p_129508_;
        }
@@ -46,11 +74,10 @@
 +      this.preparing = false;
 +      // Spigot End
        if (this.m_129536_()) {
--         this.f_129468_.close().awaitUninterruptibly();
-+         this.f_129468_.close(); // We can't wait as this may be called from an event loop.
++         this.mohist$isClosing = true; // Mohist fix vmp mixin
+          this.f_129468_.close().awaitUninterruptibly();
           this.f_129471_ = p_129508_;
        }
- 
 @@ -316,6 +_,8 @@
     }
  
@@ -68,6 +95,15 @@
        (new Bootstrap()).group(f_129464_.m_13971_()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
              ChannelPipeline channelpipeline = p_129557_.pipeline();
+@@ -367,7 +_,7 @@
+    }
+ 
+    public boolean m_129536_() {
+-      return this.f_129468_ != null && this.f_129468_.isOpen();
++      return this.f_129468_ != null && this.f_129468_.isOpen() && !this.mohist$isClosing;
+    }
+ 
+    public boolean m_129537_() {
 @@ -426,6 +_,7 @@
              } else if (this.m_129538_() != null) {
                 this.m_129538_().m_7026_(Component.m_237115_("multiplayer.disconnect.generic"));

@@ -1,12 +1,15 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -1,5 +_,6 @@
+@@ -1,6 +_,9 @@
  package net.minecraft.commands;
  
 +import com.google.common.base.Joiner;
  import com.google.common.collect.Maps;
++import com.mohistmc.paper.adventure.PaperAdventure;
++import com.mohistmc.paper.brigadier.PaperBrigadier;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
 @@ -13,9 +_,12 @@
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
@@ -20,6 +23,14 @@
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
  import java.util.stream.Collectors;
+@@ -34,7 +_,6 @@
+ import net.minecraft.network.chat.ClickEvent;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 @@ -118,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
@@ -29,6 +40,14 @@
  import org.slf4j.Logger;
  
  public class Commands {
+@@ -128,6 +_,7 @@
+    public static final int f_165685_ = 3;
+    public static final int f_165686_ = 4;
+    private final CommandDispatcher<CommandSourceStack> f_82090_ = new CommandDispatcher<>();
++   public final java.util.List<CommandNode<CommandSourceStack>> vanillaCommandNodes = new java.util.ArrayList<>(); // Paper
+ 
+    public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
+       AdvancementCommands.m_136310_(this.f_82090_);
 @@ -193,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
@@ -38,11 +57,12 @@
           TestCommand.m_127946_(this.f_82090_);
           SpawnArmorTrimsCommand.m_266283_(this.f_82090_);
        }
-@@ -218,7 +_,14 @@
+@@ -218,7 +_,15 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
 -
++      this.vanillaCommandNodes.addAll(this.f_82090_.getRoot().getChildren()); // Paper
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.f_82090_, p_230943_, p_230944_);
 +
 +      this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
@@ -120,7 +140,7 @@
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
        commandsourcestack.m_81377_().m_129905_().m_6521_(() -> {
           return "/" + p_242841_;
-@@ -243,7 +_,16 @@
+@@ -243,29 +_,53 @@
  
        try {
           try {
@@ -138,16 +158,70 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -252,7 +_,7 @@
-             if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
-                int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
-                MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
+          } catch (CommandSyntaxException commandsyntaxexception) {
+-            commandsourcestack.m_81352_(ComponentUtils.m_130729_(commandsyntaxexception.getRawMessage()));
+-            if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
+-               int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
+-               MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
 -                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
-+                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, finalLabel));
-                });
-                if (j > 10) {
-                   mutablecomponent1.m_7220_(CommonComponents.f_238772_);
-@@ -295,17 +_,65 @@
+-               });
+-               if (j > 10) {
+-                  mutablecomponent1.m_7220_(CommonComponents.f_238772_);
+-               }
+-
+-               mutablecomponent1.m_130946_(commandsyntaxexception.getInput().substring(Math.max(0, j - 10), j));
+-               if (j < commandsyntaxexception.getInput().length()) {
+-                  Component component = Component.m_237113_(commandsyntaxexception.getInput().substring(j)).m_130944_(ChatFormatting.RED, ChatFormatting.UNDERLINE);
+-                  mutablecomponent1.m_7220_(component);
+-               }
+-
+-               mutablecomponent1.m_7220_(Component.m_237115_("command.context.here").m_130944_(ChatFormatting.RED, ChatFormatting.ITALIC));
+-               commandsourcestack.m_81352_(mutablecomponent1);
++            // Paper start
++            final net.kyori.adventure.text.TextComponent.Builder builder = net.kyori.adventure.text.Component.text();
++            if ((p_242844_.getContext().getNodes().isEmpty() || !this.vanillaCommandNodes.contains(p_242844_.getContext().getNodes().get(0).getNode()))) {
++               if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
++                  builder.append(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(org.spigotmc.SpigotConfig.unknownCommandMessage));
++               }
++            } else {
++               builder.color(net.kyori.adventure.text.format.NamedTextColor.RED).append(PaperBrigadier.componentFromMessage(commandsyntaxexception.getRawMessage()));
++               // Paper end
++               if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
++                  int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
++                  MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
++                     return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, finalLabel));
++                  });
++                  if (j > 10) {
++                     mutablecomponent1.m_7220_(CommonComponents.f_238772_);
++                  }
++
++                  mutablecomponent1.m_130946_(commandsyntaxexception.getInput().substring(Math.max(0, j - 10), j));
++                  if (j < commandsyntaxexception.getInput().length()) {
++                     Component component = Component.m_237113_(commandsyntaxexception.getInput().substring(j)).m_130944_(ChatFormatting.RED, ChatFormatting.UNDERLINE);
++                     mutablecomponent1.m_7220_(component);
++                  }
++
++                  mutablecomponent1.m_7220_(Component.m_237115_("command.context.here").m_130944_(ChatFormatting.RED, ChatFormatting.ITALIC));
++                  builder.append(net.kyori.adventure.text.Component.newline()).append(PaperAdventure.asAdventure(mutablecomponent1));
++               }
++            }
++            org.bukkit.event.command.UnknownCommandEvent event = new org.bukkit.event.command.UnknownCommandEvent(commandsourcestack.getBukkitSender(), p_242841_, org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty() ? null : builder.build());
++            org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
++            if (event.message() != null) {
++               commandsourcestack.sendFailure(PaperAdventure.asVanilla(event.message()), false);
++               // Paper end
+             }
+          } catch (Exception exception) {
+             MutableComponent mutablecomponent = Component.m_237113_(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
+@@ -286,6 +_,7 @@
+                f_82089_.error("'/{}' threw an exception", p_242841_, exception);
+             }
+ 
++
+             return 0;
+          }
+ 
+@@ -295,17 +_,68 @@
        }
     }
  
@@ -158,7 +232,10 @@
 +
     public void m_82095_(ServerPlayer p_82096_) {
 -      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
-+      if ( org.spigotmc.SpigotConfig.tabComplete < 0 ) return; // Spigot
++      if ( org.spigotmc.SpigotConfig.tabComplete < 0 ) {
++         p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(new RootCommandNode<>()));
++         return; // Spigot
++      }
 +      // CraftBukkit start
 +      // Register Vanilla commands into builtRoot as before
 +      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newIdentityHashMap(); // Use identity to prevent aliasing issues

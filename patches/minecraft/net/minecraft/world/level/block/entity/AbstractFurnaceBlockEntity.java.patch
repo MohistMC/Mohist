@@ -288,7 +288,7 @@
        ExperienceOrb.m_147082_(p_154999_, p_155000_, i);
     }
  
-@@ -495,4 +_,67 @@
+@@ -495,4 +_,66 @@
        }
  
     }
@@ -298,13 +298,12 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
-+         if (facing == Direction.UP)
-+            return handlers[0].cast();
-+         else if (facing == Direction.DOWN)
-+            return handlers[1].cast();
-+         else
-+            return handlers[2].cast();
++      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && facing != null && !this.f_58859_) {
++          return switch (facing) {
++              case UP -> handlers[0].cast();
++              case DOWN -> handlers[1].cast();
++              default -> handlers[2].cast();
++          };
 +      }
 +      return super.getCapability(capability, facing);
 +   }

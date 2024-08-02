@@ -2,6 +2,8 @@ package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.paper.inventory.ItemRarity;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Translatable;
@@ -24,7 +26,7 @@ import java.util.Map;
  * use this class to encapsulate Materials for which {@link Material#isItem()}
  * returns false.</b>
  */
-public class ItemStack implements Cloneable, ConfigurationSerializable, Translatable, net.kyori.adventure.translation.Translatable {
+public class ItemStack implements Cloneable, ConfigurationSerializable, Translatable, net.kyori.adventure.text.event.HoverEventSource<net.kyori.adventure.text.event.HoverEvent.ShowItem>, net.kyori.adventure.translation.Translatable{
     private Material type = Material.AIR;
     private int amount = 0;
     private MaterialData data = null;
@@ -600,8 +602,284 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
 
     @Override
     @NotNull
+    @Deprecated(forRemoval = true) // Paper
     public String getTranslationKey() {
         return Bukkit.getUnsafe().getTranslationKey(this);
+    }
+
+    // Paper start
+    /**
+     * Randomly enchants a copy of this {@link ItemStack} using the given experience levels.
+     *
+     * <p>If this ItemStack is already enchanted, the existing enchants will be removed before enchanting.</p>
+     *
+     * <p>Levels must be in range {@code [1, 30]}.</p>
+     *
+     * @param levels levels to use for enchanting
+     * @param allowTreasure whether to allow enchantments where {@link org.bukkit.enchantments.Enchantment#isTreasure()} returns true
+     * @param random {@link java.util.Random} instance to use for enchanting
+     * @return enchanted copy of the provided ItemStack
+     * @throws IllegalArgumentException on bad arguments
+     */
+    @NotNull
+    public ItemStack enchantWithLevels(final @org.jetbrains.annotations.Range(from = 1, to = 30) int levels, final boolean allowTreasure, final @NotNull java.util.Random random) {
+        return Bukkit.getServer().getItemFactory().enchantWithLevels(this, levels, allowTreasure, random);
+    }
+
+    @NotNull
+    @Override
+    public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op) {
+        return org.bukkit.Bukkit.getServer().getItemFactory().asHoverEvent(this, op);
+    }
+
+    /**
+     * Get the formatted display name of the {@link ItemStack}.
+     *
+     * @return display name of the {@link ItemStack}
+     */
+    @NotNull
+    public net.kyori.adventure.text.Component displayName() {
+        return Bukkit.getServer().getItemFactory().displayName(this);
+    }
+
+    /**
+     * Minecraft updates are converting simple item stacks into more complex NBT oriented Item Stacks.
+     *
+     * Use this method to ensure any desired data conversions are processed.
+     * The input itemstack will not be the same as the returned itemstack.
+     *
+     * @return A potentially Data Converted ItemStack
+     */
+    @NotNull
+    public ItemStack ensureServerConversions() {
+        return Bukkit.getServer().getItemFactory().ensureServerConversions(this);
+    }
+
+    /**
+     * Deserializes this itemstack from raw NBT bytes. NBT is safer for data migrations as it will
+     * use the built in data converter instead of bukkits dangerous serialization system.
+     *
+     * This expects that the DataVersion was stored on the root of the Compound, as saved from
+     * the {@link #serializeAsBytes()} API returned.
+     * @param bytes bytes representing an item in NBT
+     * @return ItemStack migrated to this version of Minecraft if needed.
+     */
+    @NotNull
+    public static ItemStack deserializeBytes(@NotNull byte[] bytes) {
+        return org.bukkit.Bukkit.getUnsafe().deserializeItem(bytes);
+    }
+
+    /**
+     * Serializes this itemstack to raw bytes in NBT. NBT is safer for data migrations as it will
+     * use the built in data converter instead of bukkits dangerous serialization system.
+     * @return bytes representing this item in NBT.
+     */
+    @NotNull
+    public byte[] serializeAsBytes() {
+        return org.bukkit.Bukkit.getUnsafe().serializeItem(this);
+    }
+
+    /**
+     * Gets the Display name as seen in the Client.
+     * Currently the server only supports the English language. To override this,
+     * You must replace the language file embedded in the server jar.
+     *
+     * @return Display name of Item
+     * @deprecated {@link ItemStack} implements {@link net.kyori.adventure.translation.Translatable}; use that and
+     * {@link net.kyori.adventure.text.Component#translatable(net.kyori.adventure.translation.Translatable)} instead.
+     */
+    @Nullable
+    @Deprecated
+    public String getI18NDisplayName() {
+        return Bukkit.getServer().getItemFactory().getI18NDisplayName(this);
+    }
+
+    public int getMaxItemUseDuration() {
+        if (type == null || type == Material.AIR || !type.isItem()) {
+            return 0;
+        }
+        // Requires access to NMS
+        return ensureServerConversions().getMaxItemUseDuration();
+    }
+
+    /**
+     * Clones the itemstack and returns it a single quantity.
+     * @return The new itemstack with 1 quantity
+     */
+    @NotNull
+    public ItemStack asOne() {
+        return asQuantity(1);
+    }
+
+    /**
+     * Clones the itemstack and returns it as the specified quantity
+     * @param qty The quantity of the cloned item
+     * @return The new itemstack with specified quantity
+     */
+    @NotNull
+    public ItemStack asQuantity(int qty) {
+        ItemStack clone = clone();
+        clone.setAmount(qty);
+        return clone;
+    }
+
+    /**
+     * Adds 1 to this itemstack. Will not go over the items max stack size.
+     * @return The same item (not a clone)
+     */
+    @NotNull
+    public ItemStack add() {
+        return add(1);
+    }
+
+    /**
+     * Adds quantity to this itemstack. Will not go over the items max stack size.
+     *
+     * @param qty The amount to add
+     * @return The same item (not a clone)
+     */
+    @NotNull
+    public ItemStack add(int qty) {
+        setAmount(Math.min(getMaxStackSize(), getAmount() + qty));
+        return this;
+    }
+
+    /**
+     * Subtracts 1 to this itemstack.  Going to 0 or less will invalidate the item.
+     * @return The same item (not a clone)
+     */
+    @NotNull
+    public ItemStack subtract() {
+        return subtract(1);
+    }
+
+    /**
+     * Subtracts quantity to this itemstack. Going to 0 or less will invalidate the item.
+     *
+     * @param qty The amount to add
+     * @return The same item (not a clone)
+     */
+    @NotNull
+    public ItemStack subtract(int qty) {
+        setAmount(Math.max(0, getAmount() - qty));
+        return this;
+    }
+
+    /**
+     * If the item has lore, returns it, else it will return null
+     * @return The lore, or null
+     * @deprecated in favor of {@link #lore()}
+     */
+    @Deprecated
+    public @Nullable List<String> getLore() {
+        if (!hasItemMeta()) {
+            return null;
+        }
+        ItemMeta itemMeta = getItemMeta();
+        if (!itemMeta.hasLore()) {
+            return null;
+        }
+        return itemMeta.getLore();
+    }
+
+    /**
+     * If the item has lore, returns it, else it will return null
+     * @return The lore, or null
+     */
+    public @Nullable List<net.kyori.adventure.text.Component> lore() {
+        if (!this.hasItemMeta()) {
+            return null;
+        }
+        final ItemMeta itemMeta = getItemMeta();
+        if (!itemMeta.hasLore()) {
+            return null;
+        }
+        return itemMeta.lore();
+    }
+
+    /**
+     * Sets the lore for this item.
+     * Removes lore when given null.
+     *
+     * @param lore the lore that will be set
+     * @deprecated in favour of {@link #lore(List)}
+     */
+    @Deprecated
+    public void setLore(@Nullable List<String> lore) {
+        ItemMeta itemMeta = getItemMeta();
+        if (itemMeta == null) {
+            throw new IllegalStateException("Cannot set lore on " + getType());
+        }
+        itemMeta.setLore(lore);
+        setItemMeta(itemMeta);
+    }
+
+    /**
+     * Sets the lore for this item.
+     * Removes lore when given null.
+     *
+     * @param lore the lore that will be set
+     */
+    public void lore(@Nullable List<? extends net.kyori.adventure.text.Component> lore) {
+        ItemMeta itemMeta = getItemMeta();
+        if (itemMeta == null) {
+            throw new IllegalStateException("Cannot set lore on " + getType());
+        }
+        itemMeta.lore(lore);
+        this.setItemMeta(itemMeta);
+    }
+
+    /**
+     * Set itemflags which should be ignored when rendering a ItemStack in the Client. This Method does silently ignore double set itemFlags.
+     *
+     * @param itemFlags The hideflags which shouldn't be rendered
+     */
+    public void addItemFlags(@NotNull ItemFlag... itemFlags) {
+        ItemMeta itemMeta = getItemMeta();
+        if (itemMeta == null) {
+            throw new IllegalStateException("Cannot add flags on " + getType());
+        }
+        itemMeta.addItemFlags(itemFlags);
+        setItemMeta(itemMeta);
+    }
+
+    /**
+     * Remove specific set of itemFlags. This tells the Client it should render it again. This Method does silently ignore double removed itemFlags.
+     *
+     * @param itemFlags Hideflags which should be removed
+     */
+    public void removeItemFlags(@NotNull ItemFlag... itemFlags) {
+        ItemMeta itemMeta = getItemMeta();
+        if (itemMeta == null) {
+            throw new IllegalStateException("Cannot remove flags on " + getType());
+        }
+        itemMeta.removeItemFlags(itemFlags);
+        setItemMeta(itemMeta);
+    }
+
+    /**
+     * Get current set itemFlags. The collection returned is unmodifiable.
+     *
+     * @return A set of all itemFlags set
+     */
+    @NotNull
+    public java.util.Set<ItemFlag> getItemFlags() {
+        ItemMeta itemMeta = getItemMeta();
+        if (itemMeta == null) {
+            return java.util.Collections.emptySet();
+        }
+        return itemMeta.getItemFlags();
+    }
+
+    /**
+     * Check if the specified flag is present on this item.
+     *
+     * @param flag the flag to check
+     * @return if it is present
+     */
+    public boolean hasItemFlag(@NotNull ItemFlag flag) {
+        ItemMeta itemMeta = getItemMeta();
+        return itemMeta != null && itemMeta.hasItemFlag(flag);
     }
 
     /**
@@ -614,4 +892,70 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
     public @NotNull String translationKey() {
         return Bukkit.getUnsafe().getTranslationKey(this);
     }
+
+    /**
+     * Gets the item rarity of the itemstack. The rarity can change based on enchantements.
+     *
+     * @return the itemstack rarity
+     */
+    @NotNull
+    public ItemRarity getRarity() {
+        return Bukkit.getUnsafe().getItemStackRarity(this);
+    }
+
+    /**
+     * Checks if an itemstack can repair this itemstack.
+     * Returns false if {@code this} or {@code repairMaterial}'s type is not an item ({@link Material#isItem()}).
+     *
+     * @param repairMaterial the repair material
+     * @return true if it is repairable by, false if not
+     */
+    public boolean isRepairableBy(@NotNull ItemStack repairMaterial) {
+        return Bukkit.getUnsafe().isValidRepairItemStack(this, repairMaterial);
+    }
+
+    /**
+     * Checks if this itemstack can repair another.
+     * Returns false if {@code this} or {@code toBeRepaired}'s type is not an item ({@link Material#isItem()}).
+     *
+     * @param toBeRepaired the itemstack to be repaired
+     * @return true if it can repair, false if not
+     */
+    public boolean canRepair(@NotNull ItemStack toBeRepaired) {
+        return Bukkit.getUnsafe().isValidRepairItemStack(toBeRepaired, this);
+    }
+
+    /**
+     * Damages this itemstack by the specified amount. This
+     * runs all logic associated with damaging an itemstack like
+     * events and stat changes.
+     *
+     * @param amount the amount of damage to do
+     * @param livingEntity the entity related to the damage
+     * @return the damaged itemstack or an empty one if it broke. May return the same instance of ItemStack
+     * @see org.bukkit.entity.LivingEntity#damageItemStack(EquipmentSlot, int) to damage itemstacks in equipment slots
+     */
+    public @NotNull ItemStack damage(int amount, @NotNull org.bukkit.entity.LivingEntity livingEntity) {
+        return livingEntity.damageItemStack(this, amount);
+    }
+
+    /**
+     * Returns an empty item stack, consists of an air material and a stack size of 0.
+     *
+     * Any item stack with a material of air or a stack size of 0 is seen
+     * as being empty by {@link ItemStack#isEmpty}.
+     */
+    @NotNull
+    public static ItemStack empty() {
+        return new ItemStack();
+    }
+
+    /**
+     * Returns whether this item stack is empty and contains no item. This means
+     * it is either air or the stack has a size of 0.
+     */
+    public boolean isEmpty() {
+        return type.isAir() || amount <= 0;
+    }
+    // Paper end
 }

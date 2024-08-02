@@ -56,7 +56,7 @@ class LibraryLoader {
 
         for (Dependency dependency : dependencies) {
             String group = dependency.group().replace(".", "/");
-            String fileName = "%s-%s.pom".formatted(dependency.name(), dependency.version());
+            String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
             if (has(dependency)) {
                 continue;
             }
@@ -65,7 +65,7 @@ class LibraryLoader {
                     newDependencies.add(findDependency(group, dependency.name(), false));
                 } else {
                     newDependencies.add(dependency);
-                    String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
+                    String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
                     if (ConnectionUtil.isValid(pomUrl)) {
                         newDependencies.addAll(initDependencies0(pomUrl));
                     }

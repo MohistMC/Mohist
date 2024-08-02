@@ -645,6 +645,23 @@
           if (s == null) {
              return false;
           } else {
+@@ -1568,6 +_,16 @@
+       }
+    }
+ 
++   // Paper start - Entity serialization api
++   public boolean serializeEntity(CompoundTag compound) {
++      List<Entity> pass = new java.util.ArrayList<>(this.m_20197_());
++      this.f_19823_ = ImmutableList.of();
++      boolean result = m_20223_(compound);
++      this.f_19823_ = ImmutableList.copyOf(pass);
++      return result;
++   }
++   // Paper end
++
+    public boolean m_20223_(CompoundTag p_20224_) {
+       return this.m_20159_() ? false : this.m_20086_(p_20224_);
+    }
 @@ -1582,14 +_,46 @@
  
           Vec3 vec3 = this.m_20184_();
@@ -1065,7 +1082,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2410,32 +_,65 @@
+@@ -2410,32 +_,66 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -1123,6 +1140,7 @@
 -               if (p_20118_.m_46472_() == Level.f_46430_) {
 -                  ServerLevel.m_8617_(p_20118_);
 +               if (spawnPortal && p_20118_.getTypeKey() == LevelStem.f_63973_) { // CraftBukkit
++                  ServerLevel.entityAtomicReference(this); // Mohist
 +                  ServerLevel.m_8617_(p_20118_); // CraftBukkit
                 }
 +               // CraftBukkit end
@@ -1501,11 +1519,10 @@
        this.f_146795_ = null;
     }
  
-@@ -3319,6 +_,108 @@
-    public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
+@@ -3320,6 +_,108 @@
        return true;
     }
-+
+ 
 +   /* ================================== Forge Start =====================================*/
 +
 +   private boolean canUpdate = true;
@@ -1607,6 +1624,18 @@
 +
 +   /* ================================== Forge End =====================================*/
 +
- 
++
     public Level m_9236_() {
        return this.f_19853_;
+    }
+@@ -3387,4 +_,10 @@
+          return this.f_146957_;
+       }
+    }
++
++   // Paper start
++   public static int nextEntityId() {
++      return f_19843_.incrementAndGet();
++   }
++   // Paper end
+ }

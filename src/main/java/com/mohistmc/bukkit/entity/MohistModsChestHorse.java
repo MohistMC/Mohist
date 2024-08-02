@@ -24,7 +24,7 @@ public class MohistModsChestHorse extends CraftChestedHorse {
     }
 
     @Override
-    public Horse.@NotNull Variant getVariant() {
+    public @NotNull Horse.Variant getVariant() {
         return Horse.Variant.FORGE_MOD_CHEST_HORSE;
     }
 
