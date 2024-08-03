@@ -1937,7 +1937,7 @@
        PacketUtils.m_131359_(p_253950_, this, this.f_9743_.m_284548_());
        RemoteChatSession.Data remotechatsession$data = p_253950_.f_252446_();
        ProfilePublicKey.Data profilepublickey$data = this.f_252494_ != null ? this.f_252494_.f_243855_().f_219781_() : null;
-@@ -1719,4 +_,117 @@
+@@ -1719,4 +_,118 @@
     interface EntityInteraction {
        InteractionResult m_143694_(ServerPlayer p_143695_, Entity p_143696_, InteractionHand p_143697_);
     }
@@ -1980,29 +1980,28 @@
 +
 +      if (!async && s.startsWith("/")) {
 +         this.handleCommand(s);
-+      } else if (this.f_9743_.m_9241_() == ChatVisiblity.SYSTEM) {
-+         // Do nothing, this is coming from a plugin
-+      } else {
-+         org.bukkit.entity.Player player = this.getCraftPlayer();
-+         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(f_9745_));
++      } else if (this.f_9743_.m_9241_() != ChatVisiblity.SYSTEM) {
++         org.bukkit.entity.Player thisPlayer = this.getCraftPlayer();
++         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, thisPlayer, s, new LazyPlayerSet(f_9745_));
 +         String originalFormat = event.getFormat(), originalMessage = event.getMessage();
 +         Bukkit.getPluginManager().callEvent(event);
 +
 +         if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
 +            // Evil plugins still listening to deprecated event
-+            final PlayerChatEvent queueEvent = new PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
++            final PlayerChatEvent queueEvent = new PlayerChatEvent(thisPlayer, event.getMessage(), event.getFormat(), event.getRecipients());
 +            queueEvent.setCancelled(event.isCancelled());
-+            Waitable waitable = new Waitable() {
++
++            class SyncChat extends Waitable<Object> {
 +               @Override
 +               protected Object evaluate() {
-+                  org.bukkit.Bukkit.getPluginManager().callEvent(queueEvent);
++                  Bukkit.getPluginManager().callEvent(queueEvent);
 +                  if (queueEvent.isCancelled()) {
 +                     return null;
 +                  }
 +                  String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
 +                  if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
-+                     if (originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) {
-+                        ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
++                     if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) {
++                        ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, ServerGamePacketListenerImpl.this.f_9743_));
 +                        return null;
 +                     }
 +
@@ -2011,14 +2010,14 @@
 +                     }
 +                  } else {
 +                     for (org.bukkit.entity.Player player : queueEvent.getRecipients()) {
-+                        player.sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), message);
++                        player.sendMessage(thisPlayer.getUniqueId(), message);
 +                     }
 +                  }
-+                  ServerGamePacketListenerImpl.this.f_9745_.console.sendMessage(message);
-+
++                  Bukkit.getConsoleSender().sendMessage(message);
 +                  return null;
 +               }
-+            };
++            }
++            Waitable waitable = new SyncChat();
 +            if (async) {
 +               f_9745_.processQueue.add(waitable);
 +            } else {
@@ -2026,31 +2025,33 @@
 +            }
 +            try {
 +               waitable.get();
++               return;
 +            } catch (InterruptedException e) {
 +               Thread.currentThread().interrupt(); // This is proper habit for java. If we aren't handling it, pass it on!
++               return;
 +            } catch (ExecutionException e) {
 +               throw new RuntimeException("Exception processing chat event", e.getCause());
 +            }
-+         } else {
-+            if (event.isCancelled()) {
++         }
++         if (event.isCancelled()) {
++            return;
++         }
++         s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
++         if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
++            if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
++               ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, ServerGamePacketListenerImpl.this.f_9743_));
 +               return;
 +            }
-+            s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-+            if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
-+               if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
-+                  ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
-+                  return;
-+               }
-+               for (ServerPlayer recipient : f_9745_.m_6846_().f_11196_) {
-+                  recipient.getBukkitEntity().sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), s);
-+               }
-+            } else {
-+               for (org.bukkit.entity.Player recipient : event.getRecipients()) {
-+                  recipient.sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), s);
-+               }
++            for (ServerPlayer recipient : f_9745_.m_6846_().f_11196_) {
++               recipient.getBukkitEntity().sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), s);
 +            }
-+            f_9745_.console.sendMessage(s);
++         } else {
++            for (org.bukkit.entity.Player recipient : event.getRecipients()) {
++               recipient.sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), s);
++            }
 +         }
++         Bukkit.getConsoleSender().sendMessage(s);
++
 +      }
 +   }
 +   // CraftBukkit end
