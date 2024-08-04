@@ -991,7 +991,7 @@
        }
     }
  
-@@ -1155,8 +_,14 @@
+@@ -1155,8 +_,15 @@
           Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.command(), p_215225_.timeStamp(), p_215225_.lastSeenMessages());
           if (optional.isPresent()) {
              this.server.submit(() -> {
@@ -1000,6 +1000,7 @@
 +                  return;
 +               }
 +               // CraftBukkit end
++
                 this.performChatCommand(p_215225_, optional.get());
 -               this.detectRateSpam();
 +               this.s = "/" + p_215225_.command();

@@ -573,7 +573,7 @@
              this.onServerExit();
           }
  
-@@ -709,8 +_,17 @@
+@@ -709,8 +_,14 @@
     }
  
     private boolean haveTime() {
@@ -584,9 +584,6 @@
 +
 +   private void executeModerately() {
 +      this.runAllTasks();
-+      while (!processQueue.isEmpty()) {
-+         processQueue.remove().run();
-+      }
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
@@ -656,7 +653,7 @@
     }
  
     private ServerStatus.Players buildPlayerStatus() {
-@@ -845,24 +_,27 @@
+@@ -845,24 +_,33 @@
     }
  
     public void tickChildren(BooleanSupplier p_129954_) {
@@ -669,6 +666,12 @@
        this.profiler.popPush("levels");
  
 -      for(ServerLevel serverlevel : this.getAllLevels()) {
++      // CraftBukkit start
++      // Run tasks that are waiting on processing
++      while (!processQueue.isEmpty()) {
++         processQueue.remove().run();
++      }
++
 +      // Send time updates to everyone, it will get the right time from the world the player is in.
 +      if (this.tickCount % 20 == 0) {
 +         for (int i = 0; i < this.getPlayerList().players.size(); ++i) {
