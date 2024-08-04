@@ -45,14 +45,14 @@
  
     public void m_27595_(@Nullable Player p_27596_) {
 -      this.f_27554_ = 600;
++      // CraftBukkit start
++      EntityEnterLoveModeEvent entityEnterLoveModeEvent = CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
++      if (entityEnterLoveModeEvent.isCancelled()) {
++         return;
++      }
++      this.f_27554_ =  entityEnterLoveModeEvent.getTicksInLove();
++      // CraftBukkit end
        if (p_27596_ != null) {
-+         // CraftBukkit start
-+         EntityEnterLoveModeEvent entityEnterLoveModeEvent = CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
-+         if (entityEnterLoveModeEvent.isCancelled()) {
-+            return;
-+         }
-+         this.f_27554_ =  entityEnterLoveModeEvent.getTicksInLove();
-+         // CraftBukkit end
           this.f_27555_ = p_27596_.m_20148_();
 +         this.breedItem = p_27596_.m_150109_().m_36056_(); // CraftBukkit
        }
