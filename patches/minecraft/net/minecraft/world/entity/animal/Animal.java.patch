@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
+@@ -2,6 +_,7 @@
+ 
+ import java.util.Optional;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicInteger;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
 @@ -29,12 +_,15 @@
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Blocks;
@@ -50,7 +58,7 @@
        }
  
        this.m_9236_().m_7605_(this, (byte)18);
-@@ -206,28 +_,61 @@
+@@ -206,14 +_,51 @@
  
     public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);
@@ -68,8 +76,7 @@
        if (ageablemob != null) {
           ageablemob.m_6863_(true);
           ageablemob.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), 0.0F, 0.0F);
-          this.m_277117_(p_27564_, p_27565_, ageablemob);
-          p_27564_.m_47205_(ageablemob);
++
 +         // CraftBukkit start - call EntityBreedEvent
 +         ServerPlayer breeder = Optional.ofNullable(this.m_27592_()).or(() -> {
 +            return Optional.ofNullable(p_27565_.m_27592_());
@@ -80,43 +87,42 @@
 +            return;
 +         }
 +         experience = entityBreedEvent.getExperience();
-+         this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob, experience);
++         this.experience(experience);
+          this.m_277117_(p_27564_, p_27565_, ageablemob);
 +         ageablemob.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
-+         p_27564_.m_47205_(ageablemob);
+          p_27564_.m_47205_(ageablemob);
 +         // CraftBukkit end
        }
     }
--
+ 
++   // Mohist start
++   public AtomicInteger experience = new AtomicInteger(this.m_217043_().m_188503_(7) + 1);
++   public void experience(int exp) {
++      experience.set(exp);
++   }
++
++   public void finalizeSpawnChildFromBreeding(ServerLevel pLevel, Animal pAnimal, @Nullable AgeableMob pBaby, int experience) {
++      this.experience(experience);
++      this.m_277117_(pLevel, pAnimal, pBaby);
++   }
++   // Mohist end
 +   
     public void m_277117_(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_) {
-+      // CraftBukkit start
-+      this.finalizeSpawnChildFromBreeding(p_277963_, p_277357_, p_277516_, this.m_217043_().m_188503_(7) + 1);
-+   }
-+   public void finalizeSpawnChildFromBreeding(ServerLevel pLevel, Animal pAnimal, @Nullable AgeableMob pBaby, int experience) {
        Optional.ofNullable(this.m_27592_()).or(() -> {
--         return Optional.ofNullable(p_277357_.m_27592_());
-+         return Optional.ofNullable(pAnimal.m_27592_());
-       }).ifPresent((p_277486_) -> {
-          p_277486_.m_36220_(Stats.f_12937_);
--         CriteriaTriggers.f_10581_.m_147278_(p_277486_, this, p_277357_, p_277516_);
-+         CriteriaTriggers.f_10581_.m_147278_(p_277486_, this, pAnimal, pBaby);
-       });
-       this.m_146762_(6000);
--      p_277357_.m_146762_(6000);
-+      pAnimal.m_146762_(6000);
-       this.m_27594_();
--      p_277357_.m_27594_();
--      p_277963_.m_7605_(this, (byte)18);
--      if (p_277963_.m_46469_().m_46207_(GameRules.f_46135_)) {
+          return Optional.ofNullable(p_277357_.m_27592_());
+@@ -227,9 +_,13 @@
+       p_277357_.m_27594_();
+       p_277963_.m_7605_(this, (byte)18);
+       if (p_277963_.m_46469_().m_46207_(GameRules.f_46135_)) {
 -         p_277963_.m_7967_(new ExperienceOrb(p_277963_, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_217043_().m_188503_(7) + 1));
-+      pAnimal.m_27594_();
-+      pLevel.m_7605_(this, (byte)18);
-+      if (pLevel.m_46469_().m_46207_(GameRules.f_46135_)) {
 +         // CraftBukkit start - use event experience
-+         if (experience > 0) {
-+            pLevel.m_7967_(new ExperienceOrb(pLevel, this.m_20185_(), this.m_20186_(), this.m_20189_(), experience));
++         int exp = experience.getAndSet(this.m_217043_().m_188503_(7) + 1);
++         if (exp > 0) {
++            p_277963_.m_7967_(new ExperienceOrb(p_277963_, this.m_20185_(), this.m_20186_(), this.m_20189_(), exp));
 +         }
 +         // CraftBukkit end
        }
- 
+-
     }
+ 
+    public void m_7822_(byte p_27562_) {
