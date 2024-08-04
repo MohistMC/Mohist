@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -22,6 +_,7 @@
- import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
- import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
- import net.minecraft.util.DebugBuffer;
-+import net.minecraft.util.Mth;
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelHeightAccessor;
 @@ -63,6 +_,7 @@
     private final ChunkHolder.LevelChangeListener f_140015_;
     public final ChunkHolder.PlayerProvider f_140016_;

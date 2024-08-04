@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/inventory/ContainerLevelAccess.java
 +++ b/net/minecraft/world/inventory/ContainerLevelAccess.java
-@@ -5,6 +_,8 @@
+@@ -5,6 +_,7 @@
  import java.util.function.BiFunction;
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.level.Level;
-+import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
  
  public interface ContainerLevelAccess {

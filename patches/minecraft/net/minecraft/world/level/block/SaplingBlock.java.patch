@@ -1,13 +1,10 @@
 --- a/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/net/minecraft/world/level/block/SaplingBlock.java
-@@ -14,12 +_,17 @@
+@@ -14,12 +_,14 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.Location;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
-+import org.bukkit.event.world.StructureGrowEvent;
  
  public class SaplingBlock extends BushBlock implements BonemealableBlock {
     public static final IntegerProperty f_55973_ = BlockStateProperties.f_61387_;

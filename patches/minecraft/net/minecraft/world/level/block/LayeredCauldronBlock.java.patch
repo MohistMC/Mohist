@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -16,6 +_,10 @@
+@@ -16,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.material.Fluids;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates;
 +import org.bukkit.event.block.CauldronLevelChangeEvent;

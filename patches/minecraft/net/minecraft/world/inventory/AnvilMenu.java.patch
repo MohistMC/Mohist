@@ -11,11 +11,10 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
  import net.minecraft.network.chat.Component;
-@@ -16,6 +_,10 @@
+@@ -16,6 +_,9 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.apache.commons.lang3.StringUtils;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
 +import org.jetbrains.annotations.Nullable;

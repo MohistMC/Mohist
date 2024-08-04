@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/NoteBlock.java
 +++ b/net/minecraft/world/level/block/NoteBlock.java
-@@ -14,6 +_,7 @@
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.player.Player;
-+import net.minecraft.world.flag.FeatureFlags;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.context.BlockPlaceContext;
- import net.minecraft.world.level.Level;
 @@ -67,6 +_,7 @@
        if (flag != p_55041_.m_61143_(f_55012_)) {
           if (flag) {

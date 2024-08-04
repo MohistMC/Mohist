@@ -1,20 +1,5 @@
 --- a/net/minecraft/world/level/block/SculkCatalystBlock.java
 +++ b/net/minecraft/world/level/block/SculkCatalystBlock.java
-@@ -2,10 +_,14 @@
- 
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.sounds.SoundEvents;
-+import net.minecraft.sounds.SoundSource;
- import net.minecraft.util.RandomSource;
- import net.minecraft.util.valueproviders.ConstantInt;
- import net.minecraft.util.valueproviders.IntProvider;
-+import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.entity.BlockEntity;
 @@ -54,9 +_,11 @@
  
     public void m_213646_(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {

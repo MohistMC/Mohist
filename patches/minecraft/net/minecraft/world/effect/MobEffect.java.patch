@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/effect/MobEffect.java
 +++ b/net/minecraft/world/effect/MobEffect.java
-@@ -9,6 +_,8 @@
- import net.minecraft.Util;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.network.chat.Component;
-+import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.ai.attributes.Attribute;
 @@ -16,8 +_,12 @@
  import net.minecraft.world.entity.ai.attributes.AttributeMap;
  import net.minecraft.world.entity.ai.attributes.AttributeModifier;

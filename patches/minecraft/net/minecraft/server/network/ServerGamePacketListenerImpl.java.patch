@@ -1136,9 +1136,16 @@
           }
  
        }
-@@ -1208,7 +_,7 @@
+@@ -1207,8 +_,14 @@
+          Optional<LastSeenMessages> optional = this.m_247189_(p_215225_.f_237922_(), p_215225_.f_237923_(), p_215225_.f_241638_());
           if (optional.isPresent()) {
              this.f_9745_.m_18707_(() -> {
++               // CraftBukkit start - SPIGOT-7346: Prevent disconnected players from executing commands
++               if (f_9743_.m_9232_()) {
++                  return;
++               }
++               // CraftBukkit end
++
                 this.m_246958_(p_215225_, optional.get());
 -               this.m_215251_();
 +               this.detectRateSpam("/" + p_215225_.f_237922_()); // Spigot
@@ -1162,7 +1169,7 @@
 +      }
 +      command = event.getMessage().substring(1);
 +
-+      ParseResults parseresults = this.m_242658_(command);
++      ParseResults<CommandSourceStack> parseresults = this.m_242658_(command);
 +      // CraftBukkit end
  
        Map<String, PlayerChatMessage> map;
@@ -2017,7 +2024,7 @@
 +                  return null;
 +               }
 +            }
-+            Waitable waitable = new SyncChat();
++            Waitable<Object> waitable = new SyncChat();
 +            if (async) {
 +               f_9745_.processQueue.add(waitable);
 +            } else {

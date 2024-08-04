@@ -1,18 +1,5 @@
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -4,9 +_,12 @@
- import com.mojang.logging.LogUtils;
- import com.mojang.math.Transformation;
- import com.mojang.serialization.Codec;
-+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
- import it.unimi.dsi.fastutil.ints.IntSet;
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.Optional;
-+import java.util.Set;
- import java.util.function.IntFunction;
- import javax.annotation.Nullable;
- import net.minecraft.Util;
 @@ -302,7 +_,7 @@
        this.f_19804_.m_135381_(f_268593_, p_270345_.m_269016_());
     }

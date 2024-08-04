@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -8,10 +_,14 @@
+@@ -8,7 +_,10 @@
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
@@ -11,10 +11,6 @@
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
-+import java.util.concurrent.atomic.AtomicBoolean;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
- import net.minecraft.CrashReport;
 @@ -19,6 +_,9 @@
  import net.minecraft.ReportedException;
  import net.minecraft.core.NonNullList;

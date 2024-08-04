@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkStorage.java
-@@ -6,16 +_,22 @@
+@@ -6,16 +_,21 @@
  import java.nio.file.Path;
  import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.ExecutionException;
-+import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
  import net.minecraft.SharedConstants;

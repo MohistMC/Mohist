@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -35,6 +_,7 @@
+@@ -29,7 +_,6 @@
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+-import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.material.FluidState;
- import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-+import net.minecraft.world.level.storage.loot.LootContext;
- import net.minecraft.world.level.storage.loot.LootParams;
- import net.minecraft.world.level.storage.loot.LootTable;
- import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 @@ -43,6 +_,8 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;

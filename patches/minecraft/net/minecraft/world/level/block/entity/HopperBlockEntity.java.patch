@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -10,6 +_,7 @@
- import net.minecraft.core.NonNullList;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
-+import net.minecraft.world.CompoundContainer;
- import net.minecraft.world.Container;
- import net.minecraft.world.ContainerHelper;
- import net.minecraft.world.WorldlyContainer;
-@@ -30,6 +_,14 @@
+@@ -30,6 +_,13 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
@@ -16,7 +8,6 @@
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.HopperInventorySearchEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;

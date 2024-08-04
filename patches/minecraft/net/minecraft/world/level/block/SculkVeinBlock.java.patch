@@ -9,14 +9,6 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.sounds.SoundEvents;
-@@ -21,6 +_,7 @@
- import net.minecraft.world.level.block.state.properties.BooleanProperty;
- import net.minecraft.world.level.material.FluidState;
- import net.minecraft.world.level.material.Fluids;
-+import net.minecraft.world.level.material.PushReaction;
- 
- public class SculkVeinBlock extends MultifaceBlock implements SculkBehaviour, SimpleWaterloggedBlock {
-    private static final BooleanProperty f_222348_ = BlockStateProperties.f_61362_;
 @@ -83,7 +_,10 @@
        }
     }

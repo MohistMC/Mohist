@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -26,6 +_,7 @@
- import net.minecraft.util.thread.BlockableEventLoop;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.ai.village.poi.PoiManager;
-+import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
 @@ -81,6 +_,16 @@
        this.m_8488_();
     }
