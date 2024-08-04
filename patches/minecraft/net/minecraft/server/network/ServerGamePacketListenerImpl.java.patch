@@ -653,6 +653,19 @@
           }
  
        }
+@@ -1204,6 +_,12 @@
+       } else {
+          if (this.m_241937_(p_215225_.f_237922_(), p_215225_.f_237923_(), p_215225_.f_241638_())) {
+             this.f_9745_.m_18707_(() -> {
++               // CraftBukkit start - SPIGOT-7346: Prevent disconnected players from executing commands
++               if (f_9743_.m_9232_()) {
++                  return;
++               }
++               // CraftBukkit end
++
+                this.m_242600_(p_215225_);
+                this.m_215251_();
+             });
 @@ -1346,8 +_,8 @@
     }
  
