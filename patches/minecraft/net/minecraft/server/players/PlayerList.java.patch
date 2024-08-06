@@ -443,7 +443,7 @@
        UUID uuid = Player.m_36198_(p_11301_);
        List<ServerPlayer> list = Lists.newArrayList();
  
-@@ -392,75 +_,169 @@
+@@ -392,75 +_,168 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_11301_);
     }
  
@@ -598,7 +598,6 @@
 -      this.f_11196_.add(serverplayer);
 -      this.f_11197_.put(serverplayer.m_142081_(), serverplayer);
 +      if (!p_11237_.f_8906_.isDisconnected()) {
-+         serverplayer.gatherCapsAndRevive(); // Mohist - Re-gather the invalidated capabilities, since we don't create a new ServerPlayer.
 +         serverlevel1.m_8845_(serverplayer);
 +         this.f_11196_.add(serverplayer);
 +         this.playersByName.put(serverplayer.m_6302_().toLowerCase(java.util.Locale.ROOT), serverplayer); // Spigot
