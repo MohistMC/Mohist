@@ -1736,6 +1736,15 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     UnsafeValues getUnsafe();
 
+    // Paper start
+    /**
+     * Gets the active {@link org.bukkit.command.CommandMap}
+     *
+     * @return the active command map
+     */
+    @NotNull
+    org.bukkit.command.CommandMap getCommandMap();
+
     // Spigot start
     public class Spigot {
 

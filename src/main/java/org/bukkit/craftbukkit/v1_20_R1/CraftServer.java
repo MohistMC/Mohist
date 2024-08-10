@@ -1919,6 +1919,7 @@ public final class CraftServer implements Server {
         return helpMap;
     }
 
+    @Override
     public SimpleCommandMap getCommandMap() {
         return commandMap;
     }
