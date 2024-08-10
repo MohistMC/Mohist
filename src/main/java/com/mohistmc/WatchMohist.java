@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.spigotmc.TicksPerSecondCommand;
 
-
 public class WatchMohist implements Runnable {
 
     public static ScheduledThreadPoolExecutor WatchMohist = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("WatchMohist"));
@@ -18,7 +17,7 @@ public class WatchMohist implements Runnable {
 
     public static void start() {
         if (isEnable()) {
-            WatchMohist.scheduleAtFixedRate(new WatchMohist(), 30000L, 500L, TimeUnit.MILLISECONDS);
+            WatchMohist.scheduleAtFixedRate(new WatchMohist(), 60000L, 500L, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -41,7 +40,7 @@ public class WatchMohist implements Runnable {
     @Override
     public void run() {
         long curTime = System.currentTimeMillis();
-        if (Time > 0L && curTime - Time > 2000L && curTime - WarnTime > 30000L) {
+        if (Time > 0L && curTime - Time > 2000L && curTime - WarnTime > 60000L) {
             WarnTime = curTime;
             MohistMC.LOGGER.warn(MohistMC.i18n.as("watchmohist.1"));
 
