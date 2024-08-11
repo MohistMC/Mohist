@@ -11,7 +11,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import com.mohistmc.api.ItemAPI;
+import com.mohistmc.api.item.ItemAPI;
+import com.mohistmc.paper.adventure.PaperAdventure;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -853,6 +855,11 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     @Override
+    public void setDisplayNameComponent(@org.jetbrains.annotations.Nullable BaseComponent[] component) {
+        this.displayName = net.md_5.bungee.chat.ComponentSerializer.toString(component);
+    }
+
+    @Override
     public boolean hasDisplayName() {
         return displayName != null;
     }
@@ -880,12 +887,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     // Paper start
     @Override
     public List<net.kyori.adventure.text.Component> lore() {
-        return this.lore != null ? io.papermc.paper.adventure.PaperAdventure.asAdventureFromJson(this.lore) : null;
+        return this.lore != null ? PaperAdventure.asAdventureFromJson(this.lore) : null;
     }
 
     @Override
     public void lore(final List<? extends net.kyori.adventure.text.Component> lore) {
-        this.lore = lore != null ? io.papermc.paper.adventure.PaperAdventure.asJson(lore) : null;
+        this.lore = lore != null ? PaperAdventure.asJson(lore) : null;
     }
 
     @Override
@@ -1011,6 +1018,20 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 this.lore.clear();
             }
             safelyAdd(lore, this.lore, false);
+        }
+    }
+
+    @Override
+    public void setLoreComponents(@org.jetbrains.annotations.Nullable List<BaseComponent[]> lore) {
+        if (lore == null) {
+            this.lore = null;
+        } else {
+            if (this.lore == null) {
+                safelyAdd(lore, this.lore = new ArrayList<>(lore.size()), false);
+            } else {
+                this.lore.clear();
+                safelyAdd(lore, this.lore, false);
+            }
         }
     }
 

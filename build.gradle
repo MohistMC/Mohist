@@ -17,17 +17,16 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
-    id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.11,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.11,6.2)' apply false
 }
 
 init() //Init all our extension methods!
 
 ext {
     JAR_SIGNER = null
-    MAPPING_CHANNEL = 'parchment'
-    MAPPING_VERSION = '2023.09.03-1.20.1'
+    MAPPING_CHANNEL = 'official'
+    MAPPING_VERSION = '1.20.1'
     MC_VERSION = '1.20.1'
     MC_NEXT_VERSION = '1.21'
     MCP_VERSION = '20230612.114412'
@@ -116,7 +115,7 @@ subprojects {
 }
 
 project(':mcp') {
-    apply plugin: 'net.neoforged.gradle.mcp'
+    apply plugin: 'net.minecraftforge.gradle.mcp'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
@@ -126,8 +125,7 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-    apply plugin: 'net.neoforged.gradle.patcher'
-    apply plugin: 'org.parchmentmc.librarian.forgegradle'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -376,8 +374,7 @@ def sharedFmlonlyForge = { Project prj ->
 project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
-    apply plugin: 'net.neoforged.gradle.patcher'
-    apply plugin: 'org.parchmentmc.librarian.forgegradle'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
 
     applyPatches { level 'WARNING' }
 

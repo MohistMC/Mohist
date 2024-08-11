@@ -70,7 +70,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,34 +_,77 @@
+@@ -101,34 +_,78 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -115,6 +115,7 @@
 +   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++   public final int getTotalTileEntityTickers() { return this.f_151512_.size(); } // Paper
 +
 +   public CraftWorld getWorld() {
 +      return this.world;
@@ -402,6 +403,23 @@
        }
     }
  
+@@ -445,8 +_,15 @@
+       return this.m_183438_(ChunkPos.m_151388_(p_220394_));
+    }
+ 
++   // Mohist start
++   private final AtomicBoolean mohist$pFire = new AtomicBoolean(false);
++   public void mohist$pFire(boolean pFire) {
++      mohist$pFire.set(pFire);
++   }
++   // Mohsit ene
++
+    public Explosion m_254849_(@Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_) {
+-      return this.m_254877_(p_256599_, (DamageSource)null, (ExplosionDamageCalculator)null, p_255914_, p_255684_, p_255843_, p_256310_, false, p_256178_);
++      return this.m_254877_(p_256599_, (DamageSource)null, (ExplosionDamageCalculator)null, p_255914_, p_255684_, p_255843_, p_256310_, mohist$pFire.getAndSet(false), p_256178_);
+    }
+ 
+    public Explosion m_255391_(@Nullable Entity p_255682_, double p_255803_, double p_256403_, double p_256538_, float p_255674_, boolean p_256634_, Level.ExplosionInteraction p_256111_) {
 @@ -471,7 +_,7 @@
              explosion$blockinteraction1 = this.m_255157_(GameRules.f_254629_);
              break;
