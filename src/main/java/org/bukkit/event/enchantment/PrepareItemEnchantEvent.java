@@ -8,6 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.view.EnchantmentView;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +24,7 @@ public class PrepareItemEnchantEvent extends InventoryEvent implements Cancellab
     private boolean cancelled;
     private final Player enchanter;
 
-    public PrepareItemEnchantEvent(@NotNull final Player enchanter, @NotNull InventoryView view, @NotNull final Block table, @NotNull final ItemStack item, @NotNull final EnchantmentOffer[] offers, final int bonus) {
+    public PrepareItemEnchantEvent(@NotNull final Player enchanter, @NotNull EnchantmentView view, @NotNull final Block table, @NotNull final ItemStack item, @NotNull final EnchantmentOffer[] offers, final int bonus) {
         super(view);
         this.enchanter = enchanter;
         this.table = table;
@@ -98,6 +99,12 @@ public class PrepareItemEnchantEvent extends InventoryEvent implements Cancellab
      */
     public int getEnchantmentBonus() {
         return bonus;
+    }
+
+    @NotNull
+    @Override
+    public EnchantmentView getView() {
+        return (EnchantmentView) super.getView();
     }
 
     @Override

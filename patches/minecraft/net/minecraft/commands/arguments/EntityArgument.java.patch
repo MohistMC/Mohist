@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -110,12 +_,31 @@
+@@ -118,12 +_,31 @@
          }
      }
  
@@ -29,7 +29,7 @@
          if (p_91482_.getSource() instanceof SharedSuggestionProvider sharedsuggestionprovider) {
              StringReader stringreader = new StringReader(p_91483_.getInput());
              stringreader.setCursor(p_91483_.getStart());
--            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.hasPermission(2));
+-            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, EntitySelectorParser.allowSelectors(sharedsuggestionprovider));
 +            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
  
              try {

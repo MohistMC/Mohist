@@ -1004,7 +1004,7 @@ public final class ForgeHooks {
     }
 
     public static boolean canUseEntitySelectors(SharedSuggestionProvider provider) {
-        if (provider.hasPermission(Commands.LEVEL_GAMEMASTERS))
+        if (EntitySelectorParser.allowSelectors(provider))
             return true;
         else if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
             return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);

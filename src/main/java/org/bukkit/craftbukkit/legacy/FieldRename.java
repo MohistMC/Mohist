@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.legacy.fieldrename.FieldRenameData;
 import org.bukkit.craftbukkit.legacy.reroute.DoNotReroute;
 import org.bukkit.craftbukkit.legacy.reroute.InjectPluginVersion;
+import org.bukkit.craftbukkit.legacy.reroute.RequireCompatibility;
 import org.bukkit.craftbukkit.legacy.reroute.RerouteMethodName;
 import org.bukkit.craftbukkit.legacy.reroute.RerouteStatic;
 import org.bukkit.craftbukkit.util.ApiVersion;
@@ -50,11 +51,7 @@ public class FieldRename {
         };
     }
 
-    @RerouteStatic("java/lang/Enum")
-    public static <T extends Enum<T>> T valueOf(Class<T> enumClass, String name, @InjectPluginVersion ApiVersion apiVersion) {
-        return Enum.valueOf(enumClass, rename(apiVersion, enumClass.getName().replace('.', '/'), name));
-    }
-
+    @RequireCompatibility("allow-old-keys-in-registry")
     public static <T extends Keyed> T get(Registry<T> registry, NamespacedKey namespacedKey) {
         // We don't have version-specific changes, so just use current, and don't inject a version
         return CraftRegistry.get(registry, namespacedKey, ApiVersion.CURRENT);

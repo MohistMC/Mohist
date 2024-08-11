@@ -88,7 +88,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      *
      * @see PatternType
      */
-    Registry<PatternType> BANNER_PATTERN = new SimpleRegistry<>(PatternType.class);
+    Registry<PatternType> BANNER_PATTERN = Objects.requireNonNull(Bukkit.getRegistry(PatternType.class), "No registry present for Pattern Type. This is a bug.");
     /**
      * Server biomes.
      *
@@ -303,7 +303,6 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      *
      * @see MapCursor.Type
      */
-    @ApiStatus.Internal
     Registry<MapCursor.Type> MAP_DECORATION_TYPE = new SimpleRegistry<>(MapCursor.Type.class);
     /**
      * Game events.

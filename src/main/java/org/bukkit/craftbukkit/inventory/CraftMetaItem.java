@@ -1919,7 +1919,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                         CraftMetaFirework.FIREWORKS.TYPE,
                         CraftMetaEnchantedBook.STORED_ENCHANTMENTS.TYPE,
                         CraftMetaCharge.EXPLOSION.TYPE,
-                        CraftMetaBlockState.BLOCK_ENTITY_TAG.TYPE,
                         CraftMetaKnowledgeBook.BOOK_RECIPES.TYPE,
                         CraftMetaTropicalFishBucket.ENTITY_TAG.TYPE,
                         CraftMetaTropicalFishBucket.BUCKET_ENTITY_TAG.TYPE,

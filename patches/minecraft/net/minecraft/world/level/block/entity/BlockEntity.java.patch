@@ -41,7 +41,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private final BlockEntityType<?> type;
      @Nullable
-@@ -37,10 +_,17 @@
+@@ -37,11 +_,18 @@
      private BlockState blockState;
      private DataComponentMap components = DataComponentMap.EMPTY;
  
@@ -54,12 +54,13 @@
 +        super(BlockEntity.class);
          this.type = p_155228_;
          this.worldPosition = p_155229_.immutable();
+         this.validateBlockState(p_155230_);
          this.blockState = p_155230_;
 +        this.gatherCapabilities();
      }
  
-     public static BlockPos getPosFromTag(CompoundTag p_187473_) {
-@@ -61,6 +_,7 @@
+     private void validateBlockState(BlockState p_345558_) {
+@@ -72,6 +_,7 @@
      }
  
      protected void loadAdditional(CompoundTag p_331149_, HolderLookup.Provider p_333170_) {
@@ -67,7 +68,7 @@
      }
  
      public final void loadWithComponents(CompoundTag p_331756_, HolderLookup.Provider p_335164_) {
-@@ -76,6 +_,7 @@
+@@ -87,6 +_,7 @@
      }
  
      protected void saveAdditional(CompoundTag p_187471_, HolderLookup.Provider p_327783_) {
@@ -75,7 +76,7 @@
      }
  
      public final CompoundTag saveWithFullMetadata(HolderLookup.Provider p_331193_) {
-@@ -205,6 +_,13 @@
+@@ -216,6 +_,13 @@
  
      public void setRemoved() {
          this.remove = true;
@@ -89,7 +90,7 @@
      }
  
      public void clearRemoved() {
-@@ -263,6 +_,15 @@
+@@ -279,6 +_,15 @@
          });
          DataComponentPatch datacomponentpatch = p_331646_.forget(set::contains);
          this.components = datacomponentpatch.split().added();
@@ -105,7 +106,7 @@
      }
  
      protected void collectImplicitComponents(DataComponentMap.Builder p_328216_) {
-@@ -310,4 +_,10 @@
+@@ -326,4 +_,10 @@
  
          <T> T getOrDefault(DataComponentType<? extends T> p_330702_, T p_330858_);
      }

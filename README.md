@@ -1,11 +1,11 @@
 <div align="center">
-  <h1>Mohist 1.21</h1>
+  <h1>Mohist 1.21.1</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.21)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.21)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.21.1)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.21.1)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.21--51.0.29-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.21.html)
+[![](https://img.shields.io/badge/Forge-1.21.1--52.0.2-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.21.1.html)
 [![](https://img.shields.io/badge/JDK-21.0.3-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-21-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.7-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.6/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -18,9 +18,9 @@
 Progress
 ------
 
-- [ ] Rectify Forge([**72f98dc4a**](https://github.com/MinecraftForge/MinecraftForge/commit/72f98dc4a))
+- [ ] Rectify Forge([**9c85a6bb6**](https://github.com/MinecraftForge/MinecraftForge/commit/9c85a6bb6))
 - [x] Start patch
-    * [x] Bukkit([**9738f005**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/9738f005))
+    * [x] Bukkit([**2ec53f49**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/2ec53f49))
     * [ ] CraftBukkit([**ae4f5a0be**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/ae4f5a0be))
     * [x] Spigot ([**491f3675**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/491f3675))
         * [x] Bukkit-Patches

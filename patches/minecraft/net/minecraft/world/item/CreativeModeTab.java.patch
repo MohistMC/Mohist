@@ -118,7 +118,7 @@
 +         */
 +        public CreativeModeTab.Builder withSearchBar() {
 +            this.hasSearchBar = true;
-+            if (this.backgroundTexture == null)
++            if (this.backgroundTexture == CreativeModeTab.DEFAULT_BACKGROUND)
 +                return this.backgroundTexture(createTextureLocation("item_seach"));
 +            return this;
 +        }

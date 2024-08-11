@@ -111,3 +111,27 @@
          public Item.Properties requiredFeatures(FeatureFlag... p_250948_) {
              this.requiredFeatures = FeatureFlags.REGISTRY.subset(p_250948_);
              return this;
+@@ -439,6 +_,11 @@
+         @Nullable
+         MapItemSavedData mapData(MapId p_335695_);
+ 
++        @Nullable
++        default Level level() {
++            return null;
++        }
++
+         static Item.TooltipContext of(@Nullable final Level p_332083_) {
+             return p_332083_ == null ? EMPTY : new Item.TooltipContext() {
+                 @Override
+@@ -454,6 +_,11 @@
+                 @Override
+                 public MapItemSavedData mapData(MapId p_330171_) {
+                     return p_332083_.getMapData(p_330171_);
++                }
++
++                @Override
++                public Level level() {
++                    return p_332083_;
+                 }
+             };
+         }
