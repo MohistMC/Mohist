@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,9 +_,11 @@
+@@ -1,9 +_,12 @@
  package net.minecraft.server.dedicated;
  
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
++import com.mohistmc.api.ServerAPI;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
@@ -125,11 +126,15 @@
        }
     }
  
-@@ -282,6 +_,7 @@
+@@ -282,6 +_,11 @@
           this.f_139601_.m_7530_();
        }
  
-+      Runtime.getRuntime().halt(0);
++      if (ServerAPI.yes_steve_model()) {
++         System.exit(0);
++      } else {
++         Runtime.getRuntime().halt(0);
++      }
     }
  
     public void m_5703_(BooleanSupplier p_139661_) {
