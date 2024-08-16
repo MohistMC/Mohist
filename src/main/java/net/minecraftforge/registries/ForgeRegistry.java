@@ -427,7 +427,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         if (this.add != null)
             this.add.onAdd(this, this.stage, idToUse, rkey, value, oldEntry);
 
-        LOGGER.trace(REGISTRIES, MohistMC.i18n.as("mohist.i18n.152", this.name, key, idToUse, value, id));
+        LOGGER.trace(REGISTRIES,"Registry {} add: {} {} {} (req. id {})", this.name, key, idToUse, value, id);
 
         return idToUse;
     }
