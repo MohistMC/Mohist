@@ -653,7 +653,7 @@
           }
  
        }
-@@ -1204,6 +_,12 @@
+@@ -1204,8 +_,14 @@
        } else {
           if (this.m_241937_(p_215225_.f_237922_(), p_215225_.f_237923_(), p_215225_.f_241638_())) {
              this.f_9745_.m_18707_(() -> {
@@ -664,15 +664,60 @@
 +               // CraftBukkit end
 +
                 this.m_242600_(p_215225_);
-                this.m_215251_();
+-               this.m_215251_();
++               this.detectRateSpam("/" + p_215225_.f_237922_()); // Spigot
              });
-@@ -1346,8 +_,8 @@
+          }
+ 
+@@ -1319,8 +_,28 @@
     }
  
-    private void m_215251_() {
+    private void m_243086_(PlayerChatMessage p_243277_) {
+-      this.f_9745_.m_6846_().m_243049_(p_243277_, this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, this.f_9743_));
+-      this.m_215251_();
++      // CraftBukkit start
++      String s = p_243277_.m_241775_().f_241656_();
++      if (s.isEmpty()) {
++         f_9744_.warn(this.f_9743_.m_6302_() + " tried to send an empty message");
++      } else if (getCraftPlayer().isConversing()) {
++         OutgoingPlayerChatMessage outgoing = OutgoingPlayerChatMessage.m_242676_(p_243277_);
++         outgoing.m_241051_(this.f_9745_.m_6846_());
++
++         final String conversationInput = s;
++         this.f_9745_.processQueue.add(new Runnable() {
++            @Override
++            public void run() {
++               getCraftPlayer().acceptConversationInput(conversationInput);
++            }
++         });
++      } else if (this.f_9743_.m_9241_() == ChatVisiblity.SYSTEM) { // Re-add "Command Only" flag check
++         this.m_9829_(new ClientboundSystemChatPacket(Component.m_237115_("chat.cannotSend").m_130940_(ChatFormatting.RED), false));
++      } else {
++         this.chat(s, p_243277_, true);
++      }
++      // CraftBukkit end
++      this.detectRateSpam(s); // Spigot
+    }
+ 
+    private boolean m_242598_(PlayerChatMessage p_242942_) {
+@@ -1345,9 +_,18 @@
+       return true;
+    }
+ 
+-   private void m_215251_() {
 -      this.f_9750_ += 20;
 -      if (this.f_9750_ > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
-+      if (this.f_9750_.addAndGet(20) > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
++   private void detectRateSpam(String s) {
++      boolean counted = true;
++      for ( String exclude : org.spigotmc.SpigotConfig.spamExclusions )
++      {
++         if ( exclude != null && s.startsWith( exclude ) )
++         {
++            counted = false;
++            break;
++         }
++      }
++      if (counted && this.f_9750_.addAndGet(20) > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
 +         // CraftBukkit end
           this.m_9942_(Component.m_237115_("disconnect.spam"));
        }
