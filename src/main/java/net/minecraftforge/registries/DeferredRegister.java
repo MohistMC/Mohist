@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import com.mohistmc.MohistMC;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -175,7 +176,7 @@ public class DeferredRegister<T>
     public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup)
     {
         if (seenRegisterEvent)
-            throw new IllegalStateException("Cannot register new entries to DeferredRegister after RegisterEvent has been fired.");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.143"));
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
@@ -186,10 +187,10 @@ public class DeferredRegister<T>
                     ? RegistryObject.createOptional(key, this.registryKey, this.modid)
                     : RegistryObject.create(key, this.registryKey, this.modid);
         else
-            throw new IllegalStateException("Could not create RegistryObject in DeferredRegister");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.144"));
 
         if (entries.putIfAbsent((RegistryObject<T>) ret, sup) != null) {
-            throw new IllegalArgumentException("Duplicate registration " + name);
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.145", name));
         }
 
         return ret;
@@ -355,9 +356,9 @@ public class DeferredRegister<T>
 
     private Supplier<IForgeRegistry<T>> makeRegistry(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
         if (registryName == null)
-            throw new IllegalStateException("Cannot create a registry without specifying a registry name");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.146"));
         if (RegistryManager.ACTIVE.getRegistry(registryName) != null || this.registryFactory != null)
-            throw new IllegalStateException("Cannot create a registry for a type that already exists");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.147"));
 
         this.registryFactory = () -> sup.get().setName(registryName);
         return new RegistryHolder<>(this.registryKey);
@@ -371,7 +372,7 @@ public class DeferredRegister<T>
 
         ITagManager<T> tagManager = (ITagManager<T>) registry.tags();
         if (tagManager == null)
-            throw new IllegalStateException("The forge registry " + registry.getRegistryName() + " does not support tags, but optional tags were registered!");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.148", registry.getRegistryName()));
 
         Multimaps.asMap(this.optionalTags).forEach(tagManager::addOptionalTagDefaults);
     }

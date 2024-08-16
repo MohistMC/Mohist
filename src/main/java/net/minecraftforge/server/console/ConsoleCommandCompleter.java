@@ -6,6 +6,7 @@
 package net.minecraftforge.server.console;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.MohistMC;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestion;
@@ -74,7 +75,7 @@ final class ConsoleCommandCompleter implements Completer
         }
         catch (ExecutionException e)
         {
-            logger.error("Failed to tab complete", e);
+            logger.error(MohistMC.i18n.as("mohist.i18n.226", e));
         }
     }
 

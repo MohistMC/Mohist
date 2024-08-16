@@ -5,6 +5,7 @@
 
 package net.minecraftforge.registries;
 
+import com.mohistmc.MohistMC;
 import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -80,7 +81,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             rootRegistry.freeze();
 
         if (aggregate.getSuppressed().length > 0)
-            LOGGER.error(LogUtils.FATAL_MARKER, "Failed to create some forge registries, see suppressed exceptions for details", aggregate);
+            LOGGER.error(LogUtils.FATAL_MARKER, MohistMC.i18n.as("mohist.i18n.207", aggregate));
     }
 
     private <T> void buildRegistry(Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries, RegistryData<T> data)

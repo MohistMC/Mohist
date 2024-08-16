@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.inventory.MohistModsInventory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -204,7 +205,7 @@ public class NetworkHooks
         output.writeBytes(extraData);
 
         if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
-            throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.125", output.readableBytes()));
         }
         var c = containerSupplier.createMenu(openContainerId, player.getInventory(), player);
         // Mohist start - Custom Container compatible with mods

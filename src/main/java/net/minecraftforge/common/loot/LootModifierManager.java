@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.mohistmc.MohistMC;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -78,7 +79,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
             JsonElement json = resourceList.get(location);
             IGlobalLootModifier.DIRECT_CODEC.parse(JsonOps.INSTANCE, json)
                 // log error if parse fails
-                .resultOrPartial(errorMsg -> LOGGER.debug("Could not decode GlobalLootModifier with json id {} - error: {}", location, errorMsg))
+                .resultOrPartial(errorMsg -> LOGGER.debug(MohistMC.i18n.as("mohist.i18n.76", location, errorMsg)))
                 // add loot modifier if parse succeeds
                 .ifPresent(modifier -> builder.put(location, modifier));
         }

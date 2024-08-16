@@ -11,6 +11,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mohistmc.MohistMC;
 import com.mojang.math.Axis;
 import com.mojang.math.Transformation;
 import java.lang.reflect.Type;
@@ -134,7 +135,7 @@ public final class TransformationHelper
                 }
                 else
                 {
-                    throw new JsonParseException("TRSR: unknown default string: " + transform);
+                    throw new JsonParseException(MohistMC.i18n.as("mohist.i18n.80", transform));
                 }
             }
             if (json.isJsonArray())
@@ -142,7 +143,7 @@ public final class TransformationHelper
                 // direct matrix array
                 return new Transformation(parseMatrix(json));
             }
-            if (!json.isJsonObject()) throw new JsonParseException("TRSR: expected array or object, got: " + json);
+            if (!json.isJsonObject()) throw new JsonParseException(MohistMC.i18n.as("mohist.i18n.81", json));
             JsonObject obj = json.getAsJsonObject();
             Transformation ret;
             if (obj.has("matrix"))
@@ -213,7 +214,7 @@ public final class TransformationHelper
                 origin = parseOrigin(obj);
                 elements.remove("origin");
             }
-            if (!elements.isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation' OR 'left_rotation', 'scale', 'post-rotation' (legacy) OR 'right_rotation', 'origin'. Found: " + String.join(", ", elements));
+            if (!elements.isEmpty()) throw new JsonParseException(MohistMC.i18n.as("mohist.i18n.82", String.join(", ", elements)));
 
             Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
             return matrix.applyOrigin(new Vector3f(origin));

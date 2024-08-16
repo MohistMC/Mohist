@@ -86,7 +86,7 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key, Namespa
         /*
         Preconditions.checkArgument(namespace != null && isValidNamespace(namespace), "Invalid namespace. Must be [a-z0-9._-]: %s", namespace);
         Preconditions.checkArgument(key != null && isValidKey(key), "Invalid key. Must be [a-z0-9/._-]: %s", key);
-         */
+        */
 
         this.namespace = namespace;
         this.key = key;

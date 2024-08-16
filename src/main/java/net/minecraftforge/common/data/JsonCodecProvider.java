@@ -8,6 +8,7 @@ package net.minecraftforge.common.data;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mohistmc.MohistMC;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
@@ -122,7 +123,7 @@ public class JsonCodecProvider<T> implements DataProvider
     @Override
     public String getName()
     {
-        return String.format("%s generator for %s", this.directory, this.modid);
+        return String.format(MohistMC.i18n.as("mohist.i18n.70", this.directory, this.modid));
     }
 
     /**

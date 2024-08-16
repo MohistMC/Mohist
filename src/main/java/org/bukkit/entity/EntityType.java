@@ -323,8 +323,8 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
     private final boolean independent, living;
     public NamespacedKey key;
 
-    public static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
-    public static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
+    public static final Map<String, EntityType> NAME_MAP = new HashMap<>();
+    public static final Map<Short, EntityType> ID_MAP = new HashMap<>();
 
     static {
         for (EntityType type : values()) {

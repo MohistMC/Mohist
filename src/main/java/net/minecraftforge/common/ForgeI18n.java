@@ -6,6 +6,7 @@
 package net.minecraftforge.common;
 
 import com.google.common.base.CharMatcher;
+import com.mohistmc.MohistMC;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.loading.StringUtils;
@@ -80,7 +81,7 @@ public class ForgeI18n {
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
-        LOGGER.debug(Logging.CORE,"Loading I18N data entries: {}", properties.size());
+        LOGGER.debug(Logging.CORE,MohistMC.i18n.as("mohist.i18n.101", properties.size()));
         i18n = properties;
     }
 
@@ -89,7 +90,7 @@ public class ForgeI18n {
         try {
             return parseFormat(pattern, args);
         } catch (IllegalArgumentException e) {
-            LOGGER.error(Logging.CORE,"Illegal format found `{}`", pattern);
+            LOGGER.error(Logging.CORE,MohistMC.i18n.as("mohist.i18n.102", pattern));
             return pattern;
         }
     }

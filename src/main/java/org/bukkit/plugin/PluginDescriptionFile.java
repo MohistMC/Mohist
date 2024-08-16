@@ -3,6 +3,7 @@ package org.bukkit.plugin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.mohistmc.MohistMC;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -870,7 +871,7 @@ public final class PluginDescriptionFile {
             if (lazyPermissions == null) {
                 permissions = ImmutableList.<Permission>of();
             } else {
-                permissions = ImmutableList.copyOf(Permission.loadPermissions(lazyPermissions, "Permission node '%s' in plugin description file for " + getFullName() + " is invalid", defaultPerm));
+                permissions = ImmutableList.copyOf(Permission.loadPermissions(lazyPermissions, MohistMC.i18n.as("mohist.i18n.31", getFullName(), defaultPerm), defaultPerm));
                 lazyPermissions = null;
             }
         }
@@ -1009,7 +1010,8 @@ public final class PluginDescriptionFile {
             name = rawName = map.get("name").toString();
 
             if (!VALID_NAME.matcher(name).matches()) {
-                throw new InvalidDescriptionException("name '" + name + "' contains invalid characters.");
+                throw new InvalidDescriptionException(MohistMC.i18n.as("mohist.i18n.32", name))
+                        ;
             }
             name = name.replace(' ', '_');
         } catch (NullPointerException ex) {
@@ -1195,9 +1197,9 @@ public final class PluginDescriptionFile {
                 builder.add(entry.toString().replace(' ', '_'));
             }
         } catch (ClassCastException ex) {
-            throw new InvalidDescriptionException(ex, key + " is of wrong type");
+            throw new InvalidDescriptionException(ex, MohistMC.i18n.as("mohist.i18n.33", key));
         } catch (NullPointerException ex) {
-            throw new InvalidDescriptionException(ex, "invalid " + key + " format");
+            throw new InvalidDescriptionException(ex, MohistMC.i18n.as("mohist.i18n.34", key));
         }
         return builder.build();
     }
@@ -1265,7 +1267,7 @@ public final class PluginDescriptionFile {
         if (object instanceof Map) {
             return (Map<?, ?>) object;
         }
-        throw new InvalidDescriptionException("Plugin description file is empty or not properly structured. Is " + object + "but should be a map.");
+        throw new InvalidDescriptionException(MohistMC.i18n.as("mohist.i18n.35", object));
     }
 
     /**

@@ -88,14 +88,14 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
             try {
                 jarClass = Class.forName(description.getMain(), true, this);
             } catch (ClassNotFoundException ex) {
-                throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+                throw new InvalidPluginException(MohistMC.i18n.as("mohist.i18n.26", description.getMain()), ex);
             }
 
             Class<? extends JavaPlugin> pluginClass;
             try {
                 pluginClass = jarClass.asSubclass(JavaPlugin.class);
             } catch (ClassCastException ex) {
-                throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
+                throw new InvalidPluginException(MohistMC.i18n.as("mohist.i18n.27", description.getMain()), ex);
             }
 
             plugin = pluginClass.newInstance();
@@ -171,10 +171,10 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
 
                         seenIllegalAccess.add(provider.getName());
                         if (plugin != null) {
-                            plugin.getLogger().log(Level.WARNING, "Loaded class {0} from {1} which is not a depend or softdepend of this plugin.", new Object[]{name, provider.getFullName()});
+                            plugin.getLogger().log(Level.WARNING,MohistMC.i18n.as("mohist.i18n.28", name, provider.getFullName()));
                         } else {
                             // In case the bad access occurs on construction
-                            loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend or softdepend of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+                            loader.server.getLogger().log(Level.WARNING,MohistMC.i18n.as("mohist.i18n.29", description.getName(), name, provider.getFullName()));
                         }
                     }
                 }
@@ -231,7 +231,7 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
                             }
                         } catch (IllegalArgumentException ex) {
                             if (getPackage(pkgName) == null) {
-                                throw new IllegalStateException("Cannot find package " + pkgName);
+                                throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.30", pkgName));
                             }
                         }
                     }

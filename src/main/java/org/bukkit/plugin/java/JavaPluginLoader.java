@@ -1,6 +1,7 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.MohistMC;
 import com.mohistmc.util.I18n;
 import org.bukkit.Server;
 import org.bukkit.Warning;
@@ -103,39 +104,39 @@ public final class JavaPluginLoader implements PluginLoader {
             // They are equal -- nothing needs to be done!
         } else if (dataFolder.isDirectory() && oldDataFolder.isDirectory()) {
             server.getLogger().warning(String.format(
-                "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'",
+                MohistMC.i18n.as("mohist.i18n.16",
                 description.getFullName(),
                 file,
                 oldDataFolder,
                 dataFolder
-            ));
+            )));
         } else if (oldDataFolder.isDirectory() && !dataFolder.exists()) {
             if (!oldDataFolder.renameTo(dataFolder)) {
-                throw new InvalidPluginException("Unable to rename old data folder: `" + oldDataFolder + "' to: `" + dataFolder + "'");
+                throw new InvalidPluginException(MohistMC.i18n.as("mohist.i18n.17", oldDataFolder, dataFolder));
             }
             server.getLogger().log(Level.INFO, String.format(
-                "While loading %s (%s) renamed data folder: `%s' to `%s'",
+                MohistMC.i18n.as( "mohist.i18n.18",
                 description.getFullName(),
                 file,
                 oldDataFolder,
                 dataFolder
-            ));
+            )));
         }
 
         if (dataFolder.exists() && !dataFolder.isDirectory()) {
             throw new InvalidPluginException(String.format(
-                "Projected datafolder: `%s' for %s (%s) exists and is not a directory",
+                MohistMC.i18n.as("mohist.i18n.19",
                 dataFolder,
                 description.getFullName(),
                 file
-            ));
+            )));
         }
 
         for (final String pluginName : description.getDepend()) {
             Plugin current = server.getPluginManager().getPlugin(pluginName);
 
             if (current == null) {
-                throw new UnknownDependencyException("Unknown dependency " + pluginName + ". Please download and install " + pluginName + " to run this plugin.");
+                throw new UnknownDependencyException(MohistMC.i18n.as("mohist.i18n.12", pluginName, pluginName));
             }
         }
 
@@ -246,7 +247,7 @@ public final class JavaPluginLoader implements PluginLoader {
                 methods.add(method);
             }
         } catch (NoClassDefFoundError e) {
-            plugin.getLogger().severe("Plugin " + plugin.getDescription().getFullName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
+            plugin.getLogger().severe(MohistMC.i18n.as("mohist.i18n.13", plugin.getDescription().getFullName(), listener.getClass(), e.getMessage()));
             return ret;
         }
 
@@ -260,7 +261,7 @@ public final class JavaPluginLoader implements PluginLoader {
             }
             final Class<?> checkClass;
             if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
-                plugin.getLogger().severe(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+                plugin.getLogger().severe(MohistMC.i18n.as("mohist.i18n.14", plugin.getDescription().getFullName(), method.toGenericString(), listener.getClass()));
                 continue;
             }
             final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
@@ -282,13 +283,13 @@ public final class JavaPluginLoader implements PluginLoader {
                     plugin.getLogger().log(
                             Level.WARNING,
                             String.format(
-                                    "\"%s\" has registered a listener for %s on method \"%s\", but the event is Deprecated. \"%s\"; please notify the authors %s.",
+                                    MohistMC.i18n.as( "mohist.i18n.15",
                                     plugin.getDescription().getFullName(),
                                     clazz.getName(),
                                     method.toGenericString(),
                                     (warning != null && warning.reason().length() != 0) ? warning.reason() : "Server performance will be affected",
                                     Arrays.toString(plugin.getDescription().getAuthors().toArray())),
-                            warningState == WarningState.ON ? new AuthorNagException(null) : null);
+                            warningState == WarningState.ON ? new AuthorNagException(null) : null));
                     break;
                 }
             }
@@ -322,7 +323,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
 
         if (!plugin.isEnabled()) {
-            plugin.getLogger().info(I18n.as("minecraftserver.plugin.load.enabling",plugin.getDescription().getFullName()));
+            plugin.getLogger().info(I18n.as("minecraftserver.plugin.load.enabling", plugin.getDescription().getFullName()));
 
             JavaPlugin jPlugin = (JavaPlugin) plugin;
 
@@ -330,13 +331,13 @@ public final class JavaPluginLoader implements PluginLoader {
 
             if (!loaders.contains(pluginLoader)) {
                 loaders.add(pluginLoader);
-                server.getLogger().log(Level.WARNING, "Enabled plugin with unregistered PluginClassLoader " + plugin.getDescription().getFullName());
+                server.getLogger().log(Level.WARNING,MohistMC.i18n.as( "mohist.i18n.20", plugin.getDescription().getFullName()));
             }
 
             try {
                 jPlugin.setEnabled(true);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.21", plugin.getDescription().getFullName()), ex);
                 // Mohist start - Disable plugins that fail to load
                 this.server.getPluginManager().disablePlugin(jPlugin);
                 return;
@@ -354,7 +355,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
 
         if (plugin.isEnabled()) {
-            plugin.getLogger().info(I18n.as("minecraftserver.plugin.load.disabling",plugin.getDescription().getFullName()));
+            plugin.getLogger().info(MohistMC.i18n.as("minecraftserver.plugin.load.disabling",plugin.getDescription().getFullName()));
 
             server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
 
@@ -364,7 +365,7 @@ public final class JavaPluginLoader implements PluginLoader {
             try {
                 jPlugin.setEnabled(false);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE, MohistMC.i18n.as( "mohist.i18n.22", plugin.getDescription().getFullName()), ex);
             }
 
             if (cloader instanceof PluginClassLoader) {

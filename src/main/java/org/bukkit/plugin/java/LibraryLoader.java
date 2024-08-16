@@ -73,7 +73,7 @@ class LibraryLoader {
             }
         }
 
-        MohistMC.LOGGER.info("[{}] Loading {} extra libraries... please wait", desc.getName(), newDependencies.size() - desc.getLibraries().size());
+        MohistMC.LOGGER.info(MohistMC.i18n.as("mohist.i18n.23", desc.getName(), newDependencies.size() - desc.getLibraries().size()));
 
         for (Dependency dependency : newDependencies) {
             String group = dependency.group().replace(".", "/");
@@ -106,7 +106,7 @@ class LibraryLoader {
         for (File file : libraries) {
             try {
                 jarFiles.add(file.toURI().toURL());
-                MohistMC.LOGGER.info("[{}] Loaded libraries {}", desc.getName(), file);
+                MohistMC.LOGGER.info(MohistMC.i18n.as("mohist.i18n.24", desc.getName(), file));
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -245,7 +245,7 @@ class LibraryLoader {
             if (!dependencyIgnoreVersion.contains(dependency.toIgnoreVersion())) {
                 libraries.add(file);
                 dependencyIgnoreVersion.add(dependency.toIgnoreVersion());
-                MohistMC.LOGGER.info("[{}] Found libraries {}", dependency.name, file);
+                MohistMC.LOGGER.info(MohistMC.i18n.as("mohist.i18n.25", dependency.name, file));
                 return true;
             }
         }

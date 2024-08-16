@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.util.ProxyUtils;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
@@ -132,11 +133,11 @@ public class NetworkRegistry
     private static NetworkInstance createInstance(ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
     {
         if(lock) {
-            LOGGER.error(NETREGISTRY, "Attempted to register channel {} even though registry phase is over", name);
+            LOGGER.error(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.126", name));
             throw new IllegalArgumentException("Registration of impl channels is locked");
         }
         if (instances.containsKey(name)) {
-            LOGGER.error(NETREGISTRY, "NetworkDirection channel {} already registered.", name);
+            LOGGER.error(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.127", name));
             throw new IllegalArgumentException("NetworkDirection Channel {"+ name +"} already registered");
         }
         final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
@@ -187,8 +188,8 @@ public class NetworkRegistry
                 }).filter(p->!p.getRight()).toList();
 
         if (!ProxyUtils.is() && !results.isEmpty()) {
-            LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
-                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            LOGGER.error(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.128",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(","))));
             return results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.toList());
         }
         LOGGER.debug(NETREGISTRY, "Accepting channel list from vanilla");
@@ -228,17 +229,17 @@ public class NetworkRegistry
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT.version());
                     final boolean test = testFunction.apply(ni, incomingVersion);
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.129", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED"));
                     return Pair.of(Pair.of(ni.getChannelName(), incomingVersion), test);
                 }).filter(p->!p.getRight()).map(Pair::getLeft).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         if (!results.isEmpty()) {
-            LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
+            LOGGER.error(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.130",
                     results.keySet().stream().map(Object::toString).collect(Collectors.joining(",")),
-                    originName);
+                    originName));
             return results;
         }
-        LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", originName);
+        LOGGER.debug(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.131", originName));
         return results;
     }
 
@@ -275,13 +276,13 @@ public class NetworkRegistry
                 collect(Collectors.toList());
 
         if (!results.isEmpty()) {
-            LOGGER.error(NETREGISTRY, "Channels [{}] rejected their server side version number during listping",
-                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            LOGGER.error(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.132",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(","))));
             return false;
         }
         if(!missingButRequired.isEmpty()){
-            LOGGER.error(NETREGISTRY, "The server is likely to require channel [{}] to be present, yet we don't have it",
-                    missingButRequired);
+            LOGGER.error(NETREGISTRY, MohistMC.i18n.as("mohist.i18n.133",
+                    missingButRequired));
             return false;
         }
         LOGGER.debug(NETREGISTRY, "Accepting channel list during listping");
