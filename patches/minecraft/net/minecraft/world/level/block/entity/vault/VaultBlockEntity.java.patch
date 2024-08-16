@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/level/block/entity/vault/VaultBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/vault/VaultBlockEntity.java
+@@ -41,6 +_,10 @@
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseLootEvent;
++import org.bukkit.event.block.VaultDisplayItemEvent;
+ import org.slf4j.Logger;
+ 
+ public class VaultBlockEntity extends BlockEntity {
+@@ -290,6 +_,14 @@
+                     if (!list.isEmpty()) {
+                         p_332764_.awardStat(Stats.ITEM_USED.get(p_329896_.getItem()));
+                         p_329896_.consume(p_333877_.keyItem().getCount(), p_332764_);
++                        // CraftBukkit start
++                        BlockDispenseLootEvent vaultDispenseLootEvent = CraftEventFactory.callBlockDispenseLootEvent(p_330813_, p_333223_, p_332764_, list);
++                        if (vaultDispenseLootEvent.isCancelled()) {
++                            return;
++                        }
++
++                        list = vaultDispenseLootEvent.getDispensedLoot().stream().map(CraftItemStack::asNMSCopy).toList();
++                        // CraftBukkit end
+                         unlock(p_330813_, p_331301_, p_333223_, p_333877_, p_334388_, p_330336_, list);
+                         p_334388_.addToRewardedPlayers(p_332764_);
+                         p_330336_.updateConnectedPlayersWithinRange(p_330813_, p_333223_, p_334388_, p_333877_, p_333877_.deactivationRange());
+@@ -312,6 +_,14 @@
+                 p_336318_.setDisplayItem(ItemStack.EMPTY);
+             } else {
+                 ItemStack itemstack = getRandomDisplayItemFromLootTable(p_328186_, p_327920_, p_329242_.overrideLootTableToDisplay().orElse(p_329242_.lootTable()));
++                // CraftBukkit start
++                VaultDisplayItemEvent event = CraftEventFactory.callVaultDisplayItemEvent(p_328186_, p_327920_, itemstack);
++                if (event.isCancelled()) {
++                    return;
++                }
++
++                itemstack = CraftItemStack.asNMSCopy(event.getDisplayItem());
++                // CraftBukkit end
+                 p_336318_.setDisplayItem(itemstack);
+             }
+         }

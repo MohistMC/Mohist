@@ -1,17 +1,14 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -1,5 +_,6 @@
- package net.minecraft.world.item.crafting;
- 
-+import com.mohistmc.mohist.bukkit.inventory.MohistSpecialRecipe;
+@@ -3,15 +_,31 @@
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
-@@ -8,10 +_,28 @@
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import net.minecraft.core.HolderLookup;
  import net.minecraft.core.NonNullList;
  import net.minecraft.network.RegistryFriendlyByteBuf;
  import net.minecraft.network.codec.StreamCodec;
-+import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
@@ -37,15 +34,12 @@
      final ShapedRecipePattern pattern;
      final ItemStack result;
      final String group;
-@@ -30,6 +_,70 @@
+@@ -30,6 +_,67 @@
          this(p_272759_, p_273506_, p_310709_, p_272852_, true);
      }
  
 +    // CraftBukkit start
-+    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+        if (this.getWidth() < 1 || this.getWidth() > 3 || this.getHeight() < 1 || this.getHeight() > 3 || this.result.isEmpty()) {
-+            return new MohistSpecialRecipe(id, this);
-+        }
++    public org.bukkit.inventory.ShapedRecipe toBukkitRecipe(NamespacedKey id) {
 +        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +        CraftShapedRecipe recipe = new CraftShapedRecipe(id, result, this);
 +        recipe.setGroup(this.group);

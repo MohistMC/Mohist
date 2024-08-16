@@ -103,10 +103,10 @@
 +      });
 +   }
 +
-+   public boolean createPortalBlocksCB() {
++   public boolean createPortalBlocksCB(Entity entity) {
 +      org.bukkit.World bworld = this.level.getMinecraftWorld().getWorld();
 +      createPortalBlocks();
-+      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, PortalCreateEvent.CreateReason.FIRE);
++      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), PortalCreateEvent.CreateReason.FIRE);
 +      this.level.getMinecraftWorld().getServer().server.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {

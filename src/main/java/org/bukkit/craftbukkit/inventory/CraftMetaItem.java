@@ -515,9 +515,16 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         if (blockData != null) {
             Map<String, String> mapBlockData = new HashMap<>();
 
-            CompoundTag nbtBlockData = (CompoundTag) CraftNBTTagConfigSerializer.deserialize(blockData);
-            for (String key : nbtBlockData.getAllKeys()) {
-                mapBlockData.put(key, nbtBlockData.getString(key));
+            if (blockData instanceof Map) {
+                for (Entry<?, ?> entry : ((Map<?, ?>) blockData).entrySet()) {
+                    mapBlockData.put(entry.getKey().toString(), entry.getValue().toString());
+                }
+            } else {
+                // Legacy pre 1.20.5:
+                CompoundTag nbtBlockData = (CompoundTag) CraftNBTTagConfigSerializer.deserialize(blockData);
+                for (String key : nbtBlockData.getAllKeys()) {
+                    mapBlockData.put(key, nbtBlockData.getString(key));
+                }
             }
 
             this.blockData = mapBlockData;

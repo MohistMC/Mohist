@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
 +++ b/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
+@@ -42,6 +_,9 @@
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.CollisionContext;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseLootEvent;
+ 
+ public final class TrialSpawner {
+     public static final String NORMAL_CONFIG_TAG_NAME = "normal_config";
 @@ -52,16 +_,16 @@
      private static final int MAX_MOB_TRACKING_DISTANCE = 47;
      private static final int MAX_MOB_TRACKING_DISTANCE_SQR = Mth.square(47);
@@ -35,3 +45,18 @@
                              if (!p_312690_.tryAddFreshEntityWithPassengers(entity)) {
                                  return Optional.empty();
                              } else {
+@@ -258,6 +_,14 @@
+         LootParams lootparams = new LootParams.Builder(p_310080_).create(LootContextParamSets.EMPTY);
+         ObjectArrayList<ItemStack> objectarraylist = loottable.getRandomItems(lootparams);
+         if (!objectarraylist.isEmpty()) {
++            // CraftBukkit start
++            BlockDispenseLootEvent spawnerDispenseLootEvent = CraftEventFactory.callBlockDispenseLootEvent(p_310080_, p_311547_, null, objectarraylist);
++            if (spawnerDispenseLootEvent.isCancelled()) {
++                return;
++            }
++
++            objectarraylist = new ObjectArrayList<>(spawnerDispenseLootEvent.getDispensedLoot().stream().map(CraftItemStack::asNMSCopy).toList());
++            // CraftBukkit end
+             for (ItemStack itemstack : objectarraylist) {
+                 DefaultDispenseItemBehavior.spawnItem(p_310080_, itemstack, 2, Direction.UP, Vec3.atBottomCenterOf(p_311547_).relative(Direction.UP, 1.2));
+             }

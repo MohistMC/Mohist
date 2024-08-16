@@ -1,17 +1,14 @@
 --- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
-@@ -1,5 +_,6 @@
- package net.minecraft.world.item.crafting;
+@@ -2,13 +_,16 @@
  
-+import com.mohistmc.mohist.bukkit.inventory.MohistSpecialRecipe;
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
- import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
-@@ -7,8 +_,13 @@
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import java.util.stream.Stream;
  import net.minecraft.core.HolderLookup;
  import net.minecraft.network.RegistryFriendlyByteBuf;
  import net.minecraft.network.codec.StreamCodec;
-+import net.minecraft.world.Container;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
@@ -21,7 +18,7 @@
  
  public class SmithingTransformRecipe implements SmithingRecipe {
      final Ingredient template;
-@@ -60,8 +_,22 @@
+@@ -60,8 +_,19 @@
  
      @Override
      public boolean isIncomplete() {
@@ -33,9 +30,6 @@
 +    // CraftBukkit start
 +    @Override
 +    public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+        if (this.result.isEmpty()) {
-+            return new MohistSpecialRecipe(id, this);
-+        }
 +        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
 +        CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
