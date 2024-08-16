@@ -22,7 +22,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -47,64 +_,79 @@
+@@ -47,64 +_,80 @@
  import net.minecraft.world.level.pathfinder.BinaryHeap;
  import net.minecraft.world.level.pathfinder.Node;
  import net.minecraft.world.level.pathfinder.Path;
@@ -31,6 +31,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.joml.Vector3f;
@@ -194,7 +195,7 @@
  
          if (this.random.nextInt(10) == 0) {
              List<EndCrystal> list = this.level().getEntitiesOfClass(EndCrystal.class, this.getBoundingBox().inflate(32.0));
-@@ -468,32 +_,82 @@
+@@ -468,32 +_,80 @@
          int j1 = Mth.floor(p_31140_.maxZ);
          boolean flag = false;
          boolean flag1 = false;
@@ -254,13 +255,11 @@
 +         return flag;
 +      }
 +
-+      org.bukkit.entity.Entity bukkitEntity = this.getBukkitEntity();
-+      EntityExplodeEvent event = new EntityExplodeEvent(bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
-+      bukkitEntity.getServer().getPluginManager().callEvent(event);
-+      if (event.isCancelled()) {
-+         // This flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
-+         // We should consider adding an event extension for it, or perhaps returning true if the event is cancelled.
-+         return flag;
++        EntityExplodeEvent event = CraftEventFactory.callEntityExplodeEvent(this, destroyedBlocks, 0F, this.explosionSource.getBlockInteraction());
++        if (event.isCancelled()) {
++            // This flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
++            // We should consider adding an event extension for it, or perhaps returning true if the event is cancelled.
++            return flag;
 +      } else if (event.getYield() == 0F) {
 +         // Yield zero ==> no drops
 +         for (org.bukkit.block.Block block : event.blockList()) {

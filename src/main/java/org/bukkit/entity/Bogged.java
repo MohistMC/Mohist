@@ -1,6 +1,5 @@
 package org.bukkit.entity;
 
-import net.minecraft.world.entity.Shearable;
 import org.jetbrains.annotations.ApiStatus;
 
 /**

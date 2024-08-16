@@ -2,11 +2,11 @@ package org.spigotmc;
 
 import java.io.File;
 import java.util.List;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 
 public class RestartCommand extends Command
 {
@@ -57,7 +57,7 @@ public class RestartCommand extends Command
                 // Kick all players
                 for ( ServerPlayer p : (List<ServerPlayer>) MinecraftServer.getServer().getPlayerList().players )
                 {
-                    p.connection.disconnect(Component.literal(SpigotConfig.restartMessage));
+                    p.connection.disconnect( CraftChatMessage.fromStringOrEmpty( SpigotConfig.restartMessage, true ) );
                 }
                 // Give the socket a chance to send the packets
                 try

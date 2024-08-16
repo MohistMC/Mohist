@@ -247,7 +247,7 @@ public class SpigotConfig
             {
                 try
                 {
-                    ResourceLocation key = ResourceLocation.withDefaultNamespace( name );
+                    ResourceLocation key = ResourceLocation.parse( name );
                     if ( BuiltInRegistries.CUSTOM_STAT.get( key ) == null )
                     {
                         Bukkit.getLogger().log(Level.WARNING, "Ignoring non existent stats.forced-stats " + name);
@@ -331,11 +331,14 @@ public class SpigotConfig
         SpigotConfig.movedTooQuicklyMultiplier = SpigotConfig.getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
     }
 
+    public static double maxAbsorption = 2048;
     public static double maxHealth = 2048;
     public static double movementSpeed = 2048;
     public static double attackDamage = 2048;
     private static void attributeMaxes()
     {
+        SpigotConfig.maxAbsorption = SpigotConfig.getDouble( "settings.attribute.maxAbsorption.max", SpigotConfig.maxAbsorption );
+        ( (RangedAttribute) Attributes.MAX_ABSORPTION.value() ).maxValue = SpigotConfig.maxAbsorption;
         SpigotConfig.maxHealth = SpigotConfig.getDouble( "settings.attribute.maxHealth.max", SpigotConfig.maxHealth );
         ( (RangedAttribute) Attributes.MAX_HEALTH.value() ).maxValue = SpigotConfig.maxHealth;
         SpigotConfig.movementSpeed = SpigotConfig.getDouble( "settings.attribute.movementSpeed.max", SpigotConfig.movementSpeed );

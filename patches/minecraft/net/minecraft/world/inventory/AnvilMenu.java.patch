@@ -7,12 +7,13 @@
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
  import javax.annotation.Nullable;
-@@ -20,6 +_,8 @@
+@@ -20,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.view.CraftAnvilView;
  import org.slf4j.Logger;
  
  public class AnvilMenu extends ItemCombinerMenu {
@@ -31,16 +32,16 @@
 +    // CraftBukkit start
 +    public static final int DEFAULT_DENIED_COST = -1;
 +    public int maximumRepairCost = Math.min(Short.MAX_VALUE, Math.max(41, MohistConfig.maximumRepairCost));
-+    private CraftInventoryView bukkitEntity;
++    private CraftAnvilView bukkitEntity;
 +    @Override
-+    public CraftInventoryView getBukkitView() {
++    public CraftAnvilView getBukkitView() {
 +       if (bukkitEntity != null) {
 +          return bukkitEntity;
 +       }
 +
 +       org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(
-+               access.getLocation(), this.inputSlots, this.resultSlots, this);
-+       bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++               access.getLocation(), this.inputSlots, this.resultSlots);
++       bukkitEntity = new CraftAnvilView(this.player.getBukkitEntity(), inventory, this);
 +       return bukkitEntity;
 +    }
 +    // CraftBukkit end

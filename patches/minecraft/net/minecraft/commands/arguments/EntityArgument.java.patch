@@ -5,20 +5,20 @@
      }
  
 -    @Override
-+   	public EntitySelector parse(StringReader pReader, boolean overridePermissions) throws CommandSyntaxException {
-+        EntitySelectorParser entityselectorparser = new EntitySelectorParser(pReader);
++   	public EntitySelector parse(StringReader p_345548_, boolean p_345553_, boolean overridePermissions) throws CommandSyntaxException {
++        EntitySelectorParser entityselectorparser = new EntitySelectorParser(p_345548_, p_345553_);
 +        EntitySelector entityselector = entityselectorparser.parse(overridePermissions);
 +        if (entityselector.getMaxResults() > 1 && this.single) {
 +            if (this.playersOnly) {
-+                pReader.setCursor(0);
-+                throw ERROR_NOT_SINGLE_PLAYER.createWithContext(pReader);
++                p_345548_.setCursor(0);
++                throw ERROR_NOT_SINGLE_PLAYER.createWithContext(p_345548_);
 +            } else {
-+                pReader.setCursor(0);
-+                throw ERROR_NOT_SINGLE_ENTITY.createWithContext(pReader);
++                p_345548_.setCursor(0);
++                throw ERROR_NOT_SINGLE_ENTITY.createWithContext(p_345548_);
 +            }
 +        } else if (entityselector.includesEntities() && this.playersOnly && !entityselector.isSelfSelector()) {
-+            pReader.setCursor(0);
-+            throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(pReader);
++            p_345548_.setCursor(0);
++            throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(p_345548_);
 +        } else {
 +            return entityselector;
 +        }
