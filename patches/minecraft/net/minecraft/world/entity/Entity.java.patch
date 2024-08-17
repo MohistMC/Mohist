@@ -322,7 +322,7 @@
        }
  
        this.m_146871_();
-@@ -513,15 +_,42 @@
+@@ -513,15 +_,44 @@
  
     public void m_20093_() {
        if (!this.m_5825_()) {
@@ -336,11 +336,13 @@
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(combustEvent);
 +
 +            if (!combustEvent.isCancelled()) {
-+               this.setSecondsOnFire(combustEvent.getDuration(), false);
++               callEvent.set(false);
++               this.m_20254_(combustEvent.getDuration());
 +            }
 +         } else {
++            callEvent.set(false);
 +            // This will be called every single tick the entity is in lava, so don't throw an event
-+            this.setSecondsOnFire(15, false);
++            this.m_20254_(15);
 +         }
 +         CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : CraftBlock.at(f_19853_, lastLavaContact);
           if (this.m_6469_(this.m_269291_().m_269233_(), 4.0F)) {
