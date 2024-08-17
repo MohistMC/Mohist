@@ -108,21 +108,3 @@
        return compoundtag;
     }
  
-@@ -438,7 +_,7 @@
-          ResourceLocation resourcelocation = ResourceLocation.m_135820_(s);
-          Structure structure = registry.m_7745_(resourcelocation);
-          if (structure == null) {
--            f_63449_.error("Unknown structure start: {}", (Object)resourcelocation);
-+            f_63449_.debug("Unknown structure start: {}", (Object)resourcelocation);
-          } else {
-             StructureStart structurestart = StructureStart.m_226857_(p_188255_, compoundtag.m_128469_(s), p_188257_);
-             if (structurestart != null) {
-@@ -459,7 +_,7 @@
-          ResourceLocation resourcelocation = ResourceLocation.m_135820_(s);
-          Structure structure = registry.m_7745_(resourcelocation);
-          if (structure == null) {
--            f_63449_.warn("Found reference to unknown structure '{}' in chunk {}, discarding", resourcelocation, p_208156_);
-+            // LOGGER.warn("Found reference to unknown structure '{}' in chunk {}, discarding", resourcelocation, p_208156_);
-          } else {
-             long[] along = compoundtag.m_128467_(s);
-             if (along.length != 0) {
