@@ -99,7 +99,7 @@
           this.m_146870_();
        }
  
-@@ -322,7 +_,13 @@
+@@ -322,7 +_,14 @@
        boolean flag = entity.m_6095_() == EntityType.f_20566_;
        int k = entity.m_20094_();
        if (this.m_6060_() && !flag) {
@@ -108,7 +108,8 @@
 +         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +         if (!combustEvent.isCancelled()) {
-+            entity.setSecondsOnFire(combustEvent.getDuration(), false);
++            entity.callEvent.set(false);
++            entity.m_20254_(combustEvent.getDuration());
 +         }
 +         // CraftBukkit end
        }

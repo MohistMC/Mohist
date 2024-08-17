@@ -24,7 +24,7 @@
     }
  
     protected void m_5790_(EntityHitResult p_37386_) {
-@@ -32,7 +_,14 @@
+@@ -32,7 +_,15 @@
           Entity entity = p_37386_.m_82443_();
           Entity entity1 = this.m_19749_();
           int i = entity.m_20094_();
@@ -34,7 +34,8 @@
 +         entity.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {
-+            entity.setSecondsOnFire(event.getDuration(), false);
++            entity.callEvent.set(false);
++            entity.m_20254_(event.getDuration());
 +         }
 +         // CraftBukkit end
           if (!entity.m_6469_(this.m_269291_().m_269453_(this, entity1), 5.0F)) {

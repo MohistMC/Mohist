@@ -365,7 +365,7 @@
              this.f_21359_ = null;
           }
        }
-@@ -1368,7 +_,14 @@
+@@ -1368,7 +_,15 @@
  
        int i = EnchantmentHelper.m_44914_(this);
        if (i > 0) {
@@ -375,7 +375,8 @@
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +         if (!combustEvent.isCancelled()) {
-+            p_21372_.setSecondsOnFire(combustEvent.getDuration(), false);
++            p_21372_.callEvent.set(false);
++            p_21372_.m_20254_(combustEvent.getDuration());
 +         }
 +         // CraftBukkit end
        }

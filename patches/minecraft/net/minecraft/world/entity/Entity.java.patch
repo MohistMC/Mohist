@@ -1037,7 +1037,7 @@
     }
  
     public int m_146888_() {
-@@ -2254,11 +_,40 @@
+@@ -2254,11 +_,41 @@
  
     public void m_8038_(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.m_7311_(this.f_19831_ + 1);
@@ -1055,7 +1055,8 @@
 +         EntityCombustByEntityEvent entityCombustEvent = new EntityCombustByEntityEvent(stormBukkitEntity, thisBukkitEntity, 8);
 +         pluginManager.callEvent(entityCombustEvent);
 +         if (!entityCombustEvent.isCancelled()) {
-+            this.setSecondsOnFire(entityCombustEvent.getDuration(), false);
++            this.callEvent.set(false);
++            this.m_20254_(entityCombustEvent.getDuration());
 +         }
 +         // CraftBukkit end
 +      }

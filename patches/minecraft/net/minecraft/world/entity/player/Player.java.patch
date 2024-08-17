@@ -545,7 +545,7 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1099,8 +_,15 @@
+@@ -1099,8 +_,16 @@
                 if (p_36347_ instanceof LivingEntity) {
                    f4 = ((LivingEntity)p_36347_).m_21223_();
                    if (j > 0 && !p_36347_.m_6060_()) {
@@ -557,7 +557,8 @@
 +
 +                     if (!combustEvent.isCancelled()) {
 +                        flag4 = true;
-+                        p_36347_.setSecondsOnFire(combustEvent.getDuration(), false);
++                        p_36347_.callEvent.set(false);
++                        p_36347_.m_20254_(combustEvent.getDuration());
 +                     }
 +                     // CraftBukkit end
                    }
@@ -629,7 +630,7 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
-@@ -1178,7 +_,14 @@
+@@ -1178,7 +_,15 @@
                       float f5 = f4 - ((LivingEntity)p_36347_).m_21223_();
                       this.m_36222_(Stats.f_12928_, Math.round(f5 * 10.0F));
                       if (j > 0) {
@@ -639,7 +640,8 @@
 +                        org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +                        if (!combustEvent.isCancelled()) {
-+                           entity.setSecondsOnFire(combustEvent.getDuration(), false);
++                           entity.callEvent.set(false);
++                           entity.m_20254_(combustEvent.getDuration());
 +                        }
 +                        // CraftBukkit end
                       }
