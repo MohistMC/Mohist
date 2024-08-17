@@ -112,6 +112,6 @@ public record AnyHolderSet<T>(HolderLookup.RegistryLookup<T> registryLookup) imp
     @Override
     public String toString()
     {
-        return MohistMC.i18n.as("mohist.i18n.135", this.registryLookup.key());
+        return "AnySet(" + this.registryLookup.key() + ")";
     }
 }

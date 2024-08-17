@@ -123,7 +123,7 @@ public class JsonCodecProvider<T> implements DataProvider
     @Override
     public String getName()
     {
-        return String.format(MohistMC.i18n.as("mohist.i18n.70", this.directory, this.modid));
+        return MohistMC.i18n.as("mohist.i18n.70", this.directory, this.modid);
     }
 
     /**

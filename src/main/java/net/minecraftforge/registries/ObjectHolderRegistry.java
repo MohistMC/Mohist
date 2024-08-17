@@ -111,7 +111,7 @@ public class ObjectHolderRegistry
             }
             catch (ClassNotFoundException e)
             {
-                throw new RuntimeException(MohistMC.i18n.as("mohist.i18n.213", e));
+                throw new RuntimeException(MohistMC.i18n.as("mohist.i18n.213"), e);
             }
         });
 

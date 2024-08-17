@@ -80,7 +80,7 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         }
         catch (Exception exception)
         {
-            DispenseItemBehavior.LOGGER.error(MohistMC.i18n.as("mohist.i18n.103", source.getPos(), exception));
+            DispenseItemBehavior.LOGGER.error(MohistMC.i18n.as("mohist.i18n.103", source.getPos()), exception);
             return ItemStack.EMPTY;
         }
 

@@ -59,7 +59,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
             }
             catch (ResourceLocationException e)
             {
-                throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.208", field.toString(), e));
+                throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.208", field.toString()), e);
             }
         }
 
@@ -110,7 +110,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         }
         catch (IllegalArgumentException | ReflectiveOperationException e)
         {
-            LOGGER.warn(MohistMC.i18n.as("mohist.i18n.212", this.field, thing, this.injectedObject, e));
+            LOGGER.warn(MohistMC.i18n.as("mohist.i18n.212", this.field, thing, this.injectedObject), e);
         }
     }
 
