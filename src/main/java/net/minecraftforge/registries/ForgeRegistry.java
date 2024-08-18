@@ -5,7 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.pluginfix.PluginDynamicRegistrFix;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -345,7 +344,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     void validateKey() {
         if (this.defaultKey != null)
-            Validate.notNull(this.defaultValue, MohistMC.i18n.as("mohist.i18n.138", this.defaultKey, this.name));
+            Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Name: " + this.name);
     }
 
     @Nullable
@@ -368,27 +367,27 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     }
 
     int add(int id, ResourceLocation key, V value, String owner) {
-        Preconditions.checkNotNull(key, MohistMC.i18n.as("mohist.i18n.139", value));
-        Preconditions.checkNotNull(value, MohistMC.i18n.as("mohist.i18n.140", key));
+        Preconditions.checkNotNull(key, "Can't use a null-name for the registry, object %s.", value);
+        Preconditions.checkNotNull(value, "Can't add null-object to the registry, name %s.", key);
 
         int idToUse = id;
         if (idToUse < 0 || availabilityMap.get(idToUse))
             idToUse = availabilityMap.nextClearBit(min);
 
         if (idToUse > max)
-            throw new RuntimeException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.141", idToUse)));
+            throw new RuntimeException(String.format(Locale.ENGLISH, "Invalid id %d - maximum id range exceeded.", idToUse));
 
         V oldEntry = getRaw(key);
         if (oldEntry == value) { // already registered, return prev registration's id
-            LOGGER.warn(REGISTRIES, MohistMC.i18n.as("mohist.i18n.136", this.name, value, key));
+            LOGGER.warn(REGISTRIES,"Registry {}: The object {} has been registered twice for the same name {}.", this.name, value, key);
             return this.getID(value);
         }
 
         if (oldEntry != null) { // duplicate name
             if (!this.allowOverrides)
-                throw new IllegalArgumentException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.137", key, getRaw(key), value)));
+                throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The name %s has been registered twice, for %s and %s.", key, getRaw(key), value));
             if (owner == null)
-                throw new IllegalStateException(String.format(Locale.ENGLISH,MohistMC.i18n.as("mohist.i18n.142", key, value)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Could not determine owner for the override on %s. Value: %s", key, value));
             LOGGER.debug(REGISTRIES,"Registry {} Override: {} {} -> {}", this.name, key, oldEntry, value);
             idToUse = this.getID(oldEntry);
         }
@@ -396,15 +395,15 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         Integer foundId = this.ids.inverse().get(value); //Is this ever possible to trigger with otherThing being different?
         if (foundId != null) {
             V otherThing = this.ids.get(foundId);
-            throw new IllegalArgumentException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.149", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing))));
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing)));
         }
 
         if (isLocked())
-            throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.150", value, key)));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "The object %s (name %s) is being added too late.", value, key));
 
         if (defaultKey != null && defaultKey.equals(key)) {
             if (this.defaultValue != null)
-                throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.151", value, key)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Attemped to override already set default value. This is not allowed: The object %s (name %s)", value, key));
             this.defaultValue = value;
         }
 
@@ -452,15 +451,15 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
      */
     public void addAlias(ResourceLocation src, ResourceLocation dst) {
         if (this.isLocked())
-            throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.153", src, dst)));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the alias %s -> %s too late", src, dst));
 
         if (src.equals(dst)) {
-            LOGGER.warn(REGISTRIES, MohistMC.i18n.as("mohist.i18n.154", this.name, src, dst));
+            LOGGER.warn(REGISTRIES, "Registry {} Ignoring invalid alias: {} -> {}", this.name, src, dst);
             return;
         }
 
         this.aliases.put(src, dst);
-        LOGGER.trace(REGISTRIES, MohistMC.i18n.as("mohist.i18n.155", this.name, src, dst));
+        LOGGER.trace(REGISTRIES,"Registry {} alias: {} -> {}", this.name, src, dst);
     }
 
     @NotNull
@@ -472,7 +471,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @NotNull
     @Override
     public Holder.Reference<V> getDelegateOrThrow(ResourceKey<V> rkey) {
-        return getDelegate(rkey).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.156", rkey))));
+        return getDelegate(rkey).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for key %s", rkey)));
     }
 
     @NotNull
@@ -484,7 +483,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @NotNull
     @Override
     public Holder.Reference<V> getDelegateOrThrow(ResourceLocation key) {
-        return getDelegate(key).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.157", key))));
+        return getDelegate(key).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for key %s", key)));
     }
 
     @NotNull
@@ -496,7 +495,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @NotNull
     @Override
     public Holder.Reference<V> getDelegateOrThrow(V value) {
-        return getDelegate(value).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.158", value))));
+        return getDelegate(value).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for value %s", value)));
     }
 
     private Holder.Reference<V> bindDelegate(ResourceKey<V> rkey, V value) {
@@ -529,23 +528,23 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
             // name lookup failed -> obj is not in the obj<->name map
             if (name == null)
-                throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.159", registryName, obj, id)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, id %d, doesn't yield a name.", registryName, obj, id));
 
             // id is too high
             if (id > max)
-                throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.160", registryName, obj, name, id)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, name %s uses the too large id %d.", registryName, obj, name, id));
 
             // id -> obj lookup is inconsistent
             if (getValue(id) != obj)
-                throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.161", id, name, registryName, obj)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, registryName, obj));
 
             // name -> obj lookup is inconsistent
             if (getValue(name) != obj)
-                throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.162", name, id, registryName, obj)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, registryName, obj));
 
             // name -> id lookup is inconsistent
             if (getID(name) != id)
-                throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.163", name, id)));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for name %s doesn't yield the expected id %d.", name, id));
 
             /*
             // entry is blocked, thus should be empty
@@ -565,9 +564,9 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     }
 
     void sync(ResourceLocation name, ForgeRegistry<V> from) {
-        LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.164", this.name, this.stage.getName(), from.stage.getName()));
+        LOGGER.debug(REGISTRIES,"Registry {} Sync: {} -> {}", this.name, this.stage.getName(), from.stage.getName());
         if (this == from)
-            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.165"));
+            throw new IllegalArgumentException("WTF We are the same!?!?!");
 
         this.isFrozen = false;
 
@@ -601,7 +600,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             if (overrides.isEmpty()) {
                 int realId = add(id, entry.getKey(), entry.getValue());
                 if (id != realId && id != -1) {
-                    LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.166", this.name, entry.getKey(), id, realId));
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                     errored = true;
                 }
             } else {
@@ -609,14 +608,14 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 for (V value : overrides) {
                     OverrideOwner<V> owner = from.owners.inverse().get(value);
                     if (owner == null) {
-                        LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.167", this.name, entry.getKey(), value));
+                        LOGGER.debug(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
                         errored = true;
                         continue;
                     }
 
                     int realId = add(id, entry.getKey(), value, owner.owner);
                     if (id != realId && id != -1) {
-                        LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.168", this.name, entry.getKey(), id, realId));
+                        LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                         errored = true;
                     }
                 }
@@ -624,7 +623,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         }
 
         if (errored)
-            throw new RuntimeException(MohistMC.i18n.as("mohist.i18n.169"));
+            throw new RuntimeException("One of more entry values did not copy to the correct id. Check log for details!");
     }
 
     @Override
@@ -659,13 +658,13 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         if (value != null) {
             ResourceKey<V> rkey = this.keys.inverse().remove(value);
             if (rkey == null)
-                throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.170", key, value.toString()));
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
 
             Integer id = this.ids.inverse().remove(value);
             if (id == null)
-                throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.171", key, value.toString()));
+                throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
 
-            LOGGER.trace(REGISTRIES, MohistMC.i18n.as("mohist.i18n.172", this.name, key, id));
+            LOGGER.trace(REGISTRIES,"Registry {} remove: {} {}", this.name, key, id);
         }
 
         return value;
@@ -731,11 +730,11 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             int currId = old.getIDRaw(itemName);
 
             if (currId == -1) {
-                LOGGER.info(REGISTRIES, MohistMC.i18n.as("mohist.i18n.173", this.name, itemName));
+                LOGGER.info(REGISTRIES,"Registry {}: Found a missing id from the world {}", this.name, itemName);
                 missing.put(itemName, newId);
                 continue; // no block/item -> nothing to add
             } else if (currId != newId) {
-                LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.174", this.name, name, itemName, currId, newId));
+                LOGGER.debug(REGISTRIES,"Registry {}: Fixed {} id mismatch {}: {} (init) -> {} (map).", this.name, name, itemName, currId, newId);
                 remapped.put(itemName, new IdMappingEvent.IdRemapping(currId, newId));
             }
 
@@ -756,7 +755,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             for (V value : lst) {
                 OverrideOwner<V> owner = old.owners.inverse().get(value);
                 if (owner == null) {
-                    LOGGER.warn(REGISTRIES, MohistMC.i18n.as("mohist.i18n.175", this.name, entry.getKey(), value));
+                    LOGGER.warn(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
                     continue;
                 }
 
@@ -765,12 +764,12 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
                 int realId = add(newId, itemName, value, owner.owner);
                 if (newId != realId)
-                    LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.176", this.name, entry.getKey(), newId, realId));
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
 
             int realId = add(newId, itemName, obj, primaryName == null ? itemName.getNamespace() : primaryName);
             if (realId != newId)
-                LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.177", this.name, entry.getKey(), newId, realId));
+                LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             ovs.remove(itemName);
         }
 
@@ -781,16 +780,16 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             if (!owner.equals(current)) {
                 V _new = this.owners.get(new OverrideOwner<V>(owner, ResourceKey.create(this.key, itemName)));
                 if (_new == null) {
-                    LOGGER.warn(REGISTRIES, MohistMC.i18n.as("mohist.i18n.178", this.name, itemName, owner));
+                    LOGGER.warn(REGISTRIES,"Registry {}: Skipping override for {}, Unknown owner {}", this.name, itemName, owner);
                     continue;
                 }
 
-                LOGGER.info(REGISTRIES, MohistMC.i18n.as("mohist.i18n.179", this.name, owner, itemName));
+                LOGGER.info(REGISTRIES,"Registry {}: Activating override {} for {}", this.name, owner, itemName);
 
                 int newId = this.getID(itemName);
                 int realId = this.add(newId, itemName, _new, owner);
                 if (newId != realId)
-                    LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.180", this.name, entry.getKey(), newId, realId));
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
         }
     }
@@ -811,7 +810,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             V obj = this.names.get(key);
             OverrideOwner<V> owner = this.owners.inverse().get(obj);
             if (owner == null)
-                LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.181", this.name, this.stage.getName(), key, obj));
+                LOGGER.debug(REGISTRIES,"Registry {} {}: Invalid override {} {}", this.name, this.stage.getName(), key, obj);
             ret.put(key, owner.owner);
         }
         return ret;
