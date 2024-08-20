@@ -61,15 +61,6 @@ public class MohistConfigUtil {
         return yml.getBoolean(key, true);
     }
 
-    public static String LIBRARIES_DOWNLOADSOURCE() {
-        String key = "mohist.libraries.downloadsource";
-        if (yml.get(key) == null) {
-            yml.set(key, "AUTO");
-            save();
-        }
-        return yml.getString(key, "AUTO");
-    }
-
     public static boolean CHECK_UPDATE() {
         String key = "mohist.check_update";
         if (yml.get(key) == null) {
