@@ -2,6 +2,7 @@ package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.MohistMC;
 import com.mohistmc.paper.inventory.ItemRarity;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -509,6 +510,9 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
             amount = ((Number) args.get("amount")).intValue();
         }
 
+        if (type == null) {
+            MohistMC.LOGGER.error(MohistMC.i18n.as("bukkit.ItemStack.typenull", args.get("type")));
+        }
         ItemStack result = new ItemStack(type, amount, damage);
 
         if (args.containsKey("enchantments")) { // Backward compatiblity, @deprecated
