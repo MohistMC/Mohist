@@ -31,21 +31,12 @@ import java.util.Objects;
 public class DefaultLibraries {
 
     public static void run() {
-        String config = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
-        String ds = System.getProperty("downloadsource") == null ? config : System.getProperty("downloadsource");
-        String downloadSource = config;
-        if (!Objects.equals(config, ds) && ConnectionUtil.isValid(ds)) {
-            downloadSource = ds;
-        }
-
         LibrariesDownloadQueue queue = LibrariesDownloadQueue.create()
                 .inputStream(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt"))
-                .downloadSource(downloadSource)
                 .build();
 
         System.out.println(I18n.as("libraries.checking.start"));
         if (queue.needDownload()) {
-            System.out.println(I18n.as("libraries.downloadsource", queue.downloadSource.name()));
             System.out.println(I18n.as("libraries.global.percentage"));
             queue.progressBar();
             for (Libraries libraries : queue.need_download) {

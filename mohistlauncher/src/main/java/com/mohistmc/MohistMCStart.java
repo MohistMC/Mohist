@@ -18,6 +18,7 @@
 
 package com.mohistmc;
 
+import com.mohistmc.action.ZipTree;
 import com.mohistmc.action.v_1_20_1;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
@@ -76,6 +77,8 @@ public class MohistMCStart {
         if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.check_update", true)) {
             UpdateUtils.versionCheck();
         }
+
+        ZipTree.init();
 
         if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
