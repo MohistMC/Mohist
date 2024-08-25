@@ -146,7 +146,7 @@ public class ConfigByWorlds {
                         WorldCreator wc = new WorldCreator(w);
                         wc.seed(seed);
                         wc.environment(World.Environment.valueOf(environment));
-
+                        wc.keepSpawnInMemory(keepspawninmemory);
                         wc.createWorld();
                     }
                 }
@@ -158,7 +158,8 @@ public class ConfigByWorlds {
                     if (config.get("worlds." + w + ".worldborder") != null) {
                         world.getWorldBorder().setSize(config.getDouble("worlds." + w + ".worldborder"));
                     }
-                    world.setKeepSpawnInMemory(keepspawninmemory);
+                    // Fix mods world
+                    ((CraftWorld)world).getHandle().keepSpawnInMemory = keepspawninmemory;
                 }
             }
         }
