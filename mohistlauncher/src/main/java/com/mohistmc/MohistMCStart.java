@@ -61,8 +61,8 @@ public class MohistMCStart {
                     Logo.asMohist(),
                     i18n.as("mohist.launch.welcomemessage"),
                     getVersion(),
-                    System.getProperty("java.version"),
                     System.getProperty("java.class.version"),
+                    System.getProperty("java.version"),
                     ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
             );
             if (i18n.isCN()) {
