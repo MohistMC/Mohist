@@ -11,6 +11,7 @@ import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
@@ -88,8 +89,9 @@ public class ConfigByWorlds {
     }
 
     public static void loadWorlds() {
-        if (config.getConfigurationSection("worlds.") != null) {
-            for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
+        ConfigurationSection section = config.getConfigurationSection("worlds");
+        if (section != null) {
+            for (String w : section.getKeys(false)) {
                 boolean canload = true;
                 if (Objects.equals(w, "DIM1")) {
                     if (!Bukkit.getAllowNether()) {

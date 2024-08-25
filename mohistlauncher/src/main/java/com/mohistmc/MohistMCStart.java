@@ -75,7 +75,7 @@ public class MohistMCStart {
         }
 
         if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) {
-            UpdateUtils.versionCheck();
+            new UpdateUtils().init();
         }
 
         ZipTree.init();
