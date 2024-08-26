@@ -34,7 +34,7 @@
        this.f_78144_.forEach((p_164866_, p_164867_) -> {
           if (p_164867_ != null) {
 -            p_164867_.m_77757_(this.m_78156_(p_164866_));
-+            // Mohist start - Save data asynchronously copy by SavedData
++            // Mohist start - Save data asynchronously, copy by SavedData.
 +            if (p_164867_.m_77764_()) {
 +               CompoundTag save = p_164867_.m_7176_(new CompoundTag());
 +               if (save != null) {
