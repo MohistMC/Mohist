@@ -1,5 +1,15 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
+@@ -10,6 +_,9 @@
+ import java.util.function.Consumer;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
++import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Pos;
++import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.PosRot;
++import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
+ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+ import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 @@ -22,6 +_,7 @@
  import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
  import net.minecraft.network.protocol.game.VecDeltaCodec;
@@ -8,12 +18,14 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.entity.Entity;
-@@ -35,6 +_,8 @@
+@@ -35,6 +_,10 @@
  import net.minecraft.world.item.MapItem;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.phys.Vec3;
++import net.minecraftforge.event.ForgeEventFactory;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.player.PlayerVelocityEvent;
++import org.bukkit.util.Vector;
  import org.slf4j.Logger;
  
  public class ServerEntity {
@@ -69,6 +81,31 @@
  
        if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
           if (this.f_8510_.m_20159_()) {
+@@ -104,7 +_,7 @@
+             int l1 = Mth.m_14143_(this.f_8510_.m_146909_() * 256.0F / 360.0F);
+             boolean flag1 = Math.abs(i1 - this.f_8517_) >= 1 || Math.abs(l1 - this.f_8518_) >= 1;
+             if (flag1) {
+-               this.f_8513_.accept(new ClientboundMoveEntityPacket.Rot(this.f_8510_.m_19879_(), (byte)i1, (byte)l1, this.f_8510_.m_20096_()));
++               this.f_8513_.accept(new Rot(this.f_8510_.m_19879_(), (byte)i1, (byte)l1, this.f_8510_.m_20096_()));
+                this.f_8517_ = i1;
+                this.f_8518_ = l1;
+             }
+@@ -129,12 +_,12 @@
+                if (!flag && this.f_8522_ <= 400 && !this.f_8524_ && this.f_8525_ == this.f_8510_.m_20096_()) {
+                   if ((!flag3 || !flag4) && !(this.f_8510_ instanceof AbstractArrow)) {
+                      if (flag3) {
+-                        packet1 = new ClientboundMoveEntityPacket.Pos(this.f_8510_.m_19879_(), (short)((int)i), (short)((int)j), (short)((int)k), this.f_8510_.m_20096_());
++                        packet1 = new Pos(this.f_8510_.m_19879_(), (short)((int)i), (short)((int)j), (short)((int)k), this.f_8510_.m_20096_());
+                      } else if (flag4) {
+-                        packet1 = new ClientboundMoveEntityPacket.Rot(this.f_8510_.m_19879_(), (byte)l, (byte)k1, this.f_8510_.m_20096_());
++                        packet1 = new Rot(this.f_8510_.m_19879_(), (byte)l, (byte)k1, this.f_8510_.m_20096_());
+                      }
+                   } else {
+-                     packet1 = new ClientboundMoveEntityPacket.PosRot(this.f_8510_.m_19879_(), (short)((int)i), (short)((int)j), (short)((int)k), (byte)l, (byte)k1, this.f_8510_.m_20096_());
++                     packet1 = new PosRot(this.f_8510_.m_19879_(), (short)((int)i), (short)((int)j), (short)((int)k), (byte)l, (byte)k1, this.f_8510_.m_20096_());
+                   }
+                } else {
+                   this.f_8525_ = this.f_8510_.m_20096_();
 @@ -180,7 +_,28 @@
  
        ++this.f_8521_;
@@ -80,7 +117,7 @@
 +
 +         if (this.f_8510_ instanceof ServerPlayer) {
 +            Player player = (Player) this.f_8510_.getBukkitEntity();
-+            org.bukkit.util.Vector velocity = player.getVelocity();
++            Vector velocity = player.getVelocity();
 +
 +            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
 +            this.f_8510_.f_19853_.getCraftServer().getPluginManager().callEvent(event);
@@ -99,22 +136,27 @@
           this.f_8510_.f_19864_ = false;
        }
  
-@@ -189,16 +_,19 @@
+@@ -189,16 +_,25 @@
     public void m_8534_(ServerPlayer p_8535_) {
        this.f_8510_.m_6452_(p_8535_);
        p_8535_.f_8906_.m_9829_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
-+      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.f_8510_, p_8535_);
++      ForgeEventFactory.onStopEntityTracking(this.f_8510_, p_8535_);
     }
  
     public void m_8541_(ServerPlayer p_8542_) {
 -      this.m_8536_(p_8542_.f_8906_::m_9829_);
 +      this.sendPairingData(p_8542_.f_8906_::m_9829_, p_8542_);
        this.f_8510_.m_6457_(p_8542_);
-+      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
++      ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
++   }
++
++   private ServerPlayer serverPlayer = null;
++   public void sendPairingData(Consumer<Packet<?>> p_8537_, ServerPlayer entityplayer) {
++      serverPlayer = entityplayer;
++      m_8536_(p_8537_);
     }
  
--   public void m_8536_(Consumer<Packet<?>> p_8537_) {
-+   public void sendPairingData(Consumer<Packet<?>> p_8537_, ServerPlayer entityplayer) {
+    public void m_8536_(Consumer<Packet<?>> p_8537_) {
        if (this.f_8510_.m_213877_()) {
 -         f_8508_.warn("Fetching packet for removed entity {}", (Object)this.f_8510_);
 +         // LOGGER.warn("Fetching packet for removed entity {}", (Object)this.entity);
@@ -122,14 +164,15 @@
        }
  
        Packet<?> packet = this.f_8510_.m_5654_();
-@@ -211,6 +_,13 @@
+@@ -211,6 +_,14 @@
        boolean flag = this.f_8512_;
        if (this.f_8510_ instanceof LivingEntity) {
           Collection<AttributeInstance> collection = ((LivingEntity)this.f_8510_).m_21204_().m_22170_();
 +
 +         // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
-+         if (this.f_8510_.m_19879_() == entityplayer.m_19879_()) {
++         if (serverPlayer != null && this.f_8510_.m_19879_() == serverPlayer.m_19879_()) {
 +            ((ServerPlayer) this.f_8510_).getBukkitEntity().injectScaledMaxHealth(collection, false);
++            serverPlayer = null;
 +         }
 +         // CraftBukkit end
 +
