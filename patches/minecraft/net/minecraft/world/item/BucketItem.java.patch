@@ -127,7 +127,7 @@
 +         InteractionHand enumhand = mohist$hand.getAndSet(null);
 +         // Mohist end
 +         // CraftBukkit start
-+         if (flag1 && p_150716_ != null) {
++         if (flag1 && p_150716_ != null && container != null) {
 +            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent((ServerLevel) p_150717_, p_150716_, p_150718_, clicked, enumdirection, container, enumhand);
 +            if (event.isCancelled()) {
 +               ((ServerPlayer) p_150716_).f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_150717_, p_150718_)); // SPIGOT-4238: needed when looking through entity
