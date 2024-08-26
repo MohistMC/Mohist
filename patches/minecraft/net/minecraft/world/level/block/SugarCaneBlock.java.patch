@@ -9,17 +9,18 @@
     public static final IntegerProperty f_57164_ = BlockStateProperties.f_61410_;
     protected static final float f_154735_ = 6.0F;
     protected static final VoxelShape f_57165_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-@@ -47,12 +_,16 @@
+@@ -47,12 +_,18 @@
  
           if (i < 3) {
              int j = p_222548_.m_61143_(f_57164_);
 -            if (j == 15) {
--               p_222549_.m_46597_(p_222550_.m_7494_(), this.m_49966_());
 +            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
 +               int modifier = p_222549_.spigotConfig.caneModifier; // Spigot - SPIGOT-7159: Better modifier resolution
 +            if (j >= 15 || (modifier != 100 && p_222551_.m_188501_() < (modifier / (100.0f * 16)))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222549_, p_222550_.m_7494_(), this.m_49966_());
-+               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockGrowEvent(p_222549_, p_222550_.m_7494_(), this.m_49966_()); // CraftBukkit // Mohist TODO event hook
++               p_222549_.callEvent(true);
+                p_222549_.m_46597_(p_222550_.m_7494_(), this.m_49966_());
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockGrowEvent(p_222549_, p_222550_.m_7494_(), p_222549_.mohist$defaultBlockState); // CraftBukkit // Mohist TODO event hook
                 p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
              } else {
                 p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);
