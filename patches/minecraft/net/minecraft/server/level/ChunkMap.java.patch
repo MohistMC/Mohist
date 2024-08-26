@@ -223,6 +223,20 @@
           if (i != 0) {
              int j = entitytype.m_20682_();
              if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
+@@ -1163,8 +_,11 @@
+       if (p_140332_ instanceof ServerPlayer serverplayer) {
+          this.m_140192_(serverplayer, false);
+ 
+-         for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+-            chunkmap$trackedentity.m_140485_(serverplayer);
++         try {
++            for (ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
++               chunkmap$trackedentity.m_140485_(serverplayer);
++            }
++         } catch (NullPointerException ignored) { // Mohist TODO
+          }
+       }
+ 
 @@ -1178,7 +_,7 @@
     protected void m_140421_() {
        List<ServerPlayer> list = Lists.newArrayList();
