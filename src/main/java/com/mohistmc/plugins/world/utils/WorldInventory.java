@@ -14,6 +14,7 @@ public class WorldInventory implements InventoryHolder {
         this.inventory = Bukkit.createInventory(this, size, title);
         this.worldInventoryType = worldInventoryType;
     }
+
     @Override
     public @NotNull Inventory getInventory() {
         return inventory;

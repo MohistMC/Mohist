@@ -24,7 +24,7 @@ public class ConfigByWorlds {
 
     public static void addInfo(String w, String info) {
         World world = Bukkit.getWorld(w);
-        if (ConfigByWorlds.f.exists()) {
+        if (ConfigByWorlds.f.exists() && world != null) {
             if (config.getString("worlds." + world.getName()) != null) {
                 config.set("worlds." + world.getName() + ".info", info);
             }
@@ -34,7 +34,7 @@ public class ConfigByWorlds {
 
     public static void addname(String w, String info) {
         World world = Bukkit.getWorld(w);
-        if (ConfigByWorlds.f.exists()) {
+        if (ConfigByWorlds.f.exists() && world != null) {
             if (config.getString("worlds." + world.getName()) != null) {
                 config.set("worlds." + world.getName() + ".name", info);
             }

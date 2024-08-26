@@ -12,7 +12,6 @@ public class WorldManage {
         ConfigByWorlds.addWorld(ServerAPI.getNMSServer().server.getServer().getProperties().levelName, false);
     }
 
-
     public static void deleteDir(File path) {
         if (path.exists()) {
             File[] allContents = path.listFiles();
