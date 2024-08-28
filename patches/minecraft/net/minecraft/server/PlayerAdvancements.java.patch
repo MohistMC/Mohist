@@ -53,3 +53,12 @@
        }
  
        if (flag1 && !advancementprogress.m_8193_()) {
+@@ -290,7 +_,7 @@
+ 
+    public AdvancementProgress m_135996_(Advancement p_135997_) {
+       AdvancementProgress advancementprogress = this.f_263740_.get(p_135997_);
+-      if (advancementprogress == null) {
++      if (advancementprogress == null && p_135997_ != null) {
+          advancementprogress = new AdvancementProgress();
+          this.m_135985_(p_135997_, advancementprogress);
+       }
