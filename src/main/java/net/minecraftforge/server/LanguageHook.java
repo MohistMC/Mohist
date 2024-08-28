@@ -105,7 +105,7 @@ public class LanguageHook
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
         // Possible multi-language server support?
-        for (String lang : Arrays.asList(MohistConfig.mohist_lang().toLowerCase())) {
+        for (String lang : Arrays.asList("en_us", MohistConfig.mohist_lang().toLowerCase())) {
             loadLanguage(lang, server);
         }
         capturedTables.forEach(t->t.putAll(modTable));
