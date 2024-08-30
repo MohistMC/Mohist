@@ -443,7 +443,7 @@
        UUID uuid = Player.m_36198_(p_11301_);
        List<ServerPlayer> list = Lists.newArrayList();
  
-@@ -392,75 +_,168 @@
+@@ -392,75 +_,169 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_11301_);
     }
  
@@ -538,6 +538,7 @@
        serverplayer.f_8906_ = p_11237_.f_8906_;
 +
        serverplayer.m_9015_(p_11237_, p_11238_);
++      serverplayer.reviveCaps();
 +      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
        serverplayer.m_20234_(p_11237_.m_142049_());
        serverplayer.m_36163_(p_11237_.m_5737_());

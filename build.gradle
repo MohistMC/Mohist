@@ -21,8 +21,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
-    id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.16,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.16,6.2)' apply false
 }
 
 init() //Init all our extension methods!
@@ -98,7 +98,7 @@ subprojects {
 }
 
 project(':mcp') {
-    apply plugin: 'net.neoforged.gradle.mcp'
+    apply plugin: 'net.minecraftforge.gradle.mcp'
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
@@ -107,7 +107,7 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-    apply plugin: 'net.neoforged.gradle.patcher'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
 
     dependencies {
         implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
@@ -344,7 +344,7 @@ def sharedFmlonlyForge = { Project prj ->
 project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
-    apply plugin: 'net.neoforged.gradle.patcher'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
 
     sourceSets {
         main {

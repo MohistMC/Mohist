@@ -914,7 +914,7 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1346,25 +_,37 @@
+@@ -1346,25 +_,45 @@
     }
  
     public void m_8999_(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_) {
@@ -950,6 +950,14 @@
 +         this.f_8941_.m_9260_(p_9000_);
           this.f_8924_.m_6846_().m_11229_(this, p_9000_);
           this.f_8924_.m_6846_().m_11292_(this);
++         this.m_6885_();
++         for (MobEffectInstance mobEffect : this.m_21220_()) {
++            this.f_8906_.m_141995_(new ClientboundUpdateMobEffectPacket(this.m_142049_(), mobEffect));
++         }
++
++         // Don't fire on respawn
++         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
++         Bukkit.getPluginManager().callEvent(event);
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), p_9000_.m_46472_());
        }
  
