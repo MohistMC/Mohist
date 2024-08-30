@@ -1082,7 +1082,7 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1400,26 +_,49 @@
+@@ -1400,26 +_,46 @@
        return this.f_8909_;
     }
  
@@ -1132,9 +1132,6 @@
 +         for (MobEffectInstance mobEffect : this.m_21220_()) {
 +            this.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(this.m_19879_(), mobEffect));
 +         }
-+
-+         // Fire advancement trigger
-+         this.m_9209_(serverlevel.getWorld().getHandle());
 +
 +         // Don't fire on respawn
 +         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
