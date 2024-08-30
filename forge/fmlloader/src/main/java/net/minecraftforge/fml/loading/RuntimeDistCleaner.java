@@ -53,7 +53,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         AtomicBoolean changes = new AtomicBoolean();
         if (remove(classNode.visibleAnnotations, DIST))
         {
-            LOGGER.error(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
+            // LOGGER.error(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
         }
 

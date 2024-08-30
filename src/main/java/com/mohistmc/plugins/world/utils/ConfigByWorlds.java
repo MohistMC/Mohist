@@ -11,6 +11,7 @@ import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
@@ -23,7 +24,7 @@ public class ConfigByWorlds {
 
     public static void addInfo(String w, String info) {
         World world = Bukkit.getWorld(w);
-        if (ConfigByWorlds.f.exists()) {
+        if (ConfigByWorlds.f.exists() && world != null) {
             if (config.getString("worlds." + world.getName()) != null) {
                 config.set("worlds." + world.getName() + ".info", info);
             }
@@ -33,7 +34,7 @@ public class ConfigByWorlds {
 
     public static void addname(String w, String info) {
         World world = Bukkit.getWorld(w);
-        if (ConfigByWorlds.f.exists()) {
+        if (ConfigByWorlds.f.exists() && world != null) {
             if (config.getString("worlds." + world.getName()) != null) {
                 config.set("worlds." + world.getName() + ".name", info);
             }
@@ -88,8 +89,9 @@ public class ConfigByWorlds {
     }
 
     public static void loadWorlds() {
-        if (config.getConfigurationSection("worlds.") != null) {
-            for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
+        ConfigurationSection section = config.getConfigurationSection("worlds");
+        if (section != null) {
+            for (String w : section.getKeys(false)) {
                 boolean canload = true;
                 if (Objects.equals(w, "DIM1")) {
                     if (!Bukkit.getAllowNether()) {
@@ -146,7 +148,7 @@ public class ConfigByWorlds {
                         WorldCreator wc = new WorldCreator(w);
                         wc.seed(seed);
                         wc.environment(World.Environment.valueOf(environment));
-
+                        wc.keepSpawnInMemory(keepspawninmemory);
                         wc.createWorld();
                     }
                 }
@@ -158,7 +160,8 @@ public class ConfigByWorlds {
                     if (config.get("worlds." + w + ".worldborder") != null) {
                         world.getWorldBorder().setSize(config.getDouble("worlds." + w + ".worldborder"));
                     }
-                    world.setKeepSpawnInMemory(keepspawninmemory);
+                    // Fix mods world
+                    ((CraftWorld)world).getHandle().keepSpawnInMemory = keepspawninmemory;
                 }
             }
         }
@@ -167,7 +170,7 @@ public class ConfigByWorlds {
     public static void removeWorld(String w) {
         if (Bukkit.getWorld(w) != null) {
             World world = Bukkit.getWorld(w);
-            if (ConfigByWorlds.f.exists()) {
+            if (f.exists() && world != null) {
                 if (config.getString("worlds." + world.getName()) != null) {
                     config.set("worlds." + world.getName(), null);
                     init();
@@ -178,7 +181,7 @@ public class ConfigByWorlds {
 
     public static void addSpawn(Location location) {
         World world = location.getWorld();
-        if (ConfigByWorlds.f.exists()) {
+        if (f.exists() && world != null) {
             if (config.getString("worlds." + world.getName()) != null) {
                 config.set("worlds." + world.getName() + ".spawn.x", location.getX());
                 config.set("worlds." + world.getName() + ".spawn.y", location.getY());
@@ -192,7 +195,7 @@ public class ConfigByWorlds {
 
     public static void getSpawn(String w, Player player) {
         World world = Bukkit.getWorld(w);
-        if (f.exists()) {
+        if (f.exists() && world != null) {
             if (config.getString("worlds." + world.getName()) != null) {
                 double x = config.getDouble("worlds." + world.getName() + ".spawn.x");
                 double y = config.getDouble("worlds." + world.getName() + ".spawn.y");
@@ -204,5 +207,10 @@ public class ConfigByWorlds {
                 player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
             }
         }
+    }
+
+    public static void difficulty(String w, String difficulty) {
+        config.set("worlds." + w + ".difficulty", difficulty);
+        init();
     }
 }

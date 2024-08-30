@@ -6,6 +6,7 @@
 package net.minecraftforge.common.util;
 
 import com.google.common.collect.Streams;
+import com.mohistmc.MohistMC;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,7 +98,7 @@ public class TextTable
     {
         if (values.length != columns.size())
         {
-            throw new IllegalArgumentException("Received wrong amount of values for table row, expected " + columns.size() + ", received " + columns.size() + ".");
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.78", columns.size(), columns.size()));
         }
         Row row = new Row();
         for (int i = 0; i < values.length; i++)
@@ -194,7 +195,7 @@ public class TextTable
         {
             if (columns.size() != values.size())
             {
-                throw new IllegalArgumentException("Received wrong amount of columns for table row, expected " + columns.size() + ", received " + columns.size() + ".");
+                throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.79",columns.size(), columns.size()));
             }
             return Streams.zip(values.stream(), columns.stream(), (v, c) -> c.format(v, padding)).collect(Collectors.toList());
         }

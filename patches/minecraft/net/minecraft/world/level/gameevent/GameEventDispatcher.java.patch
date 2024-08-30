@@ -1,18 +1,12 @@
 --- a/net/minecraft/world/level/gameevent/GameEventDispatcher.java
 +++ b/net/minecraft/world/level/gameevent/GameEventDispatcher.java
-@@ -5,10 +_,16 @@
- import java.util.List;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.SectionPos;
-+import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.network.protocol.game.DebugPackets;
+@@ -9,6 +_,10 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.world.level.chunk.ChunkAccess;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftGameEvent;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 +import org.bukkit.event.world.GenericGameEvent;
  
  public class GameEventDispatcher {

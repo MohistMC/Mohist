@@ -8,7 +8,7 @@
  import net.minecraft.world.level.portal.PortalShape;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-@@ -112,7 +_,14 @@
+@@ -112,7 +_,15 @@
        if (!p_49263_.m_5825_()) {
           p_49263_.m_7311_(p_49263_.m_20094_() + 1);
           if (p_49263_.m_20094_() == 0) {
@@ -18,7 +18,8 @@
 +            p_49261_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
-+               p_49263_.setSecondsOnFire(event.getDuration(), false);
++               p_49263_.callEvent.set(false);
++               p_49263_.m_20254_(event.getDuration());
 +            }
 +            // CraftBukkit end
           }

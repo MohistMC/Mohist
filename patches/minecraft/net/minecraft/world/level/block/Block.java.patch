@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/Block.java
 +++ b/net/minecraft/world/level/block/Block.java
-@@ -53,6 +_,7 @@
- import net.minecraft.world.level.block.state.StateDefinition;
- import net.minecraft.world.level.block.state.properties.Property;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.storage.loot.LootContext;
- import net.minecraft.world.level.storage.loot.LootParams;
- import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
- import net.minecraft.world.phys.Vec3;
 @@ -61,10 +_,11 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;

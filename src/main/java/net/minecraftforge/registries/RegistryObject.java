@@ -5,6 +5,7 @@
 
 package net.minecraftforge.registries;
 
+import com.mohistmc.MohistMC;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -175,7 +176,7 @@ public final class RegistryObject<T> implements Supplier<T>
                     if (!registryExists(registryName))
                     {
                         invalidRegistry = true;
-                        throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
+                        throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.222", registryName, modid, callerStack));
                     }
                     registryExists = true;
                 }
@@ -201,7 +202,7 @@ public final class RegistryObject<T> implements Supplier<T>
     public T get()
     {
         T ret = this.value;
-        if (ret == null) throw new NullPointerException("Registry Object not present: " + this.name);
+        if (ret == null) throw new NullPointerException(MohistMC.i18n.as("mohist.i18n.223", this.name));
         return ret;
     }
 

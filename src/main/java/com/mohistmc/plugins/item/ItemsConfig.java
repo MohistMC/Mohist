@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -25,8 +26,9 @@ public class ItemsConfig extends MohistPluginConfig {
 
     public List<ItemStack> getItems(){
         List<ItemStack> list = new ArrayList<>();
-        if (yaml.get("items") == null)  return list;
-        for (String s : yaml.getConfigurationSection("items").getKeys(false)) {
+        ConfigurationSection configurationSection = yaml.getConfigurationSection("items");
+        if (yaml.get("items") == null || configurationSection == null)  return list;
+        for (String s : configurationSection.getKeys(false)) {
             list.add(yaml.getItemStack("items." + s));
         }
         return list;

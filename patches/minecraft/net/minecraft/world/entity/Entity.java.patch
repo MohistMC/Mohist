@@ -322,7 +322,7 @@
        }
  
        this.m_146871_();
-@@ -513,15 +_,42 @@
+@@ -513,15 +_,44 @@
  
     public void m_20093_() {
        if (!this.m_5825_()) {
@@ -336,11 +336,13 @@
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(combustEvent);
 +
 +            if (!combustEvent.isCancelled()) {
-+               this.setSecondsOnFire(combustEvent.getDuration(), false);
++               callEvent.set(false);
++               this.m_20254_(combustEvent.getDuration());
 +            }
 +         } else {
++            callEvent.set(false);
 +            // This will be called every single tick the entity is in lava, so don't throw an event
-+            this.setSecondsOnFire(15, false);
++            this.m_20254_(15);
 +         }
 +         CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : CraftBlock.at(f_19853_, lastLavaContact);
           if (this.m_6469_(this.m_269291_().m_269233_(), 4.0F)) {
@@ -877,7 +879,7 @@
                 list.add(0, p_20349_);
              } else {
                 list.add(p_20349_);
-@@ -1946,10 +_,43 @@
+@@ -1946,10 +_,45 @@
        }
     }
  
@@ -887,37 +889,39 @@
        if (p_20352_.m_20202_() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
-+         // CraftBukkit start
-+         CraftEntity craft = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
-+         Entity orig = craft == null ? null : craft.getHandle();
-+         if (getBukkitEntity() instanceof Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
-+            VehicleExitEvent event = new VehicleExitEvent(
-+                    (Vehicle) getBukkitEntity(),
-+                    (org.bukkit.entity.LivingEntity) p_20352_.getBukkitEntity()
-+            );
++         if (!AsyncCatcher.catchAsync()) {
++            // CraftBukkit start
++            CraftEntity craft = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++            Entity orig = craft == null ? null : craft.getHandle();
++            if (getBukkitEntity() instanceof Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
++               VehicleExitEvent event = new VehicleExitEvent(
++                       (Vehicle) getBukkitEntity(),
++                       (org.bukkit.entity.LivingEntity) p_20352_.getBukkitEntity()
++               );
++               // Suppress during worldgen
++               if (this.valid) {
++                  Bukkit.getPluginManager().callEvent(event);
++               }
++               CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++               Entity n = craftn == null ? null : craftn.getHandle();
++               if (event.isCancelled() || n != orig) {
++                  removePassenger = false;
++                  return;
++               }
++            }
++            // CraftBukkit end
++            // Spigot start
++            org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(p_20352_.getBukkitEntity(), this.getBukkitEntity());
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
 +            }
-+            CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
-+            Entity n = craftn == null ? null : craftn.getHandle();
-+            if (event.isCancelled() || n != orig) {
++            if (event.isCancelled()) {
 +               removePassenger = false;
 +               return;
 +            }
++            // Spigot end
 +         }
-+         // CraftBukkit end
-+         // Spigot start
-+         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(p_20352_.getBukkitEntity(), this.getBukkitEntity());
-+         // Suppress during worldgen
-+         if (this.valid) {
-+            Bukkit.getPluginManager().callEvent(event);
-+         }
-+         if (event.isCancelled()) {
-+            removePassenger = false;
-+            return;
-+         }
-+         // Spigot end
           if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
              this.f_19823_ = ImmutableList.of();
           } else {
@@ -937,11 +941,16 @@
     protected boolean m_269011_() {
        return true;
     }
-@@ -2027,11 +_,17 @@
-             ResourceKey<Level> resourcekey = this.m_9236_().m_46472_() == Level.f_46429_ ? Level.f_46428_ : Level.f_46429_;
+@@ -2024,14 +_,20 @@
+          ServerLevel serverlevel = (ServerLevel)this.m_9236_();
+          if (this.f_19817_) {
+             MinecraftServer minecraftserver = serverlevel.m_7654_();
+-            ResourceKey<Level> resourcekey = this.m_9236_().m_46472_() == Level.f_46429_ ? Level.f_46428_ : Level.f_46429_;
++            ResourceKey<Level> resourcekey = this.m_9236_().getTypeKey() == LevelStem.f_63972_ ? Level.f_46428_ : Level.f_46429_;
              ServerLevel serverlevel1 = minecraftserver.m_129880_(resourcekey);
-             if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
+-            if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
 -               this.m_9236_().m_46473_().m_6180_("portal");
++            if (true && serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) { // CraftBukkit
 +               this.f_19853_.m_46473_().m_6180_("portal");
                 this.f_19818_ = i;
                 this.m_20091_();
@@ -1028,7 +1037,7 @@
     }
  
     public int m_146888_() {
-@@ -2254,11 +_,40 @@
+@@ -2254,11 +_,41 @@
  
     public void m_8038_(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.m_7311_(this.f_19831_ + 1);
@@ -1046,7 +1055,8 @@
 +         EntityCombustByEntityEvent entityCombustEvent = new EntityCombustByEntityEvent(stormBukkitEntity, thisBukkitEntity, 8);
 +         pluginManager.callEvent(entityCombustEvent);
 +         if (!entityCombustEvent.isCancelled()) {
-+            this.setSecondsOnFire(entityCombustEvent.getDuration(), false);
++            this.callEvent.set(false);
++            this.m_20254_(entityCombustEvent.getDuration());
 +         }
 +         // CraftBukkit end
 +      }
@@ -1082,7 +1092,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2410,32 +_,66 @@
+@@ -2410,32 +_,73 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -1139,10 +1149,18 @@
                 p_20118_.m_143334_(entity);
 -               if (p_20118_.m_46472_() == Level.f_46430_) {
 -                  ServerLevel.m_8617_(p_20118_);
+-               }
 +               if (spawnPortal && p_20118_.getTypeKey() == LevelStem.f_63973_) { // CraftBukkit
 +                  ServerLevel.entityAtomicReference(this); // Mohist
 +                  ServerLevel.m_8617_(p_20118_); // CraftBukkit
-                }
++               }
++               // CraftBukkit start - Forward the CraftEntity to the new entity
++               this.getBukkitEntity().setHandle(entity);
++               entity.bukkitEntity = this.getBukkitEntity();
++               if (this instanceof Mob)
++               {
++                  ( ( Mob ) this ).m_21455_( true, false ); // Unleash to prevent duping of leads.
++               }
 +               // CraftBukkit end
              }
 +            return entity;
@@ -1609,8 +1627,8 @@
 +   public final boolean isInFluidType() {
 +      return this.forgeFluidTypeHeight.size() > 0;
 +   }
-+  @Override
-+  public final net.minecraftforge.fluids.FluidType getEyeInFluidType() {
++   @Override
++   public final net.minecraftforge.fluids.FluidType getEyeInFluidType() {
 +      return forgeFluidTypeOnEyes;
 +   }
 +   @Override

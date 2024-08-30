@@ -18,6 +18,7 @@
 
 package com.mohistmc;
 
+import com.mohistmc.action.ZipTree;
 import com.mohistmc.action.v_1_20_1;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
@@ -60,19 +61,24 @@ public class MohistMCStart {
                     Logo.asMohist(),
                     i18n.as("mohist.launch.welcomemessage"),
                     getVersion(),
-                    System.getProperty("java.version"),
                     System.getProperty("java.class.version"),
+                    System.getProperty("java.version"),
                     ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
             );
+            if (i18n.isCN()) {
+                System.out.printf("官方交流QQ群: 158638%n");
+            }
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.check_update", true)) {
-            UpdateUtils.versionCheck();
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) {
+            new UpdateUtils().init();
         }
+
+        ZipTree.init();
 
         if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();

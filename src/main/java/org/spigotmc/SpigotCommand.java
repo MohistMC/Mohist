@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import com.mohistmc.MohistMC;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.ChatColor;
@@ -27,8 +28,8 @@ public class SpigotCommand extends Command {
         }
 
         if (args[0].equals("reload")) {
-            Command.broadcastCommandMessage(sender, ChatColor.RED + "Please note that this command is not supported and may cause issues.");
-            Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+            Command.broadcastCommandMessage(sender, ChatColor.RED + MohistMC.i18n.as("mohist.i18n.64"));
+            Command.broadcastCommandMessage(sender, ChatColor.RED + MohistMC.i18n.as("mohist.i18n.65"));
 
             MinecraftServer console = MinecraftServer.getServer();
             SpigotConfig.init((File) MinecraftServer.options.valueOf("spigot-settings"));
@@ -37,7 +38,7 @@ public class SpigotCommand extends Command {
             }
             console.server.reloadCount++;
 
-            Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Reload complete.");
+            Command.broadcastCommandMessage(sender, ChatColor.GREEN + MohistMC.i18n.as("mohist.i18n.66"));
         }
 
         return true;

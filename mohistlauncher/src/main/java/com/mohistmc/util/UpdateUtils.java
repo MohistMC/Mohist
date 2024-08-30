@@ -32,33 +32,51 @@ import java.util.List;
 
 public class UpdateUtils {
 
-    public static void versionCheck() {
+    public Json json;
+    public String jar_version;
+    public int build_number;
+    public String time;
+    public String url;
+
+    public UpdateUtils() {
+        jar_version = DataParser.versionMap.get("mohist");
+    }
+
+    public void init() {
         System.out.println(I18n.as("update.check"));
         System.out.println(I18n.as("update.stopcheck"));
-
-        try {
-            Json json = Json.read(new URL("https://mohistmc.com/api/v2/sources/jenkins/Mohist-%s/builds/latest".formatted(MohistMCStart.MCVERSION)));
-
-            var jar_version = Integer.parseInt(DataParser.versionMap.get("mohist"));
-            var build_number = json.asInteger("id");
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("createdAt")));
-            String url = json.asString("originUrl");
-
-            if (jar_version >= build_number) {
-                System.out.println(I18n.as("update.latest", jar_version, build_number));
-            } else {
-                System.out.println(I18n.as("update.detect", build_number, jar_version, time));
-                if (MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
-                    File mohistjar = MohistMCStart.jarTool.getFile();
-                    System.out.println(I18n.as("download.file", mohistjar.getName(), NumberUtil.getSize(ConnectionUtil.getConn(url).getContentLength())));
-                    if (ConnectionUtil.downloadFile(url, mohistjar)) {
-                        System.out.println(I18n.as("download.file.ok", mohistjar.getName()));
+        if (jar_version.equals("dev")) {
+            return;
+        }
+        if (canUpdate()) {
+            System.out.println(I18n.as("update.latest", jar_version, build_number));
+        } else {
+            System.out.println(I18n.as("update.detect", build_number, jar_version, time));
+            if (MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
+                File mohistjar = MohistMCStart.jarTool.getFile();
+                System.out.println(I18n.as("download.file", mohistjar.getName(), NumberUtil.getSize(ConnectionUtil.getConn(url).getContentLength())));
+                if (ConnectionUtil.downloadFile(url, mohistjar)) {
+                    System.out.println(I18n.as("download.file.ok", mohistjar.getName()));
+                    try {
                         restartServer(Arrays.asList("java", "-jar", MohistMCStart.jarTool.getJarName()), true);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
+        }
+    }
+
+    private boolean canUpdate() {
+        try {
+            build_number = Integer.parseInt(jar_version); // Add try Cache
+            json = Json.read(new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-%s/lastSuccessfulBuild/api/json".formatted(MohistMCStart.MCVERSION)));
+            build_number = json.asInteger("number");
+            time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("timestamp")));
+            url = "https://ci.codemc.io/job/MohistMC/job/Mohist-%s/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-%s-%s-server.jar".formatted(MohistMCStart.MCVERSION, MohistMCStart.MCVERSION, build_number);
+            return Integer.parseInt(jar_version) >= build_number;
         } catch (Throwable e) {
-            System.out.println(I18n.as("check.update.noci"));
+            return false;
         }
     }
 

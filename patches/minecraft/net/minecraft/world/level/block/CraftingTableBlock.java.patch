@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CraftingTableBlock.java
++++ b/net/minecraft/world/level/block/CraftingTableBlock.java
+@@ -34,7 +_,7 @@
+ 
+    public MenuProvider m_7246_(BlockState p_52240_, Level p_52241_, BlockPos p_52242_) {
+       return new SimpleMenuProvider((p_52229_, p_52230_, p_52231_) -> {
+-         return new CraftingMenu(p_52229_, p_52230_, ContainerLevelAccess.m_39289_(p_52241_, p_52242_));
++         return new CraftingMenu(p_52229_, p_52230_, ContainerLevelAccess.createFix(p_52241_, p_52242_));
+       }, f_52222_);
+    }
+ }

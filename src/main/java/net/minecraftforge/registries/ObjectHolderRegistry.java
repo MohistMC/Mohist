@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.mohistmc.MohistMC;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -110,7 +111,7 @@ public class ObjectHolderRegistry
             }
             catch (ClassNotFoundException e)
             {
-                throw new RuntimeException("Vanilla class not found, should not be possible", e);
+                throw new RuntimeException(MohistMC.i18n.as("mohist.i18n.213"), e);
             }
         });
 
@@ -121,7 +122,7 @@ public class ObjectHolderRegistry
                         data.memberName(), null, (String)data.annotationData().get("registryName"),
                         (String)data.annotationData().get("value"), false, false));
 
-        LOGGER.debug(ForgeRegistry.REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
+        LOGGER.debug(ForgeRegistry.REGISTRIES, MohistMC.i18n.as("mohist.i18n.214", objectHolders.size()));
     }
 
     private static void scanTarget(Map<Type, String> classModIds, Map<Type, Class<?>> classCache, Type type,
@@ -157,7 +158,7 @@ public class ObjectHolderRegistry
                 String prefix = classModIds.get(type);
                 if (prefix == null)
                 {
-                    LOGGER.warn(ForgeRegistry.REGISTRIES,"Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, type, annotationTarget);
+                    LOGGER.warn(ForgeRegistry.REGISTRIES, MohistMC.i18n.as("mohist.i18n.215", value, type, annotationTarget));
                     throw new IllegalStateException("Unqualified reference to ObjectHolder");
                 }
                 value = prefix + ':' + value;
@@ -201,16 +202,16 @@ public class ObjectHolderRegistry
         if (classRegistryNames.containsKey(targetClass))
             return classRegistryNames.get(targetClass);
 
-        throw new IllegalStateException("No registry name was declared for " + declaration);
+        throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.216", declaration));
     }
 
     public static void applyObjectHolders()
     {
         try
         {
-            LOGGER.debug(ForgeRegistry.REGISTRIES, "Applying holder lookups");
+            LOGGER.debug(ForgeRegistry.REGISTRIES, MohistMC.i18n.as("mohist.i18n.217"));
             applyObjectHolders(key -> true);
-            LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
+            LOGGER.debug(ForgeRegistry.REGISTRIES, MohistMC.i18n.as("mohist.i18n.219"));
         } catch (RuntimeException e)
         {
             // It is more important that the calling contexts continue without exception to prevent further cascading errors
@@ -220,7 +221,7 @@ public class ObjectHolderRegistry
 
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)
     {
-        RuntimeException aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
+        RuntimeException aggregate = new RuntimeException(MohistMC.i18n.as("mohist.i18n.218"));
         objectHolders.forEach(objectHolder -> {
             try
             {

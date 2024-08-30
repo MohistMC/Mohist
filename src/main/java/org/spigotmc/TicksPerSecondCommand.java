@@ -44,7 +44,7 @@ public class TicksPerSecondCommand extends Command
     }
 
     private boolean hasShownMemoryWarning; // Paper
-    private static String format(double tps) // Paper - Made static
+    public static String format(double tps) // Paper - Made static
     {
         return ( ( tps > 18.0 ) ? ChatColor.GREEN : ( tps > 16.0 ) ? ChatColor.YELLOW : ChatColor.RED ).toString()
                 + ( ( tps > 21.0 ) ? "*" : "" ) + Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 ); // Paper - only print * at 21, we commonly peak to 20.02 as the tick sleep is not accurate enough, stop the noise

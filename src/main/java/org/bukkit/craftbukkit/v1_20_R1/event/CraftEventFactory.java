@@ -324,7 +324,7 @@ public class CraftEventFactory {
     /**
      * Entity Enter Love Mode Event
      */
-    public static EntityEnterLoveModeEvent callEntityEnterLoveModeEvent(net.minecraft.world.entity.player.Player  entityHuman, Animal entityAnimal, int loveTicks) {
+    public static EntityEnterLoveModeEvent callEntityEnterLoveModeEvent(net.minecraft.world.entity.player.Player entityHuman, Animal entityAnimal, int loveTicks) {
         EntityEnterLoveModeEvent entityEnterLoveModeEvent = new EntityEnterLoveModeEvent((Animals) entityAnimal.getBukkitEntity(), entityHuman != null ? (HumanEntity) entityHuman.getBukkitEntity() : null, loveTicks);
         Bukkit.getPluginManager().callEvent(entityEnterLoveModeEvent);
         return entityEnterLoveModeEvent;
@@ -1169,6 +1169,17 @@ public class CraftEventFactory {
         return event;
     }
 
+    // Paper start - Add orb
+    public static PlayerExpChangeEvent callPlayerExpChangeEvent(net.minecraft.world.entity.player.Player entity, net.minecraft.world.entity.ExperienceOrb entityOrb) {
+        Player player = (Player) entity.getBukkitEntity();
+        ExperienceOrb source = (ExperienceOrb) entityOrb.getBukkitEntity();
+        int expAmount = source.getExperience();
+        PlayerExpChangeEvent event = new PlayerExpChangeEvent(player, source, expAmount);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+    // Paper end
+
     public static boolean handleBlockGrowEvent(Level world, BlockPos pos, net.minecraft.world.level.block.state.BlockState block) {
         return handleBlockGrowEvent(world, pos, block, 3);
     }
@@ -1728,7 +1739,8 @@ public class CraftEventFactory {
     public static LootGenerateEvent callLootGenerateEvent(Container inventory, LootTable lootTable, LootContext lootInfo, List<ItemStack> loot, boolean plugin) {
         CraftWorld world = lootInfo.getLevel().getWorld();
         Entity entity = lootInfo.getParamOrNull(LootContextParams.THIS_ENTITY);
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(lootTable.getLootTableId()); // TODO Mohist use forge method
+        ResourceLocation resourceLocation = lootTable.getLootTableId();
+        NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation != null ? resourceLocation : lootTable.craftLootTable); // TODO Mohist use forge method
         CraftLootTable craftLootTable = new CraftLootTable(key, lootTable);
         List<org.bukkit.inventory.ItemStack> bukkitLoot = loot.stream().map(CraftItemStack::asCraftMirror).collect(Collectors.toCollection(ArrayList::new));
 

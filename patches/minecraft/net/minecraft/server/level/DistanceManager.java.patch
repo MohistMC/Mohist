@@ -8,7 +8,7 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-@@ -23,6 +_,7 @@
+@@ -23,10 +_,12 @@
  import java.io.FileOutputStream;
  import java.io.IOException;
  import java.nio.charset.StandardCharsets;
@@ -16,6 +16,11 @@
  import java.util.Iterator;
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.SectionPos;
+ import net.minecraft.util.SortedArraySet;
 @@ -54,6 +_,8 @@
     private long f_140771_;
     private int f_183902_ = 10;
@@ -29,47 +34,49 @@
        }
  
        if (!this.f_140765_.isEmpty()) {
--         this.f_140765_.forEach((p_183908_) -> {
--            p_183908_.m_143003_(p_140806_, this.f_140770_);
--         });
 +         try {
-+            this.f_140765_.forEach((p_183908_) -> {
-+               p_183908_.m_143003_(p_140806_, this.f_140770_);
-+            });
+          this.f_140765_.forEach((p_183908_) -> {
+             p_183908_.m_143003_(p_140806_, this.f_140770_);
+          });
 +         } catch (ConcurrentModificationException ignored) {}
           this.f_140765_.clear();
           return true;
        } else {
-@@ -159,6 +_,25 @@
+@@ -150,6 +_,9 @@
+       }
+    }
+ 
++   public AtomicBoolean removeTicketCB = new AtomicBoolean(false);
++   public AtomicBoolean addTicketCB = new AtomicBoolean(false);
++
+    void m_140784_(long p_140785_, Ticket<?> p_140786_) {
+       SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(p_140785_);
+       int i = m_140797_(sortedarrayset);
+@@ -159,7 +_,18 @@
           this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
        }
  
+-   }
 +      if (p_140786_.isForceTicks()) {
 +          SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(p_140785_, e -> SortedArraySet.m_14246_(4));
 +          tickets.m_14253_(ticket);
 +      }
 +   }
 +
-+   boolean addTicketCB(long pChunkPos, Ticket<?> pTicket) {
-+      SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(pChunkPos);
-+      int i = m_140797_(sortedarrayset);
-+      Ticket<?> ticket = sortedarrayset.m_14253_(pTicket);
-+      ticket.m_9429_(this.f_140771_);
-+      if (pTicket.m_9433_() < i) {
-+         this.f_140762_.m_140715_(pChunkPos, pTicket.m_9433_(), true);
-+      }
-+      if (pTicket.isForceTicks()) {
-+         SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(pChunkPos, e -> SortedArraySet.m_14246_(4));
-+         tickets.m_14253_(ticket);
-+      }
-+      return pTicket == ticket; // CraftBukkit
-    }
++   // CraftBukkit start
++   boolean addTicketCB(long p_140785_, Ticket<?> p_140786_) {
++      m_140784_(p_140785_, p_140786_);
++      return addTicketCB.getAndSet(false);
++   }
++   // CraftBukkit end
  
     void m_140818_(long p_140819_, Ticket<?> p_140820_) {
-@@ -171,26 +_,71 @@
+       SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(p_140819_);
+@@ -171,31 +_,70 @@
        }
  
        this.f_140762_.m_140715_(p_140819_, m_140797_(sortedarrayset), false);
+-   }
 +
 +      if (p_140820_.isForceTicks()) {
 +          SortedArraySet<Ticket<?>> tickets = forcedTickets.get(p_140819_);
@@ -79,46 +86,22 @@
 +      }
 +   }
 +
-+   boolean removeTicketCB(long pChunkPos, Ticket<?> pTicket) {
-+      SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(pChunkPos);
-+      if (sortedarrayset.remove(pTicket)) {
-+      }
-+      boolean removed = false; // CraftBukkit
-+      if (sortedarrayset.isEmpty()) {
-+         this.f_140761_.remove(pChunkPos);
-+         removed = true; // CraftBukkit
-+      }
-+
-+      this.f_140762_.m_140715_(pChunkPos, m_140797_(sortedarrayset), false);
-+
-+      if (pTicket.isForceTicks()) {
-+         SortedArraySet<Ticket<?>> tickets = forcedTickets.get(pChunkPos);
-+         if (tickets != null) {
-+            tickets.remove(pTicket);
-+         }
-+      }
-+      return removed; // CraftBukkit
-    }
++   // CraftBukkit start
++   boolean removeTicketCB(long p_140819_, Ticket<?> p_140820_) {
++      m_140818_(p_140819_, p_140820_);
++      return removeTicketCB.getAndSet(false);
++   }
++   // CraftBukkit end
  
     public <T> void m_140792_(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
        this.m_140784_(p_140794_.m_45588_(), new Ticket<>(p_140793_, p_140795_, p_140796_));
     }
- 
-+   public <T> boolean addRegionTicketAtDistance(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T identifier) {
-+      return this.addTicketCB(chunkcoordintpair.m_45588_(), new Ticket<>(ticketType, level, identifier));
-+      // CraftBukkit end
-+   }
-+
+-
     public <T> void m_140823_(TicketType<T> p_140824_, ChunkPos p_140825_, int p_140826_, T p_140827_) {
        Ticket<T> ticket = new Ticket<>(p_140824_, p_140826_, p_140827_);
        this.m_140818_(p_140825_.m_45588_(), ticket);
     }
- 
-+   public <T> boolean removeRegionTicketAtDistance(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T identifier) {
-+      Ticket<T> ticket = new Ticket<>(ticketType, level, identifier);
-+      return this.removeTicketCB(chunkcoordintpair.m_45588_(), ticket);
-+      // CraftBukkit end
-+   }
+-
 +   
     public <T> void m_140840_(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
 -      Ticket<T> ticket = new Ticket<>(p_140841_, ChunkLevel.m_287154_(FullChunkStatus.FULL) - p_140843_, p_140844_);
@@ -131,6 +114,16 @@
        this.f_183901_.m_184151_(i, ticket);
     }
  
++   // CraftBukkit start
++   public <T> boolean addRegionTicketAtDistance(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T identifier) {
++      Ticket<T> ticket = new Ticket<>(ticketType, 33 - level, identifier, false);
++      long i = chunkcoordintpair.m_45588_();
++      boolean added = this.addTicketCB(i, ticket);
++      this.f_183901_.m_184151_(i, ticket);
++      return added; // CraftBukkit
++   }
++   // CraftBukkit end
++
     public <T> void m_140849_(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_) {
 -      Ticket<T> ticket = new Ticket<>(p_140850_, ChunkLevel.m_287154_(FullChunkStatus.FULL) - p_140852_, p_140853_);
 +      removeRegionTicket(p_140850_, p_140851_, p_140852_, p_140853_, false);
@@ -140,6 +133,21 @@
        long i = p_140851_.m_45588_();
        this.m_140818_(i, ticket);
        this.f_183901_.m_184165_(i, ticket);
+    }
+ 
++   // CraftBukkit start
++   public <T> boolean removeRegionTicketAtDistance(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T p_140853_) {
++      Ticket<T> ticket = new Ticket<>(ticketType, 33 - level, p_140853_, false);
++      long i = chunkcoordintpair.m_45588_();
++      boolean removed = this.removeTicketCB(i, ticket);
++      this.f_183901_.m_184165_(i, ticket);
++      return removed;
++   }
++   // CraftBukkit end
++
+    private SortedArraySet<Ticket<?>> m_140857_(long p_140858_) {
+       return this.f_140761_.computeIfAbsent(p_140858_, (p_183923_) -> {
+          return SortedArraySet.m_14246_(4);
 @@ -230,6 +_,7 @@
        ChunkPos chunkpos = p_140829_.m_123251_();
        long i = chunkpos.m_45588_();
@@ -160,9 +168,9 @@
     private void m_143207_(String p_143208_) {
        try (FileOutputStream fileoutputstream = new FileOutputStream(new File(p_143208_))) {
           for(Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>> entry : this.f_140761_.long2ObjectEntrySet()) {
-@@ -302,6 +_,26 @@
-    TickingTracker m_183915_() {
-       return this.f_183901_;
+@@ -335,6 +_,26 @@
+    public boolean m_201911_() {
+       return !this.f_140761_.isEmpty();
     }
 +
 +   // CraftBukkit start
@@ -185,5 +193,5 @@
 +   }
 +   // CraftBukkit end
  
-    public void m_201910_() {
-       ImmutableSet<TicketType<?>> immutableset = ImmutableSet.of(TicketType.f_9449_, TicketType.f_9448_, TicketType.f_9446_);
+    class ChunkTicketTracker extends ChunkTracker {
+       private static final int f_286988_ = ChunkLevel.f_286967_ + 1;

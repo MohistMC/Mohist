@@ -29,8 +29,6 @@ public class MohistMC {
 
     public MohistMC() {
         classLoader = MohistMC.class.getClassLoader();
-        String mohist_lang = MohistConfig.yml.getString("mohist.lang", Locale.getDefault().toString());
-        i18n = new i18n(MohistMC.class.getClassLoader(), mohist_lang);
 
         //TODO: do something when mod loading
         LOGGER.info("Mohist mod loading.....");
@@ -39,6 +37,9 @@ public class MohistMC {
     }
 
     public static void initVersion() {
+        String mohist_lang = MohistConfig.yml.getString("mohist.lang", Locale.getDefault().toString());
+        i18n = new i18n(MohistMC.class.getClassLoader(), mohist_lang);
+
         Map<String, String> arguments = new HashMap<>();
         String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
         arguments.put("mohist", (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : version);

@@ -1,5 +1,20 @@
 --- a/net/minecraft/world/level/storage/DimensionDataStorage.java
 +++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
+@@ -8,11 +_,14 @@
+ import java.io.FileInputStream;
+ import java.io.IOException;
+ import java.io.PushbackInputStream;
++import java.nio.file.Files;
++import java.nio.file.StandardCopyOption;
+ import java.util.Map;
+ import java.util.function.Function;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
+ import net.minecraft.SharedConstants;
++import net.minecraft.Util;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.NbtIo;
+ import net.minecraft.nbt.NbtUtils;
 @@ -49,9 +_,13 @@
     @Nullable
     public <T extends SavedData> T m_164858_(Function<CompoundTag, T> p_164859_, String p_164860_) {
@@ -14,3 +29,39 @@
        }
  
        return (T)saveddata;
+@@ -121,7 +_,34 @@
+    public void m_78151_() {
+       this.f_78144_.forEach((p_164866_, p_164867_) -> {
+          if (p_164867_ != null) {
+-            p_164867_.m_77757_(this.m_78156_(p_164866_));
++            // Mohist start - Save data asynchronously, copy by SavedData.
++            if (p_164867_.m_77764_()) {
++               CompoundTag save = p_164867_.m_7176_(new CompoundTag());
++               if (save != null) {
++                  p_164867_.m_77760_(false);
++                  Util.m_183992_().submit(() -> {
++                     try {
++                        CompoundTag compoundtag = new CompoundTag();
++                        compoundtag.m_128365_("data", save);
++                        NbtUtils.m_264171_(compoundtag);
++                        File file = this.m_78156_(p_164866_);
++                        File cache = file.toPath().getParent().resolve("cache_" + file.getName()).toFile();
++                        cache.getParentFile().mkdirs();
++                        NbtIo.m_128944_(compoundtag, cache);
++                        try {
++                           Files.move(cache.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE);
++                        }
++                        catch (Exception e) {
++                           Files.move(cache.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
++                        }
++                     }
++                     catch (Exception e2) {
++                         f_78143_.error("Could not save data {}", save, e2);
++                     }
++                  });
++               }
++            }
++            // Mohist end
+          }
+ 
+       });

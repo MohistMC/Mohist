@@ -8,13 +8,14 @@
  import java.util.function.Consumer;
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
-@@ -45,9 +_,11 @@
+@@ -45,9 +_,12 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.ticks.LevelChunkTicks;
  import net.minecraft.world.ticks.TickContainerAccess;
 +import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
 -public class LevelChunk extends ChunkAccess {
 +public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
@@ -176,14 +177,14 @@
           if (blockentity != null) {
              Level level = this.f_62776_;
              if (level instanceof ServerLevel) {
-@@ -433,6 +_,60 @@
+@@ -433,6 +_,61 @@
  
     }
  
 +   // CraftBukkit start
 +   public void loadCallback() {
 +      org.bukkit.Server server = this.f_62776_.getCraftServer();
-+      if (server != null) {
++      if (server != null && !AsyncCatcher.catchAsync()) {
 +         /*
 +          * If it's a new world, the first few chunks are generated inside
 +          * the World constructor. We can't reliably alter that, so we have
@@ -219,6 +220,7 @@
 +   }
 +
 +   public void unloadCallback() {
++      if (AsyncCatcher.catchAsync()) return;
 +      org.bukkit.Server server = this.f_62776_.getCraftServer();
 +      org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_20_R1.CraftChunk(this);
 +      org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(bukkitChunk, this.m_6344_());

@@ -1,0 +1,11 @@
+--- a/net/minecraft/advancements/AdvancementList.java
++++ b/net/minecraft/advancements/AdvancementList.java
+@@ -84,7 +_,7 @@
+ 
+          if (!flag) {
+             for(Map.Entry<ResourceLocation, Advancement.Builder> entry1 : map.entrySet()) {
+-               f_139325_.error("Couldn't load advancement {}: {}", entry1.getKey(), entry1.getValue());
++               f_139325_.debug("Couldn't load advancement {}: {}", entry1.getKey(), entry1.getValue());
+             }
+             break;
+          }

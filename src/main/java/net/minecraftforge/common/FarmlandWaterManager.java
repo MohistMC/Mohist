@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistMC;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
@@ -70,7 +71,7 @@ public class FarmlandWaterManager
     public static AABBTicket addAABBTicket(Level level, AABB aabb)
     {
         if (DEBUG)
-            LOGGER.info("FarmlandWaterManager: New AABBTicket, aabb={}", aabb);
+            LOGGER.info(MohistMC.i18n.as("mohist.i18n.83", aabb));
         //First calculate all chunks the aabb is in
         ChunkPos leftUp = new ChunkPos(((int) aabb.minX) >> 4, ((int) aabb.minZ) >> 4);
         ChunkPos rightDown = new ChunkPos(((int) aabb.maxX) >> 4, ((int) aabb.maxZ) >> 4);
@@ -90,14 +91,14 @@ public class FarmlandWaterManager
             if (distToCenter < masterDistance)
             {
                 if (DEBUG)
-                    LOGGER.info("FarmlandWaterManager: New better pos then {}: {}, prev dist {}, new dist {}", masterPos, pos, masterDistance, distToCenter);
+                    LOGGER.info(MohistMC.i18n.as("mohist.i18n.84", masterPos, pos, masterDistance, distToCenter));
                 masterPos = pos;
                 masterDistance = distToCenter;
             }
         }
         posSet.remove(masterPos);
         if (DEBUG)
-            LOGGER.info("FarmlandWaterManager: {} center pos, {} dummy posses. Dist to center {}", masterPos, posSet.toArray(new ChunkPos[0]), masterDistance);
+            LOGGER.info(MohistMC.i18n.as("mohist.i18n.85", masterPos, posSet.toArray(new ChunkPos[0]), masterDistance));
         return addCustomTicket(level, new AABBTicket(aabb), masterPos, posSet.toArray(new ChunkPos[0]));
     }
 
@@ -135,10 +136,10 @@ public class FarmlandWaterManager
         if (ticketManager != null)
         {
             if (DEBUG)
-                LOGGER.info("FarmlandWaterManager: got tickets {} at {} before", ticketManager.getTickets().size(), ticketManager.pos);
+                LOGGER.info(MohistMC.i18n.as("mohist.i18n.86", ticketManager.getTickets().size(), ticketManager.pos));
             ticketManager.getTickets().removeIf(next -> next.unload(ticketManager)); //remove if this is the master manager of the ticket
             if (DEBUG)
-                LOGGER.info("FarmlandWaterManager: got tickets {} at {} after", ticketManager.getTickets().size(), ticketManager.pos);
+                LOGGER.info(MohistMC.i18n.as("mohist.i18n.87", ticketManager.getTickets().size(), ticketManager.pos));
         }
     }
 

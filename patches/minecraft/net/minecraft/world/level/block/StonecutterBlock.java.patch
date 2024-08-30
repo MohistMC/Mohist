@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/StonecutterBlock.java
++++ b/net/minecraft/world/level/block/StonecutterBlock.java
+@@ -51,7 +_,7 @@
+    @Nullable
+    public MenuProvider m_7246_(BlockState p_57105_, Level p_57106_, BlockPos p_57107_) {
+       return new SimpleMenuProvider((p_57074_, p_57075_, p_57076_) -> {
+-         return new StonecutterMenu(p_57074_, p_57075_, ContainerLevelAccess.m_39289_(p_57106_, p_57107_));
++         return new StonecutterMenu(p_57074_, p_57075_, ContainerLevelAccess.createFix(p_57106_, p_57107_));
+       }, f_57065_);
+    }
+ 

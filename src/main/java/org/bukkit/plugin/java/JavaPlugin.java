@@ -2,6 +2,7 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.mohistmc.MohistMC;
 import com.mohistmc.forge.MohistEventBus;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.EventBus;
@@ -253,7 +254,7 @@ public abstract class JavaPlugin extends PluginBase {
         try {
             getConfig().save(configFile);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, "Could not save config to " + configFile, ex);
+            logger.log(Level.SEVERE, MohistMC.i18n.as("mohist.i18n.4",configFile), ex);
         }
     }
 
@@ -295,10 +296,10 @@ public abstract class JavaPlugin extends PluginBase {
                 out.close();
                 in.close();
             } else {
-                logger.log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                logger.log(Level.WARNING, MohistMC.i18n.as("mohist.i18n.5", outFile.getName(), outFile,outFile.getName()));
             }
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
+            logger.log(Level.SEVERE, MohistMC.i18n.as("mohist.i18n.6", outFile.getName(), outFile), ex);
         }
     }
 
@@ -474,15 +475,15 @@ public abstract class JavaPlugin extends PluginBase {
     public static <T extends JavaPlugin> T getPlugin(@NotNull Class<T> clazz) {
         Preconditions.checkArgument(clazz != null, "Null class cannot have a plugin");
         if (!JavaPlugin.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(clazz + " does not extend " + JavaPlugin.class);
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.7", clazz, JavaPlugin.class));
         }
         final ClassLoader cl = clazz.getClassLoader();
         if (!(cl instanceof PluginClassLoader)) {
-            throw new IllegalArgumentException(clazz + " is not initialized by " + PluginClassLoader.class);
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.8", clazz,PluginClassLoader.class));
         }
         JavaPlugin plugin = ((PluginClassLoader) cl).plugin;
         if (plugin == null) {
-            throw new IllegalStateException("Cannot get plugin for " + clazz + " from a static initializer");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.9", clazz));
         }
         return clazz.cast(plugin);
     }
@@ -504,11 +505,11 @@ public abstract class JavaPlugin extends PluginBase {
         Preconditions.checkArgument(clazz != null, "Null class cannot have a plugin");
         final ClassLoader cl = clazz.getClassLoader();
         if (!(cl instanceof PluginClassLoader)) {
-            throw new IllegalArgumentException(clazz + " is not provided by " + PluginClassLoader.class);
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.10", clazz,PluginClassLoader.class));
         }
         JavaPlugin plugin = ((PluginClassLoader) cl).plugin;
         if (plugin == null) {
-            throw new IllegalStateException("Cannot get plugin for " + clazz + " from a static initializer");
+            throw new IllegalStateException(MohistMC.i18n.as("mohist.i18n.11", clazz));
         }
         return plugin;
     }

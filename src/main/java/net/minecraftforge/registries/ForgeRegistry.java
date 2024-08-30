@@ -600,7 +600,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             if (overrides.isEmpty()) {
                 int realId = add(id, entry.getKey(), entry.getValue());
                 if (id != realId && id != -1) {
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                     errored = true;
                 }
             } else {
@@ -608,14 +608,14 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 for (V value : overrides) {
                     OverrideOwner<V> owner = from.owners.inverse().get(value);
                     if (owner == null) {
-                        LOGGER.warn(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
+                        LOGGER.debug(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
                         errored = true;
                         continue;
                     }
 
                     int realId = add(id, entry.getKey(), value, owner.owner);
                     if (id != realId && id != -1) {
-                        LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                        LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                         errored = true;
                     }
                 }
@@ -686,10 +686,16 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
      */
     public void freeze() {
         this.isFrozen = true;
+        var wrapper = this.getWrapper();
+        if (wrapper != null)
+            wrapper.locked = true;
     }
 
     public void unfreeze() {
         this.isFrozen = false;
+        var wrapper = this.getWrapper();
+        if (wrapper != null)
+            wrapper.locked = false;
     }
 
     void dump(ResourceLocation name) {
@@ -758,12 +764,12 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
                 int realId = add(newId, itemName, value, owner.owner);
                 if (newId != realId)
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
 
             int realId = add(newId, itemName, obj, primaryName == null ? itemName.getNamespace() : primaryName);
             if (realId != newId)
-                LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             ovs.remove(itemName);
         }
 
@@ -783,7 +789,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 int newId = this.getID(itemName);
                 int realId = this.add(newId, itemName, _new, owner);
                 if (newId != realId)
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
         }
     }
@@ -963,7 +969,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
                 int realId = this.add(remap.id, newName, remap.target);
                 if (realId != remap.id)
-                    LOGGER.warn(REGISTRIES, "Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", newName, remap.id, realId);
+                    LOGGER.debug(REGISTRIES, "Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", newName, remap.id, realId);
                 this.addAlias(remap.key, newName);
 
 

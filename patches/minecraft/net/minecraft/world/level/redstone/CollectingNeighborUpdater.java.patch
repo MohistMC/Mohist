@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/redstone/CollectingNeighborUpdater.java
++++ b/net/minecraft/world/level/redstone/CollectingNeighborUpdater.java
+@@ -52,7 +_,7 @@
+             this.f_230638_.push(p_230662_);
+          }
+       } else if (this.f_230640_ - 1 == this.f_230637_) {
+-         f_230635_.error("Too many chained neighbor updates. Skipping the rest. First skipped position: " + p_230661_.m_123344_());
++          f_230635_.debug("Too many chained neighbor updates. Skipping the rest. First skipped position: {}", p_230661_.m_123344_());
+       }
+ 
+       if (!flag) {

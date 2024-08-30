@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/portal/PortalForcer.java
 +++ b/net/minecraft/world/level/portal/PortalForcer.java
-@@ -2,12 +_,17 @@
+@@ -2,12 +_,16 @@
  
  import java.util.Comparator;
  import java.util.Optional;
-+import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicInteger;
 +import java.util.concurrent.atomic.AtomicReference;
 +
@@ -29,11 +28,15 @@
     private static final int f_164734_ = 3;
     private static final int f_164735_ = 128;
     private static final int f_164736_ = 16;
-@@ -39,10 +_,19 @@
+@@ -39,10 +_,23 @@
        this.f_77648_ = p_77650_;
     }
  
-+   private AtomicInteger searchRadius = new AtomicInteger(-1);
++   // Mohist start
++   private final AtomicInteger searchRadius = new AtomicInteger(-1);
++   private final AtomicReference<Entity> mohist$entity = new AtomicReference<>();
++   private final AtomicInteger mohist$createRedius = new AtomicInteger(16);
++   // Mohist end
 +
 +   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos pPos, WorldBorder pWorldBorder, int i) {
 +      searchRadius.set(i);
@@ -50,13 +53,10 @@
        Optional<PoiRecord> optional = poimanager.m_27166_((p_230634_) -> {
           return p_230634_.m_203565_(PoiTypes.f_218064_);
        }, p_192986_, i, PoiManager.Occupancy.ANY).filter((p_192981_) -> {
-@@ -64,6 +_,15 @@
+@@ -64,6 +_,12 @@
        });
     }
  
-+   private AtomicReference<Entity> mohist$entity = new AtomicReference<>();
-+   private AtomicInteger mohist$createRedius = new AtomicInteger(16);
-+
 +   public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos pPos, Direction.Axis pAxis, Entity entity, int createRadius) {
 +      mohist$entity.set(entity);
 +      mohist$createRedius.set(createRadius);

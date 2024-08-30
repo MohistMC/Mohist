@@ -59,8 +59,10 @@ public class Control {
     public static Plugin loadPlugin(File plugin) {
         try {
             Plugin p = Bukkit.getPluginManager().loadPlugin(plugin);
-            p.onLoad();
-            return p;
+            if (p != null) {
+                p.onLoad();
+                return p;
+            }
         } catch (Exception e) {
             MohistMC.LOGGER.error(e);
         }
@@ -70,10 +72,8 @@ public class Control {
     public static boolean unloadPlugin(Plugin plugin) {
         SimplePluginManager manager = (SimplePluginManager) Bukkit.getServer().getPluginManager();
 
-        List<Plugin> plugins = ObfuscationReflectionHelper.getPrivateValue(SimplePluginManager.class, manager, "plugins");
-        Map<String, Plugin> lookupNames = ObfuscationReflectionHelper.getPrivateValue(SimplePluginManager.class, manager, "lookupNames");
-        SimpleCommandMap commandMap = ObfuscationReflectionHelper.getPrivateValue(SimplePluginManager.class, manager, "commandMap");
-        Map<String, Command> knownCommands = ObfuscationReflectionHelper.getPrivateValue(SimpleCommandMap.class, commandMap, "knownCommands");
+        SimpleCommandMap commandMap = manager.commandMap;
+        Map<String, Command> knownCommands = commandMap.knownCommands;
 
         for (Plugin plugin1 : manager.getPlugins()) {
             if (!plugin1.equals(plugin)) {
@@ -81,8 +81,8 @@ public class Control {
             }
 
             manager.disablePlugin(plugin);
-            plugins.remove(plugin);
-            lookupNames.remove(plugin.getDescription().getName());
+            manager.plugins.remove(plugin);
+            manager.lookupNames.remove(plugin.getDescription().getName());
 
             Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator();
             while (it.hasNext()) {

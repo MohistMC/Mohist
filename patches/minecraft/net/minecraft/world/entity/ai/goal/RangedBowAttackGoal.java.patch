@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
-@@ -10,7 +_,7 @@
+@@ -8,9 +_,8 @@
+ import net.minecraft.world.entity.monster.RangedAttackMob;
+ import net.minecraft.world.entity.projectile.ProjectileUtil;
  import net.minecraft.world.item.BowItem;
- import net.minecraft.world.item.Items;
+-import net.minecraft.world.item.Items;
  
 -public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Goal {
 +public class RangedBowAttackGoal<T extends net.minecraft.world.entity.Mob & RangedAttackMob> extends Goal {

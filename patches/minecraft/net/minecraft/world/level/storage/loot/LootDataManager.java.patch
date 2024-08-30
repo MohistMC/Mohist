@@ -1,23 +1,5 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
-@@ -7,7 +_,9 @@
- import com.mojang.logging.LogUtils;
- import java.util.Collection;
- import java.util.HashMap;
-+import java.util.HashSet;
- import java.util.Map;
-+import java.util.Set;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.function.BiFunction;
-@@ -33,6 +_,7 @@
-    public static final LootDataId<LootTable> f_278474_ = new LootDataId<>(LootDataType.f_278413_, BuiltInLootTables.f_78712_);
-    private Map<LootDataId<?>, ?> f_278415_ = Map.of();
-    private Multimap<LootDataType<?>, ResourceLocation> f_278404_ = ImmutableMultimap.of();
-+   public Map<?, ResourceLocation> lootTableToKey = ImmutableMap.of(); // CraftBukkit
- 
-    public final CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_279240_, ResourceManager p_279377_, ProfilerFiller p_279135_, ProfilerFiller p_279088_, Executor p_279148_, Executor p_279169_) {
-       Map<LootDataType<?>, Map<ResourceLocation, ?>> map = new HashMap<>();
 @@ -53,7 +_,7 @@
           Map<ResourceLocation, JsonElement> map1 = new HashMap<>();
           SimpleJsonResourceReloadListener.m_278771_(p_279441_, p_279205_.m_278624_(), p_279205_.m_278857_(), map1);
@@ -27,22 +9,18 @@
                 map.put(p_279416_, p_279295_);
              });
           });
-@@ -90,6 +_,19 @@
+@@ -90,6 +_,15 @@
        });
        this.f_278415_ = map;
        this.f_278404_ = builder1.build();
 +      // CraftBukkit start - build a reversed registry map
-+      ImmutableMap.Builder<Object, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
 +      // Mohist start
-+      Set<Object> processedKeys = new HashSet<>();
 +      this.f_278415_.forEach((key, lootTable) -> {
-+         if (!processedKeys.contains(lootTable)) {
-+            lootTableToKeyBuilder.put((Object) lootTable, key.f_278500_());
-+            processedKeys.add(lootTable);
++         if (object instanceof LootTable table) {
++            table.craftLootTable = key.f_278500_();
 +         }
 +      });
 +      // Mohist end
-+      this.lootTableToKey = lootTableToKeyBuilder.build();
 +      // CraftBukkit end
     }
  

@@ -405,7 +405,7 @@ public final class CraftServer implements Server {
     private void overrideSpawnLimits() {
         for (SpawnCategory spawnCategory : SpawnCategory.values()) {
             if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
-                spawnCategoryLimit.put(spawnCategory, configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory)));
+                spawnCategoryLimit.put(spawnCategory, configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory), 10));
             }
         }
     }
@@ -564,6 +564,13 @@ public final class CraftServer implements Server {
     public String getBukkitVersion() {
         return bukkitVersion;
     }
+
+    // Paper start - expose game version
+    @Override
+    public String getMinecraftVersion() {
+        return console.getServerVersion();
+    }
+    // Paper end
 
     @Override
     public List<CraftPlayer> getOnlinePlayers() {
@@ -820,7 +827,7 @@ public final class CraftServer implements Server {
     public int getTicksPerSpawns(SpawnCategory spawnCategory) {
         Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
         Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
-        return this.configuration.getInt(CraftSpawnCategory.getConfigNameTicksPerSpawn(spawnCategory));
+        return this.configuration.getInt(CraftSpawnCategory.getConfigNameTicksPerSpawn(spawnCategory), 1);
     }
 
     @Override
@@ -1117,6 +1124,7 @@ public final class CraftServer implements Server {
 
         internal.setSpawnSettings(true, true);
         console.addLevel(internal);
+        internal.keepSpawnInMemory = creator.keepSpawnInMemory();
         getServer().prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
         internal.entityManager.tick(); // SPIGOT-6526: Load pending entities, so they are available to the API
 
@@ -1919,6 +1927,7 @@ public final class CraftServer implements Server {
         return helpMap;
     }
 
+    @Override
     public SimpleCommandMap getCommandMap() {
         return commandMap;
     }

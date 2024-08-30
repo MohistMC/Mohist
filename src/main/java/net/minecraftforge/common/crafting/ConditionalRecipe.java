@@ -14,6 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import com.mohistmc.MohistMC;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -52,7 +53,7 @@ public class ConditionalRecipe
             for (JsonElement ele : items)
             {
                 if (!ele.isJsonObject())
-                    throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
+                    throw new JsonSyntaxException(MohistMC.i18n.as("mohist.i18n.69", idx));
                 if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                     return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;

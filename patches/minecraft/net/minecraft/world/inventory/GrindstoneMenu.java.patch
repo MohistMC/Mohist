@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -16,6 +_,10 @@
+@@ -16,6 +_,11 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryGrindstone;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.event.inventory.PrepareGrindstoneEvent;
  
  public class GrindstoneMenu extends AbstractContainerMenu {
     public static final int f_150565_ = 35;
@@ -68,7 +69,7 @@
     }
  
     public void m_6199_(Container p_39570_) {
-@@ -122,12 +_,14 @@
+@@ -122,12 +_,18 @@
        ItemStack itemstack1 = this.f_39560_.m_8020_(1);
        boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
        boolean flag1 = !itemstack.m_41619_() && !itemstack1.m_41619_();
@@ -76,22 +77,27 @@
 +      if (this.xp == Integer.MIN_VALUE)
        if (!flag) {
 -         this.f_39559_.m_6836_(0, ItemStack.f_41583_);
-+         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
++         PrepareGrindstoneEvent event = new PrepareGrindstoneEvent(getBukkitView(), CraftItemStack.asCraftMirror(ItemStack.f_41583_).clone());
++         event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
++         this.f_39559_.m_6836_(0, CraftItemStack.asNMSCopy(event.getResult()));
        } else {
--         boolean flag2 = !itemstack.m_41619_() && !itemstack.m_150930_(Items.f_42690_) && !itemstack.m_41793_() || !itemstack1.m_41619_() && !itemstack1.m_150930_(Items.f_42690_) && !itemstack1.m_41793_();
-+         boolean flag2 = !itemstack.m_41619_() && !itemstack.m_150930_( Items.f_42690_) && !itemstack.m_41793_() || !itemstack1.m_41619_() && !itemstack1.m_150930_(Items.f_42690_) && !itemstack1.m_41793_();
+          boolean flag2 = !itemstack.m_41619_() && !itemstack.m_150930_(Items.f_42690_) && !itemstack.m_41793_() || !itemstack1.m_41619_() && !itemstack1.m_150930_(Items.f_42690_) && !itemstack1.m_41793_();
           if (itemstack.m_41613_() > 1 || itemstack1.m_41613_() > 1 || !flag1 && flag2) {
 -            this.f_39559_.m_6836_(0, ItemStack.f_41583_);
-+            CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
++            PrepareGrindstoneEvent event = new PrepareGrindstoneEvent(getBukkitView(), CraftItemStack.asCraftMirror(ItemStack.f_41583_).clone());
++            event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
++            this.f_39559_.m_6836_(0, CraftItemStack.asNMSCopy(event.getResult()));
              this.m_38946_();
              return;
           }
-@@ -137,20 +_,21 @@
+@@ -137,20 +_,25 @@
           ItemStack itemstack2;
           if (flag1) {
              if (!itemstack.m_150930_(itemstack1.m_41720_())) {
 -               this.f_39559_.m_6836_(0, ItemStack.f_41583_);
-+               CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
++               PrepareGrindstoneEvent event = new PrepareGrindstoneEvent(getBukkitView(), CraftItemStack.asCraftMirror(ItemStack.f_41583_).clone());
++               event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
++               this.f_39559_.m_6836_(0, CraftItemStack.asNMSCopy(event.getResult()));
                 this.m_38946_();
                 return;
              }
@@ -111,20 +117,25 @@
 +            if (!itemstack2.m_41763_() || !itemstack2.isRepairable()) {
                 if (!ItemStack.m_41728_(itemstack, itemstack1)) {
 -                  this.f_39559_.m_6836_(0, ItemStack.f_41583_);
-+                  CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
++                  PrepareGrindstoneEvent event = new PrepareGrindstoneEvent(getBukkitView(), CraftItemStack.asCraftMirror(ItemStack.f_41583_).clone());
++                  event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
++                  this.f_39559_.m_6836_(0, CraftItemStack.asNMSCopy(event.getResult()));
                    this.m_38946_();
                    return;
                 }
-@@ -163,9 +_,14 @@
+@@ -163,9 +_,17 @@
              itemstack2 = flag3 ? itemstack : itemstack1;
           }
  
 -         this.f_39559_.m_6836_(0, this.m_39579_(itemstack2, i, j));
 +         // Forge: Skip the repair if the result would give an item stack with a count not normally obtainable
-+         if (j > itemstack2.m_41741_())
++         if (j > itemstack2.m_41741_()) {
 +            this.f_39559_.m_6836_(0, ItemStack.f_41583_);
-+         else
-+         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.m_39579_(itemstack2, i, j)); // CraftBukkit
++         } else {
++            PrepareGrindstoneEvent event = new PrepareGrindstoneEvent(getBukkitView(), CraftItemStack.asCraftMirror(this.m_39579_(itemstack2, i, j)).clone());
++            event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
++            this.f_39559_.m_6836_(0, CraftItemStack.asNMSCopy(event.getResult()));
++         }
        }
  
 +      m_150429_(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client

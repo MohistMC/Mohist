@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
+@@ -2,6 +_,7 @@
+ 
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.MohistConfig;
+ import com.mojang.datafixers.util.Pair;
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+ import java.util.List;
 @@ -20,6 +_,8 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
@@ -9,13 +17,7 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.item.PrimedTnt;
  import net.minecraft.world.entity.player.Player;
-@@ -33,11 +_,17 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.material.FluidState;
-+import net.minecraft.world.level.storage.loot.LootContext;
- import net.minecraft.world.level.storage.loot.LootParams;
- import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+@@ -38,6 +_,11 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -33,7 +35,7 @@
     private final Map<Player, Vec3> f_46021_ = Maps.newHashMap();
 +   private final Vec3 position;
 +
-+   public boolean wasCanceled = false; // CraftBukkit - add field
++   public boolean wasCanceled = MohistConfig.explosion; // CraftBukkit - add field
 +
 +   public Explosion(Level p_151471_, @Nullable Entity p_151472_, double p_151473_, double p_151474_, double p_151475_, float p_151476_) {
 +      this(p_151471_, p_151472_, p_151473_, p_151474_, p_151475_, p_151476_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY);

@@ -399,7 +399,7 @@
        UUID uuid = UUIDUtil.m_235875_(p_215625_);
        List<ServerPlayer> list = Lists.newArrayList();
  
-@@ -415,76 +_,167 @@
+@@ -415,76 +_,168 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -487,6 +487,7 @@
        serverplayer.f_8906_ = p_11237_.f_8906_;
 +
        serverplayer.m_9015_(p_11237_, p_11238_);
++      serverplayer.reviveCaps();
 +      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
        serverplayer.m_20234_(p_11237_.m_19879_());
        serverplayer.m_36163_(p_11237_.m_5737_());
@@ -562,24 +563,24 @@
 +         serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
 +      }
 +      // Added from changeDimension
-+      this.m_11292_(p_11237_); // Update health, etc...
-+      p_11237_.m_6885_();
-+      for (MobEffectInstance mobEffect : p_11237_.m_21220_()) {
-+         p_11237_.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(p_11237_.m_19879_(), mobEffect));
++      this.m_11292_(serverplayer); // Update health, etc...
++      serverplayer.m_6885_();
++      for (MobEffectInstance mobEffect : serverplayer.m_21220_()) {
++         serverplayer.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(serverplayer.m_19879_(), mobEffect));
 +      }
 +
 +      // Fire advancement trigger
-+      p_11237_.m_9209_(((CraftWorld) fromWorld).getHandle());
++      serverplayer.m_9209_(((CraftWorld) fromWorld).getHandle());
 +
 +      // Don't fire on respawn
 +      if (fromWorld != mohist$location.getWorld()) {
-+         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(p_11237_.getBukkitEntity(), fromWorld);
++         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(serverplayer.getBukkitEntity(), fromWorld);
 +         f_11195_.server.getPluginManager().callEvent(event);
 +      }
 +
 +      // Save player file again if they were disconnected
-+      if (p_11237_.f_8906_.isDisconnected()) {
-+         this.m_6765_(p_11237_);
++      if (serverplayer.f_8906_.isDisconnected()) {
++         this.m_6765_(serverplayer);
 +      }
 +
 +      // CraftBukkit end
@@ -711,20 +712,18 @@
     }
  
     public void m_11292_(ServerPlayer p_11293_) {
--      p_11293_.f_36095_.m_150429_();
+       p_11293_.f_36095_.m_150429_();
 -      p_11293_.m_9233_();
--      p_11293_.f_8906_.m_9829_(new ClientboundSetCarriedItemPacket(p_11293_.m_150109_().f_35977_));
-+       p_11293_.f_36095_.m_150429_();
-+       // pPlayer.resetSentInfo();
-+       p_11293_.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
-+       // pPlayer.getEntityData().refresh(pPlayer); // CraftBukkkit - SPIGOT-7218: sync metadata
-+       p_11293_.f_8906_.m_9829_(new ClientboundSetCarriedItemPacket(p_11293_.m_150109_().f_35977_));
-+       // CraftBukkit start - from GameRules
-+       int i = p_11293_.f_19853_.m_46469_().m_46207_(GameRules.f_46145_) ? 22 : 23;
-+       p_11293_.f_8906_.m_9829_(new ClientboundEntityEventPacket(p_11293_, (byte) i));
-+       float immediateRespawn = p_11293_.f_19853_.m_46469_().m_46207_(GameRules.f_46156_) ? 1.0F : 0.0F;
-+       p_11293_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132164_, immediateRespawn));
-+       // CraftBukkit end
++      // pPlayer.resetSentInfo();
++      p_11293_.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
++      p_11293_.m_20088_().refresh(p_11293_); // CraftBukkkit - SPIGOT-7218: sync metadata
+       p_11293_.f_8906_.m_9829_(new ClientboundSetCarriedItemPacket(p_11293_.m_150109_().f_35977_));
++      // CraftBukkit start - from GameRules
++      int i = p_11293_.f_19853_.m_46469_().m_46207_(GameRules.f_46145_) ? 22 : 23;
++      p_11293_.f_8906_.m_9829_(new ClientboundEntityEventPacket(p_11293_, (byte) i));
++      float immediateRespawn = p_11293_.f_19853_.m_46469_().m_46207_(GameRules.f_46156_) ? 1.0F : 0.0F;
++      p_11293_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132164_, immediateRespawn));
++      // CraftBukkit end
     }
  
     public int m_11309_() {

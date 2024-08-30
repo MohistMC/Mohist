@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/heightproviders/VeryBiasedToBottomHeight.java
++++ b/net/minecraft/world/level/levelgen/heightproviders/VeryBiasedToBottomHeight.java
+@@ -38,7 +_,7 @@
+       int i = this.f_162047_.m_142322_(p_226312_);
+       int j = this.f_162048_.m_142322_(p_226312_);
+       if (j - i - this.f_162049_ + 1 <= 0) {
+-         f_162046_.warn("Empty height range: {}", (Object)this);
++         // LOGGER.warn("Empty height range: {}", (Object)this);
+          return i;
+       } else {
+          int k = Mth.m_216271_(p_226311_, i + this.f_162049_, j);

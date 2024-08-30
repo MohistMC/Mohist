@@ -55,19 +55,22 @@ public class VanillaInventoryCodeHooks
                             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(extractItem);
 
                             InventoryHolder owner = InventoryOwner.get(dest);
-                            Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
-                            if (destinationInventory != null) {
-                                InventoryMoveItemEvent event;
-                                try {
-                                    event = new InventoryMoveItemEvent(InventoryOwner.getInventory(container), oitemstack.clone(), destinationInventory, true);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                    if (event.isCancelled()) {
-                                        extractItem = ItemStack.EMPTY;
-                                    } else {
-                                        extractItem = CraftItemStack.asNMSCopy(event.getItem());
+                            if (container != null) {
+                                Inventory sourceInventory = InventoryOwner.getInventory(container);
+                                Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
+                                if (destinationInventory != null && sourceInventory != null) {
+                                    InventoryMoveItemEvent event;
+                                    try {
+                                        event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), destinationInventory, true);
+                                        Bukkit.getPluginManager().callEvent(event);
+                                        if (event.isCancelled()) {
+                                            extractItem = ItemStack.EMPTY;
+                                        } else {
+                                            extractItem = CraftItemStack.asNMSCopy(event.getItem());
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
 
@@ -158,9 +161,10 @@ public class VanillaInventoryCodeHooks
                                 if (!insertStack.isEmpty()) {
                                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(insertStack);
                                     InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
+                                    Inventory sourceInventory = InventoryOwner.getInventory(hopper);
                                     Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
-                                    if (destinationInventory != null) {
-                                        InventoryMoveItemEvent event = new InventoryMoveItemEvent(InventoryOwner.getInventory(hopper), oitemstack.clone(), destinationInventory, true);
+                                    if (sourceInventory != null && destinationInventory != null) {
+                                        InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), destinationInventory, true);
                                         Bukkit.getPluginManager().callEvent(event);
                                         if (event.isCancelled()) {
                                             hopper.setItem(i, originalSlotContents);

@@ -8,6 +8,7 @@ package net.minecraftforge.registries;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import com.mohistmc.MohistMC;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import java.util.Collection;
@@ -274,12 +275,12 @@ public class GameData {
     {
         if (target.registries.isEmpty())
         {
-            LOGGER.warn(REGISTRIES, "Can't revert to {} GameData state without a valid snapshot.", target.getName());
+            LOGGER.warn(REGISTRIES, MohistMC.i18n.as("mohist.i18n.182", target.getName()));
             return;
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        LOGGER.debug(REGISTRIES, "Reverting to {} data state.", target.getName());
+        LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.183", target.getName()));
         for (Map.Entry<ResourceLocation, ForgeRegistry<?>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, true);
@@ -292,12 +293,12 @@ public class GameData {
         }
 
         // the id mapping has reverted, ensure we sync up the object holders
-        LOGGER.debug(REGISTRIES, "{} state restored.", target.getName());
+        LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.184", target.getName()));
     }
 
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
-        LOGGER.debug(REGISTRIES, "Reverting {} to {}", registry, state.getName());
+        LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.185", registry, state.getName()));
         loadRegistry(registry, state, RegistryManager.ACTIVE, lock);
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
@@ -330,9 +331,9 @@ public class GameData {
 
                 if (forgeRegistry != null)
                     forgeRegistry.freeze();
-                LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryKey.location());
+                LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.186", registryKey.location()));
                 ObjectHolderRegistry.applyObjectHolders(registryKey.location()::equals);
-                LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryKey.location());
+                LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.187", registryKey.location()));
             } catch (Throwable t)
             {
                 aggregate.addSuppressed(t);
@@ -340,10 +341,10 @@ public class GameData {
         }
         if (aggregate.getSuppressed().length > 0)
         {
-            LOGGER.fatal("Failed to register some entries, see suppressed exceptions for details", aggregate);
-            LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
+            LOGGER.fatal(MohistMC.i18n.as("mohist.i18n.188", aggregate));
+            LOGGER.fatal(MohistMC.i18n.as("mohist.i18n.189"));
             revertTo(RegistryManager.VANILLA, false);
-            LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+            LOGGER.fatal(MohistMC.i18n.as("mohist.i18n.190"));
             throw aggregate;
         } else
         {
@@ -517,7 +518,7 @@ public class GameData {
                 PoiType oldType = map.put(state, obj);
                 if (oldType != null)
                 {
-                    throw new IllegalStateException(String.format(Locale.ENGLISH, "Point of interest types %s and %s both list %s in their blockstates, this is not allowed. Blockstates can only have one point of interest type each.", oldType, obj, state));
+                    throw new IllegalStateException(String.format(Locale.ENGLISH, MohistMC.i18n.as("mohist.i18n.191", oldType, obj, state)));
                 }
             });
         }
@@ -543,7 +544,7 @@ public class GameData {
             ForgeRegistry<T> toRegistry = to.getRegistry(registryName);
             if (toRegistry == null)
             {
-                throw new EnhancedRuntimeException("Could not find registry to load: " + registryName){
+                throw new EnhancedRuntimeException(MohistMC.i18n.as("mohist.i18n.192", registryName)){
                     private static final long serialVersionUID = 1L;
                     @Override
                     protected void printStackTrace(WrappedPrintStream stream)
@@ -577,7 +578,7 @@ public class GameData {
 
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
+        LOGGER.info(REGISTRIES, MohistMC.i18n.as("mohist.i18n.193", EffectiveSide.get()));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
@@ -622,7 +623,7 @@ public class GameData {
         int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
-            LOGGER.debug(REGISTRIES,"There are {} mappings missing - attempting a mod remap", count);
+            LOGGER.debug(REGISTRIES, MohistMC.i18n.as("mohist.i18n.194", count));
             Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
             Multimap<ResourceLocation, ResourceLocation> failed = ArrayListMultimap.create();
 
@@ -677,7 +678,7 @@ public class GameData {
             if (!defaulted.isEmpty())
             {
                 if (isLocalWorld)
-                    LOGGER.error(REGISTRIES, "There are unidentified mappings in this world - we are going to attempt to process anyway");
+                    LOGGER.error(REGISTRIES, MohistMC.i18n.as("mohist.i18n.195"));
             }
 
         }
@@ -771,7 +772,7 @@ public class GameData {
         String prefix = ModLoadingContext.get().getActiveNamespace();
         if (warnOverrides && !oldPrefix.equals(prefix) && !oldPrefix.isEmpty())
         {
-            LogManager.getLogger().debug("Mod `{}` attempting to register `{}` to the namespace `{}`. This could be intended, but likely means an EventBusSubscriber without a modid.", prefix, name, oldPrefix);
+            LogManager.getLogger().debug(MohistMC.i18n.as("mohist.i18n.196", prefix, name, oldPrefix));
             prefix = oldPrefix;
         }
         return new ResourceLocation(prefix, name);

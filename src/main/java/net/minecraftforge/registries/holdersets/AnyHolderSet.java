@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.mohistmc.MohistMC;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 
@@ -85,7 +86,7 @@ public record AnyHolderSet<T>(HolderLookup.RegistryLookup<T> registryLookup) imp
         List<Holder<T>> holders = this.stream().toList();
         Holder<T> holder = i >= holders.size() ? null : holders.get(i);
         if (holder == null)
-            throw new NoSuchElementException("No element " + i + " in registry " + this.registryLookup.key());
+            throw new NoSuchElementException(MohistMC.i18n.as("mohist.i18n.134", i, this.registryLookup.key()));
 
         return holder;
     }

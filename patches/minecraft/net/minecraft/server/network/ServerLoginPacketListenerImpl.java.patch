@@ -1,39 +1,33 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -1,6 +_,9 @@
+@@ -1,6 +_,10 @@
  package net.minecraft.server.network;
  
  import com.google.common.primitives.Ints;
 +import com.mohistmc.MohistConfig;
++import com.mohistmc.bukkit.LoginHandler;
 +import com.mohistmc.paper.proxy.VelocityProxy;
 +import com.mohistmc.plugins.PlayerModsCheck;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import com.mojang.logging.LogUtils;
-@@ -35,6 +_,9 @@
- import net.minecraft.util.CryptException;
- import net.minecraft.util.RandomSource;
- import org.apache.commons.lang3.Validate;
-+import org.bukkit.craftbukkit.v1_20_R1.util.Waitable;
-+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-+import org.bukkit.event.player.PlayerPreLoginEvent;
- import org.slf4j.Logger;
- 
- public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
-@@ -44,7 +_,7 @@
+@@ -43,15 +_,16 @@
+    private static final int f_143698_ = 600;
     private static final RandomSource f_10016_ = RandomSource.m_216327_();
     private final byte[] f_252396_;
-    final MinecraftServer f_10018_;
+-   final MinecraftServer f_10018_;
 -   final Connection f_10013_;
+-   ServerLoginPacketListenerImpl.State f_10019_ = ServerLoginPacketListenerImpl.State.HELLO;
++   public final MinecraftServer f_10018_;
 +   public final Connection f_10013_;
-    ServerLoginPacketListenerImpl.State f_10019_ = ServerLoginPacketListenerImpl.State.HELLO;
++   public ServerLoginPacketListenerImpl.State f_10019_ = ServerLoginPacketListenerImpl.State.HELLO;
     private int f_10020_;
     @Nullable
-@@ -52,6 +_,7 @@
+    public GameProfile f_10021_;
     private final String f_10022_ = "";
     @Nullable
     private ServerPlayer f_10024_;
-+   private int velocityLoginMessageId = -1; // Paper - Velocity support
++   public int velocityLoginMessageId = -1; // Paper - Velocity support
  
     public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
        this.f_10018_ = p_10027_;
@@ -151,7 +145,7 @@
 +            authenticatorPool.execute(() -> {
 +               try {
 +                  this.initUUID();
-+                  new LoginHandler().fireEvents();
++                  new LoginHandler().fireEvents(this);
 +               } catch (Exception ex) {
 +                  this.disconnect("Failed to verify username!");
 +                  f_10018_.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + this.f_10021_.getName(), ex);
@@ -198,7 +192,7 @@
 +                     return;
 +                  }
 +
-+                  new LoginHandler().fireEvents();
++                  new LoginHandler().fireEvents(ServerLoginPacketListenerImpl.this);
                 } else if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
                    ServerLoginPacketListenerImpl.f_10015_.warn("Failed to verify username but will let them in anyway!");
                    ServerLoginPacketListenerImpl.this.f_10021_ = gameprofile;
@@ -260,7 +254,7 @@
 +         // Proceed with login
 +         authenticatorPool.execute(() -> {
 +            try {
-+               new LoginHandler().fireEvents();
++               new LoginHandler().fireEvents(this);
 +            } catch (Exception ex) {
 +               disconnect("Failed to verify username!");
 +               f_10018_.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + f_10021_.getName(), ex);
@@ -273,56 +267,12 @@
        this.m_10053_(Component.m_237115_("multiplayer.disconnect.unexpected_query_response"));
     }
  
-@@ -244,4 +_,52 @@
-       DELAY_ACCEPT,
-       ACCEPTED;
+@@ -235,7 +_,7 @@
+       return new GameProfile(uuid, p_10039_.getName());
     }
-+
-+   // Spigot start
-+   public class LoginHandler {
-+
-+      public void fireEvents() throws Exception {
-+         // Paper start - Velocity support
-+         if (ServerLoginPacketListenerImpl.this.velocityLoginMessageId == -1 && MohistConfig.velocity_enabled) {
-+            disconnect("This server requires you to connect with Velocity.");
-+            return;
-+         }
-+         // Paper end
-+         String playerName = f_10021_.getName();
-+         java.net.InetAddress address = ((java.net.InetSocketAddress) f_10013_.m_129523_()).getAddress();
-+         java.util.UUID uniqueId = f_10021_.getId();
-+         final org.bukkit.craftbukkit.v1_20_R1.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
-+
-+         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
-+         server.getPluginManager().callEvent(asyncEvent);
-+
-+         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
-+            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
-+            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
-+            }
-+            Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<>() {
-+               @Override
-+               protected PlayerPreLoginEvent.Result evaluate() {
-+                  server.getPluginManager().callEvent(event);
-+                  return event.getResult();
-+               }
-+            };
-+
-+            ServerLoginPacketListenerImpl.this.f_10018_.processQueue.add(waitable);
-+            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               m_10053_(Component.m_130674_(event.getKickMessage()));
-+               return;
-+            }
-+         } else {
-+            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-+               m_10053_(Component.m_130674_(asyncEvent.getKickMessage()));
-+               return;
-+            }
-+         }
-+         // CraftBukkit end
-+         ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
-+      }
-+   }
-+   // Spigot end
- }
+ 
+-   static enum State {
++   public static enum State {
+       HELLO,
+       KEY,
+       AUTHENTICATING,

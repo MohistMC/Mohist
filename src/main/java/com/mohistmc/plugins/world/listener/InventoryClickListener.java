@@ -1,6 +1,5 @@
 package com.mohistmc.plugins.world.listener;
 
-import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
 import com.mohistmc.plugins.world.utils.WorldInventory;
@@ -17,6 +16,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * @author Mgazul by MohistMC
@@ -30,47 +31,58 @@ public class InventoryClickListener {
         p.closeInventory();
         String worldName = WorldsCommands.type;
         p.sendMessage(ChatColor.GREEN + I18n.as("worldlistener.ICL.worldCreateStart" , worldName));
-        String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
-        World.Environment environment = World.Environment.valueOf(itemName);
-
-        WorldCreator wc = new WorldCreator(worldName);
-        wc.seed((new Random()).nextLong());
-        wc.environment(environment);
-
-        wc.createWorld();
-
-        World world = Bukkit.getWorld(worldName);
-        if (world == null) {
-            String msg = String.format(I18n.as("worldlistener.ICL.worldCreateFailurePart1") + worldName) + I18n.as("worldlistener.ICL.worldCreateFailurePart2");
-            p.sendMessage(ChatColor.RED + msg);
+        ItemStack itemStack = event.getCurrentItem();
+        if (itemStack == null) {
             return;
         }
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null && itemMeta.hasDisplayName()) {
+            String itemName = itemMeta.getDisplayName();
+            World.Environment environment = World.Environment.valueOf(itemName);
 
-        Location spawnLocation = world.getSpawnLocation();
-        while (!spawnLocation.getBlock().getType().isAir() || !spawnLocation.getBlock().getRelative(BlockFace.UP).getType().isAir()) {
-            spawnLocation.add(0, 1, 0);
+            WorldCreator wc = new WorldCreator(worldName);
+            wc.seed((new Random()).nextLong());
+            wc.environment(environment);
+
+            wc.createWorld();
+
+            World world = Bukkit.getWorld(worldName);
+            if (world == null) {
+                String msg = String.format(I18n.as("worldlistener.ICL.worldCreateFailurePart1") + worldName) + I18n.as("worldlistener.ICL.worldCreateFailurePart2");
+                p.sendMessage(ChatColor.RED + msg);
+                return;
+            }
+
+            Location spawnLocation = world.getSpawnLocation();
+            while (!spawnLocation.getBlock().getType().isAir() || !spawnLocation.getBlock().getRelative(BlockFace.UP).getType().isAir()) {
+                spawnLocation.add(0, 1, 0);
+            }
+
+            world.setSpawnLocation(spawnLocation);
+            p.sendMessage(ChatColor.GREEN + I18n.as("worldlistener.ICL.worldCreateSuccess" , worldName));
+            try {
+                ConfigByWorlds.addWorld(world.getName(), true);
+                ConfigByWorlds.addSpawn(spawnLocation);
+            } catch (Exception e) {
+                e.fillInStackTrace();
+            }
         }
 
-        world.setSpawnLocation(spawnLocation);
-        p.sendMessage(ChatColor.GREEN + I18n.as("worldlistener.ICL.worldCreateSuccess" , worldName));
-        try {
-            ConfigByWorlds.addWorld(world.getName(), true);
-            ConfigByWorlds.addSpawn(spawnLocation);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
     }
 
     public static void init(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
+        ItemStack itemStack = event.getCurrentItem();
+        if (itemStack == null) {
+            return;
+        }
+        ItemMeta itemMeta = itemStack.getItemMeta();
         if (event.getWhoClicked() instanceof Player p) {
             if (worldInventory != null && worldInventory.getInventory() == inventory) {
                 if (worldInventory.worldInventoryType() == WorldInventoryType.CREATE) {
                     event.setCancelled(true);
-                    if (event.getCurrentItem() == null) {
-                        return;
-                    }
-                    if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
+
+                    if (itemStack.getType() == Material.MAP) {
                         createWorld(event, p);
                     }
                 } else if (worldInventory.worldInventoryType() == WorldInventoryType.LIST) {
@@ -78,15 +90,15 @@ public class InventoryClickListener {
                     if (event.getCurrentItem() == null) {
                         return;
                     }
-                    if (event.getCurrentItem().getItemMeta().getDisplayName().startsWith("§7>>")) {
-                        String toSplit = event.getCurrentItem().getItemMeta().getDisplayName();
+                    if (itemMeta != null && itemMeta.hasDisplayName() && itemMeta.getDisplayName().startsWith("§7>>")) {
+                        String toSplit = itemMeta.getDisplayName();
                         String[] splitted = toSplit.split("6");
                         if (Bukkit.getWorld(splitted[1]) != null) {
                             ConfigByWorlds.getSpawn(splitted[1], p);
                         } else {
                             WorldsCommands.worldNotExists(p, splitted[1]);
                         }
-                    } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())) {
+                    } else if (itemMeta != null && itemMeta.hasDisplayName() && itemMeta.getDisplayName().equals(I18n.as("worldmanage.gui.close"))) {
                         p.closeInventory();
                     }
                 }

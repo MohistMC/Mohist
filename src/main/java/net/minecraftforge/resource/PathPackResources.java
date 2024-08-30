@@ -6,6 +6,7 @@
 package net.minecraftforge.resource;
 
 import com.google.common.base.Joiner;
+import com.mohistmc.MohistMC;
 import com.mojang.logging.LogUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +94,7 @@ public class PathPackResources extends AbstractPackResources
     {
         FileUtil.decomposePath(path).get()
                 .ifLeft(parts -> net.minecraft.server.packs.PathPackResources.listPath(namespace, resolve(type.getDirectory(), namespace).toAbsolutePath(), parts, resourceOutput))
-                .ifRight(dataResult -> LOGGER.error("Invalid path {}: {}", path, dataResult.message()));
+                .ifRight(dataResult -> LOGGER.error(MohistMC.i18n.as("mohist.i18n.224", path, dataResult.message())));
     }
 
     @Override

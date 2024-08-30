@@ -22,6 +22,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.I18n;
+import com.mohistmc.util.MohistThreadCost;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MohistCommand extends Command {
 
-    private final List<String> params = Arrays.asList("mods", "playermods", "reload", "version", "channels_incom", "channels_outgo", "speed");
+    private final List<String> params = Arrays.asList("mods", "playermods", "reload", "version", "channels_incom", "channels_outgo", "speed", "printthreadcost");
 
     public MohistCommand(String name) {
         super(name);
@@ -49,13 +50,18 @@ public class MohistCommand extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
-            for (String param : params) {
-                if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
-                    list.add(param);
+        if ((sender.isOp() || testPermission(sender))) {
+            if (args.length == 1) {
+                for (String param : params) {
+                    if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
+                        list.add(param);
+                    }
                 }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("playermods")) {
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             }
         }
+
 
         return list;
     }
@@ -110,6 +116,7 @@ public class MohistCommand extends Command {
                 sender.sendMessage("Spigot: " + MohistMC.versionInfo.spigot());
             }
             case "channels_incom" -> sender.sendMessage(ServerAPI.channels_Incoming().toString());
+            case "printthreadcost" -> MohistThreadCost.dumpThreadCpuTime();
             case "channels_outgo" -> sender.sendMessage(ServerAPI.channels_Outgoing().toString());
             case "speed" -> {
                 if (sender instanceof Player p) {

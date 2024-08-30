@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.back;
 
+import com.mohistmc.MohistConfig;
 import com.mohistmc.util.I18n;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,9 @@ public class BackCommands extends Command {
     public BackCommands(String name) {
         super(name);
         this.usageMessage = "/back";
-        this.setPermission("mohist.command.back");
+        if (MohistConfig.back_permissions_enable) {
+            this.setPermission("mohist.command.back");
+        }
     }
 
     @Override

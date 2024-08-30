@@ -148,7 +148,7 @@
              int i = this.m_147092_(p_20792_, this.f_20770_);
              if (i > 0) {
 -               p_20792_.m_6756_(i);
-+               p_20792_.m_6756_(CraftEventFactory.callPlayerExpChangeEvent(p_20792_, i).getAmount());
++               p_20792_.m_6756_(CraftEventFactory.callPlayerExpChangeEvent(p_20792_, this).getAmount());
              }
  
              --this.f_147072_;

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.MohistMC;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -198,7 +199,7 @@ public class ForgeConfig {
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent.Loading configEvent) {
-        LogManager.getLogger().debug(Logging.FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        LogManager.getLogger().debug(Logging.FORGEMOD, MohistMC.i18n.as("mohist.i18n.88", configEvent.getConfig().getFileName()));
     }
 
     @SubscribeEvent

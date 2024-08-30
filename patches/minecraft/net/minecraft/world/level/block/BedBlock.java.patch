@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/BedBlock.java
 +++ b/net/minecraft/world/level/block/BedBlock.java
-@@ -32,6 +_,7 @@
- import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.block.state.properties.BooleanProperty;
- import net.minecraft.world.level.block.state.properties.EnumProperty;
-+import net.minecraft.world.level.material.PushReaction;
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.BlockHitResult;
 @@ -109,6 +_,22 @@
        }
     }

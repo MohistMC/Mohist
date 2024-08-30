@@ -3,6 +3,7 @@ package com.mohistmc.eventhandler.dispatcher;
 import com.mohistmc.bukkit.block.MohistBlockSnapshot;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -52,6 +53,8 @@ public class BlockEventDispatcher {
         }
     }
 
+    public static AtomicReference<BlockBreakEvent> blockBreakEvent = new AtomicReference<>();
+
     @SubscribeEvent(receiveCanceled = true)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
         LevelAccessor level = event.getLevel();
@@ -65,6 +68,7 @@ public class BlockEventDispatcher {
                 bukkitEvent.setCancelled(event.isCanceled());
                 bukkitEvent.setExpToDrop(event.getExpToDrop());
                 Bukkit.getPluginManager().callEvent(bukkitEvent);
+                blockBreakEvent.set(bukkitEvent);
                 event.setCanceled(bukkitEvent.isCancelled());
                 event.setExpToDrop(bukkitEvent.getExpToDrop());
             }

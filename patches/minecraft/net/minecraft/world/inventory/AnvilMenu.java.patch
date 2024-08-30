@@ -11,11 +11,10 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
  import net.minecraft.network.chat.Component;
-@@ -16,6 +_,10 @@
+@@ -16,6 +_,9 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.apache.commons.lang3.StringUtils;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
 +import org.jetbrains.annotations.Nullable;
@@ -137,7 +136,7 @@
                    return;
                 }
              }
-@@ -236,17 +_,18 @@
+@@ -236,18 +_,27 @@
              i += k;
              itemstack1.m_41787_();
           }
@@ -150,15 +149,27 @@
  
 -         if (k == i && k > 0 && this.f_39002_.m_6501_() >= 40) {
 -            this.f_39002_.m_6422_(39);
-+         if (k == i && k > 0 && this.f_39002_.m_6501_() >= maximumRepairCost) {
-+            this.f_39002_.m_6422_(maximumRepairCost - 1); // CraftBukkit
-          }
- 
+-         }
+-
 -         if (this.f_39002_.m_6501_() >= 40 && !this.f_39771_.m_150110_().f_35937_) {
-+         if (this.f_39002_.m_6501_() >= maximumRepairCost && !this.f_39771_.m_150110_().f_35937_) {
-             itemstack1 = ItemStack.f_41583_;
+-            itemstack1 = ItemStack.f_41583_;
++         if (maximumRepairCost == 40) {
++            if (k == i && k > 0 && this.f_39002_.m_6501_() >= 40) {
++               this.f_39002_.m_6422_(39);
++            }
++            if (this.f_39002_.m_6501_() >= 40 && !this.f_39771_.m_150110_().f_35937_) { // CraftBukkit
++               itemstack1 = ItemStack.f_41583_;
++            }
++         } else {
++            if (k == i && k > 0 && this.f_39002_.m_6501_() >= maximumRepairCost) { // CraftBukkit
++               this.f_39002_.m_6422_(maximumRepairCost - 1); // CraftBukkit
++            }
++            if (this.f_39002_.m_6501_() >= maximumRepairCost && !this.f_39771_.m_150110_().f_35937_) { // CraftBukkit
++               itemstack1 = ItemStack.f_41583_;
++            }
           }
  
+          if (!itemstack1.m_41619_()) {
 @@ -264,7 +_,9 @@
              EnchantmentHelper.m_44865_(map, itemstack1);
           }

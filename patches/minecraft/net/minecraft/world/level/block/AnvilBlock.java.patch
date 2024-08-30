@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/AnvilBlock.java
++++ b/net/minecraft/world/level/block/AnvilBlock.java
+@@ -65,7 +_,7 @@
+    @Nullable
+    public MenuProvider m_7246_(BlockState p_48821_, Level p_48822_, BlockPos p_48823_) {
+       return new SimpleMenuProvider((p_48785_, p_48786_, p_48787_) -> {
+-         return new AnvilMenu(p_48785_, p_48786_, ContainerLevelAccess.m_39289_(p_48822_, p_48823_));
++         return new AnvilMenu(p_48785_, p_48786_, ContainerLevelAccess.createFix(p_48822_, p_48823_));
+       }, f_48774_);
+    }
+ 

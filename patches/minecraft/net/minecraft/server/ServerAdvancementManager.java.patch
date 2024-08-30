@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -26,18 +_,35 @@
+@@ -26,21 +_,38 @@
     public static final Gson f_136022_ = (new GsonBuilder()).create();
     public AdvancementList f_136023_ = new AdvancementList();
     private final LootDataManager f_278379_;
@@ -36,4 +36,8 @@
 +            }
              map.put(p_278903_, advancement$builder);
           } catch (Exception exception) {
-             f_136021_.error("Parsing error loading custom advancement {}: {}", p_278903_, exception.getMessage());
+-            f_136021_.error("Parsing error loading custom advancement {}: {}", p_278903_, exception.getMessage());
++            f_136021_.debug("Parsing error loading custom advancement {}: {}", p_278903_, exception.getMessage());
+          }
+ 
+       });

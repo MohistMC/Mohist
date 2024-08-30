@@ -1,12 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/ThrowableItemProjectile.java
 +++ b/net/minecraft/world/entity/projectile/ThrowableItemProjectile.java
-@@ -1,5 +_,6 @@
- package net.minecraft.world.entity.projectile;
- 
-+import net.minecraft.Util;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
 @@ -34,7 +_,13 @@
  
     protected abstract Item m_7881_();

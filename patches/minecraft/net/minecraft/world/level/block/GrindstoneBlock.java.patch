@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/GrindstoneBlock.java
++++ b/net/minecraft/world/level/block/GrindstoneBlock.java
+@@ -156,7 +_,7 @@
+ 
+    public MenuProvider m_7246_(BlockState p_53847_, Level p_53848_, BlockPos p_53849_) {
+       return new SimpleMenuProvider((p_53812_, p_53813_, p_53814_) -> {
+-         return new GrindstoneMenu(p_53812_, p_53813_, ContainerLevelAccess.m_39289_(p_53848_, p_53849_));
++         return new GrindstoneMenu(p_53812_, p_53813_, ContainerLevelAccess.createFix(p_53848_, p_53849_));
+       }, f_53768_);
+    }
+ 

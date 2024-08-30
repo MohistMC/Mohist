@@ -6,7 +6,21 @@
        }
 +
 +      @org.jetbrains.annotations.Nullable
-+       public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return SpawnerBlockEntity.this; }
++      public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return SpawnerBlockEntity.this; }
     };
  
     public SpawnerBlockEntity(BlockPos p_155752_, BlockState p_155753_) {
+@@ -74,6 +_,12 @@
+    }
+ 
+    public BaseSpawner m_59801_() {
+-      return this.f_59788_;
++      // Mohist start - fix nextSpawnData == null TODO
++      var spawner = this.f_59788_;
++      if (spawner.f_45444_ == null) {
++         spawner.f_45444_ = new SpawnData();
++      }
++      return spawner;
++      // Mohist end
+    }
+ }

@@ -5,8 +5,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.pluginfix.PluginDynamicRegistrFix;
 import com.mohistmc.plugins.MohistPlugin;
+import com.mohistmc.util.I18n;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -49,11 +51,11 @@ import java.util.regex.Pattern;
 public final class SimplePluginManager implements PluginManager {
     private final Server server;
     private final Map<Pattern, PluginLoader> fileAssociations = new HashMap<Pattern, PluginLoader>();
-    private final List<Plugin> plugins = new ArrayList<Plugin>();
-    private final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
+    public final List<Plugin> plugins = new ArrayList<Plugin>();
+    public final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
     private MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();
     private File updateDirectory;
-    private final SimpleCommandMap commandMap;
+    public final SimpleCommandMap commandMap;
     private final Map<String, Permission> permissions = new HashMap<String, Permission>();
     private final Map<Boolean, Set<Permission>> defaultPerms = new LinkedHashMap<Boolean, Set<Permission>>();
     private final Map<String, Map<Permissible, Boolean>> permSubs = new HashMap<String, Map<Permissible, Boolean>>();
@@ -88,12 +90,12 @@ public final class SimplePluginManager implements PluginManager {
             } catch (NoSuchMethodException ex) {
                 String className = loader.getName();
 
-                throw new IllegalArgumentException(String.format("Class %s does not have a public %s(Server) constructor", className, className), ex);
+                throw new IllegalArgumentException(String.format(MohistMC.i18n.as("mohist.i18n.36", className, className)), ex);
             } catch (Exception ex) {
-                throw new IllegalArgumentException(String.format("Unexpected exception %s while attempting to construct a new instance of %s", ex.getClass().getName(), loader.getName()), ex);
+                throw new IllegalArgumentException(String.format(MohistMC.i18n.as("mohist.i18n.37", ex.getClass().getName(), loader.getName())), ex);
             }
         } else {
-            throw new IllegalArgumentException(String.format("Class %s does not implement interface PluginLoader", loader.getName()));
+            throw new IllegalArgumentException(String.format(MohistMC.i18n.as("mohist.i18n.38", loader.getName())));
         }
 
         Pattern[] patterns = instance.getPluginFileFilters();
@@ -147,56 +149,56 @@ public final class SimplePluginManager implements PluginManager {
                 description = loader.getPluginDescription(file);
                 String name = description.getName();
                 if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")) {
-                    server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
+                    server.getLogger().log(Level.SEVERE, I18n.as("minecraftserver.plugin.load.error1",file.getPath(), directory.getPath()));
                     continue;
                 } else if (description.rawName.indexOf(' ') != -1) {
-                    server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': uses the space-character (0x20) in its name");
+                    server.getLogger().log(Level.SEVERE, I18n.as("minecraftserver.plugin.load.error2",file.getPath(), directory.getPath()));
                     continue;
                 }
             } catch (InvalidDescriptionException ex) {
-                server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
+                server.getLogger().log(Level.SEVERE, I18n.as("minecraftserver.plugin.load.error3",file.getPath(), directory.getPath()),ex);
                 continue;
             }
 
             File replacedFile = plugins.put(description.getName(), file);
             if (replacedFile != null) {
                 server.getLogger().severe(String.format(
-                    "Ambiguous plugin name `%s' for files `%s' and `%s' in `%s'",
+                    MohistMC.i18n.as("mohist.i18n.39",
                     description.getName(),
                     file.getPath(),
                     replacedFile.getPath(),
                     directory.getPath()
-                ));
+                )));
             }
 
             String removedProvided = pluginsProvided.remove(description.getName());
             if (removedProvided != null) {
                 server.getLogger().warning(String.format(
-                        "Ambiguous plugin name `%s'. It is also provided by `%s'",
+                        MohistMC.i18n.as("mohist.i18n.41",
                         description.getName(),
                         removedProvided
-                ));
+                )));
             }
 
             for (String provided : description.getProvides()) {
                 File pluginFile = plugins.get(provided);
                 if (pluginFile != null) {
                     server.getLogger().warning(String.format(
-                            "`%s provides `%s' while this is also the name of `%s' in `%s'",
+                            MohistMC.i18n.as("mohist.i18n.42",
                             file.getPath(),
                             provided,
                             pluginFile.getPath(),
                             directory.getPath()
-                    ));
+                    )));
                 } else {
                     String replacedPlugin = pluginsProvided.put(provided, description.getName());
                     if (replacedPlugin != null) {
                         server.getLogger().warning(String.format(
-                                "`%s' is provided by both `%s' and `%s'",
+                                MohistMC.i18n.as("mohist.i18n.43",
                                 provided,
                                 description.getName(),
                                 replacedPlugin
-                        ));
+                        )));
                     }
                 }
             }
@@ -268,8 +270,8 @@ public final class SimplePluginManager implements PluginManager {
 
                             server.getLogger().log(
                                 Level.SEVERE,
-                                "Could not load '" + entry.getValue().getPath() + "' in folder '" + directory.getPath() + "'",
-                                new UnknownDependencyException("Unknown dependency " + dependency + ". Please download and install " + dependency + " to run this plugin."));
+                                MohistMC.i18n.as( "mohist.i18n.44", entry.getValue().getPath(),  directory.getPath(),
+                                new UnknownDependencyException(MohistMC.i18n.as("mohist.i18n.45",dependency, dependency ))));
                             break;
                         }
                     }
@@ -307,11 +309,11 @@ public final class SimplePluginManager implements PluginManager {
                             loadedPlugins.add(loadedPlugin.getName());
                             loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
                         } else {
-                            server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'");
+                            server.getLogger().log(Level.SEVERE, I18n.as("minecraftserver.plugin.load.error4", file.getPath(), directory.getPath()));
                         }
                         continue;
                     } catch (InvalidPluginException ex) {
-                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
+                        server.getLogger().log(Level.SEVERE, I18n.as("minecraftserver.plugin.load.error3", file.getPath(), directory.getPath()), ex);
                     }
                 }
             }
@@ -338,11 +340,11 @@ public final class SimplePluginManager implements PluginManager {
                                 loadedPlugins.add(loadedPlugin.getName());
                                 loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
                             } else {
-                                server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'");
+                                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.46", file.getPath(), directory.getPath()));
                             }
                             break;
                         } catch (InvalidPluginException ex) {
-                            server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
+                            server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.47", file.getPath(), directory.getPath()), ex);
                         }
                     }
                 }
@@ -355,7 +357,7 @@ public final class SimplePluginManager implements PluginManager {
                     while (failedPluginIterator.hasNext()) {
                         File file = failedPluginIterator.next();
                         failedPluginIterator.remove();
-                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': circular dependency detected");
+                        server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.48", file.getPath(), directory.getPath()));
                     }
                 }
             }
@@ -481,7 +483,7 @@ public final class SimplePluginManager implements PluginManager {
             try {
                 plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.49", plugin.getDescription().getFullName()), ex);
             }
 
             HandlerList.bakeAll();
@@ -506,32 +508,32 @@ public final class SimplePluginManager implements PluginManager {
             try {
                 plugin.getPluginLoader().disablePlugin(plugin);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.50", plugin.getDescription().getFullName()), ex);
             }
 
             try {
                 server.getScheduler().cancelTasks(plugin);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while cancelling tasks for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.51", plugin.getDescription().getFullName()), ex);
             }
 
             try {
                 server.getServicesManager().unregisterAll(plugin);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering services for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.52", plugin.getDescription().getFullName()), ex);
             }
 
             try {
                 HandlerList.unregisterAll(plugin);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering events for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.53", plugin.getDescription().getFullName()), ex);
             }
 
             try {
                 server.getMessenger().unregisterIncomingPluginChannel(plugin);
                 server.getMessenger().unregisterOutgoingPluginChannel(plugin);
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering plugin channels for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.54", plugin.getDescription().getFullName()), ex);
             }
 
             try {
@@ -539,7 +541,7 @@ public final class SimplePluginManager implements PluginManager {
                     world.removePluginChunkTickets(plugin);
                 }
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while removing chunk tickets for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.55", plugin.getDescription().getFullName()), ex);
             }
         }
     }
@@ -607,14 +609,14 @@ public final class SimplePluginManager implements PluginManager {
                     plugin.setNaggable(false);
 
                     server.getLogger().log(Level.SEVERE, String.format(
-                            "Nag author(s): '%s' of '%s' about the following: %s",
+                            MohistMC.i18n.as("mohist.i18n.56",
                             plugin.getDescription().getAuthors(),
                             plugin.getDescription().getFullName(),
                             ex.getMessage()
-                            ));
+                            )));
                 }
             } catch (Throwable ex) {
-                server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);
+                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as( "mohist.i18n.57", event.getEventName(), registration.getPlugin().getDescription().getFullName()), ex);
             }
         }
     }
@@ -622,7 +624,7 @@ public final class SimplePluginManager implements PluginManager {
     @Override
     public void registerEvents(@NotNull Listener listener, @NotNull Plugin plugin) {
         if (!plugin.isEnabled()) {
-            throw new IllegalPluginAccessException("Plugin attempted to register " + listener + " while not enabled");
+            throw new IllegalPluginAccessException(MohistMC.i18n.as("mohist.i18n.58", listener));
         }
 
         for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : plugin.getPluginLoader().createRegisteredListeners(listener, plugin).entrySet()) {
@@ -656,7 +658,7 @@ public final class SimplePluginManager implements PluginManager {
         Preconditions.checkArgument(plugin != null, "Plugin cannot be null");
 
         if (!plugin.isEnabled()) {
-            throw new IllegalPluginAccessException("Plugin attempted to register " + event + " while not enabled");
+            throw new IllegalPluginAccessException(MohistMC.i18n.as("mohist.i18n.59", event));
         }
 
         if (useTimings) {
@@ -678,7 +680,7 @@ public final class SimplePluginManager implements PluginManager {
 
             return (HandlerList) method.invoke(null);
         } catch (Exception e) {
-            throw new IllegalPluginAccessException("Error while registering listener for event type " + type.toString() + ": " + e.toString());
+            throw new IllegalPluginAccessException(MohistMC.i18n.as("mohist.i18n.60", type.toString(), e.toString()));
         }
     }
 
@@ -693,7 +695,7 @@ public final class SimplePluginManager implements PluginManager {
                     && Event.class.isAssignableFrom(clazz.getSuperclass())) {
                 return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
             } else {
-                throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
+                throw new IllegalPluginAccessException(MohistMC.i18n.as("mohist.i18n.61", clazz.getName()));
             }
         }
     }
@@ -714,7 +716,7 @@ public final class SimplePluginManager implements PluginManager {
         String name = perm.getName().toLowerCase(java.util.Locale.ENGLISH);
 
         if (permissions.containsKey(name)) {
-            throw new IllegalArgumentException("The permission " + name + " is already defined!");
+            throw new IllegalArgumentException(MohistMC.i18n.as("mohist.i18n.62", name));
         }
 
         permissions.put(name, perm);
@@ -888,6 +890,6 @@ public final class SimplePluginManager implements PluginManager {
      * @param use True if per event timing code should be used
      */
     public void useTimings(boolean use) {
-        useTimings = use;
+        useTimings = false;
     }
 }

@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/level/block/DoorBlock.java
 +++ b/net/minecraft/world/level/block/DoorBlock.java
-@@ -27,11 +_,14 @@
- import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
- import net.minecraft.world.level.block.state.properties.EnumProperty;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.material.PushReaction;
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.BlockHitResult;
+@@ -32,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;

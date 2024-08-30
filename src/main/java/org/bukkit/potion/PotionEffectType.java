@@ -1,6 +1,7 @@
 package org.bukkit.potion;
 
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Color;
@@ -364,8 +365,6 @@ public abstract class PotionEffectType implements Keyed {
      */
     @NotNull
     public static PotionEffectType[] values() {
-        int from = byId[0] == null ? 1 : 0;
-        int to = byId[byId.length - 1] == null ? byId.length - 1 : byId.length;
-        return Arrays.copyOfRange(byId, from, to);
+        return Arrays.stream(byId).filter(Objects::nonNull).toArray(PotionEffectType[]::new);
     }
 }

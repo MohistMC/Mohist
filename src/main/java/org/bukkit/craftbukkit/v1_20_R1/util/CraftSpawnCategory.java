@@ -6,7 +6,7 @@ import org.bukkit.entity.SpawnCategory;
 public class CraftSpawnCategory {
 
     public static boolean isValidForLimits(SpawnCategory spawnCategory) {
-        return spawnCategory != null && spawnCategory.ordinal() < SpawnCategory.MISC.ordinal();
+        return spawnCategory != null && spawnCategory.ordinal() < SpawnCategory.MISC.ordinal(); // Mohist - fix mod
     }
 
     public static String getConfigNameSpawnLimit(SpawnCategory spawnCategory) {
@@ -18,7 +18,7 @@ public class CraftSpawnCategory {
             case WATER_UNDERGROUND_CREATURE -> "spawn-limits.water-underground-creature";
             case AMBIENT -> "spawn-limits.ambient";
             case AXOLOTL -> "spawn-limits.axolotls";
-            default -> throw new UnsupportedOperationException("Unknown Config value " + spawnCategory + " for spawn-limits");
+            default -> "spawn-limits." + spawnCategory.name().toLowerCase();
         };
     }
 
@@ -31,7 +31,7 @@ public class CraftSpawnCategory {
             case WATER_UNDERGROUND_CREATURE -> "ticks-per.water-underground-creature-spawns";
             case AMBIENT -> "ticks-per.ambient-spawns";
             case AXOLOTL -> "ticks-per.axolotl-spawns";
-            default -> throw new UnsupportedOperationException("Unknown Config value " + spawnCategory + " for ticks-per");
+            default -> "ticks-per." + spawnCategory.name().toLowerCase();
         };
     }
 

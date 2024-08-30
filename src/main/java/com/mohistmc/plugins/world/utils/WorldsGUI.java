@@ -1,8 +1,8 @@
 package com.mohistmc.plugins.world.utils;
 
 import com.mohistmc.api.item.MohistItem;
-import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
+import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,16 +34,16 @@ public class WorldsGUI {
                 String name1 = w.getName();
                 String difficulty = w.getDifficulty().name();
                 if (config.get("worlds." + w.getName() + ".info") != null) {
-                    infos = config.getString("worlds." + w.getName() + ".info");
+                    infos = config.getString("worlds." + w.getName() + ".info", "§7-/-");
                     worldtype = config.getString("worlds." + w.getName() + ".environment");
-                    name1 = config.getString("worlds." + w.getName() + ".name");
+                    name1 = config.getString("worlds." + w.getName() + ".name", w.getName());
                     difficulty = config.getString("worlds." + w.getName() + ".difficulty");
                 }
-                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_0.getKey() + name1.replace("&", "§"));
-                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_1.getKey() + infos.replace("&", "§"));
-                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_2.getKey() + w.getWorldBorder().getSize());
-                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_3.getKey() + worldtype);
-                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_4.getKey() + difficulty);
+                infoLore.add(I18n.as("worldmanage.gui.lore0") + name1.replace("&", "§"));
+                infoLore.add(I18n.as("worldmanage.gui.lore1") + infos.replace("&", "§"));
+                infoLore.add(I18n.as("worldmanage.gui.lore2") + w.getWorldBorder().getSize());
+                infoLore.add(I18n.as("worldmanage.gui.lore3") + worldtype);
+                infoLore.add(I18n.as("worldmanage.gui.lore4") + difficulty);
                 if (w.isMods()) {
                     infoLore.add("§bModid §8>> §7" + w.getModid());
                 }
@@ -61,7 +61,7 @@ public class WorldsGUI {
         }
         inv.setItem(53, MohistItem.create(Material.MAP)
                 .setAmount(1)
-                .setDisplayName(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())
+                .setDisplayName(I18n.as("worldmanage.gui.close"))
                 .build());
         p.openInventory(inv);
         InventoryClickListener.worldInventory = worldListInventory;

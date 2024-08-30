@@ -24,7 +24,7 @@
  import org.slf4j.Logger;
  
  public class LootTable {
-@@ -39,14 +_,14 @@
+@@ -39,14 +_,15 @@
     final LootContextParamSet f_79108_;
     @Nullable
     final ResourceLocation f_286958_;
@@ -32,6 +32,7 @@
 +   private final List<LootPool> f_79109_;
     final LootItemFunction[] f_79110_;
     private final BiFunction<ItemStack, LootContext, ItemStack> f_79111_;
++   public ResourceLocation craftLootTable; // CraftBukkit
  
     LootTable(LootContextParamSet p_287716_, @Nullable ResourceLocation p_287737_, LootPool[] p_287700_, LootItemFunction[] p_287663_) {
        this.f_79108_ = p_287716_;

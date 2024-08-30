@@ -5,6 +5,7 @@
 
 package net.minecraftforge.data.loading;
 
+import com.mohistmc.MohistMC;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.registries.VanillaRegistries;
@@ -37,7 +38,7 @@ public class DatagenModLoader {
             final boolean structureValidator, final boolean flat, final String assetIndex, final File assetsDir) {
         if (mods.contains("minecraft") && mods.size() == 1)
             return;
-        LOGGER.info("Initializing Data Gatherer for mods {}", mods);
+        LOGGER.info(MohistMC.i18n.as("mohist.i18n.109", mods));
         runningDataGen = true;
         Bootstrap.bootStrap();
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});

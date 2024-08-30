@@ -36,7 +36,7 @@
 +    public ClientboundSystemChatPacket(Component f_237849_, boolean f_240374_) {
 +        this.f_237849_ = f_237849_;
 +        this.f_240374_ = f_240374_;
-+       this.content0 = Component.Serializer.m_130703_(f_237849_);
++        this.content0 = Component.Serializer.m_130703_(f_237849_);
 +    }
 +
 +    public ClientboundSystemChatPacket(String content, boolean overlay) {
@@ -65,7 +65,7 @@
 +        return f_237849_;
 +    }
 +
-+   public String content0() {
++    public String content0() {
 +      return content0;
 +   }
 +

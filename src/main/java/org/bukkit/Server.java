@@ -104,6 +104,16 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     public String getBukkitVersion();
 
+    // Paper start - expose game version
+    /**
+     * Gets the version of game this server implements
+     *
+     * @return version of game
+     */
+    @NotNull
+    String getMinecraftVersion();
+    // Paper end
+
     /**
      * Gets a view of all currently logged in players. This {@linkplain
      * Collections#unmodifiableCollection(Collection) view} is a reused
@@ -1735,6 +1745,15 @@ public interface Server extends PluginMessageRecipient {
     @Deprecated
     @NotNull
     UnsafeValues getUnsafe();
+
+    // Paper start
+    /**
+     * Gets the active {@link org.bukkit.command.CommandMap}
+     *
+     * @return the active command map
+     */
+    @NotNull
+    org.bukkit.command.CommandMap getCommandMap();
 
     // Spigot start
     public class Spigot {

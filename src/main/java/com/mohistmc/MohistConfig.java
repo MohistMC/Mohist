@@ -169,6 +169,10 @@ public class MohistConfig {
         return ColorsAPI.of(MohistConfig.motdFirstLine) + "\n" + ColorsAPI.of(MohistConfig.motdSecondLine);
     }
 
+    public static boolean isProxyOnlineMode() {
+        return org.bukkit.Bukkit.getOnlineMode()  || (velocity_enabled && velocity_onlineMode);
+    }
+
     public static boolean show_logo;
     public static String mohist_lang;
     public static boolean check_update;
@@ -220,6 +224,8 @@ public class MohistConfig {
 
     // Ban events
     public static boolean doFireTick;
+    public static boolean explosion;
+
     public static boolean worldmanage;
 
     public static boolean bukkitpermissionshandler;
@@ -230,14 +236,21 @@ public class MohistConfig {
     public static boolean recipe_warn;
 
     public static boolean tpa_enable;
+    public static boolean tpa_permissions_enable;
     public static boolean back_enable;
+    public static boolean back_permissions_enable;
     public static boolean permissions_debug_console;
     public static boolean permissions_send_player;
+
+    public static boolean watchdog_spigot;
+    public static boolean watchdog_mohist;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
         check_update = getBoolean("mohist.check_update", true);
+        watchdog_spigot = getBoolean("mohist.watchdog_spigot", true);
+        watchdog_mohist = getBoolean("mohist.watchdog_mohist", false);
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
@@ -279,6 +292,7 @@ public class MohistConfig {
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
         doFireTick = getBoolean("events.fire_tick", false);
+        explosion = getBoolean("events.explosion", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
         velocity_enabled = getBoolean("velocity.enabled", false);
@@ -287,7 +301,9 @@ public class MohistConfig {
 
         recipe_warn = getBoolean("recipe.warn", false);
         tpa_enable = getBoolean("tpa.enable", false);
+        tpa_permissions_enable = getBoolean("tpa.permissions", true);
         back_enable = getBoolean("back.enable", false);
+        back_permissions_enable = getBoolean("back.permissions", true);
 
         permissions_debug_console = getBoolean("permissions.debug.console", false);
         permissions_send_player = getBoolean("permissions.debug.player", false);

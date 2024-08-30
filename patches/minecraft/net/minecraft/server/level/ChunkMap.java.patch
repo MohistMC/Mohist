@@ -1,13 +1,15 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -5,6 +_,7 @@
+@@ -5,7 +_,9 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
 +import com.google.common.util.concurrent.AtomicDouble;
  import com.google.gson.JsonElement;
++import com.mohistmc.bukkit.CallbackExecutor;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Either;
+ import com.mojang.logging.LogUtils;
 @@ -40,12 +_,9 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
@@ -39,29 +41,12 @@
  import org.slf4j.Logger;
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -144,6 +_,27 @@
+@@ -144,6 +_,10 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
     int f_140126_;
  
 +   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
 +   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
-+   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
-+
-+      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
-+
-+      @Override
-+      public void execute(Runnable runnable) {
-+         queue.add(runnable);
-+      }
-+
-+      @Override
-+      public void run() {
-+         Runnable task;
-+         while ((task = queue.poll()) != null) {
-+            task.run();
-+         }
-+      }
-+   };
 +   // CraftBukkit end
 +
     public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
@@ -102,20 +87,20 @@
 -         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
 +         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter(new Predicate<Entity>() {
-+            @Override
-+            public boolean test(Entity entity) {
-+               boolean needsRemoval = false;
-+               net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+               if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+                  entity.m_146870_();
-+                  needsRemoval = true;
-+               }
-+               if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+                  entity.m_146870_();
-+                  needsRemoval = true;
-+               }
-+               return !needsRemoval;
-+            }
++             @Override
++             public boolean test(Entity entity) {
++                 boolean needsRemoval = false;
++                 net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++                 if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++                     entity.m_146870_();
++                     needsRemoval = true;
++                 }
++                 if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++                     entity.m_146870_();
++                     needsRemoval = true;
++                 }
++                 return !needsRemoval;
++             }
 +         }));
 +         // CraftBukkit end
        }
@@ -170,24 +155,14 @@
           }
  
        }
-@@ -946,7 +_,12 @@
- 
-    private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
-       return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
--         return p_214907_.map(this::m_214947_);
-+         return p_214907_.map(new Function<CompoundTag, CompoundTag>() {
-+            @Override
-+            public CompoundTag apply(CompoundTag compoundTag) {
-+               return m_214947_(compoundTag);
-+            }
-+         });
-       }, Util.m_183991_());
-    }
- 
-@@ -954,12 +_,27 @@
+@@ -954,12 +_,31 @@
        return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
     }
  
++   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos chunkcoordintpair) {
++      return this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_(), chunkcoordintpair, f_140133_);
++   }
++
 +   // Mohist start - fix mixin
 +   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
 +   public boolean anyPlayerCloseEnoughForSpawning(ChunkPos pChunkPos, boolean reducedRange) {
@@ -248,6 +223,38 @@
           if (i != 0) {
              int j = entitytype.m_20682_();
              if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
+@@ -1163,8 +_,11 @@
+       if (p_140332_ instanceof ServerPlayer serverplayer) {
+          this.m_140192_(serverplayer, false);
+ 
+-         for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+-            chunkmap$trackedentity.m_140485_(serverplayer);
++         try {
++            for (ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
++               chunkmap$trackedentity.m_140485_(serverplayer);
++            }
++         } catch (NullPointerException ignored) { // Mohist TODO
+          }
+       }
+ 
+@@ -1178,7 +_,7 @@
+    protected void m_140421_() {
+       List<ServerPlayer> list = Lists.newArrayList();
+       List<ServerPlayer> list1 = this.f_140133_.m_6907_();
+-
++      try {
+       for(ChunkMap.TrackedEntity chunkmap$trackedentity : this.f_140150_.values()) {
+          SectionPos sectionpos = chunkmap$trackedentity.f_140474_;
+          SectionPos sectionpos1 = SectionPos.m_235861_(chunkmap$trackedentity.f_140472_);
+@@ -1203,7 +_,7 @@
+             chunkmap$trackedentity1.m_140487_(list);
+          }
+       }
+-
++   } catch (Exception ignored) {}
+    }
+ 
+    public void m_140201_(Entity p_140202_, Packet<?> p_140203_) {
 @@ -1282,6 +_,7 @@
           }
        }
@@ -261,7 +268,7 @@
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
 -         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
-+         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_, f_140475_); // CraftBukkit
++         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_).seenBy(f_140475_); // CraftBukkit
           this.f_140472_ = p_140478_;
           this.f_140473_ = p_140479_;
           this.f_140474_ = SectionPos.m_235861_(p_140478_);

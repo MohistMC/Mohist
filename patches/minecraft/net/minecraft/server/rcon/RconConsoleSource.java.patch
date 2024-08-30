@@ -1,5 +1,12 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
 +++ b/net/minecraft/server/rcon/RconConsoleSource.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.server.rcon;
+ 
++import java.net.InetSocketAddress;
+ import net.minecraft.commands.CommandSource;
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.network.chat.Component;
 @@ -8,6 +_,10 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.phys.Vec2;
@@ -11,15 +18,18 @@
  
  public class RconConsoleSource implements CommandSource {
     private static final String f_144022_ = "Rcon";
-@@ -15,8 +_,14 @@
+@@ -15,8 +_,19 @@
     private final StringBuffer f_11501_ = new StringBuffer();
     private final MinecraftServer f_11502_;
  
--   public RconConsoleSource(MinecraftServer p_11505_) {
--      this.f_11502_ = p_11505_;
 +   // CraftBukkit start
 +   public final SocketAddress socketAddress;
 +   private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
++
+    public RconConsoleSource(MinecraftServer p_11505_) {
+       this.f_11502_ = p_11505_;
++      this.socketAddress = new InetSocketAddress(p_11505_.rconPort);
++   }
 +
 +   public RconConsoleSource(MinecraftServer pServer, SocketAddress socketAddress) {
 +      this.socketAddress = socketAddress;

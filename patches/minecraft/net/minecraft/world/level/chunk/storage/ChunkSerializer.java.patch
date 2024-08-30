@@ -24,7 +24,7 @@
              }
  
 -            PalettedContainerRO<Holder<Biome>> palettedcontainerro;
-+            PalettedContainer<Holder<Biome>> palettedcontainerro;
++            PalettedContainer<Holder<Biome>> palettedcontainerro; // CraftBukkit - read/write
              if (compoundtag.m_128425_("biomes", 10)) {
 -               palettedcontainerro = codec.parse(NbtOps.f_128958_, compoundtag.m_128469_("biomes")).promotePartial((p_188274_) -> {
 +               palettedcontainerro = (PalettedContainer<Holder<Biome>>) codec.parse(NbtOps.f_128958_, compoundtag.m_128469_("biomes")).promotePartial((p_188274_) -> {
@@ -68,6 +68,19 @@
           return protochunk1;
        }
     }
+@@ -247,6 +_,12 @@
+       return PalettedContainer.m_238418_(p_188261_.m_206115_(), p_188261_.m_206110_(), PalettedContainer.Strategy.f_188138_, p_188261_.m_246971_(Biomes.f_48202_));
+    }
+ 
++   // CraftBukkit start - read/write
++   private static Codec<PalettedContainer<Holder<Biome>>> makeBiomeCodecRW(Registry<Biome> iregistry) {
++      return PalettedContainer.m_238371_(iregistry.m_206115_(), iregistry.m_206110_(), PalettedContainer.Strategy.f_188138_, iregistry.m_246971_(Biomes.f_48202_));
++   }
++   // CraftBukkit end
++
+    public static CompoundTag m_63454_(ServerLevel p_63455_, ChunkAccess p_63456_) {
+       ChunkPos chunkpos = p_63456_.m_7697_();
+       CompoundTag compoundtag = NbtUtils.m_264171_(new CompoundTag());
 @@ -341,6 +_,14 @@
  
           compoundtag.m_128365_("CarvingMasks", compoundtag4);

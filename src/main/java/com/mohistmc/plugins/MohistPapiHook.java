@@ -1,7 +1,6 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.api.WorldAPI;
-import com.mohistmc.plugins.world.WorldDate;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -26,7 +25,7 @@ public class MohistPapiHook extends PlaceholderExpansion {
             return null;
         }
         if (i.equalsIgnoreCase("world_name")) {
-            return WorldAPI.getDate(p.getWorld(), WorldDate.NAME).replace("&", "§");
+            return WorldAPI.getWorldName(p.getWorld()).replace("&", "§");
         }
 
         return null;
