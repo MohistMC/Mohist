@@ -162,7 +162,7 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
         }
 
-        if ((options == null) || (options.has("?") || (options.has("help"))) {
+        if ((options == null) || (options.has("?") || (options.has("help")))) {
             try {
                 parser.printHelpOn(System.out);
             } catch (IOException ex) {
