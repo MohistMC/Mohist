@@ -137,13 +137,13 @@ public class CraftEnchantment extends Enchantment {
         if (StringUtils.containsIgnoreCase(candidate, "Enchantment")) {
             candidate = candidate.replaceFirst("[E|e]nchantment", "");
             // Add underscores at camelCase humps
-            candidate = candidate.replaceAll("([a-z])([A-Z])", "\1_\2").toUpperCase();
+            candidate = candidate.replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
             candidate = addSuffix(candidate.toUpperCase());
             return candidate;
         }
         // fall back to the FQN if naming pattern is broken
         candidate = clz.getName();
-        candidate = candidate.replaceAll("([a-z])([A-Z])", "\1_\2");
+        candidate = candidate.replaceAll("([a-z])([A-Z])", "$1_$2");
         candidate = candidate.replaceAll("\\.", "_");
         candidate = addSuffix(candidate.toUpperCase());
         return candidate;
