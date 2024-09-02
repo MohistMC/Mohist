@@ -102,7 +102,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting bukkitPermissionsHandler = new BoolSetting(this, "mohist.BukkitPermissionsHandler", true);
 
     public final BoolSetting disableforgegenerate_global = new BoolSetting(this, "world.disableforgegenerate.global.enable", false);
-    public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", Message.isCN() ? DownloadSource.CHINA.name() : DownloadSource.MOHIST.name());
+    public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", DownloadSource.MOHIST.name());
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
 
