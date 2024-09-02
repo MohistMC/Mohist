@@ -166,7 +166,6 @@ tasks.register('packageLibraries', Zip) {
     }
 
     group('crucible')
-    description("Package all necessary libraries to run Crucible, in case the server is unable to download them at runtime")
 }
 
 def generateClasspath(boolean legacy = false) {
