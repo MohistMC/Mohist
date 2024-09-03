@@ -114,7 +114,7 @@
        ObjectArrayList<ItemStack> objectarraylist = this.m_230922_(lootcontext);
        RandomSource randomsource = lootcontext.m_230907_();
 +      // Mohist start
-+      if (lootcontext.m_78936_(LootContextParams.f_81460_) && lootcontext.m_78936_(LootContextParams.f_81455_)) {
++      if (craftLootTable != null && lootcontext.m_78936_(LootContextParams.f_81460_) && lootcontext.m_78936_(LootContextParams.f_81455_)) {
 +         // CraftBukkit start
 +         LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, isPlugin.getAndSet(false));
 +         if (event.isCancelled()) {
