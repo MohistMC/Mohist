@@ -85,7 +85,7 @@ group = 'com.mohistmc'
 
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "10.13.4.1614"
-version = '1.7.10-46'
+version = '1.7.10-' + mohist_api()
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
@@ -178,14 +178,19 @@ def generateClasspath(boolean legacy = false) {
     return classpath.trim()
 }
 
-def JenkinsNumber() {
-    def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.7.10/api/json").openConnection();
-    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
-    conn.connect()
-    def root = conn.content.text
-    def jsonSluper = new JsonSlurper()
+static def mohist_api() {
+    try {
+        URL url = new URL("https://mohistmc.com/api/v2/projects/mohist/1.7.10/builds/latest")
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection()
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
+        conn.connect()
+        def root = conn.content.text
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parseText(root)
 
-    String data = jsonSluper.parseText(root)
-    def number = data.substring(data.indexOf("number")).split(",")
-    return Integer.valueOf(number[0].replace("number=", "")).intValue()
+        return Integer.valueOf(data.build.number) + 1
+    } catch (Exception ignored) {
+        return 'dev'
+    }
 }
+
