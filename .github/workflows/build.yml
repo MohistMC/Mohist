@@ -27,5 +27,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Mohist-1.7.10-46-server
+        name: Mohist-1.7.10-server
         path: build/distributions/*
