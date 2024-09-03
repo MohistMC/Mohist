@@ -675,7 +675,7 @@ project(':mohist') {
                     name = 'mohist'
                     groupId = 'com.mohistmc'
                     artifactId = 'mohist'
-                    version = "1.12.2-" + JenkinsNumber()
+                    version = project.version
                     description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
                     url = 'https://github.com/MohistMC/Mohist'
 
