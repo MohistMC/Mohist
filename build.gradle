@@ -149,7 +149,7 @@ project(':mohist') {
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     }
 
-    version = '1.12.2-' + JenkinsNumber()
+    version = '1.12.2-' + mohist_api()
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
@@ -815,21 +815,18 @@ task setup() {
     dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
-static def JenkinsNumber() {
-    return 344
-    /*
+static def mohist_api() {
     try {
-        def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.12.2/api/json").openConnection()
+        URL url = new URL("https://mohistmc.com/api/v2/projects/mohist/1.12.2/builds/latest")
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection()
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
         conn.connect()
         def root = conn.content.text
-        def jsonSluper = new JsonSlurper()
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parseText(root)
 
-        String data = jsonSluper.parseText(root)
-        def number = data.substring(data.indexOf("number")).split(",")
-        return Integer.valueOf(number[0].replace("number=", "")).intValue()
-    } catch (Exception e1) {
+        return Integer.valueOf(data.build.number) + 1
+    } catch (Exception ignored) {
         return 'dev'
     }
-     */
 }
