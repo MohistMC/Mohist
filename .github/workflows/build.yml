@@ -27,5 +27,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Mohist-1.12.2-344-server
-        path: projects/mohist/build/libs/mohist-1.12.2-344-server.jar
+        name: Mohist-1.12.2-server
+        path: projects/mohist/build/libs/*-server.jar
