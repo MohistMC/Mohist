@@ -1,6 +1,7 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
 import com.mohistmc.bukkit.entity.MohistModsAnimals;
 import com.mohistmc.bukkit.entity.MohistModsChestHorse;
@@ -8,12 +9,18 @@ import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
 import com.mohistmc.bukkit.entity.MohistModsMonster;
 import com.mohistmc.bukkit.entity.MohistModsProjectileEntity;
 import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
+import java.util.function.Function;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Translatable;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.HopperMinecart;
@@ -321,10 +328,12 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
     private final Class<? extends Entity> clazz;
     private final short typeId;
     private final boolean independent, living;
-    public NamespacedKey key;
+    private NamespacedKey key;
+    private net.minecraft.world.entity.EntityType<?> handleType;
+    private Function<Location, ? extends net.minecraft.world.entity.Entity> factory;
 
-    public static final Map<String, EntityType> NAME_MAP = new HashMap<>();
-    public static final Map<Short, EntityType> ID_MAP = new HashMap<>();
+    private static final Map<String, EntityType> NAME_MAP = new HashMap<>();
+    private static final Map<Short, EntityType> ID_MAP = new HashMap<>();
 
     static {
         for (EntityType type : values()) {
@@ -476,5 +485,29 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
      */
     public boolean isEnabledByFeature(@NotNull World world) {
         return Bukkit.getDataPackManager().isEnabledByFeature(this, world);
+    }
+
+    public void hookForgeEntity(ResourceLocation location, net.minecraft.world.entity.EntityType<?> entityType) {
+        this.key = CraftNamespacedKey.fromMinecraft(location);
+        this.handleType = entityType;
+        NAME_MAP.put(name.toLowerCase(), this);
+        ID_MAP.put(typeId, this);
+        ServerAPI.entityTypeMap.put(entityType, name);
+        this.factory = bukkitLoc -> {
+            if (bukkitLoc != null && bukkitLoc.getWorld() != null) {
+                ServerLevel serverLevel = ((CraftWorld) bukkitLoc.getWorld()).getHandle();
+                net.minecraft.world.entity.Entity entity = handleType.create(serverLevel);
+                if (entity != null) {
+                    entity.absMoveTo(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), bukkitLoc.getYaw(), bukkitLoc.getPitch());
+                }
+                return entity;
+            } else {
+                return null;
+            }
+        };
+    }
+
+    public Function<Location, ? extends net.minecraft.world.entity.Entity> getFactory() {
+        return factory;
     }
 }

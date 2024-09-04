@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -417,11 +418,19 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public Entity spawnEntity(Location location, EntityType entityType) {
+        Function<Location, ? extends net.minecraft.world.entity.Entity> function = entityType.getFactory();
+        if (function != null) {
+            return addEntity(function.apply(location), CreatureSpawnEvent.SpawnReason.CUSTOM, null, false);
+        }
         return spawn(location, entityType.getEntityClass());
     }
 
     @Override
     public Entity spawnEntity(Location loc, EntityType type, boolean randomizeData) {
+        Function<Location, ? extends net.minecraft.world.entity.Entity> function = type.getFactory();
+        if (function != null) {
+            return addEntity(function.apply(loc), CreatureSpawnEvent.SpawnReason.CUSTOM, null, randomizeData);
+        }
         return spawn(loc, type.getEntityClass(), null, CreatureSpawnEvent.SpawnReason.CUSTOM, randomizeData);
     }
 
