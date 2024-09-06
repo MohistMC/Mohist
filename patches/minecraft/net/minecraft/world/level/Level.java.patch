@@ -1,9 +1,12 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1,17 +_,20 @@
+@@ -1,17 +_,23 @@
  package net.minecraft.world.level;
  
  import com.google.common.collect.Lists;
++import com.mohistmc.api.WorldAPI;
++import com.mohistmc.api.event.block.ModsEntityDestroyBlockEvent;
++import com.mohistmc.api.event.block.SetBlockEvent;
 +import com.mohistmc.forge.ForgeInjectBukkit;
  import com.mojang.serialization.Codec;
  import java.io.IOException;
@@ -52,11 +55,12 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -69,8 +_,18 @@
+@@ -69,8 +_,19 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
++import org.bukkit.Location;
 +import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
@@ -209,10 +213,17 @@
     }
  
     public boolean m_5776_() {
-@@ -191,6 +_,17 @@
+@@ -191,6 +_,24 @@
     }
  
     public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
++      SetBlockEvent event = new SetBlockEvent(new Location(this.getWorld(), p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()));
++      Bukkit.getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         org.bukkit.block.Block block = event.getLocation().getBlock();
++         block.getState().update();
++         return false;
++      }
 +      // CraftBukkit start - tree generation
 +      if (this.captureTreeGeneration) {
 +         CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
@@ -299,6 +310,29 @@
           }
        }
     }
+@@ -244,6 +_,22 @@
+ 
+    public boolean m_7740_(BlockPos p_46626_, boolean p_46627_, @Nullable Entity p_46628_, int p_46629_) {
+       BlockState blockstate = this.m_8055_(p_46626_);
++      // Mohist start
++      org.bukkit.entity.Entity bukkit = p_46628_ == null ? null : p_46628_.getBukkitEntity();
++      if (bukkit == null && WorldAPI.destroyBlockProgress.containsKey(p_46626_)) {
++         bukkit = WorldAPI.destroyBlockProgress.get(p_46626_).getBukkitEntity();
++         WorldAPI.destroyBlockProgress.remove(p_46626_);
++      }
++      if (bukkit != null) {
++         ModsEntityDestroyBlockEvent event = new ModsEntityDestroyBlockEvent(new Location(this.getWorld(), p_46626_.m_123341_(), p_46626_.m_123342_(), p_46626_.m_123343_()), bukkit);
++         Bukkit.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            org.bukkit.block.Block block = event.getLocation().getBlock();
++            block.getState().update();
++            return false;
++         }
++      }
++      // Mohist end
+       if (blockstate.m_60795_()) {
+          return false;
+       } else {
 @@ -269,9 +_,20 @@
     public void m_142052_(BlockPos p_151531_, BlockState p_151532_) {
     }
