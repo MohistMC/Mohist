@@ -143,12 +143,13 @@
  import org.slf4j.Logger;
  
  public class ServerGamePacketListenerImpl
-@@ -237,16 +_,35 @@
+@@ -237,16 +_,36 @@
      private boolean waitingForSwitchToConfig;
  
      public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
 -        super(p_9770_, p_9771_, p_300908_);
-+        super(p_9770_, p_9771_, p_300908_, p_9772_); // CraftBukkit
++        super(p_9770_, p_9771_, p_300908_); // CraftBukkit
++        this.setPlayer(p_9772_);
          this.chunkSender = new PlayerChunkSender(p_9771_.isMemoryConnection());
          this.player = p_9772_;
          p_9772_.connection = this;
@@ -1662,7 +1663,7 @@
                  .setupInboundProtocol(
                      ConfigurationProtocols.SERVERBOUND,
 -                    new ServerConfigurationPacketListenerImpl(this.server, this.connection, this.createCookie(this.player.clientInformation()))
-+                    new ServerConfigurationPacketListenerImpl(this.server, this.connection, this.createCookie(this.player.clientInformation()), this.player)
++                    new ServerConfigurationPacketListenerImpl(this.server, this.connection, this.createCookie(this.player.clientInformation())).player(this.player)
                  );
          }
      }

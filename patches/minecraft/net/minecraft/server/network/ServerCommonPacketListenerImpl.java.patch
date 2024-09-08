@@ -52,24 +52,25 @@
      private final boolean transferred;
      private long keepAliveTime;
      private boolean keepAlivePending;
-@@ -43,12 +_,41 @@
-     private int latency;
-     private volatile boolean suspendFlushingOnServerThread = false;
- 
--    public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
-+    public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, ServerPlayer player) {
-         this.server = p_299469_;
-         this.connection = p_300872_;
+@@ -49,6 +_,43 @@
          this.keepAliveTime = Util.getMillis();
          this.latency = p_300277_.latency();
          this.transferred = p_300277_.transferred();
 +        // CraftBukkit start - add fields and methods
-+        this.player = player;
-+        this.player.transferCookieConnection = this;
 +        this.cserver = p_299469_.server;
 +    }
 +
-+    protected final ServerPlayer player;
++    public ServerCommonPacketListenerImpl player(ServerPlayer player) {
++        this.player = player;
++        this.player.transferCookieConnection = this;
++        return this;
++    }
++
++    public void setPlayer(ServerPlayer player) {
++        this.player = player;
++    }
++
++    protected ServerPlayer player;
 +    protected final org.bukkit.craftbukkit.CraftServer cserver;
 +    public boolean processedDisconnect;
 +

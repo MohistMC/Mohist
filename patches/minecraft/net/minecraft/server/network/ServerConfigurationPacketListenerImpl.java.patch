@@ -32,19 +32,23 @@
      private final GameProfile gameProfile;
      private final Queue<ConfigurationTask> configurationTasks = new ConcurrentLinkedQueue<>();
      @Nullable
-@@ -48,11 +_,13 @@
+@@ -48,11 +_,18 @@
      private ClientInformation clientInformation;
      @Nullable
      private SynchronizeRegistriesTask synchronizeRegistriesTask;
 +    private final net.minecraftforge.network.config.ConfigurationTaskContext taskContext;
  
--    public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
+     public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
 -        super(p_301415_, p_298106_, p_301309_);
-+    public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_, ServerPlayer player) { // CraftBukkit
-+        super(p_301415_, p_298106_, p_301309_, player); // CraftBukkit
++        super(p_301415_, p_298106_, p_301309_); // CraftBukkit
          this.gameProfile = p_301309_.gameProfile();
          this.clientInformation = p_301309_.clientInformation();
 +        this.taskContext = new net.minecraftforge.network.config.ConfigurationTaskContext(p_298106_, this::send, this::finishCurrentTask);
++    }
++
++    public ServerConfigurationPacketListenerImpl player(ServerPlayer player) {
++        this.player = player;
++        return this;
      }
  
      @Override

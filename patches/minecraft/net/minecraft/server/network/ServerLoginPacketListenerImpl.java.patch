@@ -329,8 +329,8 @@
          ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(
 -            this.server, this.connection, commonlistenercookie
 -        );
-+                this.server, this.connection, commonlistenercookie, this.player
-+        ); // CraftBukkit
++                this.server, this.connection, commonlistenercookie
++        ).player( this.player); // CraftBukkit
          this.connection.setupInboundProtocol(ConfigurationProtocols.SERVERBOUND, serverconfigurationpacketlistenerimpl);
          serverconfigurationpacketlistenerimpl.startConfiguration();
          this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
