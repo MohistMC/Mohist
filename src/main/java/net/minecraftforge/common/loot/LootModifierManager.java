@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.*;
 
 import com.mojang.serialization.JsonOps;
-import net.minecraft.core.RegistryAccess;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,15 +23,15 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-
-    private final RegistryAccess registries;
     private static final String FOLDER = "loot_modifiers";
 
+    private final RegistryAccess registries;
     private Map<ResourceLocation, IGlobalLootModifier> modifiers = ImmutableMap.of();
 
     public LootModifierManager(RegistryAccess registries) {
@@ -75,10 +74,10 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
         var ops = registries.createSerializationContext(JsonOps.INSTANCE);
         resources.forEach((location, json) -> {
             IGlobalLootModifier.DIRECT_CODEC.parse(ops, json)
-                    // log error if parse fails
-                    .ifError(error -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, error.message()))
-                    // add loot modifier if parse succeeds
-                    .ifSuccess(modifier -> builder.put(location, modifier));
+                // log error if parse fails
+                .ifError(error -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, error.message()))
+                // add loot modifier if parse succeeds
+                .ifSuccess(modifier -> builder.put(location, modifier));
         });
         this.modifiers = builder.build();
     }

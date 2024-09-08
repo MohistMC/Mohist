@@ -104,11 +104,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
         this.modFile.setFileProperties(this.properties);
 
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
-        if (modConfigs.isEmpty())
+        if (modConfigs == null || modConfigs.isEmpty())
             throw new InvalidModFileException("Missing mods list", this);
 
         this.mods = modConfigs.stream()
-                .map(mi-> (IModInfo)new ModInfo(this, mi))
+                .map(mi -> (IModInfo) ModInfo.of(this, mi))
                 .toList();
 
         if (LOGGER.isDebugEnabled(LogMarkers.LOADING)) {
@@ -159,6 +159,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
     }
 
     @Override
+    public <T> Optional<T> getConfigElement(final String key) {
+        return this.config.getConfigElement(key);
+    }
+
+    @Override
     public <T> Optional<T> getConfigElement(final String... key) {
         return this.config.getConfigElement(key);
     }
@@ -186,7 +191,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
         return Strings.isNullOrEmpty(license);
     }
 
-    private final char[] HEX = "0123456789ABCDEF".toCharArray();
+    private static final char[] HEX = "0123456789ABCDEF".toCharArray();
     public Optional<String> getCodeSigningFingerprint() {
         var signers = this.modFile.getSecureJar().getManifestSigners();
         if (signers == null)
@@ -245,7 +250,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
                 else
                     sb.append(" signed by ").append(x509.getIssuerX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
 
-                return Optional.of(sb.toString());
+               return Optional.of(sb.toString());
             }
         }
 
