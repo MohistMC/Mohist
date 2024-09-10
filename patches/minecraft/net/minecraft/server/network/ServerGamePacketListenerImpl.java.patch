@@ -322,7 +322,7 @@
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
-@@ -430,10 +_,11 @@
+@@ -430,18 +_,86 @@
              d8 = d5 - entity.m_20189_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -334,12 +334,16 @@
              }
 +            Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
-             entity.m_19890_(d3, d4, d5, f, f1);
+-            entity.m_19890_(d3, d4, d5, f, f1);
++            entity.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_());
              boolean flag3 = serverlevel.m_45756_(entity, entity.m_20191_().m_82406_(0.0625D));
-@@ -443,6 +_,73 @@
+             if (flag && (flag2 || !flag3)) {
+-               entity.m_19890_(d0, d1, d2, f, f1);
++               entity.m_19890_(d0, d1, d2, this.f_9743_.m_146908_(), this.f_9743_.m_146909_());
+                this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
- 
++
 +            // CraftBukkit start - fire PlayerMoveEvent
 +            org.bukkit.entity.Player player = this.getCraftPlayer();
 +            // Spigot Start
@@ -406,10 +410,9 @@
 +               }
 +            }
 +            // CraftBukkit end
-+
+ 
              this.f_9743_.m_284548_().m_7726_().m_8385_(this.f_9743_);
              this.f_9743_.m_36378_(this.f_9743_.m_20185_() - d0, this.f_9743_.m_20186_() - d1, this.f_9743_.m_20189_() - d2);
-             this.f_9738_ = d7 >= -0.03125D && !flag1 && !this.f_9745_.m_129915_() && !entity.m_20068_() && this.m_9793_(entity);
 @@ -475,6 +_,7 @@
           }
  
@@ -753,7 +756,7 @@
                          this.f_9743_.m_289599_(this.f_9743_.m_20185_() - d3, this.f_9743_.m_20186_() - d4, this.f_9743_.m_20189_() - d5, p_9874_.m_134139_());
                       }
                    }
-@@ -954,28 +_,86 @@
+@@ -954,28 +_,94 @@
        return false;
     }
  
@@ -836,6 +839,14 @@
           this.f_9767_ = 0;
        }
  
++      // CraftBukkit start - update last location
++      this.lastPosX = this.f_9766_.f_82479_;
++      this.lastPosY = this.f_9766_.f_82480_;
++      this.lastPosZ = this.f_9766_.f_82481_;
++      this.lastYaw = f;
++      this.lastPitch = f1;
++      // CraftBukkit end
++
        this.f_9735_ = this.f_9746_;
 -      this.f_9743_.m_19890_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_);
 -      this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_9781_ - d0, p_9782_ - d1, p_9783_ - d2, p_9784_ - f, p_9785_ - f1, p_9786_, this.f_9767_));
