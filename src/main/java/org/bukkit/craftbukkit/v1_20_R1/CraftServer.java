@@ -1020,9 +1020,12 @@ public final class CraftServer implements Server {
     @Override
     public World createWorld(WorldCreator creator) {
         Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
+
         Validate.notNull(creator, "Creator may not be null");
         Level2LevelStem.initPluginWorld.set(true); // Mohist
         String name = creator.name();
+        creator = new WorldCreator(name);
+        creator.generator(new VoidGenerator());
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(getWorldContainer(), name);
