@@ -23,6 +23,7 @@ import com.mohistmc.eventhandler.dispatcher.BlockEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.EntityEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.ItemEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.PlayerEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.ServerEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.WorldEventDispatcher;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -34,6 +35,7 @@ public class EventDispatcherRegistry {
         MinecraftForge.EVENT_BUS.register(new ItemEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new BlockEventDispatcher());
+        MinecraftForge.EVENT_BUS.register(new ServerEventDispatcher());
         MohistMC.LOGGER.info("EventDispatcherRegistry initialized");
     }
 }
