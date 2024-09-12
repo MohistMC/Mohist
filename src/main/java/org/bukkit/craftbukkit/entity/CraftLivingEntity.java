@@ -667,6 +667,11 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     @Override
+    public void setRiptiding(boolean riptiding) {
+        getHandle().setLivingEntityFlag(net.minecraft.world.entity.LivingEntity.LIVING_ENTITY_FLAG_SPIN_ATTACK, riptiding);
+    }
+
+    @Override
     public boolean isSleeping() {
         return this.getHandle().isSleeping();
     }

@@ -125,6 +125,7 @@ import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.SystemMessageReceivedEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.ToastAddEvent;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -759,13 +760,9 @@ public class ForgeHooksClient {
     }
 
     @Nullable
-    public static Component onClientSystemChat(Component message, boolean overlay, RegistryAccess registry) {
-        return message;
-        /*
-        var bound = ChatType.bind(ForgeMod.SYSTEM_CHAT_TYPE.getKey(), registry, Component.literal("System"));
-        var event = new ClientChatReceivedEvent.System(bound, message, overlay);
+    public static Component onClientSystemMessage(Component message, boolean overlay) {
+        var event = new SystemMessageReceivedEvent(message, overlay);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
-        */
     }
 
     @NotNull

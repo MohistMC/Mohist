@@ -22,7 +22,7 @@
  import net.minecraft.network.protocol.configuration.ConfigurationProtocols;
  import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket;
  import net.minecraft.network.protocol.login.ClientboundGameProfilePacket;
-@@ -36,21 +_,43 @@
+@@ -36,21 +_,48 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
  import net.minecraft.server.MinecraftServer;
@@ -55,6 +55,11 @@
 +    @Override
 +    public void sendPacket(Packet<?> packet) {
 +        this.connection.send(packet);
++    }
++
++    @Override
++    public void kickPlayer(Component reason) {
++        disconnect(reason);
 +    }
 +    // CraftBukkit end
 +

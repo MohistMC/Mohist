@@ -81,6 +81,17 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final String TAG_ACTIVE_EFFECTS = "active_effects";
      private static final ResourceLocation SPEED_MODIFIER_POWDER_SNOW_ID = ResourceLocation.withDefaultNamespace("powder_snow");
+@@ -155,8 +_,8 @@
+     public static final float BASE_JUMP_POWER = 0.42F;
+     private static final double MAX_LINE_OF_SIGHT_TEST_RANGE = 128.0;
+     protected static final int LIVING_ENTITY_FLAG_IS_USING = 1;
+-    protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
+-    protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
++    public static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
++    public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
+     protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
+     public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
+     private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.PARTICLES);
 @@ -220,18 +_,17 @@
      protected double lerpXRot;
      protected double lerpYHeadRot;
@@ -1618,26 +1629,21 @@
      public boolean isPickable() {
 -        return !this.isRemoved();
 -    }
--
--    @Override
--    public boolean isPushable() {
--        return this.isAlive() && !this.isSpectator() && !this.onClimbable();
--    }
--
--    @Override
 +      return !this.isRemoved() && this.collides; // CraftBukkit
 +   }
-+
-+   public boolean isPushable() {
-+      return this.isAlive() && !this.isSpectator() && !this.onClimbable() && this.collides; // CraftBukkit
-+   }
-+
-+   // CraftBukkit start - collidable API
-+   @Override
-+   public boolean canCollideWithBukkit(Entity entity) {
-+     return isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
-+   }
-+   // CraftBukkit end
+ 
+-    @Override
+     public boolean isPushable() {
+-        return this.isAlive() && !this.isSpectator() && !this.onClimbable();
++        return this.isAlive() && !this.isSpectator() && !this.onClimbable() && this.collides; // CraftBukkit
+     }
+ 
++    // CraftBukkit start - collidable API
+     @Override
++    public boolean canCollideWithBukkit(Entity entity) {
++        return isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
++    }
++    // CraftBukkit end
 +
      public float getYHeadRot() {
          return this.yHeadRot;
@@ -1673,6 +1679,15 @@
              this.completeUsingItem();
          }
      }
+@@ -3015,7 +_,7 @@
+         }
+     }
+ 
+-    protected void setLivingEntityFlag(int p_21156_, boolean p_21157_) {
++    public void setLivingEntityFlag(int p_21156_, boolean p_21157_) {
+         int i = this.entityData.get(DATA_LIVING_ENTITY_FLAGS);
+         if (p_21157_) {
+             i |= p_21156_;
 @@ -3029,8 +_,12 @@
      public void startUsingItem(InteractionHand p_21159_) {
          ItemStack itemstack = this.getItemInHand(p_21159_);

@@ -1,11 +1,13 @@
 package org.bukkit.attribute;
 
 import com.google.common.base.Preconditions;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AttributeModifier implements ConfigurationSerializable, Keyed {
 
+    private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
     private final NamespacedKey key;
     private final double amount;
     private final Operation operation;
@@ -65,7 +68,16 @@ public class AttributeModifier implements ConfigurationSerializable, Keyed {
     @NotNull
     @Deprecated
     public UUID getUniqueId() {
-        return UUID.fromString(getKey().toString());
+        NamespacedKey namespacedKey = getKey();
+        if (namespacedKey.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            String key = namespacedKey.getKey();
+
+            if (key.length() == 36 && UUID_PATTERN.matcher(key).matches()) {
+                return UUID.fromString(key);
+            }
+        }
+
+        return UUID.nameUUIDFromBytes(namespacedKey.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     @NotNull

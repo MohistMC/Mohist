@@ -27,7 +27,7 @@
  
  public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
      private static final EntityDataAccessor<Integer> DATA_UNHAPPY_COUNTER = SynchedEntityData.defineId(AbstractVillager.class, EntityDataSerializers.INT);
-@@ -46,7 +_,16 @@
+@@ -46,7 +_,15 @@
      private Player tradingPlayer;
      @Nullable
      protected MerchantOffers offers;
@@ -35,11 +35,10 @@
 +   	private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
 +
 +    // CraftBukkit start
-+    private CraftMerchant craftMerchant;
 +
 +    @Override
 +    public CraftMerchant getCraftMerchant() {
-+        return (craftMerchant == null) ? craftMerchant = new CraftMerchant(this) : craftMerchant;
++        return (org.bukkit.craftbukkit.entity.CraftAbstractVillager) getBukkitEntity();
 +    }
 +    // CraftBukkit end
  

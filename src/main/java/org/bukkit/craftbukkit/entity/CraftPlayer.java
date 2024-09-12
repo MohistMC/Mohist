@@ -276,6 +276,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         ConnectionProtocol getProtocol();
 
         void sendPacket(Packet<?> packet);
+
+        void kickPlayer(Component reason);
     }
 
     public record CookieFuture(ResourceLocation key, CompletableFuture<byte[]> future) {
@@ -479,10 +481,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void kickPlayer(String message) {
-        org.spigotmc.AsyncCatcher.catchOp("player kick"); // Spigot
-        if (this.getHandle().connection == null) return;
-
-        this.getHandle().connection.disconnect(CraftChatMessage.fromStringOrEmpty(message, true));
+        getHandle().transferCookieConnection.kickPlayer(CraftChatMessage.fromStringOrEmpty(message, true));
     }
 
     @Override

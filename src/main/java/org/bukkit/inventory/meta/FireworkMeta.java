@@ -76,9 +76,20 @@ public interface FireworkMeta extends ItemMeta {
     boolean hasEffects();
 
     /**
+     * Get whether this firework has power set by component.
+     *
+     * @return true if it has power set, false if there are no power set
+     */
+    boolean hasPower();
+
+    /**
      * Gets the approximate height the firework will fly.
+     * <br>
+     * Plugins should check that hasPower() returns <code>true</code>
+     * before calling this method.
      *
      * @return approximate flight height of the firework.
+     * @see #hasPower()
      */
     int getPower();
 
@@ -86,8 +97,8 @@ public interface FireworkMeta extends ItemMeta {
      * Sets the approximate power of the firework. Each level of power is half
      * a second of flight time.
      *
-     * @param power the power of the firework, from 0-127
-     * @throws IllegalArgumentException if {@literal height<0 or height>127}
+     * @param power the power of the firework, from 0-255
+     * @throws IllegalArgumentException if {@literal power<0 or power>255}
      */
     void setPower(int power) throws IllegalArgumentException;
 

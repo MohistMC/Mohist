@@ -75,7 +75,7 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean hasWork()
     {
-        return queue.size() > 0;
+        return !queue.isEmpty();
     }
 
     @Override

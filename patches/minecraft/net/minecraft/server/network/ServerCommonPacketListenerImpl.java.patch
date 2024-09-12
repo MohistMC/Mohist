@@ -52,7 +52,7 @@
      private final boolean transferred;
      private long keepAliveTime;
      private boolean keepAlivePending;
-@@ -49,6 +_,43 @@
+@@ -49,6 +_,48 @@
          this.keepAliveTime = Util.getMillis();
          this.latency = p_300277_.latency();
          this.transferred = p_300277_.transferred();
@@ -87,6 +87,11 @@
 +    @Override
 +    public void sendPacket(Packet<?> packet) {
 +        send(packet);
++    }
++
++    @Override
++    public void kickPlayer(Component reason) {
++        disconnect(reason);
 +    }
 +    // CraftBukkit end
 +

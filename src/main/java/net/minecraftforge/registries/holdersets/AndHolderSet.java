@@ -51,16 +51,16 @@ public class AndHolderSet<T> extends CompositeHolderSet<T> {
     @Override
     protected Set<Holder<T>> createSet() {
         List<HolderSet<T>> components = this.getComponents();
-        if (components.size() < 1) {
+        if (components.isEmpty()) {
             return Set.of();
         }
 
         if (components.size() == 1) {
-            return components.get(0).stream().collect(Collectors.toSet());
+            return components.getFirst().stream().collect(Collectors.toSet());
         }
 
         List<HolderSet<T>> remainingComponents = components.subList(1, components.size());
-        return components.get(0)
+        return components.getFirst()
             .stream()
             .filter(holder -> remainingComponents.stream().allMatch(holderset -> holderset.contains(holder)))
             .collect(Collectors.toSet());

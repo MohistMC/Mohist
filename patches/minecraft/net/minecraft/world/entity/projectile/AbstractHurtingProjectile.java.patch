@@ -26,21 +26,15 @@
      protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
          super(p_36833_, p_36834_);
      }
-@@ -78,8 +_,13 @@
+@@ -78,7 +_,7 @@
              }
  
              HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, this.getClipType());
 -            if (hitresult.getType() != HitResult.Type.MISS) {
 +            if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
                  this.hitTargetOrDeflectSelf(hitresult);
-+                // CraftBukkit start - Fire ProjectileHitEvent
-+                if (this.isRemoved()) {
-+                    CraftEventFactory.callProjectileHitEvent(this, hitresult);
-+                }
-+                // CraftBukkit end
              }
  
-             this.checkInsideBlocks();
 @@ -117,6 +_,7 @@
  
              this.setPos(d0, d1, d2);
