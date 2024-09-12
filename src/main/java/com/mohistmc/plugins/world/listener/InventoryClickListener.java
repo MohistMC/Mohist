@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.world.listener;
 
+import com.mohistmc.api.VoidGenerator;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
 import com.mohistmc.plugins.world.utils.WorldInventory;
@@ -41,6 +42,9 @@ public class InventoryClickListener {
             World.Environment environment = World.Environment.valueOf(itemName);
 
             WorldCreator wc = new WorldCreator(worldName);
+            if (itemName.equals("void")) {
+                wc.generator(new VoidGenerator());
+            }
             wc.seed((new Random()).nextLong());
             wc.environment(environment);
 
