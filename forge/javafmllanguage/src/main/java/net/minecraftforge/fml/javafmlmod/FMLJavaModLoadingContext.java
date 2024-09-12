@@ -8,7 +8,7 @@ package net.minecraftforge.fml.javafmlmod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 
-public class FMLJavaModLoadingContext
+public class FMLJavaModLoadingContext extends ModLoadingContext
 {
     private final FMLModContainer container;
 
@@ -22,6 +22,11 @@ public class FMLJavaModLoadingContext
     public IEventBus getModEventBus()
     {
         return container.getEventBus();
+    }
+
+    @Override
+    public FMLModContainer getContainer() {
+        return container;
     }
 
 

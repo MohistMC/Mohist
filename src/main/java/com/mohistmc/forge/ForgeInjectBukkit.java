@@ -59,7 +59,6 @@ import org.bukkit.craftbukkit.v1_20_R1.block.CraftSign;
 import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
