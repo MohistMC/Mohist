@@ -72,6 +72,7 @@ public class WorldsCommands extends Command {
                         i++;
                         inventory.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
                     }
+                    inventory.addItem(ItemAPI.doItem(Material.MAP, 1, "void", null));
                     player.openInventory(inventory);
                     InventoryClickListener.worldInventory = worldCreateInventory;
                 } else {

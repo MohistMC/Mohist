@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.world.listener;
 
+import com.mohistmc.api.WorldAPI;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
 import com.mohistmc.plugins.world.utils.WorldInventory;
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -38,11 +40,11 @@ public class InventoryClickListener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null && itemMeta.hasDisplayName()) {
             String itemName = itemMeta.getDisplayName();
-            World.Environment environment = World.Environment.valueOf(itemName);
-
+            boolean isVoid = itemName.equals("void");
             WorldCreator wc = new WorldCreator(worldName);
+            if (isVoid) wc.generator(new WorldAPI.VoidGenerator());
             wc.seed((new Random()).nextLong());
-            wc.environment(environment);
+            wc.environment(isVoid ? Environment.NORMAL : World.Environment.valueOf(itemName));
 
             wc.createWorld();
 
@@ -63,6 +65,7 @@ public class InventoryClickListener {
             try {
                 ConfigByWorlds.addWorld(world.getName(), true);
                 ConfigByWorlds.addSpawn(spawnLocation);
+                if (isVoid) ConfigByWorlds.aVoid(world.getName(), isVoid);
             } catch (Exception e) {
                 e.fillInStackTrace();
             }

@@ -1,6 +1,7 @@
 package com.mohistmc.plugins.world.utils;
 
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.api.WorldAPI;
 import com.mohistmc.util.YamlUtils;
 import java.io.File;
 import java.util.Objects;
@@ -112,6 +113,7 @@ public class ConfigByWorlds {
                 boolean isMohist = false;
                 String modName = null;
                 boolean keepspawninmemory = true;
+                boolean isVoid = false;
                 if (Bukkit.getWorld(w) == null) {
                     long seed = -1L;
                     if (config.get("worlds." + w + ".seed") != null) {
@@ -135,6 +137,9 @@ public class ConfigByWorlds {
                     if (config.get("worlds." + w + ".keepspawninmemory") != null) {
                         keepspawninmemory = config.getBoolean("worlds." + w + ".keepspawninmemory");
                     }
+                    if (config.get("worlds." + w + ".void") != null) {
+                        isVoid = config.getBoolean("worlds." + w + ".void");
+                    }
                     // Worlds created by mods are no longer loaded when the mod is unloaded
                     if (isMods && !ServerAPI.hasMod(modName)) {
                         config.set("worlds." + w, null);
@@ -146,6 +151,7 @@ public class ConfigByWorlds {
                     }
                     if (canload) {
                         WorldCreator wc = new WorldCreator(w);
+                        if (isVoid) wc.generator(new WorldAPI.VoidGenerator());
                         wc.seed(seed);
                         wc.environment(World.Environment.valueOf(environment));
                         wc.keepSpawnInMemory(keepspawninmemory);
@@ -211,6 +217,12 @@ public class ConfigByWorlds {
 
     public static void difficulty(String w, String difficulty) {
         config.set("worlds." + w + ".difficulty", difficulty);
+        init();
+    }
+
+    @Deprecated
+    public static void aVoid(String w, boolean isVoid) {
+        config.set("worlds." + w + ".void", isVoid);
         init();
     }
 }
