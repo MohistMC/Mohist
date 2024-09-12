@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.api.VoidGenerator;
 import com.mohistmc.bukkit.pluginfix.PluginDynamicRegistrFix;
 import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
