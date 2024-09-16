@@ -213,16 +213,18 @@
     }
  
     public boolean m_5776_() {
-@@ -191,6 +_,24 @@
+@@ -191,6 +_,26 @@
     }
  
     public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
-+      SetBlockEvent event = new SetBlockEvent(new Location(this.getWorld(), p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()));
-+      Bukkit.getPluginManager().callEvent(event);
-+      if (event.isCancelled()) {
-+         org.bukkit.block.Block block = event.getLocation().getBlock();
-+         block.getState().update();
-+         return false;
++      {
++         SetBlockEvent event = new SetBlockEvent(new Location(this.getWorld(), p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()));
++         Bukkit.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            org.bukkit.block.Block block = event.getLocation().getBlock();
++            block.getState().update();
++            return false;
++         }
 +      }
 +      // CraftBukkit start - tree generation
 +      if (this.captureTreeGeneration) {

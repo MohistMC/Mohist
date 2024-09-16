@@ -40,31 +40,40 @@ public class WarpsCommands extends Command {
             if (args.length == 2) {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "set" -> {
-                        String name = args[1];
-                        WarpsConfig.INSTANCE.put(name, player.getLocation());
-                        player.sendMessage(I18n.as("warpscommands.set.success", name));
-                        return true;
+                        if (player.hasPermission("mohist.command.warps.set")) {
+                            String name = args[1];
+                            WarpsConfig.INSTANCE.put(name, player.getLocation());
+                            player.sendMessage(I18n.as("warpscommands.set.success", name));
+                            return true;
+                        }
+                       return false;
                     }
                     case "del" -> {
-                        String name = args[1];
-                        if (WarpsConfig.INSTANCE.has(name)) {
-                            WarpsConfig.INSTANCE.remove(name);
-                            player.sendMessage(I18n.as("warpscommands.nowarp"));
-                            return true;
-                        } else {
-                            player.sendMessage(I18n.as("warpscommands.del.success", name));
-                            return false;
+                        if (player.hasPermission("mohist.command.warps.del")) {
+                            String name = args[1];
+                            if (WarpsConfig.INSTANCE.has(name)) {
+                                WarpsConfig.INSTANCE.remove(name);
+                                player.sendMessage(I18n.as("warpscommands.nowarp"));
+                                return true;
+                            } else {
+                                player.sendMessage(I18n.as("warpscommands.del.success", name));
+                                return false;
+                            }
                         }
+                        return false;
                     }
                     case "tp" -> {
-                        String name = args[1];
-                        if (WarpsConfig.INSTANCE.has(name)) {
-                            player.teleport(WarpsConfig.INSTANCE.get(name));
-                            return true;
-                        } else {
-                            player.sendMessage(I18n.as("warpscommands.nowarp"));
-                            return false;
+                        if (player.hasPermission("mohist.command.warps.tp")) {
+                            String name = args[1];
+                            if (WarpsConfig.INSTANCE.has(name)) {
+                                player.teleport(WarpsConfig.INSTANCE.get(name));
+                                return true;
+                            } else {
+                                player.sendMessage(I18n.as("warpscommands.nowarp"));
+                                return false;
+                            }
                         }
+                        return false;
                     }
                 }
             }
@@ -85,7 +94,7 @@ public class WarpsCommands extends Command {
                 return true;
             }
         }
-        if (args.length == 3 && args[0].equalsIgnoreCase("tp")) {
+        if (sender.isOp() && args.length == 3 && args[0].equalsIgnoreCase("tp")) {
             String playerName = args[1];
             String warpsName = args[2];
             Player player = Bukkit.getPlayer(playerName);
