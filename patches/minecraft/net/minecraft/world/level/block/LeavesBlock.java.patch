@@ -44,3 +44,23 @@
     }
  
     public int m_7753_(BlockState p_54460_, BlockGetter p_54461_, BlockPos p_54462_) {
+@@ -77,18 +_,7 @@
+    }
+ 
+    private static BlockState m_54435_(BlockState p_54436_, LevelAccessor p_54437_, BlockPos p_54438_) {
+-      int i = 7;
+-      BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+-
+-      for(Direction direction : Direction.values()) {
+-         blockpos$mutableblockpos.m_122159_(p_54438_, direction);
+-         i = Math.min(i, m_54463_(p_54437_.m_8055_(blockpos$mutableblockpos)) + 1);
+-         if (i == 1) {
+-            break;
+-         }
+-      }
+-
+-      return p_54436_.m_61124_(f_54418_, Integer.valueOf(i));
++      return p_54436_.m_61124_(f_54418_, 7);
+    }
+ 
+    private static int m_54463_(BlockState p_54464_) {
