@@ -5,6 +5,7 @@
 
 package net.minecraftforge.server;
 
+import com.mohistmc.MohistConfig;
 import com.mohistmc.util.ProxyUtils;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -170,7 +171,7 @@ public class ServerLifecycleHooks
             }
 
             if (!ProxyUtils.is() && connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
-                rejectConnection(manager, connectionType, "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
+                rejectConnection(manager, connectionType, MohistConfig.message_require_forge);
                 return false;
             }
         }

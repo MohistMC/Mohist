@@ -245,6 +245,9 @@ public class MohistConfig {
     public static boolean watchdog_spigot;
     public static boolean watchdog_mohist;
 
+    //Messaes
+    public static String message_require_forge;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
@@ -307,5 +310,7 @@ public class MohistConfig {
 
         permissions_debug_console = getBoolean("permissions.debug.console", false);
         permissions_send_player = getBoolean("permissions.debug.player", false);
+
+        message_require_forge = getString("message.require_forge", "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
     }
 }
