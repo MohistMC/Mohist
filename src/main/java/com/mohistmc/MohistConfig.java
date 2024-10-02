@@ -244,6 +244,7 @@ public class MohistConfig {
 
     public static boolean watchdog_spigot;
     public static boolean watchdog_mohist;
+    public static boolean async_save_world;
 
     //Messaes
     public static String message_require_forge;
@@ -310,6 +311,7 @@ public class MohistConfig {
 
         permissions_debug_console = getBoolean("permissions.debug.console", false);
         permissions_send_player = getBoolean("permissions.debug.player", false);
+        async_save_world = getBoolean("world.async_save", false);
 
         message_require_forge = getString("message.require_forge", "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
     }

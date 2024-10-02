@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/storage/DimensionDataStorage.java
 +++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.storage;
+ 
+ import com.google.common.collect.Maps;
++import com.mohistmc.MohistConfig;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
+ import java.io.DataInputStream;
 @@ -8,11 +_,14 @@
  import java.io.FileInputStream;
  import java.io.IOException;
@@ -29,13 +37,13 @@
        }
  
        return (T)saveddata;
-@@ -121,7 +_,34 @@
+@@ -121,7 +_,36 @@
     public void m_78151_() {
        this.f_78144_.forEach((p_164866_, p_164867_) -> {
           if (p_164867_ != null) {
 -            p_164867_.m_77757_(this.m_78156_(p_164866_));
 +            // Mohist start - Save data asynchronously, copy by SavedData.
-+            if (p_164867_.m_77764_()) {
++            if (MohistConfig.async_save_world && p_164867_.m_77764_()) {
 +               CompoundTag save = p_164867_.m_7176_(new CompoundTag());
 +               if (save != null) {
 +                  p_164867_.m_77760_(false);
@@ -60,6 +68,8 @@
 +                     }
 +                  });
 +               }
++            } else {
++               p_164867_.m_77757_(this.m_78156_(p_164866_));
 +            }
 +            // Mohist end
           }
