@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.potion;
 
+import java.util.Objects;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Color;
@@ -7,10 +8,16 @@ import org.bukkit.potion.PotionEffectType;
 
 public class CraftPotionEffectType extends PotionEffectType {
     private final MobEffect handle;
+    private String MODS_NAME;
 
     public CraftPotionEffectType(MobEffect handle) {
         super(MobEffect.getId(handle), org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.MOB_EFFECT.getKey(handle)));
         this.handle = handle;
+    }
+
+    public CraftPotionEffectType(MobEffect handle, String name) {
+        this(handle);
+        this.MODS_NAME = name;
     }
 
     @Override
@@ -92,7 +99,7 @@ public class CraftPotionEffectType extends PotionEffectType {
         case 33:
             return "DARKNESS";
         default:
-            return "UNKNOWN_EFFECT_TYPE_" + getId();
+            return Objects.requireNonNullElseGet(MODS_NAME, () -> "UNKNOWN_EFFECT_TYPE_" + getId()); // Mohist
         }
     }
 

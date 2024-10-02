@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.bukkit.inventory.MohistPotionEffect;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +56,7 @@ import org.bukkit.craftbukkit.v1_20_R1.block.CraftChest;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftHangingSign;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftSign;
 import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
@@ -180,7 +180,7 @@ public class ForgeInjectBukkit {
         var registry_effect = ForgeRegistries.MOB_EFFECTS;
         for (MobEffect effect : registry_effect) {
             String name = normalizeName(registry_effect.getKey(effect).toString());
-            MohistPotionEffect pet = new MohistPotionEffect(effect, name);
+            CraftPotionEffectType pet = new CraftPotionEffectType(effect, name);
             PotionEffectType.registerPotionEffectType(pet);
         }
         PotionEffectType.stopAcceptingRegistrations();
