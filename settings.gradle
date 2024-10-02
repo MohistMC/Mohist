@@ -94,6 +94,8 @@ dependencyResolutionManagement {
             library('apache-commons', 'org.apache.commons:commons-lang3:3.12.0')
             library('compress', 'org.apache.commons:commons-compress:1.22')
             library('mojang-logging', 'com.mojang:logging:1.1.1')
+            library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
+            library('commons-io', 'commons-io:commons-io:2.13.0')
 
             version('lwjgl', '3.3.1')
             library('lwjgl',        'org.lwjgl', 'lwjgl'       ).versionRef('lwjgl')
