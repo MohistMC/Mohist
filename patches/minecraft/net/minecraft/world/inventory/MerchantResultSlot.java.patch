@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/inventory/MerchantResultSlot.java
 +++ b/net/minecraft/world/inventory/MerchantResultSlot.java
+@@ -1,5 +_,7 @@
+ package net.minecraft.world.inventory;
+ 
++import com.mohistmc.paper.event.player.PlayerPurchaseEvent;
++import com.mohistmc.paper.event.player.PlayerTradeEvent;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
 @@ -42,13 +_,32 @@
     }
  
@@ -8,12 +16,12 @@
 +      // this.checkTakeAchievements(p_150632_); // Paper - move to after event is called and not cancelled
        MerchantOffer merchantoffer = this.slots.getActiveOffer();
 +      // Paper start
-+      io.papermc.paper.event.player.PlayerPurchaseEvent event = null;
++      PlayerPurchaseEvent event = null;
 +      if (merchantoffer != null && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
 +         if (this.merchant instanceof net.minecraft.world.entity.npc.AbstractVillager abstractVillager) {
-+            event = new io.papermc.paper.event.player.PlayerTradeEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.AbstractVillager) abstractVillager.getBukkitEntity(), merchantoffer.asBukkit(), true, true);
++            event = new PlayerTradeEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.AbstractVillager) abstractVillager.getBukkitEntity(), merchantoffer.asBukkit(), true, true);
 +         } else if (this.merchant instanceof org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantCustom.MinecraftMerchant) {
-+            event = new io.papermc.paper.event.player.PlayerPurchaseEvent(serverPlayer.getBukkitEntity(), merchantoffer.asBukkit(), false, true);
++            event = new PlayerPurchaseEvent(serverPlayer.getBukkitEntity(), merchantoffer.asBukkit(), false, true);
 +         }
 +         if (event != null) {
 +            if (!event.callEvent()) {

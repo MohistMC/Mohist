@@ -296,16 +296,10 @@ public class Metrics {
             if (config.getBoolean("enabled", true)) {
                 Metrics metrics = new Metrics("Mohist", serverUUID);
 
-                metrics.addCustomChart(new SimplePie("minecraft_version", () -> {
-                    String minecraftVersion = Bukkit.getVersion();
-                    minecraftVersion = minecraftVersion.substring(minecraftVersion.indexOf("MC: ") + 4, minecraftVersion.length() - 1);
-                    return minecraftVersion;
-                }));
-
                 metrics.addCustomChart(new SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                 metrics.addCustomChart(new SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
-                metrics.addCustomChart(new SimplePie("mohist_version", () -> "1.20"));
-                metrics.addCustomChart(new SimplePie("bungeecord", () -> SpigotConfig.bungee ? "true" : "false"));
+                metrics.addCustomChart(new SimplePie("mohist_version", () -> MohistMC.version));
+                metrics.addCustomChart(new SimplePie("bungeecord", () -> String.valueOf(SpigotConfig.bungee)));
 
                 metrics.addCustomChart(new DrilldownPie("java_version", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap<>();

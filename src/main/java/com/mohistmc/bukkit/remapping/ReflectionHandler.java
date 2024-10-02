@@ -434,7 +434,7 @@ public class ReflectionHandler extends ClassLoader {
     }
 
     public static String findMappedResource(Class<?> cl, String name) {
-        if (!name.endsWith(".class")) return null;
+        if (name.isEmpty() || !name.endsWith(".class")) return null;
         name = name.substring(0, name.length() - 6);
         String className;
         if (cl != null) {

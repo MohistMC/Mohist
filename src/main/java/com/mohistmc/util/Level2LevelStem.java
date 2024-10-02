@@ -20,7 +20,7 @@ public class Level2LevelStem {
     public static String bukkit_name;
 
     public static void reloadAndInit(World world) {
-        Level2LevelStem.plugin_worlds.put("name", world); // Add to cache
+        Level2LevelStem.plugin_worlds.put(world.getName(), world); // Add to cache
         Level2LevelStem.initPluginWorld.set(false); // check is plugin
         Level2LevelStem.worldPath_cache = null;
         Level2LevelStem.bukkit = null;

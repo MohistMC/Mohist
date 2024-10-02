@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.server.network;
  
  import com.google.common.primitives.Ints;
 +import com.mohistmc.MohistConfig;
++import com.mohistmc.paper.proxy.VelocityProxy;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import com.mojang.authlib.yggdrasil.ProfileResult;
@@ -75,8 +76,8 @@
 +            if (MohistConfig.velocity_enabled) {
 +               this.velocityLoginMessageId = java.util.concurrent.ThreadLocalRandom.current().nextInt();
 +               net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
-+               buf.writeByte(com.destroystokyo.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
-+               net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket.PlayerInfoChannelPayload(com.destroystokyo.paper.proxy.VelocityProxy.PLAYER_INFO_CHANNEL, buf));
++               buf.writeByte(VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++               net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket.PlayerInfoChannelPayload(VelocityProxy.PLAYER_INFO_CHANNEL, buf));
 +               this.connection.send(packet1);
 +               return;
 +            }
@@ -217,14 +218,14 @@
 +
 +         net.minecraft.network.FriendlyByteBuf buf = payload.buffer;
 +
-+         if (!com.destroystokyo.paper.proxy.VelocityProxy.checkIntegrity(buf)) {
++         if (!VelocityProxy.checkIntegrity(buf)) {
 +            this.disconnect("Unable to verify player details");
 +            return;
 +         }
 +
 +         int version = buf.readVarInt();
-+         if (version > com.destroystokyo.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION) {
-+            throw new IllegalStateException("Unsupported forwarding version " + version + ", wanted upto " + com.destroystokyo.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++         if (version > VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION) {
++            throw new IllegalStateException("Unsupported forwarding version " + version + ", wanted upto " + VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
 +         }
 +
 +         java.net.SocketAddress listening = this.connection.getRemoteAddress();
@@ -232,9 +233,9 @@
 +         if (listening instanceof java.net.InetSocketAddress) {
 +            port = ((java.net.InetSocketAddress) listening).getPort();
 +         }
-+         this.connection.address = new java.net.InetSocketAddress(com.destroystokyo.paper.proxy.VelocityProxy.readAddress(buf), port);
++         this.connection.address = new java.net.InetSocketAddress(VelocityProxy.readAddress(buf), port);
 +
-+         this.authenticatedProfile = com.destroystokyo.paper.proxy.VelocityProxy.createProfile(buf);
++         this.authenticatedProfile = VelocityProxy.createProfile(buf);
 +
 +         //TODO Update handling for lazy sessions, might not even have to do anything?
 +

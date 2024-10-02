@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/npc/AbstractVillager.java
 +++ b/net/minecraft/world/entity/npc/AbstractVillager.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.entity.npc;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.paper.event.player.PlayerPurchaseEvent;
+ import java.util.ArrayList;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
 @@ -34,6 +_,7 @@
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -32,7 +40,7 @@
  
 +   // Paper start
 +   @Override
-+   public void processTrade(MerchantOffer recipe, @Nullable io.papermc.paper.event.player.PlayerPurchaseEvent event) { // The MerchantRecipe passed in here is the one set by the PlayerPurchaseEvent
++   public void processTrade(MerchantOffer recipe, @Nullable PlayerPurchaseEvent event) { // The MerchantRecipe passed in here is the one set by the PlayerPurchaseEvent
 +      if (event == null || event.willIncreaseTradeUses()) {
 +         recipe.increaseUses();
 +      }

@@ -1,8 +1,9 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.world.entity.monster;
  
++import com.mohistmc.paper.event.entity.CreeperIgniteEvent;
  import java.util.Collection;
 +import java.util.concurrent.atomic.AtomicBoolean;
  import javax.annotation.Nullable;
@@ -92,7 +93,7 @@
 -   }
 +      boolean i = ignited.getAndSet(true);
 +      if (isIgnited() != i) {
-+         com.destroystokyo.paper.event.entity.CreeperIgniteEvent event = new com.destroystokyo.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
++         CreeperIgniteEvent event = new CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
 +         if (event.callEvent()) {
 +            this.entityData.set(DATA_IS_IGNITED, event.isIgnited());
 +         }

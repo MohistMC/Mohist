@@ -34,6 +34,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class MohistCommand extends Command {
 
@@ -47,15 +48,20 @@ public class MohistCommand extends Command {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
-        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
-            for (String param : params) {
-                if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
-                    list.add(param);
+        if ((sender.isOp() || testPermission(sender))) {
+            if (args.length == 1) {
+                for (String param : params) {
+                    if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
+                        list.add(param);
+                    }
                 }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("playermods")) {
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             }
         }
+
 
         return list;
     }
@@ -136,7 +142,7 @@ public class MohistCommand extends Command {
                         }
                     }
                 } else {
-                    sender.sendMessage("§c" + I18n.as("error.notplayer"));
+                    sender.sendMessage(ChatColor.RED + I18n.as("error.notplayer"));
                 }
             }
             default -> {

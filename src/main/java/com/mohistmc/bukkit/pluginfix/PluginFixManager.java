@@ -28,7 +28,10 @@ public class PluginFixManager {
             case "com.sk89q.worldedit.bukkit.BukkitAdapter" -> WorldEdit::handleBukkitAdapter;
             case "com.sk89q.worldedit.bukkit.adapter.Refraction" -> WorldEdit::handlePickName;
             case "com.sk89q.worldedit.bukkit.adapter.impl.v1_20_R2.PaperweightAdapter$SpigotWatchdog" -> WorldEdit::handleWatchdog;
-            case "com.earth2me.essentials.utils.VersionUtil" -> node -> helloWorld(node, 110, 109);
+            case "com.earth2me.essentials.utils.VersionUtil" -> node -> {
+                helloWorld(node, 110, 109);
+                helloWorld(node, "brand:", "peace");
+            };
             case "net.Zrips.CMILib.Reflections" -> node -> helloWorld(node, "bR", "f_36096_");
             default -> null;
         };
