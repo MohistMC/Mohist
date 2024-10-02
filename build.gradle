@@ -255,7 +255,8 @@ project(':mohist') {
         moduleonly(libs.unsafe) // Needed by securemodules
         moduleonly(libs.bundles.asm) // Needed by all the black magic
         moduleonly(libs.jarjar.fs) // Filesystems need to be on the bootstrap? I think thats why this is here.
-        moduleonly(libs.bundles.jimfs) // In memory file system used for ForgeDev launches
+
+        installer(libs.bundles.jimfs) // In memory file system used for ForgeDev launches
 
         installer(libs.unsafe)
         installer(libs.securemodules)
@@ -294,6 +295,9 @@ project(':mohist') {
         // spigot
         installer 'net.md-5:bungeecord-chat:1.20-R0.1' // #14
         installer 'commons-codec:commons-codec:1.16.0'
+        installer 'commons-logging:commons-logging:1.2'
+        installer 'org.apache.httpcomponents:httpclient:4.5.13'
+        installer 'org.apache.httpcomponents:httpcore:4.4.14'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
 
         installer 'io.izzel:tools:1.3.0'
@@ -308,12 +312,23 @@ project(':mohist') {
         compileOnly 'me.clip:placeholderapi:2.11.6'
         installer 'commons-lang:commons-lang:2.6-mohist'
         installer(libs.compress)
+        installer(libs.guava)
 
         // Paper start
         installer(libs.bundles.log4j)
         installer(libs.bundles.adventure)
         // Paper end
 
+        installer 'com.github.oshi:oshi-core:6.4.0'
+
+        installer 'io.netty:netty-buffer:4.1.97.Final'
+        installer 'io.netty:netty-codec:4.1.97.Final'
+        installer 'io.netty:netty-common:4.1.97.Final'
+        installer 'io.netty:netty-handler:4.1.97.Final'
+        installer 'io.netty:netty-resolver:4.1.97.Final'
+        installer 'io.netty:netty-transport:4.1.97.Final'
+        installer 'io.netty:netty-transport-classes-epoll:4.1.97.Final'
+        installer 'io.netty:netty-transport-native-unix-common:4.1.97.Final'
 
         mohist "com.nothome:javaxdelta:2.0.1"
         mohist "com.github.jponge:lzma-java:1.3"
@@ -335,6 +350,34 @@ project(':mohist') {
         mohist(libs.bootstrap)
         mohist "com.google.code.findbugs:jsr305:3.0.2"
         mohist 'org.checkerframework:checker-qual:2.0.0'
+        mohist 'commons-io:commons-io:2.13.0'
+        mohist 'it.unimi.dsi:fastutil:8.5.12'
+
+        installer "org.apache.maven:maven-artifact:3.8.5"
+        installer 'org.apache.maven:maven-builder-support:3.8.5'
+        installer 'org.apache.maven:maven-model:3.8.5'
+        installer 'org.apache.maven:maven-model-builder:3.8.5'
+        installer 'org.apache.maven:maven-repository-metadata:3.8.5'
+        installer 'org.apache.maven:maven-resolver-provider:3.8.5'
+        installer 'org.apache.maven.resolver:maven-resolver-api:1.7.3'
+        installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3'
+        installer 'org.apache.maven.resolver:maven-resolver-impl:1.7.3'
+        installer 'org.apache.maven.resolver:maven-resolver-spi:1.7.3'
+        installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
+        installer 'org.apache.maven.resolver:maven-resolver-util:1.7.3'
+        installer 'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.5'
+        installer 'org.codehaus.plexus:plexus-interpolation:1.25'
+        installer 'org.codehaus.plexus:plexus-utils:3.2.1'
+        installer 'org.joml:joml:1.10.5'
+        installer 'org.apache.commons:commons-lang3:3.13.0'
+        installer 'net.java.dev.jna:jna-platform:5.13.0'
+        installer 'net.java.dev.jna:jna:5.13.0'
+        installer 'org.slf4j:slf4j-api:2.0.7'
+        installer 'com.mojang:authlib:5.0.47'
+        installer 'com.mojang:logging:1.1.1'
+        installer 'com.mojang:datafixerupper:6.0.8'
+        installer 'com.google.code.gson:gson:2.10.1'
+        installer 'com.google.guava:failureaccess:1.0.1'
     }
 
     patcher {

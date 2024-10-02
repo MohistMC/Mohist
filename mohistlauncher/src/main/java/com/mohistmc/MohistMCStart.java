@@ -78,7 +78,7 @@ public class MohistMCStart {
 
         ZipTree.init();
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
+        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             DefaultLibraries.run();
         }
 
