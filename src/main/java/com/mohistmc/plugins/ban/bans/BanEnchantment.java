@@ -6,6 +6,7 @@ import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.tools.ListUtils;
 import java.util.List;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
@@ -52,10 +53,10 @@ public class BanEnchantment {
 
             List<String> old = MohistConfig.ban_enchantment_list;
             for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
-                if (itemStack != null) {
+                if (itemStack != null && itemStack.getType() != Material.AIR) {
                     if (EnchantmentAPI.has(itemStack)) {
                         for (Enchantment e : EnchantmentAPI.get(itemStack)) {
-                            ListUtils.isDuplicate(old, e.getName());
+                            ListUtils.isDuplicate(old, e.getKey().toString());
                         }
                     }
                 }
