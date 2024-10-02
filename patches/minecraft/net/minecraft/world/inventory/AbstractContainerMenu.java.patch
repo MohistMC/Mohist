@@ -217,6 +217,26 @@
           }
        }
  
+@@ -610,14 +_,15 @@
+             ItemStack itemstack = slot.m_7993_();
+             if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
+                int j = itemstack.m_41613_() + p_38904_.m_41613_();
+-               if (j <= p_38904_.m_41741_()) {
++               int maxSize = Math.min(slot.m_6641_(), p_38904_.m_41741_());
++               if (j <= maxSize) {
+                   p_38904_.m_41764_(0);
+                   itemstack.m_41764_(j);
+                   slot.m_6654_();
+                   flag = true;
+-               } else if (itemstack.m_41613_() < p_38904_.m_41741_()) {
+-                  p_38904_.m_41774_(p_38904_.m_41741_() - itemstack.m_41613_());
+-                  itemstack.m_41764_(p_38904_.m_41741_());
++               } else if (itemstack.m_41613_() < maxSize) {
++                  p_38904_.m_41774_(maxSize - itemstack.m_41613_());
++                  itemstack.m_41764_(maxSize);
+                   slot.m_6654_();
+                   flag = true;
+                }
 @@ -718,7 +_,7 @@
              i = 1;
              break;
