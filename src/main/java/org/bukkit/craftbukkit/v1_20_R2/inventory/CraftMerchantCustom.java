@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.event.player.PlayerPurchaseEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -61,8 +62,8 @@ public class CraftMerchantCustom extends CraftMerchant {
 
         // Paper start
         @Override
-        public void processTrade(MerchantOffer merchantRecipe, @javax.annotation.Nullable io.papermc.paper.event.player.PlayerPurchaseEvent event) { // The MerchantRecipe passed in here is the one set by the PlayerPurchaseEvent
-            /** Based on {@link net.minecraft.world.entity.npc.AbstractVillager#processTrade(MerchantOffer, io.papermc.paper.event.player.PlayerPurchaseEvent)} */
+        public void processTrade(MerchantOffer merchantRecipe, @javax.annotation.Nullable PlayerPurchaseEvent event) { // The MerchantRecipe passed in here is the one set by the PlayerPurchaseEvent
+            /** Based on {@link net.minecraft.world.entity.npc.AbstractVillager#processTrade(MerchantOffer, PlayerPurchaseEvent)} */
             if (getTradingPlayer() instanceof net.minecraft.server.level.ServerPlayer) {
                 if (event == null || event.willIncreaseTradeUses()) {
                     merchantRecipe.increaseUses();

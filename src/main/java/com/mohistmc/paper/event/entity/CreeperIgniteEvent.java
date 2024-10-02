@@ -1,4 +1,4 @@
-package com.destroystokyo.paper.event.entity;
+package com.mohistmc.paper.event.entity;
 
 import org.bukkit.entity.Creeper;
 import org.bukkit.event.Cancellable;
