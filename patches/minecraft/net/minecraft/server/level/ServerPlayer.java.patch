@@ -24,7 +24,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -140,8 +_,16 @@
+@@ -140,8 +_,19 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -32,12 +32,15 @@
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.Bukkit;
++import org.bukkit.Location;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftWorldBorder;
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R1.util.BlockStateListPopulator;
++import org.bukkit.event.player.PlayerChangedWorldEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
  
  public class ServerPlayer extends Player {
@@ -487,8 +490,22 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1373,21 +_,23 @@
+@@ -1369,25 +_,44 @@
+    }
+ 
+    public void m_8999_(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_) {
++      this.teleportTo(p_9000_, p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   }
++
++   public void teleportTo(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
+       this.m_9213_(this);
        this.m_8127_();
++
++      if (cause != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
++         this.getBukkitEntity().teleport(new Location(p_9000_.getWorld(), p_9001_, p_9002_, p_9003_, p_9004_, p_9005_), cause);
++         return;
++      }
++
        if (p_9000_ == this.f_19853_) {
           this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
 -      } else {
@@ -509,6 +526,13 @@
 +         this.f_8941_.m_9260_(p_9000_);
           this.f_8924_.m_6846_().m_11229_(this, p_9000_);
           this.f_8924_.m_6846_().m_11292_(this);
++         this.m_6885_();
++         for (MobEffectInstance mobEffect : this.m_21220_()) {
++            this.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(this.m_19879_(), mobEffect));
++         }
++
++         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
++         Bukkit.getPluginManager().callEvent(event);
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), p_9000_.m_46472_());
        }
  

@@ -50,9 +50,11 @@
  import net.minecraft.network.protocol.game.ClientboundBlockChangedAckPacket;
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundChatPreviewPacket;
-@@ -73,6 +_,9 @@
+@@ -72,7 +_,11 @@
+ import net.minecraft.network.protocol.game.ClientboundKeepAlivePacket;
  import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
++import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket.RelativeArgument;
  import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
@@ -582,7 +584,7 @@
                       d7 = d0 - this.f_9743_.m_20185_();
                       d8 = d1 - this.f_9743_.m_20186_();
                       if (d8 > -0.5D || d8 < 0.5D) {
-@@ -980,6 +_,14 @@
+@@ -980,6 +_,78 @@
        this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_143618_ - d0, p_143619_ - d1, p_143620_ - d2, p_143621_ - f, p_143622_ - f1, p_143623_, this.f_9767_, p_143624_));
     }
  
@@ -591,7 +593,71 @@
 +   }
 +
 +   public boolean teleport(double d0, double d1, double d2, float f, float f1, Set<ClientboundPlayerPositionPacket.RelativeArgument> set, boolean flag, PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
-+      return false;
++      org.bukkit.entity.Player player = this.getCraftPlayer();
++      Location from = player.getLocation();
++
++      double x = d0;
++      double y = d1;
++      double z = d2;
++      float yaw = f;
++      float pitch = f1;
++
++      Location to = new Location(this.getCraftPlayer().getWorld(), x, y, z, yaw, pitch);
++      // SPIGOT-5171: Triggered on join
++      if (from.equals(to)) {
++         this.internalTeleport(d0, d1, d2, f, f1, set, flag);
++         return false; // CraftBukkit - Return event status
++      }
++
++      PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
++      this.cserver.getPluginManager().callEvent(event);
++
++      if (event.isCancelled() || !to.equals(event.getTo())) {
++         set = Collections.emptySet(); // Can't relative teleport
++         to = event.isCancelled() ? event.getFrom() : event.getTo();
++         d0 = to.getX();
++         d1 = to.getY();
++         d2 = to.getZ();
++         f = to.getYaw();
++         f1 = to.getPitch();
++      }
++
++      this.internalTeleport(d0, d1, d2, f, f1, set, flag);
++      return event.isCancelled(); // CraftBukkit - Return event status
++   }
++
++   private void internalTeleport(double pX, double pY, double pZ, float pYaw, float pPitch, Set<RelativeArgument> pRelativeSet, boolean flag) {
++      // CraftBukkit start
++      if (Float.isNaN(pYaw)) {
++         pYaw = 0;
++      }
++      if (Float.isNaN(pPitch)) {
++         pPitch = 0;
++      }
++
++      this.justTeleported = true;
++      // CraftBukkit end
++      double d0 = pRelativeSet.contains(RelativeArgument.X) ? this.f_9743_.m_20185_() : 0.0D;
++      double d1 = pRelativeSet.contains(RelativeArgument.Y) ? this.f_9743_.m_20186_() : 0.0D;
++      double d2 = pRelativeSet.contains(RelativeArgument.Z) ? this.f_9743_.m_20189_() : 0.0D;
++      float f = pRelativeSet.contains(RelativeArgument.Y_ROT) ? this.f_9743_.m_146908_() : 0.0F;
++      float f1 = pRelativeSet.contains(RelativeArgument.X_ROT) ? this.f_9743_.m_146909_() : 0.0F;
++      this.f_9766_ = new Vec3(pX, pY, pZ);
++      if (++this.f_9767_ == Integer.MAX_VALUE) {
++         this.f_9767_ = 0;
++      }
++
++      // CraftBukkit start - update last location
++      this.lastPosX = this.f_9766_.f_82479_;
++      this.lastPosY = this.f_9766_.f_82480_;
++      this.lastPosZ = this.f_9766_.f_82481_;
++      this.lastYaw = f;
++      this.lastPitch = f1;
++      // CraftBukkit end
++
++      this.f_9735_ = this.f_9746_;
++      this.f_9743_.m_19890_(pX, pY, pZ, pYaw, pPitch);
++      this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(pX - d0, pY - d1, pZ - d2, pYaw - f, pPitch - f1, pRelativeSet, this.f_9767_, flag));
 +   }
 +
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
@@ -1345,7 +1411,7 @@
 +               try {
 +                  String channels = new String(buf, StandardCharsets.UTF_8);
 +                  for (String channel : channels.split("\0")) {
-+                     if (!com.mysql.cj.util.StringUtils.isNullOrEmpty(channel)) {
++                     if (!StringUtil.m_14408_(channel)) {
 +                        getCraftPlayer().addChannel(channel);
 +                     }
 +                  }
@@ -1357,7 +1423,7 @@
 +               try {
 +                  String channels = new String(buf, StandardCharsets.UTF_8);
 +                  for (String channel : channels.split("\0")) {
-+                     if (!com.mysql.cj.util.StringUtils.isNullOrEmpty(channel)) {
++                     if (!StringUtil.m_14408_(channel)) {
 +                        getCraftPlayer().removeChannel(channel);
 +                     }
 +                  }
