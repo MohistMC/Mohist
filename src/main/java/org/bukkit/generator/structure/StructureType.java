@@ -30,6 +30,7 @@ public abstract class StructureType implements Keyed {
     public static final StructureType STRONGHOLD = getStructureType("stronghold");
     public static final StructureType SWAMP_HUT = getStructureType("swamp_hut");
     public static final StructureType WOODLAND_MANSION = getStructureType("woodland_mansion");
+    public static final StructureType MODS = getStructureType("mods");
 
     private static StructureType getStructureType(String name) {
         return Registry.STRUCTURE_TYPE.get(NamespacedKey.minecraft(name));

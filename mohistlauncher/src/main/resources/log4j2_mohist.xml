@@ -24,6 +24,9 @@
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
+        <Queue name="TerminalConsole">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+        </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg{nolookups}}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
             <Policies>
@@ -47,6 +50,7 @@
         <Logger level="info" name="net.minecraft"/>
         <Root level="all">
             <AppenderRef ref="Console" level="INFO"/>
+            <AppenderRef ref="TerminalConsole" level="info"/>
             <AppenderRef ref="File" level="INFO"/>
             <AppenderRef ref="DebugFile" level="DEBUG"/>
         </Root>

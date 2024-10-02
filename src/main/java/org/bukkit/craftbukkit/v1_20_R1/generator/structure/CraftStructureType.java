@@ -11,9 +11,14 @@ public class CraftStructureType extends StructureType {
 
     public static StructureType minecraftToBukkit(net.minecraft.world.level.levelgen.structure.StructureType<?> minecraft) {
         ResourceLocation resourceLocation = BuiltInRegistries.STRUCTURE_TYPE.getKey(minecraft);
-        if (minecraft == null || resourceLocation == null) {
+        if (minecraft == null) {
             return null;
         }
+
+        if (resourceLocation == null) {
+            return StructureType.MODS;
+        }
+
         return Registry.STRUCTURE_TYPE.get(CraftNamespacedKey.fromMinecraft(resourceLocation));
     }
 
