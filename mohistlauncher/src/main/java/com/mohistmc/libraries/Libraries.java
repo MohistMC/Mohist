@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,26 @@
 
 package com.mohistmc.libraries;
 
-import com.mohistmc.MohistMCStart;
-import com.mohistmc.util.JarLoader;
-
+import com.mohistmc.tools.MD5Util;
 import java.io.File;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class CustomLibraries {
+@Data
+@AllArgsConstructor
+public class Libraries {
 
-    public static final File file = new File(MohistMCStart.jarTool.getJarDir() + "/libraries/customize_libraries");
+    String path;
+    String md5;
+    long size;
+    boolean installer;
 
-    public static void loadCustomLibs() throws Exception {
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+    public static Libraries from(String line) {
+        String[] parts = line.split("\\|");
+        return new Libraries(parts[0], parts[1], Long.parseLong(parts[2]), Boolean.parseBoolean(parts[3]));
+    }
 
-        for (File lib : file.listFiles((dir, name) -> name.endsWith(".jar"))) {
-            if (!DefaultLibraries.getDefaultLibs().keySet().toString().contains(lib.getName())) {
-                JarLoader.loadJar(lib.toPath());
-            }
-            System.out.println(lib.getName() + " custom library loaded successfully.");
-        }
+    public static Libraries from(File file) {
+        return new Libraries(file.getAbsolutePath(), MD5Util.get(file), file.length(), false);
     }
 }

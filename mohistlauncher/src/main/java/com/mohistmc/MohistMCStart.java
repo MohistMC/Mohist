@@ -18,12 +18,13 @@
 
 package com.mohistmc;
 
+import com.mohistmc.action.ZipTree;
 import com.mohistmc.action.v_1_20_R2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
+import com.mohistmc.feature.CustomLibraries;
+import com.mohistmc.feature.DefaultLibraries;
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.libraries.CustomLibraries;
-import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.util.DataParser;
@@ -74,6 +75,8 @@ public class MohistMCStart {
         }
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
+
+        ZipTree.init();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
