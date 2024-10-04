@@ -958,7 +958,7 @@
 -               this.m_9236_().m_46473_().m_7238_();
 +               // CraftBukkit start
 +               if (this instanceof ServerPlayer) {
-+                  ((ServerPlayer) this).changeDimension(serverlevel1, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
++                  ((ServerPlayer) this).changeDimensionCB(serverlevel1, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
 +               } else {
 +                  this.m_5489_(serverlevel1);
 +               }

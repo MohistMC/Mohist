@@ -45,7 +45,7 @@
 +         if (p_53028_ instanceof ServerPlayer player) {
 +            // Mohist  start - fix bukkit allow end
 +            if (p_53026_.getCraftServer().getAllowEnd()) {
-+               player.changeDimension(serverlevel, PlayerTeleportEvent.TeleportCause.END_PORTAL);
++               player.changeDimensionCB(serverlevel, PlayerTeleportEvent.TeleportCause.END_PORTAL);
 +            }else {
 +               player.m_5661_(Component.m_237113_("End dimension is not allow at this server"), true);
 +            }

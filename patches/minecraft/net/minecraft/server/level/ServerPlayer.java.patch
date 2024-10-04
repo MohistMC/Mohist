@@ -498,7 +498,7 @@
 +   // Mohsit start
 +   public AtomicReference<PlayerTeleportEvent.TeleportCause> changeDimensionCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +
-+   public Entity changeDimension(ServerLevel serverlevel, PlayerTeleportEvent.TeleportCause teleportCause) {
++   public Entity changeDimensionCB(ServerLevel serverlevel, PlayerTeleportEvent.TeleportCause teleportCause) {
 +      changeDimensionCause.set(teleportCause);
 +      return m_5489_(serverlevel);
 +   }
