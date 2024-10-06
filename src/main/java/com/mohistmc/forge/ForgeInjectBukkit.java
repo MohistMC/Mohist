@@ -337,7 +337,8 @@ public class ForgeInjectBukkit {
                 spawnCategory = CraftSpawnCategory.toBukkit(category);
             } catch (Exception e) {
                 String name = category.name();
-               spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
+                spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
+                spawnCategory.isMods = true;
             }
             spawnCategoryMap.put(category, spawnCategory);
             MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);

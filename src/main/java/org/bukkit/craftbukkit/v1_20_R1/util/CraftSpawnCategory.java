@@ -1,16 +1,16 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
-import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.world.entity.MobCategory;
 import org.bukkit.entity.SpawnCategory;
 
 public class CraftSpawnCategory {
 
     public static boolean isValidForLimits(SpawnCategory spawnCategory) {
-        return spawnCategory != null && ForgeInjectBukkit.spawnCategoryMap.containsValue(spawnCategory); // Mohist - fix mod
+        return spawnCategory != null && (spawnCategory.isMods || spawnCategory.ordinal() < SpawnCategory.MISC.ordinal()); // Mohist - fix mod
     }
 
     public static String getConfigNameSpawnLimit(SpawnCategory spawnCategory) {
+        if (spawnCategory.isMods) return "spawn-limits." + spawnCategory.name().toLowerCase();
         return switch (spawnCategory) {
             case MONSTER -> "spawn-limits.monsters";
             case ANIMAL -> "spawn-limits.animals";
@@ -24,6 +24,7 @@ public class CraftSpawnCategory {
     }
 
     public static String getConfigNameTicksPerSpawn(SpawnCategory spawnCategory) {
+        if (spawnCategory.isMods) return "ticks-per." + spawnCategory.name().toLowerCase();
         return switch (spawnCategory) {
             case MONSTER -> "ticks-per.monster-spawns";
             case ANIMAL -> "ticks-per.animal-spawns";
