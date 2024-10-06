@@ -1,6 +1,7 @@
 package com.mohistmc.paper.inventory;
 
 import com.mohistmc.paper.adventure.PaperAdventure;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.world.Container;
@@ -15,8 +16,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.framework.qual.DefaultQualifier;
-
-import java.util.List;
 
 @DefaultQualifier(NonNull.class)
 public final class PaperInventoryCustomHolderContainer implements Container {

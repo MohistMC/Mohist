@@ -242,7 +242,7 @@
           this.m_9942_(Component.m_237115_("multiplayer.disconnect.idling"));
        }
  
-@@ -337,12 +_,60 @@
+@@ -337,12 +_,61 @@
        return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
     }
  
@@ -291,15 +291,16 @@
 +         // Do not kick the player
 +         return;
 +      }
-+      this.f_9743_.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +      // Send the possibly modified leave message
 +      final Component ichatbasecomponent = PaperAdventure.asVanilla(event.reason()); // Paper - Adventure
 +      // CraftBukkit end
++
++      this.f_9743_.quitReason = org.bukkit.event.player.PlayerQuitEvent.QuitReason.KICKED; // Paper
 +      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.m_243092_(() -> {
 +         this.f_9742_.m_129507_(ichatbasecomponent);
        }));
 +
-+      this.m_7026_(ichatbasecomponent); // CraftBukkit - fire quit instantly
++      this.onDisconnect(ichatbasecomponent, event.leaveMessage()); // CraftBukkit - fire quit instantly
        this.f_9742_.m_129540_();
 -      this.f_9745_.m_18709_(this.f_9742_::m_129541_);
 +      this.f_9745_.m_6681_(this.f_9742_::m_129541_); // CraftBukkit - Don't wait

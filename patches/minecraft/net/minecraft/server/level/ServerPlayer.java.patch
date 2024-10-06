@@ -144,7 +144,7 @@
     private WardenSpawnTracker f_244516_ = new WardenSpawnTracker(0, 0, 0);
     private final ContainerSynchronizer f_143379_ = new ContainerSynchronizer() {
        public void m_142589_(AbstractContainerMenu p_143448_, NonNullList<ItemStack> p_143449_, ItemStack p_143450_, int[] p_143451_) {
-@@ -245,6 +_,24 @@
+@@ -245,6 +_,23 @@
     public int f_8943_;
     public boolean f_8944_;
  
@@ -160,7 +160,6 @@
 +   public boolean joining = true;
 +   public boolean sentListPacket = false;
 +   public Integer clientViewDistance;
-+   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   // CraftBukkit end
 +
 +   public boolean initialized = false; // Mohist

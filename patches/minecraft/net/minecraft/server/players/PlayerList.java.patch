@@ -355,7 +355,7 @@
 +
 +   public net.kyori.adventure.text.Component remove0(ServerPlayer entityplayer) { // CraftBukkit - return string // Paper - return Component
 +      // Paper start
-+      return this.remove(entityplayer, net.kyori.adventure.text.Component.translatable("multiplayer.player.left", NamedTextColor.YELLOW, PaperAdventure.asAdventure(entityplayer.m_5446_())));
++      return this.remove(entityplayer, PaperAdventure.asAdventure(Component.m_237110_("multiplayer.player.left", entityplayer.m_5446_()).m_130940_(ChatFormatting.YELLOW)));
 +   }
 +
 +   public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
@@ -375,7 +375,7 @@
 +         p_11287_.m_6915_();
 +      }
 +
-+      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), quitleaveMessage != null ? quitleaveMessage : net.kyori.adventure.text.Component.translatable("multiplayer.player.left", NamedTextColor.YELLOW, PaperAdventure.asAdventure(p_11287_.m_5446_())), p_11287_.quitReason);
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), quitleaveMessage != null ? quitleaveMessage : PaperAdventure.asAdventure(Component.m_237110_("multiplayer.player.left", p_11287_.m_5446_()).m_130940_(ChatFormatting.YELLOW)), p_11287_.quitReason);
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      p_11287_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +

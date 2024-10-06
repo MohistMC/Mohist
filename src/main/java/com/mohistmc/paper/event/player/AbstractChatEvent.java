@@ -1,6 +1,7 @@
 package com.mohistmc.paper.event.player;
 
 import com.mohistmc.paper.chat.ChatRenderer;
+import java.util.Set;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -10,7 +11,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
