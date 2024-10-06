@@ -836,6 +836,15 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
+@@ -1435,7 +_,7 @@
+    }
+ 
+    public GameRules m_129900_() {
+-      return this.m_129783_().m_46469_();
++      return this.m_129783_() != null ? this.m_129783_().m_46469_() : new GameRules(); // TODO Mohist - dimthread
+    }
+ 
+    public CustomBossEvents m_129901_() {
 @@ -1481,6 +_,31 @@
  
     public abstract boolean m_7779_(GameProfile p_129840_);

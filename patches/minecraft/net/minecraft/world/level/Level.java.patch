@@ -55,7 +55,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -69,8 +_,19 @@
+@@ -69,8 +_,20 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
@@ -70,6 +70,7 @@
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
 +import org.bukkit.entity.SpawnCategory;
 +import org.bukkit.event.block.BlockPhysicsEvent;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
@@ -213,17 +214,19 @@
     }
  
     public boolean m_5776_() {
-@@ -191,6 +_,26 @@
+@@ -191,6 +_,28 @@
     }
  
     public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
 +      {
-+         SetBlockEvent event = new SetBlockEvent(new Location(this.getWorld(), p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()));
-+         Bukkit.getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            org.bukkit.block.Block block = event.getLocation().getBlock();
-+            block.getState().update();
-+            return false;
++         if (!AsyncCatcher.catchAsync()) {
++            SetBlockEvent event = new SetBlockEvent(new Location(this.getWorld(), p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()));
++            Bukkit.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               org.bukkit.block.Block block = event.getLocation().getBlock();
++               block.getState().update();
++               return false;
++            }
 +         }
 +      }
 +      // CraftBukkit start - tree generation

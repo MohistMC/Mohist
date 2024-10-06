@@ -1,12 +1,13 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -20,6 +_,9 @@
+@@ -20,6 +_,10 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
++import org.spigotmc.AsyncCatcher;
  
  public class RedStoneOreBlock extends Block {
     public static final BooleanProperty f_55450_ = RedstoneTorchBlock.f_55674_;
@@ -72,7 +73,7 @@
     public void m_213898_(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
        if (p_221918_.m_61143_(f_55450_)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.m_61124_(f_55450_, false)).isCancelled()) {
++         if (!AsyncCatcher.catchAsync() && CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.m_61124_(f_55450_, false)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

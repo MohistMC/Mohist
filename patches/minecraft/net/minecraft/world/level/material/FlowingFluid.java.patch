@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -28,6 +_,13 @@
+@@ -28,6 +_,14 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -11,36 +11,41 @@
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockFromToEvent;
 +import org.bukkit.event.block.FluidLevelChangeEvent;
++import org.spigotmc.AsyncCatcher;
  
  public abstract class FlowingFluid extends Fluid {
     public static final BooleanProperty f_75947_ = BlockStateProperties.f_61434_;
-@@ -117,6 +_,15 @@
+@@ -117,6 +_,17 @@
           BlockState blockstate1 = p_255851_.m_8055_(blockpos);
           FluidState fluidstate = this.m_76035_(p_255851_, blockpos, blockstate1);
           if (this.m_75977_(p_255851_, p_76012_, blockstate, Direction.DOWN, blockpos, blockstate1, p_255851_.m_6425_(blockpos), fluidstate.m_76152_())) {
 +            // CraftBukkit start
-+            org.bukkit.block.Block source = CraftBlock.at(p_255851_, p_76012_);
-+            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
-+            Bukkit.getPluginManager().callEvent(event);
++            if (!AsyncCatcher.catchAsync()) {
++               org.bukkit.block.Block source = CraftBlock.at(p_255851_, p_76012_);
++               BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
++               Bukkit.getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
-+               return;
++               if (event.isCancelled()) {
++                  return;
++               }
 +            }
 +            // CraftBukkit end
              this.m_6364_(p_255851_, blockpos, blockstate1, Direction.DOWN, fluidstate);
              if (this.m_76019_(p_255851_, p_76012_) >= 3) {
                 this.m_76014_(p_255851_, p_76012_, p_76013_, blockstate);
-@@ -143,6 +_,15 @@
+@@ -143,6 +_,17 @@
              BlockPos blockpos = p_76016_.m_121945_(direction);
              BlockState blockstate = p_256644_.m_8055_(blockpos);
              if (this.m_75977_(p_256644_, p_76016_, p_76018_, direction, blockpos, blockstate, p_256644_.m_6425_(blockpos), fluidstate.m_76152_())) {
 +               // CraftBukkit start
-+               org.bukkit.block.Block source = CraftBlock.at(p_256644_, p_76016_);
-+               BlockFromToEvent event = new BlockFromToEvent(source, CraftBlock.notchToBlockFace(direction));
-+               Bukkit.getPluginManager().callEvent(event);
++               if (!AsyncCatcher.catchAsync()) {
++                  org.bukkit.block.Block source = CraftBlock.at(p_256644_, p_76016_);
++                  BlockFromToEvent event = new BlockFromToEvent(source, CraftBlock.notchToBlockFace(direction));
++                  Bukkit.getPluginManager().callEvent(event);
 +
-+               if (event.isCancelled()) {
-+                  continue;
++                  if (event.isCancelled()) {
++                     continue;
++                  }
 +               }
 +               // CraftBukkit end
                 this.m_6364_(p_256644_, blockpos, blockstate, direction, fluidstate);

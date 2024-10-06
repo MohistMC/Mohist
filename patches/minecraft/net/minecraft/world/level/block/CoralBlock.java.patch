@@ -8,12 +8,20 @@
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.item.context.BlockPlaceContext;
  import net.minecraft.world.level.BlockGetter;
+@@ -12,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.material.FluidState;
++import org.spigotmc.AsyncCatcher;
+ 
+ public class CoralBlock extends Block {
+    private final Block f_52128_;
 @@ -23,6 +_,11 @@
  
     public void m_213897_(BlockState p_221020_, ServerLevel p_221021_, BlockPos p_221022_, RandomSource p_221023_) {
        if (!this.m_52134_(p_221021_, p_221022_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.f_52128_.m_49966_()).isCancelled()) {
++         if (!AsyncCatcher.catchAsync() && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.f_52128_.m_49966_()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

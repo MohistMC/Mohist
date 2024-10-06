@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -3,30 +_,45 @@
+@@ -3,30 +_,46 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
@@ -37,6 +37,7 @@
 +
 +import net.kyori.adventure.audience.Audience;
 +import net.kyori.adventure.text.format.NamedTextColor;
++import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
  import net.minecraft.ChatFormatting;
 -import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
@@ -355,7 +356,7 @@
 +
 +   public net.kyori.adventure.text.Component remove0(ServerPlayer entityplayer) { // CraftBukkit - return string // Paper - return Component
 +      // Paper start
-+      return this.remove(entityplayer, PaperAdventure.asAdventure(Component.m_237110_("multiplayer.player.left", entityplayer.m_5446_()).m_130940_(ChatFormatting.YELLOW)));
++      return this.remove(entityplayer, LegacyComponentSerializer.legacySection().deserialize("\u00A7e" + entityplayer.m_6302_() + " left the game"));
 +   }
 +
 +   public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
@@ -375,7 +376,7 @@
 +         p_11287_.m_6915_();
 +      }
 +
-+      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), quitleaveMessage != null ? quitleaveMessage : PaperAdventure.asAdventure(Component.m_237110_("multiplayer.player.left", p_11287_.m_5446_()).m_130940_(ChatFormatting.YELLOW)), p_11287_.quitReason);
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), quitleaveMessage != null ? quitleaveMessage : LegacyComponentSerializer.legacySection().deserialize("\u00A7e" + p_11287_.m_6302_() + " left the game"), p_11287_.quitReason);
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      p_11287_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +

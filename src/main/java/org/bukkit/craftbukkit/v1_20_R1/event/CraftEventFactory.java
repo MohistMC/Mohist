@@ -241,6 +241,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.spigotmc.AsyncCatcher;
 
 public class CraftEventFactory {
     public static org.bukkit.block.Block blockDamage; // For use in EntityDamageByBlockEvent
@@ -845,6 +846,11 @@ public class CraftEventFactory {
 
         CraftBlockState state = CraftBlockStates.getBlockState(world, target, flag);
         state.setData(block);
+
+        if (AsyncCatcher.catchAsync()) {
+            state.update(true);
+            return true;
+        }
 
         BlockSpreadEvent event = new BlockSpreadEvent(state.getBlock(), CraftBlock.at(world, sourceBlockOverride != null ? sourceBlockOverride : source), state);
         Bukkit.getPluginManager().callEvent(event);

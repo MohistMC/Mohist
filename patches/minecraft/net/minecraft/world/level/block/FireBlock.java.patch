@@ -12,7 +12,7 @@
  import java.util.function.Function;
  import java.util.stream.Collectors;
  import net.minecraft.Util;
-@@ -27,6 +_,12 @@
+@@ -27,6 +_,13 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -22,6 +22,7 @@
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockBurnEvent;
 +import org.bukkit.event.block.BlockFadeEvent;
++import org.spigotmc.AsyncCatcher;
  
  public class FireBlock extends BaseFireBlock {
     public static final int f_153264_ = 15;
@@ -100,7 +101,7 @@
                 if (!this.m_53485_(p_221161_, p_221162_)) {
                    BlockPos blockpos = p_221162_.m_7495_();
                    if (!p_221161_.m_8055_(blockpos).m_60783_(p_221161_, blockpos, Direction.UP) || i > 3) {
-+                     if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221161_, p_221162_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                     if (!AsyncCatcher.catchAsync() && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221161_, p_221162_, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +                        p_221161_.m_7471_(p_221162_, false);
 +                     }
 +                  }
@@ -109,7 +110,7 @@
 +               }
 +
 +               if (i == 15 && p_221163_.m_188503_(4) == 0 && !this.canCatchFire(p_221161_, p_221162_.m_7495_(), Direction.UP)) {
-+                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221161_, p_221162_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                  if (!AsyncCatcher.catchAsync() && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221161_, p_221162_, Blocks.f_50016_.m_49966_()).isCancelled()) {
                       p_221161_.m_7471_(p_221162_, false);
                    }
 -

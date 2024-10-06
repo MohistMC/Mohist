@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/level/block/FarmBlock.java
 +++ b/net/minecraft/world/level/block/FarmBlock.java
-@@ -26,6 +_,8 @@
+@@ -26,6 +_,9 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
++import org.spigotmc.AsyncCatcher;
  
  public class FarmBlock extends Block {
     public static final IntegerProperty f_53243_ = BlockStateProperties.f_61423_;
@@ -38,7 +39,7 @@
  
     public static void m_269406_(@Nullable Entity p_270981_, BlockState p_270402_, Level p_270568_, BlockPos p_270551_) {
 +      // CraftBukkit start
-+      if (CraftEventFactory.callBlockFadeEvent(p_270568_, p_270551_, Blocks.f_50493_.m_49966_()).isCancelled()) {
++      if (!AsyncCatcher.catchAsync() && CraftEventFactory.callBlockFadeEvent(p_270568_, p_270551_, Blocks.f_50493_.m_49966_()).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

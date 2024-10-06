@@ -1,29 +1,32 @@
 --- a/net/minecraft/world/level/block/DragonEggBlock.java
 +++ b/net/minecraft/world/level/block/DragonEggBlock.java
-@@ -15,6 +_,8 @@
+@@ -15,6 +_,9 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockFromToEvent;
++import org.spigotmc.AsyncCatcher;
  
  public class DragonEggBlock extends FallingBlock {
     protected static final VoxelShape f_52908_ = Block.m_49796_(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
-@@ -42,6 +_,18 @@
+@@ -42,6 +_,20 @@
        for(int i = 0; i < 1000; ++i) {
           BlockPos blockpos = p_52938_.m_7918_(p_52937_.f_46441_.m_188503_(16) - p_52937_.f_46441_.m_188503_(16), p_52937_.f_46441_.m_188503_(8) - p_52937_.f_46441_.m_188503_(8), p_52937_.f_46441_.m_188503_(16) - p_52937_.f_46441_.m_188503_(16));
           if (p_52937_.m_8055_(blockpos).m_60795_() && worldborder.m_61937_(blockpos)) {
 +            // CraftBukkit start
-+            org.bukkit.block.Block from = CraftBlock.at(p_52937_, p_52938_);
-+            org.bukkit.block.Block to = CraftBlock.at(p_52937_, blockpos);
-+            BlockFromToEvent event = new BlockFromToEvent(from, to);
-+            org.bukkit.Bukkit.getPluginManager().callEvent(event);
++            if (!AsyncCatcher.catchAsync()) {
++               org.bukkit.block.Block from = CraftBlock.at(p_52937_, p_52938_);
++               org.bukkit.block.Block to = CraftBlock.at(p_52937_, blockpos);
++               BlockFromToEvent event = new BlockFromToEvent(from, to);
++               org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
-+               return;
++               if (event.isCancelled()) {
++                  return;
++               }
++
++               blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
 +            }
-+
-+            blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
 +            // CraftBukkit end
              if (p_52937_.f_46443_) {
                 for(int j = 0; j < 128; ++j) {

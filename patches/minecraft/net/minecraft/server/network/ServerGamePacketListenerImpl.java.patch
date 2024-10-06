@@ -279,7 +279,7 @@
 +         LoginHandler.disconnect(this, pTextComponent);
 +         return;
 +      }
-+      net.kyori.adventure.text.Component leaveMessage = net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, net.kyori.adventure.text.Component.text(this.f_9743_.m_6302_())); // Paper - Adventure
++      net.kyori.adventure.text.Component leaveMessage = LegacyComponentSerializer.legacySection().deserialize("\u00A7e" + this.f_9743_.m_6302_() + " left the game"); // Paper - Adventure
 +      net.kyori.adventure.text.Component reason = LegacyComponentSerializer.legacySection().deserialize(pTextComponent);
 +      PlayerKickEvent event = new PlayerKickEvent(this.f_9743_.getBukkitEntity(), reason, leaveMessage, mohist$kickCause.getAndSet(org.bukkit.event.player.PlayerKickEvent.Cause.UNKNOWN));
 +

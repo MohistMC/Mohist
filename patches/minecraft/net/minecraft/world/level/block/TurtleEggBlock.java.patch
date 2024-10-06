@@ -8,13 +8,14 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.state.BlockBehaviour;
-@@ -28,6 +_,9 @@
+@@ -28,6 +_,10 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
++import org.spigotmc.AsyncCatcher;
  
  public class TurtleEggBlock extends Block {
     public static final int f_154841_ = 2;
@@ -52,7 +53,7 @@
 +           // pLevel.setBlock(pPos, pState.setValue(HATCH, Integer.valueOf(i + 1)), 2);
           } else {
 +            // CraftBukkit start - Call BlockFadeEvent
-+            if (CraftEventFactory.callBlockFadeEvent(p_222645_, p_222646_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++            if (!AsyncCatcher.catchAsync() && CraftEventFactory.callBlockFadeEvent(p_222645_, p_222646_, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit end
