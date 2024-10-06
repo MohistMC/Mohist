@@ -18,14 +18,11 @@
 
 package com.mohistmc.mohistlauncher.feature;
 
-import com.mohistmc.libraries.LibrariesDownloadQueue;
-import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
+import com.mohistmc.mohistlauncher.libraries.LibrariesDownloadQueue;
 import com.mohistmc.mohistlauncher.util.I18n;
-import com.mohistmc.tools.ConnectionUtil;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.SneakyThrows;
 
 public class DefaultLibraries {
@@ -34,21 +31,12 @@ public class DefaultLibraries {
 
     @SneakyThrows
     public static void run() {
-        String config = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
-        String ds = System.getProperty("downloadsource") == null ? config : System.getProperty("downloadsource");
-        String downloadSource = config;
-        if (!Objects.equals(config, ds) && ConnectionUtil.isValid(ds)) {
-            downloadSource = ds;
-        }
-
         LibrariesDownloadQueue queue = LibrariesDownloadQueue.create()
                 .inputStream(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt"))
-                .downloadSource(downloadSource)
                 .build();
         installerTourls = queue.installerTourls;
         System.out.println(I18n.as("libraries.checking.start"));
         if (queue.needDownload()) {
-            System.out.println(I18n.as("libraries.downloadsource", queue.downloadSource.name()));
             System.out.println(I18n.as("libraries.global.percentage"));
             queue.progressBar();
         }

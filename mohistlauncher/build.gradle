@@ -26,7 +26,6 @@ dependencies {
     implementation(libs.json)
     implementation(libs.tools)
     implementation(libs.progressbar)
-    implementation(libs.libraries)
 }
 
 tasks.named('jar', Jar).configure {

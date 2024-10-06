@@ -19,6 +19,7 @@
 package com.mohistmc.mohistlauncher;
 
 import com.mohistmc.i18n.i18n;
+import com.mohistmc.mohistlauncher.action.ZipTree;
 import com.mohistmc.mohistlauncher.action.v_1_20_R3;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.feature.DefaultLibraries;
@@ -61,7 +62,7 @@ public class Main {
         }
 
         // if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) { UpdateUtils.versionCheck(); }
-
+        ZipTree.init();
         DefaultLibraries.run();
         v_1_20_R3.run();
 
