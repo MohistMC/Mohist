@@ -20,7 +20,7 @@ package com.mohistmc.mohistlauncher;
 
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.mohistlauncher.action.ZipTree;
-import com.mohistmc.mohistlauncher.action.v_1_20_R3;
+import com.mohistmc.mohistlauncher.action.v_1_21_R1;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.feature.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
@@ -59,12 +59,16 @@ public class Main {
                     %s - %s, Java(%s) %s
                     """;
             System.out.printf(test + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
+            if (i18n.isCN()) {
+                System.out.printf("官方交流QQ群: 158638%n");
+                System.out.printf("国内官网已开放: https://www.mohistmc.cn/%n");
+            }
         }
 
         // if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) { UpdateUtils.versionCheck(); }
         ZipTree.init();
         DefaultLibraries.run();
-        v_1_20_R3.run();
+        v_1_21_R1.run();
 
         if (!MojangEulaUtil.hasAcceptedEULA()) {
             System.out.println(i18n.as("eula"));
