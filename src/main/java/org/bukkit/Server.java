@@ -62,13 +62,25 @@ import java.util.logging.Logger;
 /**
  * Represents a server implementation.
  */
-public interface Server extends PluginMessageRecipient {
+public interface Server extends PluginMessageRecipient, net.kyori.adventure.audience.ForwardingAudience { // Paper
+
+    /**
+     * Returns the de facto plugins directory, generally used for storing plugin jars to be loaded,
+     * as well as their {@link org.bukkit.plugin.Plugin#getDataFolder() data folders}.
+     *
+     * <p>Plugins should use {@link org.bukkit.plugin.Plugin#getDataFolder()} rather than traversing this
+     * directory manually when determining the location in which to store their data and configuration files.</p>
+     *
+     * @return plugins directory
+     */
+    @NotNull
+    File getPluginsFolder();
 
     /**
      * Used for all administrative messages, such as an operator using a
      * command.
      * <p>
-     * For use in {@link #broadcast(java.lang.String, java.lang.String)}.
+     * For use in {@link #broadcast(net.kyori.adventure.text.Component, java.lang.String)}.
      */
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "bukkit.broadcast.admin";
 
@@ -76,7 +88,7 @@ public interface Server extends PluginMessageRecipient {
      * Used for all announcement messages, such as informing users that a
      * player has joined.
      * <p>
-     * For use in {@link #broadcast(java.lang.String, java.lang.String)}.
+     * For use in {@link #broadcast(net.kyori.adventure.text.Component, java.lang.String)}.
      */
     public static final String BROADCAST_CHANNEL_USERS = "bukkit.broadcast.user";
 
@@ -339,8 +351,34 @@ public interface Server extends PluginMessageRecipient {
      *
      * @param message the message
      * @return the number of players
+     * @deprecated use {@link #broadcast(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public int broadcastMessage(@NotNull String message);
+
+    // Paper start
+    /**
+     * Sends the component to all online players.
+     *
+     * @param component the component to send
+     * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
+     */
+    @Deprecated
+    public default void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+        spigot().broadcast(component);
+    }
+
+    /**
+     * Sends an array of components as a single message to all online players.
+     *
+     * @param components the components to send
+     * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
+     */
+    @Deprecated
+    public default void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+        spigot().broadcast(components);
+    }
+    // Paper end
 
     /**
      * Gets the name of the update folder. The update folder is used to safely
@@ -516,13 +554,10 @@ public interface Server extends PluginMessageRecipient {
      * </ul>
      * <p>
      * <b>Note:</b> If set to 0, {@link SpawnCategory} mobs spawning will be disabled.
-     * <p>
-     * Minecraft default: 1.
-     * <br>
-     * <b>Note: </b> the {@link SpawnCategory#MISC} are not consider.
      *
      * @param spawnCategory the category of spawn
      * @return the default ticks per {@link SpawnCategory} mobs spawn value
+     * @throws IllegalArgumentException if the category is {@link SpawnCategory#MISC}
      */
     public int getTicksPerSpawns(@NotNull SpawnCategory spawnCategory);
 
@@ -568,6 +603,18 @@ public interface Server extends PluginMessageRecipient {
     @Nullable
     public Player getPlayer(@NotNull UUID id);
 
+    // Paper start
+    /**
+     * Gets the unique ID of the player currently known as the specified player name
+     * In Offline Mode, will return an Offline UUID
+     *
+     * @param playerName the player name to look up the unique ID for
+     * @return A UUID, or null if that player name is not registered with Minecraft and the server is in online mode
+     */
+    @Nullable
+    public UUID getPlayerUniqueId(@NotNull String playerName);
+    // Paper end
+
     /**
      * Gets the plugin manager for interfacing with plugins.
      *
@@ -606,28 +653,40 @@ public interface Server extends PluginMessageRecipient {
      * <p>
      * If the world is already loaded, it will just return the equivalent of
      * getWorld(creator.name()).
+     * <p>
+     * Do note that un/loading worlds mid-tick may have potential side effects, we strongly recommend
+     * ensuring that you're not un/loading worlds midtick by checking {@link Bukkit#isTickingWorlds()}
      *
      * @param creator the options to use when creating the world
      * @return newly created or loaded world
+     * @throws IllegalStateException when {@link #isTickingWorlds() isTickingWorlds} is true
      */
     @Nullable
     public World createWorld(@NotNull WorldCreator creator);
 
     /**
      * Unloads a world with the given name.
+     * <p>
+     * Do note that un/loading worlds mid-tick may have potential side effects, we strongly recommend
+     * ensuring that you're not un/loading worlds midtick by checking {@link Bukkit#isTickingWorlds()}
      *
      * @param name Name of the world to unload
      * @param save whether to save the chunks before unloading
      * @return true if successful, false otherwise
+     * @throws IllegalStateException when {@link #isTickingWorlds() isTickingWorlds} is true
      */
     public boolean unloadWorld(@NotNull String name, boolean save);
 
     /**
      * Unloads the given world.
+     * <p>
+     * Do note that un/loading worlds mid-tick may have potential side effects, we strongly recommend
+     * ensuring that you're not un/loading worlds midtick by checking {@link Bukkit#isTickingWorlds()}
      *
      * @param world the world to unload
      * @param save whether to save the chunks before unloading
      * @return true if successful, false otherwise
+     * @throws IllegalStateException when {@link #isTickingWorlds() isTickingWorlds} is true
      */
     public boolean unloadWorld(@NotNull World world, boolean save);
 
@@ -649,6 +708,28 @@ public interface Server extends PluginMessageRecipient {
     @Nullable
     public World getWorld(@NotNull UUID uid);
 
+    // Paper start
+    /**
+     * Gets the world from the given NamespacedKey
+     *
+     * @param worldKey the NamespacedKey of the world to retrieve
+     * @return a world with the given NamespacedKey, or null if none exists
+     */
+    @Nullable
+    default World getWorld(@NotNull NamespacedKey worldKey) {
+        return getWorld((net.kyori.adventure.key.Key) worldKey);
+    }
+
+    /**
+     * Gets the world from the given Key
+     *
+     * @param worldKey the Key of the world to retrieve
+     * @return a world with the given Key, or null if none exists
+     */
+    @Nullable
+    World getWorld(@NotNull net.kyori.adventure.key.Key worldKey);
+    // Paper end
+
     /**
      * Create a new virtual {@link WorldBorder}.
      * <p>
@@ -667,9 +748,8 @@ public interface Server extends PluginMessageRecipient {
      *
      * @param id the id of the map to get
      * @return a map view if it exists, or null otherwise
-     * @deprecated Magic value
      */
-    @Deprecated
+    //@Deprecated // Paper - Not a magic value
     @Nullable
     public MapView getMap(int id);
 
@@ -696,7 +776,9 @@ public interface Server extends PluginMessageRecipient {
      *
      * @see World#locateNearestStructure(org.bukkit.Location,
      *      org.bukkit.StructureType, int, boolean)
+     * @deprecated use {@link #createExplorerMap(World, Location, org.bukkit.generator.structure.StructureType, org.bukkit.map.MapCursor.Type)}
      */
+    @Deprecated // Paper
     @NotNull
     public ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType);
 
@@ -957,8 +1039,33 @@ public interface Server extends PluginMessageRecipient {
      * @param permission the required permission {@link Permissible
      *     permissibles} must have to receive the broadcast
      * @return number of message recipients
+     * @deprecated in favour of {@link #broadcast(net.kyori.adventure.text.Component, String)}
      */
+    @Deprecated // Paper
     public int broadcast(@NotNull String message, @NotNull String permission);
+    // Paper start
+    /**
+     * Broadcast a message to all players.
+     * <p>
+     * This is the same as calling {@link #broadcast(net.kyori.adventure.text.Component,
+     * java.lang.String)} with the {@link #BROADCAST_CHANNEL_USERS} permission.
+     *
+     * @param message the message
+     * @return the number of players
+     */
+    int broadcast(net.kyori.adventure.text.Component message);
+
+    /**
+     * Broadcasts the specified message to every user with the given
+     * permission name.
+     *
+     * @param message message to broadcast
+     * @param permission the required permission {@link Permissible
+     *     permissibles} must have to receive the broadcast
+     * @return number of message recipients
+     */
+    int broadcast(net.kyori.adventure.text.Component message, @NotNull String permission);
+    // Paper end
 
     /**
      * Gets the player by the given name, regardless if they are offline or
@@ -1119,6 +1226,18 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     public ConsoleCommandSender getConsoleSender();
 
+    // Paper start
+    /**
+     * Creates a special {@link CommandSender} which redirects command feedback (in the form of chat messages) to the
+     * specified listener. The returned sender will have the same effective permissions as {@link #getConsoleSender()}.
+     *
+     * @param feedback feedback listener
+     * @return a command sender
+     */
+    @NotNull
+    public CommandSender createCommandSender(final @NotNull java.util.function.Consumer<? super net.kyori.adventure.text.Component> feedback);
+    // Paper end
+
     /**
      * Gets the folder that contains all of the various {@link World}s.
      *
@@ -1129,6 +1248,8 @@ public interface Server extends PluginMessageRecipient {
 
     /**
      * Gets every player that has ever played on this server.
+     * <p>
+     * <b>This method can be expensive as it loads all the player data files from the disk.</b>
      *
      * @return an array containing all previous players
      */
@@ -1175,6 +1296,7 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type);
 
+    // Paper start
     /**
      * Creates an empty inventory with the specified type and title. If the type
      * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
@@ -1199,6 +1321,36 @@ public interface Server extends PluginMessageRecipient {
      *
      * @see InventoryType#isCreatable()
      */
+    @NotNull
+    Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, net.kyori.adventure.text.Component title);
+    // Paper end
+
+    /**
+     * Creates an empty inventory with the specified type and title. If the type
+     * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
+     * otherwise the new inventory has the normal size for its type.<br>
+     * It should be noted that some inventory types do not support titles and
+     * may not render with said titles on the Minecraft client.
+     * <br>
+     * {@link InventoryType#WORKBENCH} will not process crafting recipes if
+     * created with this method. Use
+     * {@link Player#openWorkbench(Location, boolean)} instead.
+     * <br>
+     * {@link InventoryType#ENCHANTING} will not process {@link ItemStack}s
+     * for possible enchanting results. Use
+     * {@link Player#openEnchanting(Location, boolean)} instead.
+     *
+     * @param owner The holder of the inventory; can be null if there's no holder.
+     * @param type The type of inventory to create.
+     * @param title The title of the inventory, to be displayed when it is viewed.
+     * @return The new inventory.
+     * @throws IllegalArgumentException if the {@link InventoryType} cannot be
+     * viewed.
+     * @deprecated in favour of {@link #createInventory(InventoryHolder, InventoryType, net.kyori.adventure.text.Component)}
+     *
+     * @see InventoryType#isCreatable()
+     */
+    @Deprecated // Paper
     @NotNull
     Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull String title);
 
@@ -1240,10 +1392,13 @@ public interface Server extends PluginMessageRecipient {
      *     viewed
      * @return a new inventory
      * @throws IllegalArgumentException if the size is not a multiple of 9
+     * @deprecated in favour of {@link #createInventory(InventoryHolder, int, net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     @NotNull
     Inventory createInventory(@Nullable InventoryHolder owner, int size, @NotNull String title) throws IllegalArgumentException;
 
+    // Paper start
     /**
      * Creates an empty merchant.
      *
@@ -1251,7 +1406,18 @@ public interface Server extends PluginMessageRecipient {
      * when the merchant inventory is viewed
      * @return a new merchant
      */
+    @NotNull Merchant createMerchant(net.kyori.adventure.text.Component title);
+    // Paper start
+    /**
+     * Creates an empty merchant.
+     *
+     * @param title the title of the corresponding merchant inventory, displayed
+     * when the merchant inventory is viewed
+     * @return a new merchant
+     * @deprecated in favour of {@link #createMerchant(net.kyori.adventure.text.Component)}
+     */
     @NotNull
+    @Deprecated // Paper
     Merchant createMerchant(@Nullable String title);
 
     /**
@@ -1347,27 +1513,56 @@ public interface Server extends PluginMessageRecipient {
      */
     boolean isPrimaryThread();
 
+    // Paper start
     /**
      * Gets the message that is displayed on the server list.
      *
-     * @return the servers MOTD
+     * @return the server's MOTD
      */
-    @NotNull
-    String getMotd();
+    net.kyori.adventure.text.Component motd();
 
     /**
      * Set the message that is displayed on the server list.
      *
      * @param motd The message to be displayed
      */
-    void setMotd(@NotNull String motd);
+    void motd(final net.kyori.adventure.text.Component motd);
 
     /**
      * Gets the default message that is displayed when the server is stopped.
      *
      * @return the shutdown message
      */
+    net.kyori.adventure.text.Component shutdownMessage();
+    // Paper end
+
+    /**
+     * Gets the message that is displayed on the server list.
+     *
+     * @return the servers MOTD
+     * @deprecated in favour of {@link #motd()}
+     */
+    @NotNull
+    @Deprecated // Paper
+    String getMotd();
+
+    /**
+     * Set the message that is displayed on the server list.
+     *
+     * @param motd The message to be displayed
+     * @deprecated in favour of {@link #motd(net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    void setMotd(@NotNull String motd);
+
+    /**
+     * Gets the default message that is displayed when the server is stopped.
+     *
+     * @return the shutdown message
+     * @deprecated in favour of {@link #shutdownMessage()}
+     */
     @Nullable
+    @Deprecated // Paper
     String getShutdownMessage();
 
     /**
@@ -1394,7 +1589,7 @@ public interface Server extends PluginMessageRecipient {
      *
      * @return the scoreboard manager or null if no worlds are loaded.
      */
-    @Nullable
+    @NotNull // Paper
     ScoreboardManager getScoreboardManager();
 
     /**
@@ -1578,6 +1773,16 @@ public interface Server extends PluginMessageRecipient {
      */
     @NotNull
     public double[] getTPS();
+    // Paper end
+
+    // Paper start
+    /**
+     * Gets the active {@link org.bukkit.command.CommandMap}
+     *
+     * @return the active command map
+     */
+    @NotNull
+    org.bukkit.command.CommandMap getCommandMap();
 
     /**
      * Get the advancement specified by this key.
@@ -1746,15 +1951,6 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     UnsafeValues getUnsafe();
 
-    // Paper start
-    /**
-     * Gets the active {@link org.bukkit.command.CommandMap}
-     *
-     * @return the active command map
-     */
-    @NotNull
-    org.bukkit.command.CommandMap getCommandMap();
-
     // Spigot start
     public class Spigot {
 
@@ -1763,11 +1959,33 @@ public interface Server extends PluginMessageRecipient {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        // Paper start
+        @NotNull
+        public org.bukkit.configuration.file.YamlConfiguration getBukkitConfig()
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+
+        @NotNull
+        public org.bukkit.configuration.file.YamlConfiguration getSpigotConfig()
+        {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @NotNull
+        public org.bukkit.configuration.file.YamlConfiguration getPaperConfig()
+        {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        // Paper end
+
         /**
          * Sends the component to the player
          *
          * @param component the components to send
+         * @deprecated use {@link #broadcast(net.kyori.adventure.text.Component)}
          */
+        @Deprecated // Paper
         public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -1776,7 +1994,9 @@ public interface Server extends PluginMessageRecipient {
          * Sends an array of components as a single message to the player
          *
          * @param components the components to send
+         * @deprecated use {@link #broadcast(net.kyori.adventure.text.Component)}
          */
+        @Deprecated // Paper
         public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -1792,4 +2012,21 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     Spigot spigot();
     // Spigot end
+
+    /**
+     * Gets the default no permission message used on the server
+     *
+     * @return the default message
+     * @deprecated use {@link #permissionMessage()}
+     */
+    @NotNull
+    @Deprecated
+    String getPermissionMessage();
+
+    /**
+     * Gets the default no permission message used on the server
+     *
+     * @return the default message
+     */
+    @NotNull net.kyori.adventure.text.Component permissionMessage();
 }

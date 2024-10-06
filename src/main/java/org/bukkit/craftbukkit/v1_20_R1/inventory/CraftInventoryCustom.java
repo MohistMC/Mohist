@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.inventory.PaperInventoryCustomHolderContainer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -15,9 +16,21 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CraftInventoryCustom extends CraftInventory {
+
+    // Paper start
+    public CraftInventoryCustom(InventoryHolder owner, InventoryType type, Container delegate) {
+        super(new PaperInventoryCustomHolderContainer(owner, delegate, type));
+    }
+    // Paper end
     public CraftInventoryCustom(InventoryHolder owner, InventoryType type) {
         super(new MinecraftInventory(owner, type));
     }
+
+    // Paper start
+    public CraftInventoryCustom(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
+        super(new MinecraftInventory(owner, type, title));
+    }
+    // Paper end
 
     public CraftInventoryCustom(InventoryHolder owner, InventoryType type, String title) {
         super(new MinecraftInventory(owner, type, title));
@@ -41,6 +54,28 @@ public class CraftInventoryCustom extends CraftInventory {
         super(new MinecraftInventory(owner, items));
     }
 
+    // Paper start
+    public String getTitle() {
+        if (this.inventory instanceof MinecraftInventory minecraftInventory) {
+            return minecraftInventory.getTitle();
+        } else if (this.inventory instanceof PaperInventoryCustomHolderContainer customHolderContainer) {
+            return customHolderContainer.getTitle();
+        } else {
+            throw new UnsupportedOperationException(this.inventory.getClass() + " isn't a recognized Container type here");
+        }
+    }
+
+    public net.kyori.adventure.text.Component title() {
+        if (this.inventory instanceof MinecraftInventory minecraftInventory) {
+            return minecraftInventory.title();
+        } else if (this.inventory instanceof PaperInventoryCustomHolderContainer customHolderContainer) {
+            return customHolderContainer.title();
+        } else {
+            throw new UnsupportedOperationException(this.inventory.getClass() + " isn't a recognized Container type here");
+        }
+    }
+    // Paper end
+
     static class MinecraftInventory implements Container {
         private final NonNullList<ItemStack> items;
         private int maxStack = MAX_STACK;
@@ -49,6 +84,13 @@ public class CraftInventoryCustom extends CraftInventory {
         private final net.kyori.adventure.text.Component adventure$title; // Paper
         private InventoryType type;
         private final InventoryHolder owner;
+
+        // Paper start
+        public MinecraftInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
+            this(owner, type.getDefaultSize(), title);
+            this.type = type;
+        }
+        // Paper end
 
         public MinecraftInventory(InventoryHolder owner, InventoryType type) {
             this(owner, type.getDefaultSize(), type.getDefaultTitle());

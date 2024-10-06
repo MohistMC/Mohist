@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1.command;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.commands.FeedbackForwardingSender;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.commands.CommandSourceStack;
@@ -82,12 +83,33 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         if (sender instanceof ProxiedCommandSender) {
             return ((ProxiedNativeCommandSender) sender).getHandle();
         }
+        // Paper start
+        if (sender instanceof FeedbackForwardingSender feedback) {
+            return feedback.asVanilla();
+        }
+        // Paper end
 
         throw new IllegalArgumentException("Cannot make " + sender + " a vanilla command listener");
     }
 
     public static String getPermission(CommandNode<CommandSourceStack> vanillaCommand) {
-        return "minecraft.command." + ((vanillaCommand.getRedirect() == null) ? vanillaCommand.getName() : vanillaCommand.getRedirect().getName());
+        // Paper start
+        final String commandName;
+        if (vanillaCommand.getRedirect() == null) {
+            commandName = vanillaCommand.getName();
+        } else {
+            commandName = vanillaCommand.getRedirect().getName();
+        }
+        return "minecraft.command." + stripDefaultNamespace(commandName);
+    }
+
+    private static String stripDefaultNamespace(final String maybeNamespaced) {
+        final String prefix = "minecraft:";
+        if (maybeNamespaced.startsWith(prefix)) {
+            return maybeNamespaced.substring(prefix.length());
+        }
+        return maybeNamespaced;
+        // Paper end
     }
 
     private String toDispatcher(String[] args, String name) {

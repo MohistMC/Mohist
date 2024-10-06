@@ -274,11 +274,7 @@ public abstract class Enchantment implements Keyed, net.kyori.adventure.translat
      * Cursed enchantments are found the same way treasure enchantments are
      *
      * @return true if the enchantment is cursed
-     * @deprecated cursed enchantments are no longer special. Will return true
-     * only for {@link Enchantment#BINDING_CURSE} and
-     * {@link Enchantment#VANISHING_CURSE}.
      */
-    @Deprecated
     public abstract boolean isCursed();
 
     /**
@@ -300,6 +296,18 @@ public abstract class Enchantment implements Keyed, net.kyori.adventure.translat
      * @return True if the enchantment may be applied, otherwise False
      */
     public abstract boolean canEnchantItem(@NotNull ItemStack item);
+    // Paper start
+    /**
+     * Get the name of the enchantment with its applied level.
+     * <p>
+     * If the given {@code level} is either less than the {@link #getStartLevel()} or greater than the {@link #getMaxLevel()},
+     * the level may not be shown in the numeral format one may otherwise expect.
+     * </p>
+     *
+     * @param level the level of the enchantment to show
+     * @return the name of the enchantment with {@code level} applied
+     */
+    public abstract net.kyori.adventure.text.Component displayName(int level);
 
     @Override
     public boolean equals(Object obj) {

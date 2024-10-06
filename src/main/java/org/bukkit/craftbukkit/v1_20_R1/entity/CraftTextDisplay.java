@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.world.entity.Display;
 import org.bukkit.Color;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
@@ -33,6 +34,19 @@ public class CraftTextDisplay extends CraftDisplay implements TextDisplay {
     public void setText(String text) {
         getHandle().setText(CraftChatMessage.fromString(text, true)[0]);
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component text() {
+        return PaperAdventure.asAdventure(this.getHandle().getText());
+    }
+
+    @Override
+    public void text(net.kyori.adventure.text.Component text) {
+        this.getHandle().setText(text == null ? net.minecraft.network.chat.Component.empty() : PaperAdventure.asVanilla(text));
+    }
+    // Paper end
+
 
     @Override
     public int getLineWidth() {

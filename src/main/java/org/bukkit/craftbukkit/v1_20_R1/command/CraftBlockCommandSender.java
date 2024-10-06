@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.command;
 
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -44,6 +45,18 @@ public class CraftBlockCommandSender extends ServerCommandSender implements Bloc
     public String getName() {
         return block.getTextName();
     }
+
+    // Paper start
+    @Override
+    public void sendMessage(net.kyori.adventure.identity.Identity identity, net.kyori.adventure.text.Component message, net.kyori.adventure.audience.MessageType type) {
+        block.source.sendSystemMessage(PaperAdventure.asVanilla(message));
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component name() {
+        return PaperAdventure.asAdventure(this.block.getDisplayName());
+    }
+    // Paper end
 
     @Override
     public boolean isOp() {

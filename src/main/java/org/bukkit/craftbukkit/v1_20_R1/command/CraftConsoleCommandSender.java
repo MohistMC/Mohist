@@ -49,6 +49,13 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
         return "CONSOLE";
     }
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component name() {
+        return net.kyori.adventure.text.Component.text(this.getName());
+    }
+    // Paper end
+
     @Override
     public boolean isOp() {
         return true;

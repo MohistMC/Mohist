@@ -14,7 +14,8 @@ import java.util.UUID;
 
 public abstract class ServerCommandSender implements CommandSender {
     private static PermissibleBase blockPermInst;
-    private final PermissibleBase perm;
+    public final PermissibleBase perm; // Paper
+    private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
 
     public ServerCommandSender() {
         if (this instanceof CraftBlockCommandSender) {
@@ -25,6 +26,10 @@ public abstract class ServerCommandSender implements CommandSender {
         } else {
             this.perm = new PermissibleBase(this);
         }
+    }
+
+    protected ServerCommandSender(PermissibleBase perm) {
+        this.perm = perm;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -260,6 +261,129 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         this.generation = (generation == null) ? null : generation.ordinal();
     }
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component title() {
+        return null;
+    }
+
+    @Override
+    public org.bukkit.inventory.meta.BookMeta title(net.kyori.adventure.text.Component title) {
+        return this;
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component author() {
+        return null;
+    }
+
+    @Override
+    public org.bukkit.inventory.meta.BookMeta author(net.kyori.adventure.text.Component author) {
+        return this;
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component page(final int page) {
+        Preconditions.checkArgument(this.isValidPage(page), "Invalid page number (%s/%s)", page, this.getPageCount());
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(this.pages.get(page - 1));
+    }
+
+    @Override
+    public void page(final int page, net.kyori.adventure.text.Component data) {
+        Preconditions.checkArgument(this.isValidPage(page), "Invalid page number (%s/%s)", page, this.getPageCount());
+        if (data == null) {
+            data = net.kyori.adventure.text.Component.empty();
+        }
+        this.pages.set(page - 1, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(data));
+    }
+
+    @Override
+    public List<net.kyori.adventure.text.Component> pages() {
+        if (this.pages == null) return ImmutableList.of();
+        return this.pages.stream().map(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection()::deserialize).collect(ImmutableList.toImmutableList());
+    }
+
+    @Override
+    public BookMeta pages(List<net.kyori.adventure.text.Component> pages) {
+        if (this.pages != null) this.pages.clear();
+        for (net.kyori.adventure.text.Component page : pages) {
+            this.addPages(page);
+        }
+        return this;
+    }
+
+    @Override
+    public BookMeta pages(net.kyori.adventure.text.Component... pages) {
+        if (this.pages != null) this.pages.clear();
+        this.addPages(pages);
+        return this;
+    }
+
+    @Override
+    public void addPages(net.kyori.adventure.text.Component... pages) {
+        if (this.pages == null) this.pages = new ArrayList<>();
+        for (net.kyori.adventure.text.Component page : pages) {
+            if (this.pages.size() >= MAX_PAGES) {
+                return;
+            }
+
+            if (page == null) {
+                page = net.kyori.adventure.text.Component.empty();
+            }
+
+            this.pages.add(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(page));
+        }
+    }
+
+    private CraftMetaBook(List<net.kyori.adventure.text.Component> pages) {
+        super((org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem) org.bukkit.Bukkit.getItemFactory().getItemMeta(org.bukkit.Material.WRITABLE_BOOK));
+        this.pages = pages.subList(0, Math.min(MAX_PAGES, pages.size())).stream().map(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection()::serialize).collect(java.util.stream.Collectors.toList());
+    }
+
+    static class CraftMetaBookBuilder implements BookMetaBuilder {
+        protected final List<net.kyori.adventure.text.Component> pages = new java.util.ArrayList<>();
+
+        @Override
+        public BookMetaBuilder title(net.kyori.adventure.text.Component title) {
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder author(net.kyori.adventure.text.Component author) {
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder addPage(net.kyori.adventure.text.Component page) {
+            this.pages.add(page);
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder pages(net.kyori.adventure.text.Component... pages) {
+            java.util.Collections.addAll(this.pages, pages);
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder pages(java.util.Collection<net.kyori.adventure.text.Component> pages) {
+            this.pages.addAll(pages);
+            return this;
+        }
+
+        @Override
+        public BookMeta build() {
+            return new CraftMetaBook(this.pages);
+        }
+    }
+
+    @Override
+    public BookMetaBuilder toBuilder() {
+        return new CraftMetaBookBuilder();
+    }
+
+    // Paper end
+
     @Override
     public String getPage(final int page) {
         Preconditions.checkArgument(isValidPage(page), "Invalid page number (%s)", page);
@@ -401,27 +525,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     }
 
     @Override
-    Builder<String, Object> serialize(Builder<String, Object> builder) {
+    ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
 
-        if (hasTitle()) {
-            builder.put(BOOK_TITLE.BUKKIT, title);
-        }
-
-        if (hasAuthor()) {
-            builder.put(BOOK_AUTHOR.BUKKIT, author);
-        }
-
-        if (pages != null) {
-            builder.put(BOOK_PAGES.BUKKIT, ImmutableList.copyOf(pages));
-        }
-
-        if (resolved != null) {
-            builder.put(RESOLVED.BUKKIT, resolved);
-        }
-
-        if (generation != null) {
-            builder.put(GENERATION.BUKKIT, generation);
+        if (this.pages != null) {
+            builder.put(CraftMetaBook.BOOK_PAGES.BUKKIT, ImmutableList.copyOf(this.pages));
         }
 
         return builder;

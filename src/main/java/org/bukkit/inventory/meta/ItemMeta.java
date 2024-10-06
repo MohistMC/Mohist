@@ -58,13 +58,13 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * before calling this method.
      *
      * @return the display name that is set
-     * @deprecated use {@link #displayName()}
+     * @deprecated in favour of {@link #displayName()}
      */
+    @Deprecated // Paper
     @NotNull
-    @Deprecated
-    net.md_5.bungee.api.chat.BaseComponent[] getDisplayNameComponent();
-    // Paper end
+    String getDisplayName();
 
+    // Paper start
     /**
      * Gets the display name that is set.
      * <p>
@@ -72,9 +72,12 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * before calling this method.
      *
      * @return the display name that is set
+     * @deprecated use {@link #displayName()}
      */
     @NotNull
-    String getDisplayName();
+    @Deprecated
+    net.md_5.bungee.api.chat.BaseComponent[] getDisplayNameComponent();
+    // Paper end
 
     /**
      * Sets the display name.

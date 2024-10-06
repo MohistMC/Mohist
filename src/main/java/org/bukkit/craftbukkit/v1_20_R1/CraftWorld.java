@@ -666,6 +666,13 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         }
     }
 
+    // Paper start
+    @Override
+    public boolean isDayTime() {
+        return getHandle().isDay();
+    }
+    // Paper end
+
     @Override
     public long getGameTime() {
         return world.levelData.getGameTime();

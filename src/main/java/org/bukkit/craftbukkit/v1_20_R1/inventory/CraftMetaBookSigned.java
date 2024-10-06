@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
@@ -79,7 +80,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
     }
 
     @Override
-    Builder<String, Object> serialize(Builder<String, Object> builder) {
+    ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
         return builder;
     }

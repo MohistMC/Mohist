@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
@@ -30,4 +31,16 @@ public class CraftCommandBlock extends CraftBlockEntityState<CommandBlockEntity>
     public void setName(String name) {
         getSnapshot().getCommandBlock().setName(CraftChatMessage.fromStringOrNull(name != null ? name : "@"));
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component name() {
+        return PaperAdventure.asAdventure(getSnapshot().getCommandBlock().getName());
+    }
+
+    @Override
+    public void name(net.kyori.adventure.text.Component name) {
+        getSnapshot().getCommandBlock().setName(name == null ? net.minecraft.network.chat.Component.literal("@") : PaperAdventure.asVanilla(name));
+    }
+    // Paper end
 }

@@ -11,6 +11,7 @@ import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import com.mohistmc.paper.attribute.UnmodifiableAttributeMap;
 import com.mohistmc.paper.inventory.ItemRarity;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -75,6 +76,43 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
 
     private CraftMagicNumbers() {}
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.flattener.ComponentFlattener componentFlattener() {
+        return PaperAdventure.FLATTENER;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer colorDownsamplingGsonComponentSerializer() {
+        return net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.colorDownsamplingGson();
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer gsonComponentSerializer() {
+        return net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson();
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.plain.PlainComponentSerializer plainComponentSerializer() {
+        return PaperAdventure.PLAIN;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer plainTextSerializer() {
+        return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer() {
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection();
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component resolveWithContext(final net.kyori.adventure.text.Component component, final org.bukkit.command.CommandSender context, final org.bukkit.entity.Entity scoreboardSubject, final boolean bypassPermissions) throws IOException {
+        return PaperAdventure.resolveWithContext(component, context, scoreboardSubject, bypassPermissions);
+    }
+    // Paper end
 
     public static BlockState getBlock(MaterialData material) {
         return getBlock(material.getItemType(), material.getData());

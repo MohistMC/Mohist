@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import com.mohistmc.paper.event.player.PlayerPurchaseEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -13,10 +14,17 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 
 public class CraftMerchantCustom extends CraftMerchant {
 
+    @Deprecated // Paper - Adventure
     public CraftMerchantCustom(String title) {
+        super(new MinecraftMerchant(title));
+        this.getMerchant().craftMerchant = this;
+    }
+    // Paper start
+    public CraftMerchantCustom(net.kyori.adventure.text.Component title) {
         super(new MinecraftMerchant(title));
         getMerchant().craftMerchant = this;
     }
+    // Paper end
 
     @Override
     public String toString() {
@@ -35,10 +43,17 @@ public class CraftMerchantCustom extends CraftMerchant {
         private net.minecraft.world.entity.player.Player tradingPlayer;
         protected CraftMerchant craftMerchant;
 
+        @Deprecated // Paper - Adventure
         public MinecraftMerchant(String title) {
             Preconditions.checkArgument(title != null, "Title cannot be null");
             this.title = CraftChatMessage.fromString(title)[0];
         }
+        // Paper start
+        public MinecraftMerchant(net.kyori.adventure.text.Component title) {
+            Preconditions.checkArgument(title != null, "Title cannot be null");
+            this.title = PaperAdventure.asVanilla(title);
+        }
+        // Paper end
 
         @Override
         public CraftMerchant getCraftMerchant() {

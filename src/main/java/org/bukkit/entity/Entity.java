@@ -731,6 +731,15 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     Spigot spigot();
     // Spigot end
 
+    // Paper start
+    /**
+     * Gets the entity's display name formatted with their team prefix/suffix and
+     * the entity's default hover/click events.
+     *
+     * @return the team display name
+     */
+    net.kyori.adventure.text.Component teamDisplayName();
+
     @NotNull
     @Override
     default net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowEntity> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowEntity> op) {

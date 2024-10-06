@@ -3,11 +3,15 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
+import com.mohistmc.paper.adventure.DisplayNames;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.shorts.ShortArraySet;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
+import java.util.Locale;
+import net.kyori.adventure.bossbar.BossBar;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
@@ -170,6 +174,7 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -290,15 +295,61 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
     }
 
+    private @Nullable Set<net.kyori.adventure.bossbar.BossBar> activeBossBars;
+
+    @Override
+    public @NotNull Iterable<? extends net.kyori.adventure.bossbar.BossBar> activeBossBars() {
+        if (this.activeBossBars != null) {
+            return java.util.Collections.unmodifiableSet(this.activeBossBars);
+        }
+        return Set.of();
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component displayName() {
+        return this.getHandle().adventure$displayName;
+    }
+
+    @Override
+    public void displayName(final net.kyori.adventure.text.Component displayName) {
+        this.getHandle().adventure$displayName = displayName != null ? displayName : net.kyori.adventure.text.Component.text(this.getName());
+        this.getHandle().displayName = null;
+    }
+
     @Override
     public String getDisplayName() {
-        return getHandle().displayName;
+        if(true) return DisplayNames.getLegacy(this); // Paper
+        return this.getHandle().displayName;
     }
 
     @Override
     public void setDisplayName(final String name) {
         getHandle().displayName = name == null ? getName() : name;
     }
+
+    // Paper start
+    @Override
+    public void playerListName(net.kyori.adventure.text.Component name) {
+        getHandle().tabListDisplayName = name == null ? null : PaperAdventure.asVanilla(name);
+        for (ServerPlayer player : server.getHandle().players) {
+            if (player.getBukkitEntity().canSee(this)) {
+                player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
+            }
+        }
+    }
+    @Override
+    public net.kyori.adventure.text.Component playerListName() {
+        return getHandle().tabListDisplayName == null ? net.kyori.adventure.text.Component.text(getName()) : PaperAdventure.asAdventure(getHandle().tabListDisplayName);
+    }
+    @Override
+    public net.kyori.adventure.text.Component playerListHeader() {
+        return playerListHeader;
+    }
+    @Override
+    public net.kyori.adventure.text.Component playerListFooter() {
+        return playerListFooter;
+    }
+    // Paper end
 
     @Override
     public String getPlayerListName() {
@@ -318,43 +369,43 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
     }
 
-    private Component playerListHeader;
-    private Component playerListFooter;
+    private net.kyori.adventure.text.Component playerListHeader; // Paper - Adventure
+    private net.kyori.adventure.text.Component playerListFooter; // Paper - Adventure
 
     @Override
     public String getPlayerListHeader() {
-        return (playerListHeader == null) ? null : CraftChatMessage.fromComponent(playerListHeader);
+        return (this.playerListHeader == null) ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(playerListHeader);
     }
 
     @Override
     public String getPlayerListFooter() {
-        return (playerListFooter == null) ? null : CraftChatMessage.fromComponent(playerListFooter);
+        return (this.playerListFooter == null) ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(playerListFooter); // Paper - Adventure
     }
 
     @Override
     public void setPlayerListHeader(String header) {
-        this.playerListHeader = CraftChatMessage.fromStringOrNull(header, true);
-        updatePlayerListHeaderFooter();
+        this.playerListHeader = header == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(header); // Paper - Adventure
+        this.updatePlayerListHeaderFooter();
     }
 
     @Override
     public void setPlayerListFooter(String footer) {
-        this.playerListFooter = CraftChatMessage.fromStringOrNull(footer, true);
-        updatePlayerListHeaderFooter();
+        this.playerListFooter = footer == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(footer); // Paper - Adventure
+        this.updatePlayerListHeaderFooter();
     }
 
     @Override
     public void setPlayerListHeaderFooter(String header, String footer) {
-        this.playerListHeader = CraftChatMessage.fromStringOrNull(header, true);
-        this.playerListFooter = CraftChatMessage.fromStringOrNull(footer, true);
-        updatePlayerListHeaderFooter();
+        this.playerListHeader = header == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(header); // Paper - Adventure
+        this.playerListFooter = footer == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(footer); // Paper - Adventure
+        this.updatePlayerListHeaderFooter();
     }
 
     private void updatePlayerListHeaderFooter() {
-        if (getHandle().connection == null) return;
+        if (this.getHandle().connection == null) return;
 
-        ClientboundTabListPacket packet = new ClientboundTabListPacket((this.playerListHeader == null) ? Component.empty() : this.playerListHeader, (this.playerListFooter == null) ? Component.empty() : this.playerListFooter);
-        getHandle().connection.send(packet);
+        ClientboundTabListPacket packet = new ClientboundTabListPacket((this.playerListHeader == null) ? Component.empty() : PaperAdventure.asVanilla(this.playerListHeader), (this.playerListFooter == null) ? Component.empty() : PaperAdventure.asVanilla(this.playerListFooter)); // Paper - adventure
+        this.getHandle().connection.send(packet);
     }
 
     @Override
@@ -381,7 +432,28 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void kickPlayer(String message) {
         if (getHandle().connection == null) return;
 
-        getHandle().connection.disconnect(message == null ? "" : message);
+        this.getHandle().connection.disconnect(message == null ? "" : message, org.bukkit.event.player.PlayerKickEvent.Cause.PLUGIN); // Paper - kick event cause
+    }
+
+    // Paper start
+    private static final net.kyori.adventure.text.Component DEFAULT_KICK_COMPONENT = net.kyori.adventure.text.Component.translatable("multiplayer.disconnect.kicked");
+    @Override
+    public void kick() {
+        this.kick(DEFAULT_KICK_COMPONENT);
+    }
+
+    @Override
+    public void kick(final net.kyori.adventure.text.Component message) {
+        kick(message, org.bukkit.event.player.PlayerKickEvent.Cause.PLUGIN);
+    }
+
+    @Override
+    public void kick(net.kyori.adventure.text.Component message, org.bukkit.event.player.PlayerKickEvent.Cause cause) {
+        org.spigotmc.AsyncCatcher.catchOp("player kick");
+        final ServerGamePacketListenerImpl connection = this.getHandle().connection;
+        if (connection != null) {
+            connection.disconnect(message == null ? net.kyori.adventure.text.Component.empty() : message, cause);
+        }
     }
 
     @Override
@@ -713,6 +785,25 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         getHandle().connection.send(new ClientboundSetEquipmentPacket(entity.getEntityId(), equipment));
     }
 
+    // Paper start
+    @Override
+    public void sendSignChange(Location loc, @Nullable List<? extends net.kyori.adventure.text.Component> lines, DyeColor dyeColor, boolean hasGlowingText) {
+        if (getHandle().connection == null) {
+            return;
+        }
+        if (lines == null) {
+            lines = new java.util.ArrayList<>(4);
+        }
+        Preconditions.checkArgument(loc != null, "Location cannot be null");
+        Preconditions.checkArgument(dyeColor != null, "DyeColor cannot be null");
+        if (lines.size() < 4) {
+            throw new IllegalArgumentException("Must have at least 4 lines");
+        }
+        Component[] components = CraftSign.sanitizeLines(lines);
+        this.sendSignChange0(components, loc, dyeColor, hasGlowingText);
+    }
+    // Paper end
+
     @Override
     public void sendSignChange(Location loc, String[] lines) {
        sendSignChange(loc, lines, DyeColor.BLACK);
@@ -733,9 +824,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
         Preconditions.checkArgument(lines.length >= 4, "Must have at least 4 lines (%s)", lines.length);
 
-        if (getHandle().connection == null) return;
+        if (this.getHandle().connection == null) return;
 
         Component[] components = CraftSign.sanitizeLines(lines);
+        // Paper start - adventure
+        this.sendSignChange0(components, loc, dyeColor, hasGlowingText);
+    }
+
+    private void sendSignChange0(Component[] components, Location loc, DyeColor dyeColor, boolean hasGlowingText) {
         SignBlockEntity sign = new SignBlockEntity(CraftLocation.toBlockPosition(loc), Blocks.OAK_SIGN.defaultBlockState());
         SignText text = sign.getFrontText();
         text = text.setColor(net.minecraft.world.item.DyeColor.byId(dyeColor.getWoolData()));
@@ -746,6 +842,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         sign.setText(text, true);
 
         getHandle().connection.send(sign.getUpdatePacket());
+        // Paper end
     }
 
     @Override
@@ -1706,7 +1803,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setResourcePack(String url, byte[] hash, boolean force) {
-        setResourcePack(url, hash, null, force);
+        this.setResourcePack(url, hash, (String) null, force);
     }
 
     @Override
@@ -1721,6 +1818,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             getHandle().sendTexturePack(url, "", force, CraftChatMessage.fromStringOrNull(prompt, true));
         }
     }
+
+    // Paper start
+    @Override
+    public void setResourcePack(String url, byte[] hashBytes, net.kyori.adventure.text.Component prompt, boolean force) {
+        Preconditions.checkArgument(url != null, "Resource pack URL cannot be null");
+        final String hash;
+        if (hashBytes != null) {
+            Preconditions.checkArgument(hashBytes.length == 20, "Resource pack hash should be 20 bytes long but was " + hashBytes.length);
+            hash = BaseEncoding.base16().lowerCase().encode(hashBytes);
+        } else {
+            hash = "";
+        }
+        this.getHandle().sendTexturePack(url, hash, force, PaperAdventure.asVanilla(prompt));
+    }
+    // Paper end
 
     @Override
     public void setResourcePack(String url, byte[] hash) {
@@ -2128,13 +2240,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    public @NotNull Locale locale() {
+        return getHandle().adventure$locale;
+    }
+
+    @Override
     public int getPing() {
         return getHandle().latency;
     }
 
     @Override
     public String getLocale() {
-        return getHandle().getLanguage();
+        // Paper start - Locale change event
+        final String locale = this.getHandle().getLanguage();
+        return locale != null ? locale : "en_us";
+        // Paper end
     }
 
     @Override

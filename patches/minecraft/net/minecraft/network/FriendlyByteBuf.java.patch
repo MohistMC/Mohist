@@ -1,6 +1,14 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -78,7 +_,7 @@
+@@ -5,6 +_,7 @@
+ import com.google.common.collect.Maps;
+ import com.google.gson.Gson;
+ import com.google.gson.JsonElement;
++import com.mohistmc.paper.adventure.PaperAdventure;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.properties.Property;
+ import com.mojang.authlib.properties.PropertyMap;
+@@ -78,11 +_,12 @@
  import org.joml.Quaternionf;
  import org.joml.Vector3f;
  
@@ -9,6 +17,32 @@
     private static final int f_178335_ = 5;
     private static final int f_178336_ = 10;
     public static final int f_178337_ = 2097152;
+    private final ByteBuf f_130049_;
++   public java.util.Locale adventure$locale; // Paper
+    public static final short f_178333_ = Short.MAX_VALUE;
+    public static final int f_178334_ = 262144;
+    private static final int f_236798_ = 256;
+@@ -505,9 +_,19 @@
+          return component;
+       }
+    }
++   // Paper start
++   public FriendlyByteBuf writeComponent(final net.kyori.adventure.text.Component component) {
++      return this.m_130072_(PaperAdventure.asJsonString(component, this.adventure$locale), 262144);
++   }
++
++   @Deprecated
++   public FriendlyByteBuf writeComponent(final net.md_5.bungee.api.chat.BaseComponent[] component) {
++      return this.m_130072_(net.md_5.bungee.chat.ComponentSerializer.toString(component), 262144);
++   }
++   // Paper end
+ 
+    public FriendlyByteBuf m_130083_(Component p_130084_) {
+-      return this.m_130072_(Component.Serializer.m_130703_(p_130084_), 262144);
++      return this.m_130072_(PaperAdventure.asJsonString(p_130084_, this.adventure$locale), 262144); // Paper
+    }
+ 
+    public <T extends Enum<T>> T m_130066_(Class<T> p_130067_) {
 @@ -622,6 +_,15 @@
     }
  

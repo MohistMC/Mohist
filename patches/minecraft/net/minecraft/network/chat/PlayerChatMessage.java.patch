@@ -1,0 +1,66 @@
+--- a/net/minecraft/network/chat/PlayerChatMessage.java
++++ b/net/minecraft/network/chat/PlayerChatMessage.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.network.chat;
+ 
+ import com.google.common.primitives.Ints;
++import com.mohistmc.paper.adventure.PaperAdventure;
+ import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import java.security.SignatureException;
+@@ -15,7 +_,54 @@
+ import net.minecraft.util.SignatureUpdater;
+ import net.minecraft.util.SignatureValidator;
+ 
+-public record PlayerChatMessage(SignedMessageLink f_243882_, @Nullable MessageSignature f_244279_, SignedMessageBody f_240885_, @Nullable Component f_237215_, FilterMask f_242992_) {
++import net.kyori.adventure.chat.SignedMessage.Signature;
++
++public record PlayerChatMessage(SignedMessageLink f_243882_, @Nullable MessageSignature f_244279_, SignedMessageBody f_240885_, @Nullable Component f_237215_, FilterMask f_242992_, @Nullable net.minecraft.network.chat.ChatDecorator.Result result) {
++   public PlayerChatMessage(SignedMessageLink f_243882_, @Nullable MessageSignature f_244279_, SignedMessageBody f_240885_, @Nullable Component f_237215_, FilterMask f_242992_) {
++      this(f_243882_, f_244279_, f_240885_, f_237215_, f_242992_, null);
++   }
++   public PlayerChatMessage withResult(net.minecraft.network.chat.ChatDecorator.Result result) {
++      final PlayerChatMessage msg = this.m_241956_(result.component());
++      return new PlayerChatMessage(msg.f_243882_, msg.f_244279_, msg.f_240885_, msg.f_237215_, msg.f_242992_, result);
++   }
++   public net.minecraft.network.chat.ChatDecorator.Result requireResult() {
++      return Objects.requireNonNull(this.result, "Requires a decoration result to be set here");
++   }
++   public final class AdventureView implements net.kyori.adventure.chat.SignedMessage {
++      private AdventureView() {
++      }
++      @Override
++      public @org.jetbrains.annotations.NotNull Instant timestamp() {
++         return PlayerChatMessage.this.m_241109_();
++      }
++      @Override
++      public long salt() {
++         return PlayerChatMessage.this.m_241064_();
++      }
++      @Override
++      public @org.jetbrains.annotations.Nullable Signature signature() {
++         return PlayerChatMessage.this.f_244279_ == null ? null : PlayerChatMessage.this.f_244279_.adventure();
++      }
++      @Override
++      public @org.jetbrains.annotations.Nullable net.kyori.adventure.text.Component unsignedContent() {
++         return PlayerChatMessage.this.f_237215_() == null ? null : PaperAdventure.asAdventure(PlayerChatMessage.this.f_237215_());
++      }
++      @Override
++      public @org.jetbrains.annotations.NotNull String message() {
++         return PlayerChatMessage.this.m_245728_();
++      }
++      @Override
++      public @org.jetbrains.annotations.NotNull net.kyori.adventure.identity.Identity identity() {
++         return net.kyori.adventure.identity.Identity.identity(PlayerChatMessage.this.m_245167_());
++      }
++      public PlayerChatMessage playerChatMessage() {
++         return PlayerChatMessage.this;
++      }
++   }
++   public AdventureView adventureView() {
++      return new AdventureView();
++   }
++   // Paper end
+    public static final MapCodec<PlayerChatMessage> f_252410_ = RecordCodecBuilder.mapCodec((p_253460_) -> {
+       return p_253460_.group(SignedMessageLink.f_252474_.fieldOf("link").forGetter(PlayerChatMessage::f_243882_), MessageSignature.f_252463_.optionalFieldOf("signature").forGetter((p_253459_) -> {
+          return Optional.ofNullable(p_253459_.f_244279_);

@@ -44,24 +44,66 @@
           } else {
              this.m_136231_(p_136200_);
           }
-@@ -75,7 +_,7 @@
+@@ -75,19 +_,49 @@
  
     public boolean m_6546_(String p_136215_, PlayerTeam p_136216_) {
        if (super.m_6546_(p_136215_, p_136216_)) {
 -         this.f_136193_.m_6846_().m_11268_(ClientboundSetPlayerTeamPacket.m_179328_(p_136216_, p_136215_, ClientboundSetPlayerTeamPacket.Action.ADD));
+-         this.m_136217_();
+-         return true;
+-      } else {
+-         return false;
+-      }
+-   }
 +         this.broadcastAll(ClientboundSetPlayerTeamPacket.m_179328_(p_136216_, p_136215_, ClientboundSetPlayerTeamPacket.Action.ADD));
-          this.m_136217_();
-          return true;
-       } else {
-@@ -85,7 +_,7 @@
++         this.m_136217_();
++         return true;
++      } else {
++         return false;
++      }
++   }
++
++   // Paper start
++   public boolean addPlayersToTeam(java.util.Collection<String> players, PlayerTeam team) {
++      boolean anyAdded = false;
++      for (String playerName : players) {
++         if (super.m_6546_(playerName, team)) {
++            anyAdded = true;
++         }
++      }
++
++      if (anyAdded) {
++         this.broadcastAll(ClientboundSetPlayerTeamPacket.createMultiplePlayerPacket(team, players, ClientboundSetPlayerTeamPacket.Action.ADD));
++         this.m_136217_();
++         return true;
++      } else {
++         return false;
++      }
++   }
++   // Paper end
  
     public void m_6519_(String p_136223_, PlayerTeam p_136224_) {
        super.m_6519_(p_136223_, p_136224_);
 -      this.f_136193_.m_6846_().m_11268_(ClientboundSetPlayerTeamPacket.m_179328_(p_136224_, p_136223_, ClientboundSetPlayerTeamPacket.Action.REMOVE));
+-      this.m_136217_();
+-   }
 +      this.broadcastAll(ClientboundSetPlayerTeamPacket.m_179328_(p_136224_, p_136223_, ClientboundSetPlayerTeamPacket.Action.REMOVE));
-       this.m_136217_();
-    }
++      this.m_136217_();
++   }
++
++   // Paper start
++   public void removePlayersFromTeam(java.util.Collection<String> players, PlayerTeam team) {
++      for (String playerName : players) {
++         super.m_6519_(playerName, team);
++      }
++
++      this.broadcastAll(ClientboundSetPlayerTeamPacket.createMultiplePlayerPacket(team, players, ClientboundSetPlayerTeamPacket.Action.REMOVE));
++      this.m_136217_();
++   }
++   // Paper end
  
+    public void m_7092_(Objective p_136202_) {
+       super.m_7092_(p_136202_);
 @@ -97,7 +_,7 @@
     public void m_7091_(Objective p_136219_) {
        super.m_7091_(p_136219_);

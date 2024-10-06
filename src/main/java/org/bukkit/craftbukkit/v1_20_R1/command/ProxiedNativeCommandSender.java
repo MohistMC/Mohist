@@ -68,6 +68,13 @@ public class ProxiedNativeCommandSender implements ProxiedCommandSender {
         return getCallee().getName();
     }
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component name() {
+        return this.getCallee().name();
+    }
+    // Paper end
+
     @Override
     public boolean isPermissionSet(String name) {
         return getCaller().isPermissionSet(name);

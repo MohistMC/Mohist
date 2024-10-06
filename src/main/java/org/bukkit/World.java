@@ -46,7 +46,7 @@ import java.util.function.Predicate;
 /**
  * Represents a world, which may contain entities, chunks and blocks
  */
-public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, Keyed {
+public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, Keyed, net.kyori.adventure.audience.ForwardingAudience { // Paper
 
     // Paper start
     /**
@@ -312,8 +312,8 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * @return Whether the chunk was actually regenerated
      *
      * @deprecated regenerating a single chunk is not likely to produce the same
-     * chunk as before as terrain decoration may be spread across chunks. Use of
-     * this method should be avoided as it is known to produce buggy results.
+     * chunk as before as terrain decoration may be spread across chunks. It may
+     * or may not change blocks in the adjacent chunks as well.
      */
     @Deprecated
     public boolean regenerateChunk(int x, int z);
@@ -325,9 +325,8 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * @param z Z-coordinate of the chunk
      * @return Whether the chunk was actually refreshed
      *
-     * @deprecated This method is not guaranteed to work suitably across all client implementations.
      */
-    @Deprecated
+    //@Deprecated // Paper
     public boolean refreshChunk(int x, int z);
 
     /**
@@ -616,7 +615,6 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
     @NotNull
     public Collection<Entity> getEntitiesByClasses(@NotNull Class<?>... classes);
 
-
     // Paper start
     /**
      * Gets nearby LivingEntities within the specified radius (bounding box)
@@ -883,6 +881,14 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      */
     @Nullable
     public Entity getEntity(@NotNull java.util.UUID uuid);
+    // Paper end
+
+    // Paper start
+    @NotNull
+    @Override
+    default Iterable<? extends net.kyori.adventure.audience.Audience> audiences() {
+        return this.getPlayers();
+    }
     // Paper end
 
     /**
@@ -1207,6 +1213,16 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      */
     public void setFullTime(long time);
 
+    // Paper start
+
+    /**
+     * Check if it is currently daytime in this world
+     *
+     * @return True if it is daytime
+     */
+    public boolean isDayTime();
+    // Paper end
+
     /**
      * Gets the full in-game time on this world since the world generation
      *
@@ -1466,6 +1482,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      *     MaterialData} are null or {@link Material} of the {@link MaterialData} is not a block
      */
     @NotNull
+    @Deprecated // Paper
     public FallingBlock spawnFallingBlock(@NotNull Location location, @NotNull MaterialData data) throws IllegalArgumentException;
 
     /**

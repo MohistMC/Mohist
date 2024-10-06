@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.AbstractBannerBlock;
@@ -100,4 +101,26 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
         }
         banner.itemPatterns = newPatterns;
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component customName() {
+        return PaperAdventure.asAdventure(this.getSnapshot().getCustomName());
+    }
+
+    @Override
+    public void customName(net.kyori.adventure.text.Component customName) {
+        this.getSnapshot().setCustomName(PaperAdventure.asVanilla(customName));
+    }
+
+    @Override
+    public String getCustomName() {
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serializeOrNull(this.customName());
+    }
+
+    @Override
+    public void setCustomName(String name) {
+        this.customName(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserializeOrNull(name));
+    }
+    // Paper end
 }

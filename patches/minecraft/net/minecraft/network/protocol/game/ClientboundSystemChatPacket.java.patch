@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -1,24 +_,81 @@
+@@ -1,24 +_,99 @@
  package net.minecraft.network.protocol.game;
  
 +import java.util.Objects;
@@ -32,15 +32,25 @@
 +   private final Component f_237849_;
 +   private final boolean f_240374_;
 +   private final String content0;
++   private net.kyori.adventure.text.Component adventure$content = null;
 +
 +    public ClientboundSystemChatPacket(Component f_237849_, boolean f_240374_) {
 +        this.f_237849_ = f_237849_;
 +        this.f_240374_ = f_240374_;
-+        this.content0 = Component.Serializer.m_130703_(f_237849_);
++        this.content0 = Serializer.m_130703_(f_237849_);
++    }
++
++    public ClientboundSystemChatPacket(net.kyori.adventure.text.Component adventure$content, String content, boolean overlay) {
++        this(content, overlay);
++        this.adventure$content = adventure$content;
 +    }
 +
 +    public ClientboundSystemChatPacket(String content, boolean overlay) {
-+        this(Component.Serializer.m_130701_(content), overlay);
++        this(Serializer.m_130701_(content), overlay);
++    }
++
++    public ClientboundSystemChatPacket(net.kyori.adventure.text.Component content, boolean overlay) {
++        this(content, null, overlay);
 +    }
 +
 +    public ClientboundSystemChatPacket(BaseComponent[] content, boolean overlay) {
@@ -53,7 +63,15 @@
 +    }
 +
 +    public void m_5779_(FriendlyByteBuf p_237860_) {
-+        p_237860_.m_130072_(this.content0, 262144); // Spigot
++        // Paper start
++        if (this.adventure$content != null) {
++            p_237860_.writeComponent(this.adventure$content);
++        } else if (this.f_237849_ != null) {
++            p_237860_.m_130072_(this.content0, 262144); // Spigot
++        } else {
++            throw new IllegalArgumentException("Must supply either adventure component or string json content");
++        }
++        // Paper end
 +        p_237860_.writeBoolean(this.f_240374_);
 +    }
 +

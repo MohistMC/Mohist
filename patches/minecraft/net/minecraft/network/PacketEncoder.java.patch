@@ -1,0 +1,17 @@
+--- a/net/minecraft/network/PacketEncoder.java
++++ b/net/minecraft/network/PacketEncoder.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.network;
+ 
++import com.mohistmc.paper.adventure.PaperAdventure;
+ import com.mojang.logging.LogUtils;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+@@ -33,6 +_,7 @@
+          } else {
+             FriendlyByteBuf friendlybytebuf = new FriendlyByteBuf(p_130547_);
+             friendlybytebuf.m_130130_(i);
++            friendlybytebuf.adventure$locale = p_130545_.channel().attr(PaperAdventure.LOCALE_ATTRIBUTE).get(); // Paper
+ 
+             try {
+                int j = friendlybytebuf.writerIndex();

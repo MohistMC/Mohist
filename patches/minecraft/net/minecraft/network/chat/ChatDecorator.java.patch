@@ -1,0 +1,73 @@
+--- a/net/minecraft/network/chat/ChatDecorator.java
++++ b/net/minecraft/network/chat/ChatDecorator.java
+@@ -1,5 +_,7 @@
+ package net.minecraft.network.chat;
+ 
++import com.mohistmc.paper.adventure.AdventureComponent;
++import com.mohistmc.paper.adventure.PaperAdventure;
+ import java.util.concurrent.CompletableFuture;
+ import javax.annotation.Nullable;
+ import net.minecraft.server.level.ServerPlayer;
+@@ -11,4 +_,62 @@
+    };
+ 
+    CompletableFuture<Component> m_236961_(@Nullable ServerPlayer p_236962_, Component p_236963_);
++
++   // Paper start
++   default CompletableFuture<Result> decorate(@Nullable ServerPlayer sender, @Nullable net.minecraft.commands.CommandSourceStack commandSourceStack, Component message) {
++      throw new UnsupportedOperationException("Must override this implementation");
++   }
++
++   static ChatDecorator create(ImprovedChatDecorator delegate) {
++      return new ChatDecorator() {
++         @Override
++         public CompletableFuture<Component> m_236961_(@Nullable ServerPlayer sender, Component message) {
++            return this.decorate(sender, null, message).thenApply(Result::component);
++         }
++
++         @Override
++         public CompletableFuture<Result> decorate(@Nullable ServerPlayer sender, @Nullable net.minecraft.commands.CommandSourceStack commandSourceStack, Component message) {
++            return delegate.decorate(sender, commandSourceStack, message);
++         }
++      };
++   }
++
++   @FunctionalInterface
++   interface ImprovedChatDecorator {
++      CompletableFuture<Result> decorate(@Nullable ServerPlayer sender, @Nullable net.minecraft.commands.CommandSourceStack commandSourceStack, Component message);
++   }
++
++   interface Result {
++      boolean hasNoFormatting();
++
++      Component component();
++
++      MessagePair message();
++
++      boolean modernized();
++   }
++
++   record MessagePair(net.kyori.adventure.text.Component component, String legacyMessage) { }
++
++   record LegacyResult(Component component, String format, MessagePair message, boolean hasNoFormatting, boolean modernized) implements Result {
++      public LegacyResult(net.kyori.adventure.text.Component component, String format, MessagePair message, boolean hasNoFormatting, boolean modernified) {
++         this(PaperAdventure.asVanilla(component), format, message, hasNoFormatting, modernified);
++      }
++      public LegacyResult {
++         component = component instanceof AdventureComponent adventureComponent ? adventureComponent.deepConverted() : component;
++      }
++   }
++
++   record ModernResult(Component component, boolean hasNoFormatting, boolean modernized) implements Result {
++      public ModernResult(net.kyori.adventure.text.Component component, boolean hasNoFormatting, boolean modernized) {
++         this(PaperAdventure.asVanilla(component), hasNoFormatting, modernized);
++      }
++
++      @Override
++      public MessagePair message() {
++         final net.kyori.adventure.text.Component adventureComponent = PaperAdventure.WRAPPER_AWARE_SERIALIZER.deserialize(this.component);
++         return new MessagePair(adventureComponent, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(adventureComponent));
++      }
++   }
++   // Paper end
+ }

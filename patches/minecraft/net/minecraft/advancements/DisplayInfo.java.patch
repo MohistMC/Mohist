@@ -1,0 +1,20 @@
+--- a/net/minecraft/advancements/DisplayInfo.java
++++ b/net/minecraft/advancements/DisplayInfo.java
+@@ -4,6 +_,8 @@
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
+ import com.google.gson.JsonSyntaxException;
++import com.mohistmc.paper.advancement.AdvancementDisplay;
++import com.mohistmc.paper.advancement.PaperAdvancementDisplay;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.registries.BuiltInRegistries;
+@@ -28,6 +_,8 @@
+    private final boolean f_14965_;
+    private float f_14966_;
+    private float f_14967_;
++   public final AdvancementDisplay paper = new PaperAdvancementDisplay(this); // Paper
++
+ 
+    public DisplayInfo(ItemStack p_14969_, Component p_14970_, Component p_14971_, @Nullable ResourceLocation p_14972_, FrameType p_14973_, boolean p_14974_, boolean p_14975_, boolean p_14976_) {
+       this.f_14958_ = p_14970_;

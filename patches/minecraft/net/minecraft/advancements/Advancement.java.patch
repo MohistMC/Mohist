@@ -1,6 +1,13 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -24,6 +_,7 @@
+@@ -18,12 +_,14 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.HoverEvent;
++import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.chat.Style;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.util.GsonHelper;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.ItemLike;
  import org.apache.commons.lang3.ArrayUtils;
@@ -16,6 +23,32 @@
  
     public Advancement(ResourceLocation p_286878_, @Nullable Advancement p_286496_, @Nullable DisplayInfo p_286499_, AdvancementRewards p_286389_, Map<String, Criterion> p_286635_, String[][] p_286882_, boolean p_286478_) {
        this.f_138301_ = p_286878_;
+@@ -64,6 +_,25 @@
+ 
+    }
+ 
++   public static Component constructDisplayComponent(final @Nullable ResourceLocation id, final @Nullable DisplayInfo display) {
++      if (id == null && display == null) {
++         throw new IllegalArgumentException("can't both be null");
++      } else if (display == null) {
++         return Component.m_237113_(id.toString());
++         // Paper end
++      } else {
++         Component ichatbasecomponent = display.m_14977_();
++         ChatFormatting enumchatformat = display.m_14992_().m_15552_();
++         MutableComponent ichatmutablecomponent = ComponentUtils.m_130750_(ichatbasecomponent.m_6881_(), Style.f_131099_.m_131140_(enumchatformat)).m_130946_("\n").m_7220_(display.m_14985_());
++         MutableComponent ichatmutablecomponent1 = ichatbasecomponent.m_6881_().m_130938_((chatmodifier) -> {
++            return chatmodifier.m_131144_(new HoverEvent(HoverEvent.Action.f_130831_, ichatmutablecomponent));
++         });
++
++         return ComponentUtils.m_130748_(ichatmutablecomponent1).m_130940_(enumchatformat); // Paper
++      }
++
++   }
++
+    public Advancement.Builder m_138313_() {
+       return new Advancement.Builder(this.f_138298_ == null ? null : this.f_138298_.m_138327_(), this.f_138299_, this.f_138300_, this.f_138302_, this.f_138303_, this.f_285575_);
+    }
 @@ -150,7 +_,7 @@
        return this.f_138305_;
     }

@@ -81,6 +81,20 @@ public final class Bukkit {
     }
 
     /**
+     * Returns the de facto plugins directory, generally used for storing plugin jars to be loaded,
+     * as well as their {@link org.bukkit.plugin.Plugin#getDataFolder() data folders}.
+     *
+     * <p>Plugins should use {@link org.bukkit.plugin.Plugin#getDataFolder()} rather than traversing this
+     * directory manually when determining the location in which to store their data and configuration files.</p>
+     *
+     * @return plugins directory
+     */
+    @NotNull
+    public static File getPluginsFolder() {
+        return server.getPluginsFolder();
+    }
+
+    /**
      * Attempts to set the {@link Server} singleton.
      * <p>
      * This cannot be done if the Server is already set.
@@ -125,6 +139,18 @@ public final class Bukkit {
     public static String getBukkitVersion() {
         return server.getBukkitVersion();
     }
+
+    // Paper start - expose game version
+    /**
+     * Gets the version of game this server implements
+     *
+     * @return version of game
+     */
+    @NotNull
+    public static String getMinecraftVersion() {
+        return server.getMinecraftVersion();
+    }
+    // Paper end
 
     /**
      * Gets a view of all currently logged in players. This {@linkplain
@@ -274,9 +300,11 @@ public final class Bukkit {
     /**
      * Get the DataPack Manager.
      *
+     * @deprecated use {@link #getDatapackManager()}
      * @return the manager
      */
     @NotNull
+    @Deprecated(forRemoval = true)
     public static DataPackManager getDataPackManager() {
         return server.getDataPackManager();
     }
@@ -391,10 +419,36 @@ public final class Bukkit {
      *
      * @param message the message
      * @return the number of players
+     * @deprecated in favour of {@link Server#broadcast(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public static int broadcastMessage(@NotNull String message) {
         return server.broadcastMessage(message);
     }
+
+    // Paper start
+    /**
+     * Sends the component to all online players.
+     *
+     * @param component the component to send
+     * @deprecated use {@code sendMessage} methods on {@link #getServer()} that accept {@link net.kyori.adventure.text.Component}
+     */
+    @Deprecated
+    public static void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+        server.broadcast(component);
+    }
+
+    /**
+     * Sends an array of components as a single message to all online players.
+     *
+     * @param components the components to send
+     * @deprecated use {@code sendMessage} methods on {@link #getServer()} that accept {@link net.kyori.adventure.text.Component}
+     */
+    @Deprecated
+    public static void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+        server.broadcast(components);
+    }
+    // Paper end
 
     /**
      * Gets the name of the update folder. The update folder is used to safely
@@ -650,6 +704,20 @@ public final class Bukkit {
         return server.getPlayer(id);
     }
 
+    // Paper start
+    /**
+     * Gets the unique ID of the player currently known as the specified player name
+     * In Offline Mode, will return an Offline UUID
+     *
+     * @param playerName the player name to look up the unique ID for
+     * @return A UUID, or null if that player name is not registered with Minecraft and the server is in online mode
+     */
+    @Nullable
+    public static UUID getPlayerUniqueId(@NotNull String playerName) {
+        return server.getPlayerUniqueId(playerName);
+    }
+    // Paper end
+
     /**
      * Gets the plugin manager for interfacing with plugins.
      *
@@ -696,6 +764,9 @@ public final class Bukkit {
      * <p>
      * If the world is already loaded, it will just return the equivalent of
      * getWorld(creator.name()).
+     * <p>
+     * Do note that un/loading worlds mid-tick may have potential side effects, we strongly recommend
+     * ensuring that you're not un/loading worlds midtick by checking {@link Bukkit#isTickingWorlds()}
      *
      * @param creator the options to use when creating the world
      * @return newly created or loaded world
@@ -707,6 +778,9 @@ public final class Bukkit {
 
     /**
      * Unloads a world with the given name.
+     * <p>
+     * Do note that un/loading worlds mid-tick may have potential side effects, we strongly recommend
+     * ensuring that you're not un/loading worlds midtick by checking {@link Bukkit#isTickingWorlds()}
      *
      * @param name Name of the world to unload
      * @param save whether to save the chunks before unloading
@@ -718,6 +792,9 @@ public final class Bukkit {
 
     /**
      * Unloads the given world.
+     * <p>
+     * Do note that un/loading worlds mid-tick may have potential side effects, we strongly recommend
+     * ensuring that you're not un/loading worlds midtick by checking {@link Bukkit#isTickingWorlds()}
      *
      * @param world the world to unload
      * @param save whether to save the chunks before unloading
@@ -748,6 +825,29 @@ public final class Bukkit {
     public static World getWorld(@NotNull UUID uid) {
         return server.getWorld(uid);
     }
+    // Paper start
+    /**
+     * Gets the world from the given NamespacedKey
+     *
+     * @param worldKey the NamespacedKey of the world to retrieve
+     * @return a world with the given NamespacedKey, or null if none exists
+     */
+    @Nullable
+    public static World getWorld(@NotNull NamespacedKey worldKey) {
+        return server.getWorld(worldKey);
+    }
+
+    /**
+     * Gets the world from the given Key
+     *
+     * @param worldKey the Key of the world to retrieve
+     * @return a world with the given Key, or null if none exists
+     */
+    @Nullable
+    public static World getWorld(@NotNull net.kyori.adventure.key.Key worldKey) {
+        return server.getWorld(worldKey);
+    }
+    // Paper end
 
     /**
      * Create a new virtual {@link WorldBorder}.
@@ -766,9 +866,8 @@ public final class Bukkit {
      *
      * @param id the id of the map to get
      * @return a map view if it exists, or null otherwise
-     * @deprecated Magic value
      */
-    @Deprecated
+    //@Deprecated // Paper - Not a magic value
     @Nullable
     public static MapView getMap(int id) {
         return server.getMap(id);
@@ -808,9 +907,6 @@ public final class Bukkit {
     /**
      * Create a new explorer map targeting the closest nearby structure of a
      * given {@link StructureType}.
-     * <br>
-     * This method uses implementation default values for radius and
-     * findUnexplored (usually 100, true).
      *
      * @param world the world the map will belong to
      * @param location the origin location to find the nearest structure
@@ -1106,6 +1202,33 @@ public final class Bukkit {
         server.shutdown();
     }
 
+    // Paper start
+    /**
+     * Broadcast a message to all players.
+     * <p>
+     * This is the same as calling {@link #broadcast(net.kyori.adventure.text.Component,
+     * java.lang.String)} with the {@link Server#BROADCAST_CHANNEL_USERS} permission.
+     *
+     * @param message the message
+     * @return the number of players
+     */
+    public static int broadcast(net.kyori.adventure.text.Component message) {
+        return server.broadcast(message);
+    }
+    /**
+     * Broadcasts the specified message to every user with the given
+     * permission name.
+     *
+     * @param message message to broadcast
+     * @param permission the required permission {@link Permissible
+     *     permissibles} must have to receive the broadcast
+     * @return number of message recipients
+     */
+    public static int broadcast(net.kyori.adventure.text.Component message, @NotNull String permission) {
+        return server.broadcast(message, permission);
+    }
+    // Paper end
+
     /**
      * Broadcasts the specified message to every user with the given
      * permission name.
@@ -1310,6 +1433,20 @@ public final class Bukkit {
         return server.getConsoleSender();
     }
 
+    // Paper start
+    /**
+     * Creates a special {@link CommandSender} which redirects command feedback (in the form of chat messages) to the
+     * specified listener. The returned sender will have the same effective permissions as {@link #getConsoleSender()}.
+     *
+     * @param feedback feedback listener
+     * @return a command sender
+     */
+    @NotNull
+    public static CommandSender createCommandSender(final @NotNull java.util.function.Consumer<? super net.kyori.adventure.text.Component> feedback) {
+        return server.createCommandSender(feedback);
+    }
+    // Paper end
+
     /**
      * Gets the folder that contains all of the various {@link World}s.
      *
@@ -1322,6 +1459,8 @@ public final class Bukkit {
 
     /**
      * Gets every player that has ever played on this server.
+     * <p>
+     * <b>This method can be expensive as it loads all the player data files from the disk.</b>
      *
      * @return an array containing all previous players
      */
@@ -1376,6 +1515,7 @@ public final class Bukkit {
         return server.createInventory(owner, type);
     }
 
+    // Paper start
     /**
      * Creates an empty inventory with the specified type and title. If the type
      * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
@@ -1400,6 +1540,38 @@ public final class Bukkit {
      *
      * @see InventoryType#isCreatable()
      */
+    @NotNull
+    public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, net.kyori.adventure.text.Component title) {
+        return server.createInventory(owner, type, title);
+    }
+    // Paper end
+
+    /**
+     * Creates an empty inventory with the specified type and title. If the type
+     * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
+     * otherwise the new inventory has the normal size for its type.<br>
+     * It should be noted that some inventory types do not support titles and
+     * may not render with said titles on the Minecraft client.
+     * <br>
+     * {@link InventoryType#WORKBENCH} will not process crafting recipes if
+     * created with this method. Use
+     * {@link Player#openWorkbench(Location, boolean)} instead.
+     * <br>
+     * {@link InventoryType#ENCHANTING} will not process {@link ItemStack}s
+     * for possible enchanting results. Use
+     * {@link Player#openEnchanting(Location, boolean)} instead.
+     *
+     * @param owner The holder of the inventory; can be null if there's no holder.
+     * @param type The type of inventory to create.
+     * @param title The title of the inventory, to be displayed when it is viewed.
+     * @return The new inventory.
+     * @throws IllegalArgumentException if the {@link InventoryType} cannot be
+     * viewed.
+     * @deprecated in favour of {@link #createInventory(InventoryHolder, InventoryType, net.kyori.adventure.text.Component)}
+     *
+     * @see InventoryType#isCreatable()
+     */
+    @Deprecated // Paper
     @NotNull
     public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull String title) {
         return server.createInventory(owner, type, title);
@@ -1447,12 +1619,15 @@ public final class Bukkit {
      *     viewed
      * @return a new inventory
      * @throws IllegalArgumentException if the size is not a multiple of 9
+     * @deprecated in favour of {@link #createInventory(InventoryHolder, InventoryType, net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     @NotNull
     public static Inventory createInventory(@Nullable InventoryHolder owner, int size, @NotNull String title) throws IllegalArgumentException {
         return server.createInventory(owner, size, title);
     }
 
+    // Paper start
     /**
      * Creates an empty merchant.
      *
@@ -1460,7 +1635,20 @@ public final class Bukkit {
      * when the merchant inventory is viewed
      * @return a new merchant
      */
+    public static @NotNull Merchant createMerchant(net.kyori.adventure.text.Component title) {
+        return server.createMerchant(title);
+    }
+    // Paper start
+    /**
+     * Creates an empty merchant.
+     *
+     * @param title the title of the corresponding merchant inventory, displayed
+     * when the merchant inventory is viewed
+     * @return a new merchant
+     * @deprecated in favour of {@link #createMerchant(net.kyori.adventure.text.Component)}
+     */
     @NotNull
+    @Deprecated // Paper
     public static Merchant createMerchant(@Nullable String title) {
         return server.createMerchant(title);
     }
@@ -1577,12 +1765,43 @@ public final class Bukkit {
         return server.isPrimaryThread();
     }
 
+    // Paper start
+    /**
+     * Gets the message that is displayed on the server list.
+     *
+     * @return the server's MOTD
+     */
+    @NotNull public static net.kyori.adventure.text.Component motd() {
+        return server.motd();
+    }
+
+    /**
+     * Set the message that is displayed on the server list.
+     *
+     * @param motd The message to be displayed
+     */
+    public static void motd(final net.kyori.adventure.text.Component motd) {
+        server.motd(motd);
+    }
+
+    /**
+     * Gets the default message that is displayed when the server is stopped.
+     *
+     * @return the shutdown message
+     */
+    public static net.kyori.adventure.text.Component shutdownMessage() {
+        return server.shutdownMessage();
+    }
+    // Paper end
+
     /**
      * Gets the message that is displayed on the server list.
      *
      * @return the servers MOTD
+     * @deprecated in favour of {@link #motd()}
      */
     @NotNull
+    @Deprecated // Paper
     public static String getMotd() {
         return server.getMotd();
     }
@@ -1591,7 +1810,9 @@ public final class Bukkit {
      * Set the message that is displayed on the server list.
      *
      * @param motd The message to be displayed
+     * @deprecated in favour of {@link #motd(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public static void setMotd(@NotNull String motd) {
         server.setMotd(motd);
     }
@@ -1600,8 +1821,10 @@ public final class Bukkit {
      * Gets the default message that is displayed when the server is stopped.
      *
      * @return the shutdown message
+     * @deprecated in favour of {@link #shutdownMessage()}
      */
     @Nullable
+    @Deprecated // Paper
     public static String getShutdownMessage() {
         return server.getShutdownMessage();
     }
@@ -1634,7 +1857,7 @@ public final class Bukkit {
      *
      * @return the scoreboard manager or null if no worlds are loaded.
      */
-    @Nullable
+    @NotNull // Paper
     public static ScoreboardManager getScoreboardManager() {
         return server.getScoreboardManager();
     }
@@ -1847,6 +2070,7 @@ public final class Bukkit {
     public static double[] getTPS() {
         return server.getTPS();
     }
+    // Paper end
 
     /**
      * Get the advancement specified by this key.
@@ -2052,5 +2276,27 @@ public final class Bukkit {
     @NotNull
     public static Server.Spigot spigot() {
         return server.spigot();
+    }
+
+    /**
+     * Gets the default no permission message used on the server
+     *
+     * @return the default message
+     * @deprecated use {@link #permissionMessage()}
+     */
+    @NotNull
+    @Deprecated
+    public static String getPermissionMessage() {
+        return server.getPermissionMessage();
+    }
+
+    /**
+     * Gets the default no permission message used on the server
+     *
+     * @return the default message
+     */
+    @NotNull
+    public static net.kyori.adventure.text.Component permissionMessage() {
+        return server.permissionMessage();
     }
 }

@@ -1,11 +1,13 @@
 package org.bukkit.event.player;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-
 import java.net.InetAddress;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.bukkit.profile.PlayerProfile;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Stores details for players attempting to log in.
@@ -15,10 +17,12 @@ import java.util.UUID;
 public class AsyncPlayerPreLoginEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private Result result;
-    private String message;
-    private final String name;
+    private net.kyori.adventure.text.Component message; // Paper
+    //private String name; // Paper - Not used anymore
     private final InetAddress ipAddress;
-    private final UUID uniqueId;
+    private final InetAddress rawAddress; // Paper
+    //private UUID uniqueId; // Paper - Not used anymore
+    private final String hostname; // Paper
 
     @Deprecated
     public AsyncPlayerPreLoginEvent(@NotNull final String name, @NotNull final InetAddress ipAddress) {
@@ -26,12 +30,62 @@ public class AsyncPlayerPreLoginEvent extends Event {
     }
 
     public AsyncPlayerPreLoginEvent(@NotNull final String name, @NotNull final InetAddress ipAddress, @NotNull final UUID uniqueId) {
+        // Paper start
+        this(name, ipAddress, uniqueId, Bukkit.createPlayerProfile(uniqueId, name));
+    }
+    private PlayerProfile profile;
+
+    /**
+     * Gets the PlayerProfile of the player logging in
+     * @return The Profile
+     */
+    @NotNull
+    public PlayerProfile getPlayerProfile() {
+        return profile;
+    }
+
+    /**
+     * Changes the PlayerProfile the player will login as
+     * @param profile The profile to use
+     */
+    public void setPlayerProfile(@NotNull PlayerProfile profile) {
+        this.profile = profile;
+    }
+
+    // Paper Start
+    /**
+     * Gets the raw address of the player logging in
+     * @return The address
+     */
+    @NotNull
+    public InetAddress getRawAddress() {
+        return rawAddress;
+    }
+    // Paper end
+
+    @Deprecated
+    public AsyncPlayerPreLoginEvent(@NotNull final String name, @NotNull final InetAddress ipAddress, @NotNull final UUID uniqueId, @NotNull PlayerProfile profile) {
+        this(name, ipAddress, ipAddress, uniqueId, profile);
+    }
+
+    @Deprecated // Paper - Add hostname
+    public AsyncPlayerPreLoginEvent(@NotNull final String name, @NotNull final InetAddress ipAddress, @NotNull final InetAddress rawAddress, @NotNull final UUID uniqueId, @NotNull PlayerProfile profile) {
+        // Paper start - Add hostname
+        this(name, ipAddress, rawAddress, uniqueId, profile, "");
+    }
+
+    public AsyncPlayerPreLoginEvent(@NotNull final String name, @NotNull final InetAddress ipAddress, @NotNull final InetAddress rawAddress, @NotNull final UUID uniqueId, @NotNull PlayerProfile profile, @NotNull String hostname) {
+        // Paper end - Add hostname
         super(true);
+        this.profile = profile;
+        // Paper end
         this.result = Result.ALLOWED;
-        this.message = "";
-        this.name = name;
+        this.message = net.kyori.adventure.text.Component.empty(); // Paper
+        //this.name = name; // Paper - Not used anymore
         this.ipAddress = ipAddress;
-        this.uniqueId = uniqueId;
+        this.rawAddress = rawAddress; // Paper
+        //this.uniqueId = uniqueId; // Paper - Not used anymore
+        this.hostname = hostname; // Paper - Add hostname
     }
 
     /**
@@ -80,6 +134,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
         this.result = result == null ? null : Result.valueOf(result.name());
     }
 
+    // Paper start
     /**
      * Gets the current kick message that will be used if getResult() !=
      * Result.ALLOWED
@@ -87,7 +142,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
      * @return Current kick message
      */
     @NotNull
-    public String getKickMessage() {
+    public net.kyori.adventure.text.Component kickMessage() {
         return message;
     }
 
@@ -96,16 +151,8 @@ public class AsyncPlayerPreLoginEvent extends Event {
      *
      * @param message New kick message
      */
-    public void setKickMessage(@NotNull final String message) {
+    public void kickMessage(@NotNull final net.kyori.adventure.text.Component message) {
         this.message = message;
-    }
-
-    /**
-     * Allows the player to log in
-     */
-    public void allow() {
-        result = Result.ALLOWED;
-        message = "";
     }
 
     /**
@@ -114,9 +161,69 @@ public class AsyncPlayerPreLoginEvent extends Event {
      * @param result New result for disallowing the player
      * @param message Kick message to display to the user
      */
-    public void disallow(@NotNull final Result result, @NotNull final String message) {
+    public void disallow(@NotNull final Result result, @NotNull final net.kyori.adventure.text.Component message) {
         this.result = result;
         this.message = message;
+    }
+
+    /**
+     * Disallows the player from logging in, with the given reason
+     *
+     * @param result New result for disallowing the player
+     * @param message Kick message to display to the user
+     * @deprecated This method uses a deprecated enum from {@link
+     *     PlayerPreLoginEvent}
+     * @see #disallow(Result, String)
+     */
+    @Deprecated
+    public void disallow(@NotNull final PlayerPreLoginEvent.Result result, @NotNull final net.kyori.adventure.text.Component message) {
+        this.result = result == null ? null : Result.valueOf(result.name());
+        this.message = message;
+    }
+    // Paper end
+    /**
+     * Gets the current kick message that will be used if getResult() !=
+     * Result.ALLOWED
+     *
+     * @return Current kick message
+     * @deprecated in favour of {@link #kickMessage()}
+     */
+    @NotNull
+    @Deprecated // Paper
+    public String getKickMessage() {
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(this.message); // Paper
+    }
+
+    /**
+     * Sets the kick message to display if getResult() != Result.ALLOWED
+     *
+     * @param message New kick message
+     * @deprecated in favour of {@link #kickMessage(net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    public void setKickMessage(@NotNull final String message) {
+        this.message = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message); // Paper
+    }
+
+    /**
+     * Allows the player to log in
+     */
+    public void allow() {
+        result = Result.ALLOWED;
+        message = net.kyori.adventure.text.Component.empty(); // Paper
+    }
+
+    /**
+     * Disallows the player from logging in, with the given reason
+     *
+     * @param result New result for disallowing the player
+     * @param message Kick message to display to the user
+     * @deprecated in favour of {@link #disallow(org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result, net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    public void disallow(@NotNull final Result result, @NotNull final String message) {
+        this.result = result;
+        this.message = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message); // Paper
     }
 
     /**
@@ -131,7 +238,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
     @Deprecated
     public void disallow(@NotNull final PlayerPreLoginEvent.Result result, @NotNull final String message) {
         this.result = result == null ? null : Result.valueOf(result.name());
-        this.message = message;
+        this.message = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message); // Paper
     }
 
     /**
@@ -141,7 +248,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
      */
     @NotNull
     public String getName() {
-        return name;
+        return profile.getName(); // Paper
     }
 
     /**
@@ -161,8 +268,21 @@ public class AsyncPlayerPreLoginEvent extends Event {
      */
     @NotNull
     public UUID getUniqueId() {
-        return uniqueId;
+        return profile.getUniqueId(); // Paper
     }
+
+    // Paper start
+    /**
+     * Gets the hostname that the player used to connect to the server, or
+     * blank if unknown
+     *
+     * @return The hostname
+     */
+    @NotNull
+    public String getHostname() {
+        return hostname;
+    }
+    // Paper end
 
     @NotNull
     @Override

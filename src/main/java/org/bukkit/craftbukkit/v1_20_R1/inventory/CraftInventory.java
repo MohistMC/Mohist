@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.paper.inventory.PaperInventoryCustomHolderContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MerchantContainer;
@@ -473,6 +474,10 @@ public class CraftInventory implements Inventory {
             return InventoryType.BREWING;
         } else if (inventory instanceof CraftInventoryCustom.MinecraftInventory) {
             return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
+            // Paper start
+        } else if (this.inventory instanceof PaperInventoryCustomHolderContainer holderContainer) {
+            return holderContainer.getType();
+            // Paper end
         } else if (inventory instanceof PlayerEnderChestContainer) {
             return InventoryType.ENDER_CHEST;
         } else if (inventory instanceof MerchantContainer) {

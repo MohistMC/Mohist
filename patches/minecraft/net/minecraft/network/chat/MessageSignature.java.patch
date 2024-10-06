@@ -1,0 +1,10 @@
+--- a/net/minecraft/network/chat/MessageSignature.java
++++ b/net/minecraft/network/chat/MessageSignature.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.util.SignatureValidator;
+ 
+ public record MessageSignature(byte[] f_240884_) {
++   public net.kyori.adventure.chat.SignedMessage.Signature adventure() { return () -> this.f_240884_; } // Paper
+    public static final Codec<MessageSignature> f_252463_ = ExtraCodecs.f_216160_.xmap(MessageSignature::new, MessageSignature::f_240884_);
+    public static final int f_244417_ = 256;
+ 

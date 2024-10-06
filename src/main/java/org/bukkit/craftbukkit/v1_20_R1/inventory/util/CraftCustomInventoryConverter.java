@@ -12,6 +12,13 @@ public class CraftCustomInventoryConverter implements CraftInventoryCreator.Inve
         return new CraftInventoryCustom(holder, type);
     }
 
+    // Paper start
+    @Override
+    public Inventory createInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
+        return new CraftInventoryCustom(owner, type, title);
+    }
+    // Paper end
+
     @Override
     public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
         return new CraftInventoryCustom(owner, type, title);

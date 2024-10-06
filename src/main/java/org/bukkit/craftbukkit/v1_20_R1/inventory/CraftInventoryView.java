@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
 import com.mohistmc.bukkit.inventory.MohistModsInventory;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -76,6 +77,13 @@ public class CraftInventoryView extends InventoryView {
         }
         return CraftItemStack.asCraftMirror(container.getSlot(slot).getItem());
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component title() {
+        return PaperAdventure.asAdventure(this.container.getTitle());
+    }
+    // Paper end
 
     @Override
     public String getTitle() {

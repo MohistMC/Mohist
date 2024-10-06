@@ -38,15 +38,23 @@
     }
  
     public void channelInactive(ChannelHandlerContext p_129527_) {
-@@ -125,7 +_,7 @@
+@@ -125,12 +_,15 @@
        } else {
           boolean flag = !this.f_129479_;
           this.f_129479_ = true;
 -         if (this.f_129468_.isOpen()) {
 +         if (this.f_129468_.isOpen() && !this.mohist$isClosing) {
++            net.minecraft.server.level.ServerPlayer player = this.getPlayer(); // Paper
              if (p_129534_ instanceof TimeoutException) {
                 f_129465_.debug("Timeout", p_129534_);
++               if (player != null) player.quitReason = org.bukkit.event.player.PlayerQuitEvent.QuitReason.TIMED_OUT; // Paper
                 this.m_129507_(Component.m_237115_("disconnect.timeout"));
+             } else {
+                Component component = Component.m_237110_("disconnect.genericReason", "Internal Exception: " + p_129534_);
++               if (player != null) player.quitReason = org.bukkit.event.player.PlayerQuitEvent.QuitReason.ERRONEOUS_STATE; // Paper
+                if (flag) {
+                   f_129465_.debug("Failed to sent packet", p_129534_);
+                   ConnectionProtocol connectionprotocol = this.m_178315_();
 @@ -150,7 +_,7 @@
     }
  
@@ -56,6 +64,21 @@
           try {
              m_129517_(p_129488_, this.f_129470_);
           } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
+@@ -175,6 +_,14 @@
+       this.f_129470_ = p_129506_;
+    }
+ 
++   public @Nullable net.minecraft.server.level.ServerPlayer getPlayer() {
++      if (f_129470_ instanceof net.minecraft.server.network.ServerGamePacketListenerImpl serverGamePacketListener) {
++         return serverGamePacketListener.f_9743_;
++      } else {
++         return null;
++      }
++   }
++
+    public void m_129512_(Packet<?> p_129513_) {
+       this.m_243124_(p_129513_, (PacketSendListener)null);
+    }
 @@ -241,7 +_,7 @@
     }
  

@@ -1,15 +1,23 @@
 --- a/net/minecraft/resources/ResourceLocation.java
 +++ b/net/minecraft/resources/ResourceLocation.java
-@@ -143,6 +_,12 @@
-       return i;
-    }
+@@ -26,6 +_,7 @@
+    public static final char f_179907_ = ':';
+    public static final String f_179908_ = "minecraft";
+    public static final String f_179909_ = "realms";
++   public static final String PAPER_NAMESPACE = "paper"; // Paper
+    private final String f_135804_;
+    private final String f_135805_;
  
+@@ -141,6 +_,12 @@
+       }
+ 
+       return i;
++   }
++
 +   // Normal compare sorts by path first, this compares namespace first.
 +   public int compareNamespaced(ResourceLocation o) {
 +      int ret = this.f_135804_.compareTo(o.f_135804_);
 +      return ret != 0 ? ret : this.f_135805_.compareTo(o.f_135805_);
-+   }
-+
-    public String m_179910_() {
-       return this.toString().replace('/', '_').replace(':', '_');
     }
+ 
+    public String m_179910_() {

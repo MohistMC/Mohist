@@ -248,6 +248,7 @@ public class MohistConfig {
 
     //Messaes
     public static String message_require_forge;
+    public static String message_no_permission;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -314,5 +315,6 @@ public class MohistConfig {
         async_save_world = getBoolean("world.async_save", false);
 
         message_require_forge = getString("message.require_forge", "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
+        message_no_permission = getString("message.no-permission", "<red>I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.");
     }
 }

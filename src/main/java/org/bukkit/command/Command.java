@@ -33,7 +33,8 @@ public abstract class Command {
     protected String description;
     protected String usageMessage;
     private String permission;
-    private String permissionMessage;
+    private net.kyori.adventure.text.Component permissionMessage; // Paper
+    @NotNull public String getTimingName() {return getName();} // Paper
 
     protected Command(@NotNull String name) {
         this(name, "", "/" + name, new ArrayList<String>());
@@ -183,12 +184,11 @@ public abstract class Command {
             return true;
         }
 
-        if (permissionMessage == null) {
-            target.sendMessage(ChatColor.RED + "I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is a mistake.");
-        } else if (permissionMessage.length() != 0) {
-            for (String line : permissionMessage.replace("<permission>", permission).split("\n")) {
-                target.sendMessage(line);
-            }
+            // Paper start - use components for permissionMessage
+        net.kyori.adventure.text.Component permissionMessage = this.permissionMessage != null ? this.permissionMessage : Bukkit.permissionMessage();
+        if (!permissionMessage.equals(net.kyori.adventure.text.Component.empty())) {
+            target.sendMessage(permissionMessage.replaceText(net.kyori.adventure.text.TextReplacementConfig.builder().matchLiteral("<permission>").replacement(permission).build()));
+            // Paper end
         }
 
         return false;
@@ -315,10 +315,12 @@ public abstract class Command {
      * command
      *
      * @return Permission check failed message
+     * @deprecated use {@link #permissionMessage()}
      */
     @Nullable
+    @Deprecated // Paper
     public String getPermissionMessage() {
-        return permissionMessage;
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serializeOrNull(permissionMessage); // Paper
     }
 
     /**
@@ -379,10 +381,12 @@ public abstract class Command {
      * @param permissionMessage new permission message, null to indicate
      *     default message, or an empty string to indicate no message
      * @return this command object, for chaining
+     * @deprecated use {@link #permissionMessage(net.kyori.adventure.text.Component)}
      */
     @NotNull
+    @Deprecated // Paper
     public Command setPermissionMessage(@Nullable String permissionMessage) {
-        this.permissionMessage = permissionMessage;
+        this.permissionMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserializeOrNull(permissionMessage); // Paper
         return this;
     }
 
@@ -397,13 +401,47 @@ public abstract class Command {
         this.usageMessage = (usage == null) ? "" : usage;
         return this;
     }
+    // Paper start
+    /**
+     * Gets the permission message.
+     *
+     * @return the permission message
+     */
+    public net.kyori.adventure.text.Component permissionMessage() {
+        return this.permissionMessage;
+    }
+
+    /**
+     * Sets the permission message.
+     *
+     * @param permissionMessage the permission message
+     */
+    public void permissionMessage(net.kyori.adventure.text.Component permissionMessage) {
+        this.permissionMessage = permissionMessage;
+    }
+    // Paper end
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, @NotNull String message) {
         broadcastCommandMessage(source, message, true);
     }
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, @NotNull String message, boolean sendToSource) {
-        String result = source.getName() + ": " + message;
+        // Paper start
+        broadcastCommandMessage(source, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message), sendToSource);
+    }
+
+    public static void broadcastCommandMessage(@NotNull CommandSender source, net.kyori.adventure.text.Component message) {
+        broadcastCommandMessage(source, message, true);
+    }
+
+    public static void broadcastCommandMessage(@NotNull CommandSender source, net.kyori.adventure.text.Component message, boolean sendToSource) {
+        net.kyori.adventure.text.TextComponent.Builder result = net.kyori.adventure.text.Component.text()
+            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE)
+            .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false)
+            .append(source.name())
+            .append(net.kyori.adventure.text.Component.text(": "))
+            .append(message);
+        // Paper end
 
         if (source instanceof BlockCommandSender) {
             BlockCommandSender blockCommandSender = (BlockCommandSender) source;
@@ -422,7 +460,12 @@ public abstract class Command {
         }
 
         Set<Permissible> users = Bukkit.getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
-        String colored = ChatColor.GRAY + "" + ChatColor.ITALIC + "[" + result + ChatColor.GRAY + ChatColor.ITALIC + "]";
+        // Paper start
+        net.kyori.adventure.text.TextComponent.Builder colored = net.kyori.adventure.text.Component.text()
+            .color(net.kyori.adventure.text.format.NamedTextColor.GRAY)
+            .decorate(net.kyori.adventure.text.format.TextDecoration.ITALIC)
+            .append(net.kyori.adventure.text.Component.text("["), result, net.kyori.adventure.text.Component.text("]"));
+        // Paper end
 
         if (sendToSource && !(source instanceof ConsoleCommandSender)) {
             source.sendMessage(message);

@@ -1,10 +1,10 @@
 package org.bukkit.advancement;
 
+import com.mohistmc.paper.advancement.AdvancementDisplay;
+import java.util.Collection;
 import org.bukkit.Keyed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * Represents an advancement that may be awarded to a player. This class is not
@@ -20,13 +20,53 @@ public interface Advancement extends Keyed {
     @NotNull
     Collection<String> getCriteria();
 
+    // Paper start
     /**
-     * Returns the display information for this advancement.
+     * Get the display info of this advancement.
+     * <p>
+     * Will be {@code null} when totally hidden, for example with crafting
+     * recipes.
      *
-     * This includes it's name, description and other visible tags.
-     *
-     * @return a AdvancementDisplay object, or null if not set.
+     * @return the display info
      */
     @Nullable
     AdvancementDisplay getDisplay();
+
+    /**
+     * Gets the formatted display name for this display. This
+     * is part of the component that would be shown in chat when a player
+     * completes the advancement. Will return the same as
+     * {@link com.mohistmc.paper.advancement.AdvancementDisplay#displayName()} when an
+     * {@link com.mohistmc.paper.advancement.AdvancementDisplay} is present.
+     *
+     * @return the display name
+     * @see com.mohistmc.paper.advancement.AdvancementDisplay#displayName()
+     */
+    @NotNull net.kyori.adventure.text.Component displayName();
+
+    /**
+     * Gets the parent advancement, if any.
+     *
+     * @return the parent advancement
+     */
+    @Nullable
+    Advancement getParent();
+
+    /**
+     * Gets all the direct children advancements.
+     *
+     * @return the children advancements
+     */
+    @NotNull
+    @org.jetbrains.annotations.Unmodifiable
+    Collection<Advancement> getChildren();
+
+    /**
+     * Gets the root advancement of the tree this is located in.
+     *
+     * @return the root advancement
+     */
+    @NotNull
+    Advancement getRoot();
+    // Paper end
 }

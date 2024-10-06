@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.enchantments;
 
 import com.mohistmc.api.EnchantmentAPI;
+import com.mohistmc.paper.adventure.PaperAdventure;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
 import net.minecraft.world.item.enchantment.VanishingCurseEnchantment;
@@ -196,6 +197,11 @@ public class CraftEnchantment extends Enchantment {
     }
 
     // Paper start
+    @Override
+    public net.kyori.adventure.text.Component displayName(int level) {
+        return PaperAdventure.asAdventure(getHandle().getFullname(level));
+    }
+
     @Override
     public String translationKey() {
         return this.target.getDescriptionId();

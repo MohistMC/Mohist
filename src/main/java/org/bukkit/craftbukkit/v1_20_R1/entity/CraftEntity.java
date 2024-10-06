@@ -878,6 +878,21 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return CraftChatMessage.fromComponent(getHandle().getName());
     }
 
+    // Paper start
+    @org.jetbrains.annotations.NotNull
+    @Override
+    public net.kyori.adventure.text.Component name() {
+        return PaperAdventure.asAdventure(this.getHandle().getName());
+    }
+
+    @org.jetbrains.annotations.NotNull
+    @Override
+    public net.kyori.adventure.text.Component teamDisplayName() {
+        return PaperAdventure.asAdventure(this.getHandle().getDisplayName());
+    }
+    // Paper end
+
+
     @Override
     public boolean isPermissionSet(String name) {
         return getPermissibleBase().isPermissionSet(name);

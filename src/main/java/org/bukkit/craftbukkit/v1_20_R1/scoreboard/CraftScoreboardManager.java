@@ -40,10 +40,18 @@ public final class CraftScoreboardManager implements ScoreboardManager {
 
     @Override
     public CraftScoreboard getNewScoreboard() {
+        org.spigotmc.AsyncCatcher.catchOp("scoreboard creation"); // Spigot
         CraftScoreboard scoreboard = new CraftScoreboard(new ServerScoreboard(server));
         scoreboards.add(scoreboard);
         return scoreboard;
     }
+
+    // Paper start
+    public void registerScoreboardForVanilla(CraftScoreboard scoreboard) {
+        org.spigotmc.AsyncCatcher.catchOp("scoreboard registration");
+        scoreboards.add(scoreboard);
+    }
+    // Paper end
 
     // CraftBukkit method
     public CraftScoreboard getPlayerBoard(CraftPlayer player) {

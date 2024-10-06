@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
+import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.world.entity.MobCategory;
 import org.bukkit.entity.SpawnCategory;
 
 public class CraftSpawnCategory {
 
     public static boolean isValidForLimits(SpawnCategory spawnCategory) {
-        return spawnCategory != null && spawnCategory.ordinal() < SpawnCategory.MISC.ordinal(); // Mohist - fix mod
+        return spawnCategory != null && ForgeInjectBukkit.spawnCategoryMap.containsValue(spawnCategory); // Mohist - fix mod
     }
 
     public static String getConfigNameSpawnLimit(SpawnCategory spawnCategory) {

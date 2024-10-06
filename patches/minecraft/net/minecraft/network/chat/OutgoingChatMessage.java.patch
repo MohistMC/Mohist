@@ -1,0 +1,50 @@
+--- a/net/minecraft/network/chat/OutgoingChatMessage.java
++++ b/net/minecraft/network/chat/OutgoingChatMessage.java
+@@ -7,6 +_,12 @@
+ 
+    void m_246195_(ServerPlayer p_250979_, boolean p_249307_, ChatType.Bound p_252281_);
+ 
++   // Paper start
++   default void sendToPlayer(ServerPlayer sender, boolean filterMaskEnabled, ChatType.Bound params, @javax.annotation.Nullable Component unsigned) {
++      this.m_246195_(sender, filterMaskEnabled, params);
++   }
++   // Paper end
++
+    static OutgoingChatMessage m_247282_(PlayerChatMessage p_249173_) {
+       return (OutgoingChatMessage)(p_249173_.m_245339_() ? new OutgoingChatMessage.Disguised(p_249173_.m_245692_()) : new OutgoingChatMessage.Player(p_249173_));
+    }
+@@ -17,7 +_,12 @@
+       }
+ 
+       public void m_246195_(ServerPlayer p_249237_, boolean p_249574_, ChatType.Bound p_250880_) {
+-         p_249237_.f_8906_.m_245903_(this.f_244003_, p_250880_);
++         // Paper start
++         this.sendToPlayer(p_249237_, p_249574_, p_250880_, null);
++      }
++      public void sendToPlayer(ServerPlayer sender, boolean filterMaskEnabled, ChatType.Bound params, @javax.annotation.Nullable Component unsigned) {
++         sender.f_8906_.m_245903_(unsigned != null ? unsigned : this.f_244003_, params);
++         // Paper end
+       }
+    }
+ 
+@@ -27,11 +_,16 @@
+       }
+ 
+       public void m_246195_(ServerPlayer p_249642_, boolean p_251123_, ChatType.Bound p_251482_) {
+-         PlayerChatMessage playerchatmessage = this.f_243697_.m_243098_(p_251123_);
+-         if (!playerchatmessage.m_243059_()) {
+-            p_249642_.f_8906_.m_245431_(playerchatmessage, p_251482_);
++         // Paper start
++         this.sendToPlayer(p_249642_, p_251123_, p_251482_, null);
++      }
++      public void sendToPlayer(ServerPlayer sender, boolean filterMaskEnabled, ChatType.Bound params, @javax.annotation.Nullable Component unsigned) {
++         // Paper end
++         PlayerChatMessage playerChatMessage = this.f_243697_.m_243098_(filterMaskEnabled);
++         playerChatMessage = unsigned != null ? playerChatMessage.m_241956_(unsigned) : playerChatMessage; // Paper
++         if (!playerChatMessage.m_243059_()) {
++            sender.f_8906_.m_245431_(playerChatMessage, params);
+          }
+-
+       }
+    }
+ }

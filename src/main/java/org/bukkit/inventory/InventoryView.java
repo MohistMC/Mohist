@@ -210,10 +210,10 @@ public abstract class InventoryView {
     /**
      * Get the item on the cursor of one of the viewing players.
      *
-     * @return The item on the player's cursor, or null if they aren't holding
-     *     one.
+     * @return The item on the player's cursor, or an empty stack
+     * if they aren't holding one.
      */
-    @Nullable
+    @NotNull // Paper - fix nullability
     public final ItemStack getCursor() {
         return getPlayer().getItemOnCursor();
     }
@@ -370,7 +370,6 @@ public abstract class InventoryView {
                 type = InventoryType.SlotType.CRAFTING;
                 break;
             case ANVIL:
-            case SMITHING:
             case CARTOGRAPHY:
             case GRINDSTONE:
             case MERCHANT:
@@ -388,6 +387,7 @@ public abstract class InventoryView {
                 }
                 break;
             case LOOM:
+            case SMITHING: // Paper
             case SMITHING_NEW:
                 if (slot == 3) {
                     type = InventoryType.SlotType.RESULT;
@@ -447,11 +447,25 @@ public abstract class InventoryView {
         return getPlayer().setWindowProperty(prop, value);
     }
 
+    // Paper start
     /**
      * Get the title of this inventory window.
      *
      * @return The title.
      */
+    @NotNull
+    public /*abstract*/ net.kyori.adventure.text.Component title() {
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(this.getTitle());
+    }
+    // Paper end
+
+    /**
+     * Get the title of this inventory window.
+     *
+     * @return The title.
+     * @deprecated in favour of {@link #title()}
+     */
+    @Deprecated // Paper
     @NotNull
     public abstract String getTitle();
 

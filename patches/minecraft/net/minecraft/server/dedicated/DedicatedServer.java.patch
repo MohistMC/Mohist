@@ -215,7 +215,7 @@
              Thread thread1 = new Thread(new ServerWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(f_139598_));
              thread1.setName("Server Watchdog");
-@@ -188,7 +_,14 @@
+@@ -188,9 +_,22 @@
              f_139598_.info("JMX monitoring enabled");
           }
  
@@ -230,7 +230,15 @@
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
++
++   // Paper start
++   public java.io.File getPluginsFolder() {
++      return (java.io.File) this.options.valueOf("plugins");
++   }
++   // Paper end
  
+    public boolean m_6998_() {
+       return this.m_7913_().f_139731_ && super.m_6998_();
 @@ -263,6 +_,16 @@
           this.f_139601_.m_7530_();
        }

@@ -7,11 +7,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.pluginfix.PluginDynamicRegistrFix;
 import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.paper.adventure.PaperAdventure;
+import com.mohistmc.paper.commands.FeedbackForwardingSender;
 import com.mohistmc.plugins.MohistPlugin;
 import com.mohistmc.util.Level2LevelStem;
 import com.mohistmc.util.ProxyUtils;
@@ -26,6 +29,8 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
@@ -267,6 +272,8 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
@@ -551,6 +558,11 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    public @NotNull File getPluginsFolder() {
+        return this.console.getPluginsFolder();
+    }
+
+    @Override
     public String getName() {
         return serverName;
     }
@@ -622,6 +634,25 @@ public final class CraftServer implements Server {
 
         return null;
     }
+
+    // Paper start
+    @javax.annotation.Nullable
+    public UUID getPlayerUniqueId(String name) {
+        Player player = Bukkit.getPlayerExact(name);
+        if (player != null) {
+            return player.getUniqueId();
+        }
+        GameProfile profile;
+        // Only fetch an online UUID in online mode
+        if (ProxyUtils.isProxyOnlineMode()) {
+            profile = console.getProfileCache().get(name).orElse(null);
+        } else {
+            // Make an OfflinePlayer using an offline mode UUID since the name has no profile
+            profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name);
+        }
+        return profile != null ? profile.getId() : null;
+    }
+    // Paper end
 
     @Override
     public int broadcastMessage(String message) {
@@ -1217,6 +1248,15 @@ public final class CraftServer implements Server {
         return null;
     }
 
+    // Paper start
+    @Override
+    public World getWorld(net.kyori.adventure.key.Key worldKey) {
+        ServerLevel worldServer = console.getLevel(ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, PaperAdventure.asVanilla(worldKey)));
+        if (worldServer == null) return null;
+        return worldServer.getWorld();
+    }
+    // Paper end
+
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
         if (getWorld(world.getUID()) != null) {
@@ -1610,21 +1650,33 @@ public final class CraftServer implements Server {
 
     @Override
     public int broadcast(String message, String permission) {
+        // Paper start - Adventure
+        return this.broadcast(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message), permission);
+    }
+
+    @Override
+    public int broadcast(net.kyori.adventure.text.Component message) {
+        return this.broadcast(message, BROADCAST_CHANNEL_USERS);
+    }
+
+    @Override
+    public int broadcast(net.kyori.adventure.text.Component message, String permission) {
+        // Paper end
         Set<CommandSender> recipients = new HashSet<>();
-        for (Permissible permissible : getPluginManager().getPermissionSubscriptions(permission)) {
-            if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
+        for (Permissible permissible : this.getPluginManager().getPermissionSubscriptions(permission)) {
+            if (permissible instanceof CommandSender && !(permissible instanceof org.bukkit.command.BlockCommandSender) && permissible.hasPermission(permission)) { // Paper - Don't broadcast messages to command blocks
                 recipients.add((CommandSender) permissible);
             }
         }
 
-        BroadcastMessageEvent broadcastMessageEvent = new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, recipients);
-        getPluginManager().callEvent(broadcastMessageEvent);
+        BroadcastMessageEvent broadcastMessageEvent = new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, recipients); // Paper - Adventure
+        this.getPluginManager().callEvent(broadcastMessageEvent);
 
         if (broadcastMessageEvent.isCancelled()) {
             return 0;
         }
 
-        message = broadcastMessageEvent.getMessage();
+        message = broadcastMessageEvent.message(); // Paper - Adventure
 
         for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
@@ -1632,7 +1684,6 @@ public final class CraftServer implements Server {
 
         return recipients.size();
     }
-
     @Override
     @Deprecated
     public OfflinePlayer getOfflinePlayer(String name) {
@@ -1819,6 +1870,13 @@ public final class CraftServer implements Server {
         return console.console;
     }
 
+    // Paper start
+    @Override
+    public CommandSender createCommandSender(final java.util.function.Consumer<? super net.kyori.adventure.text.Component> feedback) {
+        return new FeedbackForwardingSender(feedback, this);
+    }
+    // Paper end
+
     public EntityMetadataStore getEntityMetadata() {
         return entityMetadata;
     }
@@ -1886,6 +1944,14 @@ public final class CraftServer implements Server {
         return CraftInventoryCreator.INSTANCE.createInventory(owner, type);
     }
 
+    // Paper start
+    @Override
+    public Inventory createInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
+        Preconditions.checkArgument(type.isCreatable(), "Cannot open an inventory of type ", type);
+        return CraftInventoryCreator.INSTANCE.createInventory(owner, type, title);
+    }
+    // Paper end
+
     @Override
     public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
         Validate.isTrue(type.isCreatable(), "Cannot open an inventory of type ", type);
@@ -1911,6 +1977,13 @@ public final class CraftServer implements Server {
         Validate.isTrue(9 <= size && size <= 54 && size % 9 == 0, "Size for custom inventory must be a multiple of 9 between 9 and 54 slots (got " + size + ")");
         return CraftInventoryCreator.INSTANCE.createInventory(owner, size, title);
     }
+
+    // Paper start
+    @Override
+    public Merchant createMerchant(net.kyori.adventure.text.Component title) {
+        return new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchantCustom(title == null ? InventoryType.MERCHANT.defaultTitle() : title);
+    }
+    // Paper end
 
     @Override
     public Merchant createMerchant(String title) {
@@ -1976,6 +2049,23 @@ public final class CraftServer implements Server {
     @Override
     public boolean isPrimaryThread() {
         return Thread.currentThread().equals(console.serverThread)/* || console.hasStopped()*/; // All bets are off if we have shut down (e.g. due to watchdog)
+    }
+
+    // Paper start - Adventure
+    @Override
+    public net.kyori.adventure.text.Component motd() {
+        return this.console.motd();
+    }
+    @Override
+    public void motd(final net.kyori.adventure.text.Component motd) {
+        this.console.motd(motd);
+    }
+    // Paper end
+
+    @Override
+    public @Nullable Component shutdownMessage() {
+        String msg = getShutdownMessage();
+        return msg != null ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(msg) : null;
     }
 
     @Override
@@ -2416,6 +2506,25 @@ public final class CraftServer implements Server {
     public org.bukkit.Server.Spigot spigot()
     {
         return spigot;
+    }
+
+    @Override
+    public String getPermissionMessage() {
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().serialize(Component.text(MohistConfig.message_no_permission));
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component permissionMessage() {
+        return Component.text(MohistConfig.message_no_permission);
+    }
+
+    private Iterable<? extends net.kyori.adventure.audience.Audience> adventure$audiences;
+    @Override
+    public Iterable<? extends net.kyori.adventure.audience.Audience> audiences() {
+        if (this.adventure$audiences == null) {
+            this.adventure$audiences = com.google.common.collect.Iterables.concat(java.util.Collections.singleton(this.getConsoleSender()), this.getOnlinePlayers());
+        }
+        return this.adventure$audiences;
     }
     // Spigot end
 }
