@@ -15,24 +15,24 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftInventoryView<T extends AbstractContainerMenu> extends CraftAbstractInventoryView {
+public class CraftInventoryView<T extends AbstractContainerMenu, I extends Inventory> extends CraftAbstractInventoryView {
     protected final T container;
     private final CraftHumanEntity player;
-    private final CraftInventory viewing;
+    private final I viewing;
     private final String originalTitle;
     private String title;
 
-    public CraftInventoryView(HumanEntity player, Inventory viewing, T container) {
+    public CraftInventoryView(HumanEntity player, I viewing, T container) {
         // TODO: Should we make sure it really IS a CraftHumanEntity first? And a CraftInventory?
         this.player = (CraftHumanEntity) player;
-        this.viewing = (CraftInventory) viewing;
+        this.viewing = (I) viewing;
         this.container = container;
         this.originalTitle = CraftChatMessage.fromComponent(container.getTitle());
         this.title = this.originalTitle;
     }
 
     @Override
-    public Inventory getTopInventory() {
+    public I getTopInventory() {
         return this.viewing;
     }
 

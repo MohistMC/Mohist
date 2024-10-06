@@ -5,12 +5,12 @@ import net.minecraft.world.inventory.BrewingStandMenu;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.view.BrewingStandView;
 
-public class CraftBrewingStandView extends CraftInventoryView<BrewingStandMenu> implements BrewingStandView {
+public class CraftBrewingStandView extends CraftInventoryView<BrewingStandMenu, BrewerInventory> implements BrewingStandView {
 
-    public CraftBrewingStandView(final HumanEntity player, final Inventory viewing, final BrewingStandMenu container) {
+    public CraftBrewingStandView(final HumanEntity player, final BrewerInventory viewing, final BrewingStandMenu container) {
         super(player, viewing, container);
     }
 

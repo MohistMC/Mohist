@@ -1,7 +1,9 @@
 package org.bukkit.inventory.view;
 
+import org.bukkit.inventory.BeaconInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -9,6 +11,10 @@ import org.jetbrains.annotations.Nullable;
  * beacon view data.
  */
 public interface BeaconView extends InventoryView {
+
+    @NotNull
+    @Override
+    BeaconInventory getTopInventory();
 
     /**
      * Gets the tier of the beacon
@@ -65,7 +71,8 @@ public interface BeaconView extends InventoryView {
 
     /**
      * Sets the secondary effect on this beacon, or null to clear. Note that
-     * tier must be &gt;= 4 for this effect to be active.
+     * tier must be &gt;= 4 and a primary effect must be set in order for this
+     * effect to be active.
      * <p>
      * The {@link PotionEffectType} provided must be one that is already within
      * the beacon as a valid option.

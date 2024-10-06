@@ -140,11 +140,6 @@ public abstract class GameEvent implements Keyed {
 
     @NotNull
     private static GameEvent getEvent(@NotNull String key) {
-        NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
-        GameEvent gameEvent = Registry.GAME_EVENT.get(namespacedKey);
-
-        Preconditions.checkNotNull(gameEvent, "No GameEvent found for %s. This is a bug.", namespacedKey);
-
-        return gameEvent;
+        return Registry.GAME_EVENT.getOrThrow(NamespacedKey.minecraft(key));
     }
 }

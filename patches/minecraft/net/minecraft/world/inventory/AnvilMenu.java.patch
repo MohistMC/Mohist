@@ -39,7 +39,7 @@
 +          return bukkitEntity;
 +       }
 +
-+       org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(
++       org.bukkit.craftbukkit.inventory.CraftInventoryAnvil inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(
 +               access.getLocation(), this.inputSlots, this.resultSlots);
 +       bukkitEntity = new CraftAnvilView(this.player.getBukkitEntity(), inventory, this);
 +       return bukkitEntity;

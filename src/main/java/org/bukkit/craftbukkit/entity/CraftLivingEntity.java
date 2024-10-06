@@ -46,7 +46,9 @@ import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
 import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.AbstractWindCharge;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.BreezeWindCharge;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
@@ -506,8 +508,15 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
                 launch = new net.minecraft.world.entity.projectile.SmallFireball(world, this.getHandle(), vec);
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
                 launch = new net.minecraft.world.entity.projectile.WitherSkull(world, this.getHandle(), vec);
-            } else if (DragonFireball.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.DragonFireball(world, this.getHandle(), vec);
+            } else if (AbstractWindCharge.class.isAssignableFrom(projectile)) {
+                if (BreezeWindCharge.class.isAssignableFrom(projectile)) {
+                    launch = EntityType.BREEZE_WIND_CHARGE.create(world);
+                } else {
+                    launch = EntityType.WIND_CHARGE.create(world);
+                }
+
+                ((net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge) launch).setOwner(getHandle());
+                ((net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge) launch).shootFromRotation(getHandle(), getHandle().getXRot(), getHandle().getYRot(), 0.0F, 1.5F, 1.0F); // WindChargeItem
             } else if (WindCharge.class.isAssignableFrom(projectile)) {
                 launch = EntityType.WIND_CHARGE.create(world);
                 ((net.minecraft.world.entity.projectile.windcharge.WindCharge) launch).setOwner(this.getHandle());

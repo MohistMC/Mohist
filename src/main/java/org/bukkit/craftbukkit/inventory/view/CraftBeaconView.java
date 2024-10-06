@@ -5,14 +5,15 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.BeaconInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.view.BeaconView;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
-public class CraftBeaconView extends CraftInventoryView<BeaconMenu> implements BeaconView {
+public class CraftBeaconView extends CraftInventoryView<BeaconMenu, BeaconInventory> implements BeaconView {
 
-    public CraftBeaconView(final HumanEntity player, final Inventory viewing, final BeaconMenu container) {
+    public CraftBeaconView(final HumanEntity player, final BeaconInventory viewing, final BeaconMenu container) {
         super(player, viewing, container);
     }
 
@@ -35,11 +36,11 @@ public class CraftBeaconView extends CraftInventoryView<BeaconMenu> implements B
 
     @Override
     public void setPrimaryEffect(@Nullable final PotionEffectType effectType) {
-        this.container.setData(BeaconBlockEntity.DATA_PRIMARY, BeaconMenu.encodeEffect(CraftPotionEffectType.bukkitToMinecraftHolder(effectType)));
+        this.container.setData(BeaconBlockEntity.DATA_PRIMARY, BeaconMenu.encodeEffect((effectType == null) ? null : CraftPotionEffectType.bukkitToMinecraftHolder(effectType)));
     }
 
     @Override
     public void setSecondaryEffect(@Nullable final PotionEffectType effectType) {
-        this.container.setData(BeaconBlockEntity.DATA_SECONDARY, BeaconMenu.encodeEffect(CraftPotionEffectType.bukkitToMinecraftHolder(effectType)));
+        this.container.setData(BeaconBlockEntity.DATA_SECONDARY, BeaconMenu.encodeEffect((effectType == null) ? null : CraftPotionEffectType.bukkitToMinecraftHolder(effectType)));
     }
 }

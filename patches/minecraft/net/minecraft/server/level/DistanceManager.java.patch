@@ -35,6 +35,18 @@
  
      protected DistanceManager(Executor p_140774_, Executor p_140775_) {
          ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
+@@ -113,6 +_,11 @@
+         }
+ 
+         if (!this.chunksToUpdateFutures.isEmpty()) {
++            // CraftBukkit start - SPIGOT-7780: Call chunk unload events before updateHighestAllowedStatus
++            this.chunksToUpdateFutures.forEach((playerchunk) -> {
++                playerchunk.callEventIfUnloading(p_140806_);
++            });
++            // CraftBukkit end
+             this.chunksToUpdateFutures.forEach(p_341233_ -> p_341233_.updateHighestAllowedStatus(p_140806_));
+             this.chunksToUpdateFutures.forEach(p_183908_ -> p_183908_.updateFutures(p_140806_, this.mainThreadExecutor));
+             this.chunksToUpdateFutures.clear();
 @@ -152,6 +_,26 @@
          if (p_140786_.getTicketLevel() < i) {
              this.ticketTracker.update(p_140785_, p_140786_.getTicketLevel(), true);

@@ -125,6 +125,10 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
+        if (isPotionEmpty()) {
+            return;
+        }
+
         Optional<Holder<Potion>> defaultPotion = (this.hasBasePotionType()) ? Optional.of(CraftPotionType.bukkitToMinecraftHolder(this.type)) : Optional.empty();
         Optional<Integer> potionColor = (this.hasColor()) ? Optional.of(this.color.asRGB()) : Optional.empty();
 
@@ -189,7 +193,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
 
     @Override
     public boolean hasCustomEffects() {
-        return this.customEffects != null;
+        return this.customEffects != null && !customEffects.isEmpty();
     }
 
     @Override

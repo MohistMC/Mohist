@@ -281,6 +281,16 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 
     @NotNull
     @Override
+    public B getOrThrow(@NotNull NamespacedKey namespacedKey) {
+        B object = get(namespacedKey);
+
+        Preconditions.checkArgument(object != null, "No %s registry entry found for key %s.", minecraftRegistry.key(), namespacedKey);
+
+        return object;
+    }
+
+    @NotNull
+    @Override
     public Stream<B> stream() {
         return minecraftRegistry.keySet().stream().map(minecraftKey -> get(CraftNamespacedKey.fromMinecraft(minecraftKey)));
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
-@@ -8,10 +_,14 @@
+@@ -8,10 +_,15 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
  import net.minecraft.world.effect.MobEffect;
@@ -12,6 +12,7 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryBeacon;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.view.CraftBeaconView;
  
  public class BeaconMenu extends AbstractContainerMenu {
      private static final int PAYMENT_SLOT = 0;
@@ -20,7 +21,7 @@
      private final ContainerLevelAccess access;
      private final ContainerData beaconData;
 +   	// CraftBukkit start
-+   	private CraftInventoryView bukkitEntity = null;
++   	private CraftBeaconView bukkitEntity = null;
 +   	private Inventory player;
 +   	// CraftBukkit end
  
@@ -62,13 +63,13 @@
 +
 +    // CraftBukkit start
 +    @Override
-+    public CraftInventoryView getBukkitView() {
++    public CraftBeaconView getBukkitView() {
 +        if (bukkitEntity != null) {
 +            return bukkitEntity;
 +        }
 +
-+        CraftInventory inventory = new CraftInventoryBeacon(this.beacon);
-+        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        CraftInventoryBeacon inventory = new CraftInventoryBeacon(this.beacon);
++        bukkitEntity = new CraftBeaconView(this.player.player.getBukkitEntity(), inventory, this);
 +        return bukkitEntity;
 +    }
 +    // CraftBukkit end

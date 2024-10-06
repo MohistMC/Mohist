@@ -1,28 +1,19 @@
 --- a/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
 +++ b/net/minecraft/world/level/block/entity/trialspawner/TrialSpawner.java
-@@ -57,16 +57,16 @@
-     private static final int MAX_MOB_TRACKING_DISTANCE = 47;
-     private static final int MAX_MOB_TRACKING_DISTANCE_SQR = MathHelper.square(47);
-     private static final float SPAWNING_AMBIENT_SOUND_CHANCE = 0.02F;
--    private final TrialSpawnerConfig normalConfig;
--    private final TrialSpawnerConfig ominousConfig;
-+    public TrialSpawnerConfig normalConfig; // PAIL - private->public, -final
-+    public TrialSpawnerConfig ominousConfig; // PAIL - private->public, -final
-     private final TrialSpawnerData data;
--    private final int requiredPlayerRange;
--    private final int targetCooldownLength;
-+    public int requiredPlayerRange; // PAIL - private->public, -final
-+    public int targetCooldownLength; // PAIL - private->public, -final
-     public final TrialSpawner.b stateAccessor;
-     private PlayerDetector playerDetector;
-     private final PlayerDetector.a entitySelector;
-     private boolean overridePeacefulAndMobSpawnRule;
--    private boolean isOminous;
-+    public boolean isOminous; // PAIL - private->public
+@@ -47,6 +47,12 @@
+ import net.minecraft.world.phys.Vec3D;
+ import net.minecraft.world.phys.shapes.VoxelShapeCollision;
  
-     public Codec<TrialSpawner> codec() {
-         return RecordCodecBuilder.create((instance) -> {
-@@ -219,13 +219,18 @@
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseLootEvent;
++// CraftBukkit end
++
+ public final class TrialSpawner {
+ 
+     public static final String NORMAL_CONFIG_TAG_NAME = "normal_config";
+@@ -219,13 +225,18 @@
                                  }
  
                                  entityinsentient.setPersistenceRequired();
@@ -43,3 +34,19 @@
                                  return Optional.empty();
                              } else {
                                  TrialSpawner.a trialspawner_a = this.isOminous ? TrialSpawner.a.OMINOUS : TrialSpawner.a.NORMAL;
+@@ -248,6 +259,15 @@
+         ObjectArrayList<ItemStack> objectarraylist = loottable.getRandomItems(lootparams);
+ 
+         if (!objectarraylist.isEmpty()) {
++            // CraftBukkit start
++            BlockDispenseLootEvent spawnerDispenseLootEvent = CraftEventFactory.callBlockDispenseLootEvent(worldserver, blockposition, null, objectarraylist);
++            if (spawnerDispenseLootEvent.isCancelled()) {
++                return;
++            }
++
++            objectarraylist = new ObjectArrayList<>(spawnerDispenseLootEvent.getDispensedLoot().stream().map(CraftItemStack::asNMSCopy).toList());
++            // CraftBukkit end
++
+             ObjectListIterator objectlistiterator = objectarraylist.iterator();
+ 
+             while (objectlistiterator.hasNext()) {
