@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/BossEvent.java
++++ b/net/minecraft/world/BossEvent.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world;
+ 
++import com.mohistmc.paper.adventure.PaperAdventure;
+ import java.util.UUID;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.network.chat.Component;
+@@ -13,6 +_,7 @@
+    protected boolean f_18844_;
+    protected boolean f_18845_;
+    protected boolean f_18846_;
++   public net.kyori.adventure.bossbar.BossBar adventure; // Paper
+ 
+    public BossEvent(UUID p_18849_, Component p_18850_, BossEvent.BossBarColor p_18851_, BossEvent.BossBarOverlay p_18852_) {
+       this.f_18847_ = p_18849_;
+@@ -27,10 +_,12 @@
+    }
+ 
+    public Component m_18861_() {
++      if (this.adventure != null) return PaperAdventure.asVanilla(this.adventure.name()); // Paper
+       return this.f_18840_;
+    }
+ 
+    public void m_6456_(Component p_18856_) {
++      if (this.adventure != null) this.adventure.name(PaperAdventure.asAdventure(f_18840_)); // Paper
+       this.f_18840_ = p_18856_;
+    }
+ 

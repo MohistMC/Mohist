@@ -1,9 +1,10 @@
 --- a/net/minecraft/network/chat/PlayerChatMessage.java
 +++ b/net/minecraft/network/chat/PlayerChatMessage.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.network.chat;
  
  import com.google.common.primitives.Ints;
++import com.mohistmc.paper.adventure.AdventureComponent;
 +import com.mohistmc.paper.adventure.PaperAdventure;
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -64,3 +65,12 @@
     public static final MapCodec<PlayerChatMessage> f_252410_ = RecordCodecBuilder.mapCodec((p_253460_) -> {
        return p_253460_.group(SignedMessageLink.f_252474_.fieldOf("link").forGetter(PlayerChatMessage::f_243882_), MessageSignature.f_252463_.optionalFieldOf("signature").forGetter((p_253459_) -> {
           return Optional.ofNullable(p_253459_.f_244279_);
+@@ -40,7 +_,7 @@
+    }
+ 
+    public PlayerChatMessage m_241956_(Component p_242164_) {
+-      Component component = !p_242164_.equals(Component.m_237113_(this.m_245728_())) ? p_242164_ : null;
++      Component component = !(p_242164_ instanceof AdventureComponent advComponent ? advComponent.deepConverted() : p_242164_).equals(Component.m_237113_(this.m_245728_())) ? p_242164_ : null; // Paper
+       return new PlayerChatMessage(this.f_243882_, this.f_244279_, this.f_240885_, component, this.f_242992_);
+    }
+ 

@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/protocol/game/ClientboundSetActionBarTextPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundSetActionBarTextPacket.java
+@@ -6,6 +_,7 @@
+ 
+ public class ClientboundSetActionBarTextPacket implements Packet<ClientGamePacketListener> {
+    private final Component f_179199_;
++   public net.kyori.adventure.text.Component adventure$text; // Paper
+ 
+    public ClientboundSetActionBarTextPacket(Component p_179203_) {
+       this.f_179199_ = p_179203_;
+@@ -16,6 +_,11 @@
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_179205_) {
++      // Paper start
++      if (this.adventure$text != null) {
++         p_179205_.writeComponent(this.adventure$text);
++      } else
++         // Paper end
+       p_179205_.m_130083_(this.f_179199_);
+    }
+ 

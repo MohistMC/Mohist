@@ -1167,14 +1167,14 @@
  
                 CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_245728_());
 -               CompletableFuture<Component> completablefuture1 = this.f_9745_.m_236742_().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
-+               CompletableFuture<Component> completablefuture1 = net.minecraftforge.common.ForgeHooks.getServerChatSubmittedDecorator().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
++               CompletableFuture<net.minecraft.network.chat.ChatDecorator.Result> completablefuture1 = this.f_9745_.m_236742_().decorate(this.f_9743_, null, playerchatmessage.m_245692_()); // Paper // Mohist TODO forge chat event
                 this.f_241681_.m_241849_((p_248212_) -> {
                    return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((p_248218_) -> {
 -                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(completablefuture1.join()).m_243072_(completablefuture.join().f_243010_());
-+                     Component decoratedContent = completablefuture1.join();
++                     net.minecraft.network.chat.ChatDecorator.Result decoratedContent = completablefuture1.join();
 +                     if (decoratedContent == null)
 +                        return; // Forge: ServerChatEvent was canceled if this is null.
-+                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(decoratedContent).m_243072_(completablefuture.join().f_243010_());
++                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_243072_(completablefuture.join().f_243010_()).withResult(completablefuture1.join()); // Paper
                       this.m_243086_(playerchatmessage1);
 -                  }, p_248212_);
 +                  }, this.f_9745_.chatExecutor); // CraftBukkit - async chat
@@ -1248,6 +1248,15 @@
              this.m_9829_(new ClientboundSystemChatPacket(Component.m_237115_("chat.disabled.options").m_130940_(ChatFormatting.RED), false));
              return Optional.empty();
           } else {
+@@ -1300,7 +_,7 @@
+       return true;
+    }
+ 
+-   private static boolean m_215214_(String p_215215_) {
++   public static boolean m_215214_(String p_215215_) {
+       for(int i = 0; i < p_215215_.length(); ++i) {
+          if (!SharedConstants.m_136188_(p_215215_.charAt(i))) {
+             return true;
 @@ -1316,13 +_,36 @@
     }
  
@@ -2001,7 +2010,7 @@
 +      return !this.f_9743_.joining && !this.f_9742_.m_129536_();
 +   }
 +
-+   private void handleCommand(String s) {
++   public void handleCommand(String s) {
 +      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
 +      f_9744_.info(this.f_9743_.m_6302_() + " issued server command: " + s);
 +

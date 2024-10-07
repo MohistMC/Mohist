@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/chat/ComponentUtils.java
++++ b/net/minecraft/network/chat/ComponentUtils.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.network.chat;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.paper.adventure.AdventureComponent;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.brigadier.Message;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+@@ -42,6 +_,11 @@
+       if (p_130735_ > 100) {
+          return p_130733_.m_6881_();
+       } else {
++         // Paper start
++         if (p_130733_ instanceof AdventureComponent adventureComponent) {
++            p_130733_ = adventureComponent.deepConverted();
++         }
++         // Paper end
+          MutableComponent mutablecomponent = p_130733_.m_214077_().m_213698_(p_130732_, p_130734_, p_130735_ + 1);
+ 
+          for(Component component : p_130733_.m_7360_()) {

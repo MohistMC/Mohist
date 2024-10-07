@@ -15,6 +15,32 @@
     }
  
     public static void m_245478_(CommandContext<CommandSourceStack> p_249433_, String p_248718_, Consumer<PlayerChatMessage> p_249460_) throws CommandSyntaxException {
+@@ -50,10 +_,10 @@
+    private static void m_247736_(Consumer<PlayerChatMessage> p_250000_, CommandSourceStack p_252335_, PlayerChatMessage p_249420_) {
+       MinecraftServer minecraftserver = p_252335_.m_81377_();
+       CompletableFuture<FilteredText> completablefuture = m_246606_(p_252335_, p_249420_);
+-      CompletableFuture<Component> completablefuture1 = minecraftserver.m_236742_().m_236961_(p_252335_.m_230896_(), p_249420_.m_245692_());
++      CompletableFuture<net.minecraft.network.chat.ChatDecorator.Result> completablefuture1 = minecraftserver.m_236742_().decorate(p_252335_.m_230896_(), p_252335_, p_249420_.m_245692_());
+       p_252335_.m_241923_().m_241849_((p_247979_) -> {
+          return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((p_247970_) -> {
+-            PlayerChatMessage playerchatmessage = p_249420_.m_241956_(completablefuture1.join()).m_243072_(completablefuture.join().f_243010_());
++            PlayerChatMessage playerchatmessage = p_249420_.m_241956_(completablefuture1.join().component()).m_243072_(completablefuture.join().f_243010_());
+             p_250000_.accept(playerchatmessage);
+          }, p_247979_);
+       });
+@@ -61,10 +_,10 @@
+ 
+    private static void m_247098_(Consumer<PlayerChatMessage> p_249162_, CommandSourceStack p_248759_, PlayerChatMessage p_252332_) {
+       MinecraftServer minecraftserver = p_248759_.m_81377_();
+-      CompletableFuture<Component> completablefuture = minecraftserver.m_236742_().m_236961_(p_248759_.m_230896_(), p_252332_.m_245692_());
++      CompletableFuture<net.minecraft.network.chat.ChatDecorator.Result> completablefuture = minecraftserver.m_236742_().decorate(p_248759_.m_230896_(), p_248759_, p_252332_.m_245692_());
+       p_248759_.m_241923_().m_241849_((p_247974_) -> {
+          return completablefuture.thenAcceptAsync((p_247965_) -> {
+-            p_249162_.accept(p_252332_.m_241956_(p_247965_));
++            p_249162_.accept(p_252332_.m_241956_(p_247965_.component()));
+          }, p_247974_);
+       });
+    }
 @@ -100,7 +_,7 @@
        }
  

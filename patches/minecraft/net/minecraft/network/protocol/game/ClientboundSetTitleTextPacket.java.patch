@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/protocol/game/ClientboundSetTitleTextPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundSetTitleTextPacket.java
+@@ -6,6 +_,7 @@
+ 
+ public class ClientboundSetTitleTextPacket implements Packet<ClientGamePacketListener> {
+    private final Component f_179388_;
++   public net.kyori.adventure.text.Component adventure$text; // Paper
+ 
+    public ClientboundSetTitleTextPacket(Component p_179392_) {
+       this.f_179388_ = p_179392_;
+@@ -16,6 +_,11 @@
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_179394_) {
++      // Paper start
++      if (this.adventure$text != null) {
++         p_179394_.writeComponent(this.adventure$text);
++      } else
++         // Paper end
+       p_179394_.m_130083_(this.f_179388_);
+    }
+ 

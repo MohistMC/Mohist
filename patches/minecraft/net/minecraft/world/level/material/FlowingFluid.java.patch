@@ -85,28 +85,36 @@
     protected abstract boolean m_6760_(Level p_256009_);
  
     protected void m_6364_(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {
-@@ -396,11 +_,23 @@
+@@ -396,11 +_,31 @@
           int i = this.m_6886_(p_75995_, p_75996_, p_75997_, fluidstate);
           if (fluidstate.m_76178_()) {
              p_75997_ = fluidstate;
 -            p_75995_.m_7731_(p_75996_, Blocks.f_50016_.m_49966_(), 3);
 +            // CraftBukkit start
-+            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, Blocks.f_50016_.m_49966_());
-+            if (event.isCancelled()) {
-+               return;
++            if (!AsyncCatcher.catchAsync()) {
++               FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, Blocks.f_50016_.m_49966_());
++               if (event.isCancelled()) {
++                  return;
++               }
++               p_75995_.m_7731_(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 3);
++            } else {
++               p_75995_.m_7731_(p_75996_, Blocks.f_50016_.m_49966_(), 3);
 +            }
-+            p_75995_.m_7731_(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 3);
 +            // CraftBukkit end
           } else if (!fluidstate.equals(p_75997_)) {
              p_75997_ = fluidstate;
              BlockState blockstate = fluidstate.m_76188_();
 -            p_75995_.m_7731_(p_75996_, blockstate, 2);
 +            // CraftBukkit start
-+            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, blockstate);
-+            if (event.isCancelled()) {
-+               return;
++            if (!AsyncCatcher.catchAsync()) {
++               FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, blockstate);
++               if (event.isCancelled()) {
++                  return;
++               }
++               p_75995_.m_7731_(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 2);
++            } else {
++               p_75995_.m_7731_(p_75996_, blockstate, 2);
 +            }
-+            p_75995_.m_7731_(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 2);
 +            // CraftBukkit end
              p_75995_.m_186469_(p_75996_, fluidstate.m_76152_(), i);
              p_75995_.m_46672_(p_75996_, blockstate.m_60734_());

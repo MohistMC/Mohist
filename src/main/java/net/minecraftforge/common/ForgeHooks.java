@@ -127,6 +127,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -419,21 +420,26 @@ public class ForgeHooks
     @NotNull
     public static ChatDecorator getServerChatSubmittedDecorator()
     {
-        return (sender, message) -> CompletableFuture.supplyAsync(() -> {
-            if (sender == null)
-                return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
-            AsyncPlayerChatPreviewEvent event = new AsyncPlayerChatPreviewEvent(true, sender.getBukkitEntity(), CraftChatMessage.fromComponent(message), new LazyPlayerSet(sender.getServer()));
-            String originalFormat = event.getFormat(), originalMessage = event.getMessage();
-            Bukkit.getPluginManager().callEvent(event);
+        return new ChatDecorator() {
+            @Override
+            public CompletableFuture<Component> decorate(@Nullable ServerPlayer sender, Component message) {
+                return CompletableFuture.supplyAsync(() -> {
+                    if (sender == null)
+                        return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
+                    AsyncPlayerChatPreviewEvent event = new AsyncPlayerChatPreviewEvent(true, sender.getBukkitEntity(), CraftChatMessage.fromComponent(message), new LazyPlayerSet(sender.getServer()));
+                    String originalFormat = event.getFormat(), originalMessage = event.getMessage();
+                    Bukkit.getPluginManager().callEvent(event);
 
-            if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
-                return message;
+                    if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
+                        return message;
+                    }
+
+                    Component bukkit = CraftChatMessage.fromStringOrNull(String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage()));
+
+                    return onServerChatSubmittedEvent(sender, getRawText(bukkit), bukkit);
+                }, sender.getServer().chatExecutor);
             }
-
-            Component bukkit = CraftChatMessage.fromStringOrNull(String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage()));
-
-            return onServerChatSubmittedEvent(sender, getRawText(bukkit), bukkit);
-        }, sender.getServer().chatExecutor);
+        };
     }
 
     static final Pattern URL_PATTERN = Pattern.compile(

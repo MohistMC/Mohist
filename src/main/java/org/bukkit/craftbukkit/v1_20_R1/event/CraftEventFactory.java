@@ -1238,6 +1238,9 @@ public class CraftEventFactory {
     }
 
     public static boolean callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.world.level.block.state.BlockState newBlock, boolean cancelled) {
+        if (AsyncCatcher.catchAsync()) {
+            return true;
+        }
         Block block = entity.level.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
 
         EntityChangeBlockEvent event = new EntityChangeBlockEvent(entity.getBukkitEntity(), block, CraftBlockData.fromData(newBlock));

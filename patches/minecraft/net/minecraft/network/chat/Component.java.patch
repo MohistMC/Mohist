@@ -8,6 +8,14 @@
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
  import com.google.gson.JsonArray;
+@@ -13,6 +_,7 @@
+ import com.google.gson.JsonSerializationContext;
+ import com.google.gson.JsonSerializer;
+ import com.google.gson.stream.JsonReader;
++import com.mohistmc.paper.adventure.AdventureComponent;
+ import com.mojang.brigadier.Message;
+ import java.io.IOException;
+ import java.io.StringReader;
 @@ -20,9 +_,11 @@
  import java.lang.reflect.Type;
  import java.util.ArrayList;
@@ -41,14 +49,30 @@
     Style m_7383_();
  
     ComponentContents m_214077_();
-@@ -144,6 +_,10 @@
- 
-    static MutableComponent m_237115_(String p_237116_) {
+@@ -146,6 +_,10 @@
        return MutableComponent.m_237204_(new TranslatableContents(p_237116_, (String)null, TranslatableContents.f_237494_));
-+   }
-+
-+   static MutableComponent a(String pKey, Object... pArgs) {
-+      return MutableComponent.m_237204_(new TranslatableContents(pKey, (String)null, pArgs));
     }
  
++   static MutableComponent a(String pKey, Object... pArgs) {
++      return MutableComponent.m_237204_(new TranslatableContents(pKey, (String)null, pArgs));
++   }
++
     static MutableComponent m_237110_(String p_237111_, Object... p_237112_) {
+       return MutableComponent.m_237204_(new TranslatableContents(p_237111_, (String)null, p_237112_));
+    }
+@@ -182,6 +_,7 @@
+       private static final Gson f_130685_ = Util.m_137537_(() -> {
+          GsonBuilder gsonbuilder = new GsonBuilder();
+          gsonbuilder.disableHtmlEscaping();
++         gsonbuilder.registerTypeAdapter(AdventureComponent.class, new AdventureComponent.Serializer()); // Paper
+          gsonbuilder.registerTypeHierarchyAdapter(Component.class, new Component.Serializer());
+          gsonbuilder.registerTypeHierarchyAdapter(Style.class, new Style.Serializer());
+          gsonbuilder.registerTypeAdapterFactory(new LowerCaseEnumTypeAdapterFactory());
+@@ -333,6 +_,7 @@
+       }
+ 
+       public JsonElement serialize(Component p_130706_, Type p_130707_, JsonSerializationContext p_130708_) {
++         if (p_130706_ instanceof AdventureComponent) return p_130708_.serialize(p_130706_); // Paper
+          JsonObject jsonobject = new JsonObject();
+          if (!p_130706_.m_7383_().m_131179_()) {
+             this.m_130709_(p_130706_.m_7383_(), jsonobject, p_130708_);

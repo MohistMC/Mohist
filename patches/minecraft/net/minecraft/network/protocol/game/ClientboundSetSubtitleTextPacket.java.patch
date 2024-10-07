@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/protocol/game/ClientboundSetSubtitleTextPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundSetSubtitleTextPacket.java
+@@ -6,6 +_,7 @@
+ 
+ public class ClientboundSetSubtitleTextPacket implements Packet<ClientGamePacketListener> {
+    private final Component f_179374_;
++   public net.kyori.adventure.text.Component adventure$text; // Paper
+ 
+    public ClientboundSetSubtitleTextPacket(Component p_179378_) {
+       this.f_179374_ = p_179378_;
+@@ -16,6 +_,11 @@
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_179380_) {
++      // Paper start
++      if (this.adventure$text != null) {
++         p_179380_.writeComponent(this.adventure$text);
++      } else
++         // Paper end
+       p_179380_.m_130083_(this.f_179374_);
+    }
+ 
