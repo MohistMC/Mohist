@@ -1063,6 +1063,9 @@ public class CraftEventFactory {
             human.world.getServer().getPluginManager().callEvent(event);
         }
         human.openContainer.transferTo(human.inventoryContainer, human.getBukkitEntity());
+        if (human instanceof EntityPlayerMP) {
+            ((EntityPlayerMP) human).getBukkitEntity().updateInventory();
+        }
     }
 
     public static void handleEditBookEvent(EntityPlayerMP player, ItemStack newBookItem) {
