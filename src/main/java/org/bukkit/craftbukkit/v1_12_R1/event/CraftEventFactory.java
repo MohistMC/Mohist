@@ -1061,11 +1061,12 @@ public class CraftEventFactory {
         InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
         if (human.openContainer.getBukkitView() != null) {
             human.world.getServer().getPluginManager().callEvent(event);
+            if (human instanceof EntityPlayerMP) {
+                ((EntityPlayerMP) human).getBukkitEntity().updateInventory();
+            }
         }
         human.openContainer.transferTo(human.inventoryContainer, human.getBukkitEntity());
-        if (human instanceof EntityPlayerMP) {
-            ((EntityPlayerMP) human).getBukkitEntity().updateInventory();
-        }
+
     }
 
     public static void handleEditBookEvent(EntityPlayerMP player, ItemStack newBookItem) {
