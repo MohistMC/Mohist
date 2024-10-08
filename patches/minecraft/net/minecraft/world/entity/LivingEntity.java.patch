@@ -1633,7 +1633,7 @@
 -                  this.m_21008_(interactionhand, itemstack);
 +               ItemStack copy = this.f_20935_.m_41777_();
 +               // CraftBukkit start - fire PlayerItemConsumeEvent
-+               ItemStack itemstack = this.f_20935_.m_41671_(this.f_19853_, this);
++               ItemStack itemstack;
 +               if (this instanceof ServerPlayer) {
 +                  org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(copy);
 +                  org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(interactionhand);
@@ -1646,9 +1646,9 @@
 +                     ((ServerPlayer) this).getBukkitEntity().updateScaledHealth();
 +                     return;
 +                  }
-+                  if (!craftItem.equals(event.getItem())) {
-+                     itemstack = CraftItemStack.asNMSCopy(event.getItem()).m_41671_(this.f_19853_, this);
-+                  }
++                  itemstack = (craftItem.equals(event.getItem())) ? this.f_20935_.m_41671_(this.m_9236_(), this) : CraftItemStack.asNMSCopy(event.getItem()).m_41671_(this.m_9236_(), this);
++               } else {
++                  itemstack = this.f_20935_.m_41671_(this.f_19853_, this);
 +               }
 +               // CraftBukkit end
 +               ItemStack itemstackForge = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), itemstack);
