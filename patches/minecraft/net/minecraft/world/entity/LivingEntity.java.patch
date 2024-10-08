@@ -1641,14 +1641,14 @@
 +                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
 +
 +                  if (event.isCancelled()) {
-+                     // Update client
++                     // Update client  
 +                     ((ServerPlayer) this).getBukkitEntity().updateInventory();
 +                     ((ServerPlayer) this).getBukkitEntity().updateScaledHealth();
 +                     return;
 +                  }
-+                  if (!craftItem.equals(event.getItem())) {
-+                     itemstack = CraftItemStack.asNMSCopy(event.getItem()).m_41671_(this.f_19853_, this);
-+                  }
++                  itemstack = (craftItem.equals(event.getItem())) ? this.f_20935_.m_41671_(this.m_9236_(), this) : CraftItemStack.asNMSCopy(event.getItem()).m_41671_(this.m_9236_(), this);
++               } else {
++                  itemstack = this.f_20935_.m_41671_(this.f_19853_, this);
 +               }
 +               // CraftBukkit end
 +               ItemStack itemstackForge = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), itemstack);
