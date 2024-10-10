@@ -1641,7 +1641,7 @@
 +                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
 +
 +                  if (event.isCancelled()) {
-+                     // Update client  
++                     // Update client
 +                     ((ServerPlayer) this).getBukkitEntity().updateInventory();
 +                     ((ServerPlayer) this).getBukkitEntity().updateScaledHealth();
 +                     return;
