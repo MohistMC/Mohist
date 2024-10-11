@@ -4,6 +4,7 @@ import java.net.BindException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -32,18 +33,27 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     private void printJarOrClassInfo(Throwable e) {
         StackTraceElement[] stackTrace = e.getStackTrace();
-        if (stackTrace.length > 0) {
-            StackTraceElement element = stackTrace[0];
-            System.out.println("问题发生在: " + element.getClassName() + " (文件: " + element.getFileName() + " 行: " + element.getLineNumber() + ")");
-            try {
-                Class<?> clazz = Class.forName(element.getClassName());
-                String location = clazz.getProtectionDomain().getCodeSource().getLocation().toString();
-                System.out.println("相关的Jar/类路径: " + location);
-            } catch (ClassNotFoundException ex) {
-                System.out.println("无法找到相关的类: " + element.getClassName());
+        for (StackTraceElement element : stackTrace) {
+            if (!isInternalJavaClass(element.getClassName())) {
+                System.out.println("问题发生在: " + element.getClassName() + " (文件: " + element.getFileName() + " 行: " + element.getLineNumber() + ")");
+                try {
+                    Class<?> clazz = Class.forName(element.getClassName());
+                    String location = clazz.getProtectionDomain().getCodeSource().getLocation().toString();
+                    System.out.println("相关的Jar/类路径: " + location);
+                } catch (ClassNotFoundException ex) {
+                    System.out.println("无法找到相关的类: " + element.getClassName());
+                }
+                break;
             }
         }
     }
+    private boolean isInternalJavaClass(String className) {
+        return className.startsWith("java.") || className.startsWith("javax.") ||
+                className.startsWith("org.w3c.dom.") || className.startsWith("org.xml.") ||
+                className.startsWith("com.sun.") || className.startsWith("sun.") ||
+                className.startsWith("javafx.");
+    }
+
 
     private void handleOutOfMemoryError(Throwable e) {
         Runtime runtime = Runtime.getRuntime();
@@ -79,7 +89,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     }
 
     private void handleNullPointerException(Throwable e) {
-        System.out.println("你遇到了一个NullPointerException，这个错误可能与未正确初始化的对象有关。" + e.getCause());
+        System.out.println("你遇到了一个NullPointerException，这个错误可能与未正确初始化的对象有关。");
         System.out.println("以下是完整的异常信息:");
         e.printStackTrace();
         printJarOrClassInfo(e);

@@ -54,8 +54,8 @@ public class MohistMCStart {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         mainArgs.addAll(List.of(args));
         jarTool = new JarTool(MohistMCStart.class);
-        DataParser.parseVersions();
-        DataParser.parseLaunchArgs();
+        //DataParser.parseVersions();
+        //DataParser.parseLaunchArgs();
         MohistConfigUtil.init();
         MohistConfigUtil.i18n();
         if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
