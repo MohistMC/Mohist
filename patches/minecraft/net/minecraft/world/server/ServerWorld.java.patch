@@ -213,10 +213,10 @@
 +         this.worldDataServer = MohistDerivedWorldInfo.create((DerivedWorldInfo)p_i241885_4_);
 +      }
 +
-+      if (generator != null) {
-+         p_i241885_8_ = new CustomChunkGenerator(this, p_i241885_8_, generator);
++      if (generator$mohist != null) {
++         p_i241885_8_ = new CustomChunkGenerator(this, p_i241885_8_, generator$mohist);
 +      } else {
-+         generator = getCBServer().getGenerator(p_i241885_4_.func_76065_j());
++         generator$mohist = getCBServer().getGenerator(p_i241885_4_.func_76065_j());
 +      }
 +      worldDataServer.world = this;
 +      this.spigotConfig = new SpigotWorldConfig(name); // Spigot
@@ -238,7 +238,7 @@
        }
 -
 -   }
-+      this.craftWorld = new CraftWorld(this, generator, environment);
++      this.craftWorld = new CraftWorld(this, generator$mohist, environment);
 +      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      this.initCapabilities();
 +   }

@@ -71,7 +71,7 @@
     public final Thread field_217407_c;
     private final boolean field_234916_c_;
     private int field_73008_k;
-@@ -92,8 +_,61 @@
+@@ -92,8 +_,62 @@
     private final WorldBorder field_175728_M;
     private final BiomeManager field_226689_w_;
     private final RegistryKey<World> field_73011_w;
@@ -84,7 +84,8 @@
 +   public CraftWorld craftWorld; //Mohist - compat for Forge
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
-+   public static org.bukkit.generator.ChunkGenerator generator;
++   public static org.bukkit.generator.ChunkGenerator generator$mohist;
++   public org.bukkit.generator.ChunkGenerator generator;
 +   public static org.bukkit.World.Environment environment;
 +   public boolean captureBlockStates = false;
 +   public boolean captureTreeGeneration = false;
@@ -116,7 +117,7 @@
 +   }
 +
 +   public static void setGeneratorAndEnv(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env){
-+      generator = gen;
++      generator$mohist = gen;
 +      environment = env;
 +   }
  
@@ -133,7 +134,7 @@
        this.field_72984_F = p_i241925_4_;
        this.field_72986_A = p_i241925_1_;
        this.field_234921_x_ = p_i241925_3_;
-@@ -102,17 +_,20 @@
+@@ -102,20 +_,24 @@
        if (p_i241925_3_.func_242724_f() != 1.0D) {
           this.field_175728_M = new WorldBorder() {
              public double func_230316_a_() {
@@ -157,6 +158,10 @@
        this.field_217407_c = Thread.currentThread();
        this.field_226689_w_ = new BiomeManager(this, p_i241925_7_, p_i241925_3_.func_227176_e_());
        this.field_234916_c_ = p_i241925_6_;
++      this.generator = generator$mohist;
+    }
+ 
+    public boolean func_201670_d() {
 @@ -155,6 +_,11 @@
        return this.func_212866_a_(p_175726_1_.func_177958_n() >> 4, p_175726_1_.func_177952_p() >> 4);
     }
