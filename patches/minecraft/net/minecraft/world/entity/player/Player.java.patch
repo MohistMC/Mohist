@@ -393,7 +393,7 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -874,33 +_,45 @@
+@@ -874,33 +_,48 @@
                 }
  
                 this.f_20935_ = ItemStack.f_41583_;
@@ -418,7 +418,11 @@
 -         float f = p_36313_ - f1;
 -         if (f > 0.0F && f < 3.4028235E37F) {
 -            this.m_36222_(Stats.f_12933_, Math.round(f * 10.0F));
--         }
++      if (injectedHurt) {
++         damageEntity0(p_36312_, p_36313_);
++         if (damage.get() != -999) {
++            this.m_21153_(this.m_21223_() - (float) damage.getAndSet(-999));
+          }
 -
 -         if (f1 != 0.0F) {
 -            this.m_36399_(p_36312_.m_19377_());
@@ -429,8 +433,6 @@
 -            }
 -
 -            this.m_146850_(GameEvent.f_223706_);
-+      if (injectedHurt) {
-+         damageEntity0(p_36312_, p_36313_);
 +      } else {
 +         if (!this.m_6673_(p_36312_)) {
 +            p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);

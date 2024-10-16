@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -1,21 +_,30 @@
+@@ -1,21 +_,31 @@
  package net.minecraft.world.entity;
  
 +import com.google.common.base.Function;
@@ -9,6 +9,7 @@
  import com.google.common.collect.ImmutableMap;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
++import com.google.common.util.concurrent.AtomicDouble;
 +import com.mohistmc.plugins.ban.bans.BanItem;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
@@ -974,12 +975,15 @@
           }
  
           if (p_21194_ <= 0.0F) {
-@@ -1582,27 +_,245 @@
+@@ -1582,27 +_,250 @@
     }
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
 +      if (injectedHurt) {
 +         canDamage.set(damageEntity0(p_21240_, p_21241_));
++         if (damage.get() != -999) {
++            this.m_21153_(this.m_21223_() - (float) damage.getAndSet(-999));
++         }
 +      } else {
 +         if (!this.m_6673_(p_21240_)) {
 +            p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
@@ -1010,6 +1014,7 @@
 +
 +   protected boolean injectedHurt = true;
 +   public AtomicBoolean canDamage = new AtomicBoolean(true);
++   public AtomicDouble damage = new AtomicDouble(-999);
 +   public boolean canDamage() {
 +      return canDamage.getAndSet(true);
 +   }
@@ -1202,9 +1207,10 @@
 +               }
 +            }
 +            // CraftBukkit end
-+            float f1 = this.m_21223_();
 +            this.m_21231_().m_289194_(p_21240_, p_21241_);
-+            this.m_21153_(f1 - p_21241_); // Forge: moved to fix MC-121048
++            // Mohist start
++            this.damage.set(p_21241_);
++            // Mohist end
 +            // CraftBukkit start
 +            if (!human) {
 +               this.m_7911_(this.m_6103_() - p_21241_);
