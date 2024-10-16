@@ -24,6 +24,7 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.feature.CustomLibraries;
 import com.mohistmc.feature.DefaultLibraries;
+import com.mohistmc.feature.ExceptionHandler;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.Logo;
@@ -50,6 +51,7 @@ public class MohistMCStart {
     }
 
     public static void main(String[] args) throws Exception {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         mainArgs.addAll(List.of(args));
         jarTool = new JarTool(MohistMCStart.class);
         DataParser.parseVersions();
@@ -114,5 +116,6 @@ public class MohistMCStart {
         }
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
         BootstrapLauncher.main(args_);
+
     }
 }
