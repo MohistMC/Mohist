@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_18_R2.entity;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.mohistmc.api.ServerAPI;
 import java.util.Set;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import org.bukkit.boss.BossBar;
@@ -55,6 +56,11 @@ public class CraftEnderDragon extends CraftMob implements EnderDragon {
     }
 
     public static Phase getBukkitPhase(EnderDragonPhase phase) {
+        // Mohist start
+        if (phase.getId() > 10) {
+            return ServerAPI.phasetypeMap.get(phase.getId());
+        }
+        // Mohist end
         return Phase.values()[phase.getId()];
     }
 

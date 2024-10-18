@@ -98,7 +98,6 @@ public class ForgeInjectBukkit {
         addEnumArt();
         addEnumParticle();
         addStatistic();
-        addEndDragonPhase();
         loadSpawnCategory();
         addPose();
     }
@@ -307,15 +306,6 @@ public class ForgeInjectBukkit {
                 statisticMap.put(statType, statistic);
                 MohistMC.LOGGER.debug("Registered forge StatType as Statistic(Bukkit) {}", statistic.name());
             }
-        }
-    }
-
-    public static void addEndDragonPhase() {
-        var max = EnderDragonPhase.getCount();
-        for (var id = EnderDragon.Phase.values().length; id < max; id++) {
-            var name = "MOD_PHASE_" + id;
-            EnderDragon.Phase newPhase = MohistDynamEnum.addEnum(EnderDragon.Phase.class, name);
-            MohistMC.LOGGER.debug("Registered {} as ender dragon phase {}", name, newPhase);
         }
     }
 
