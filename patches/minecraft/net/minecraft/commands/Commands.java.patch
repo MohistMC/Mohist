@@ -1,16 +1,15 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -1,6 +_,9 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.commands;
  
 +import com.google.common.base.Joiner;
  import com.google.common.collect.Maps;
 +import com.mohistmc.paper.adventure.PaperAdventure;
-+import com.mohistmc.paper.brigadier.PaperBrigadier;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -13,9 +_,12 @@
+@@ -13,13 +_,17 @@
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
  import com.mojang.logging.LogUtils;
@@ -23,18 +22,16 @@
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
  import java.util.stream.Collectors;
-@@ -34,7 +_,6 @@
- import net.minecraft.network.chat.ClickEvent;
- import net.minecraft.network.chat.CommonComponents;
- import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.ComponentUtils;
- import net.minecraft.network.chat.HoverEvent;
- import net.minecraft.network.chat.MutableComponent;
- import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
-@@ -118,6 +_,8 @@
+ import javax.annotation.Nullable;
++import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
+@@ -118,6 +_,9 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 +import org.bukkit.event.player.PlayerCommandSendEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
  import org.slf4j.Logger;
@@ -181,10 +178,10 @@
 +            final net.kyori.adventure.text.TextComponent.Builder builder = net.kyori.adventure.text.Component.text();
 +            if ((p_242844_.getContext().getNodes().isEmpty() || !this.vanillaCommandNodes.contains(p_242844_.getContext().getNodes().get(0).getNode()))) {
 +               if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
-+                  builder.append(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(org.spigotmc.SpigotConfig.unknownCommandMessage));
++                  builder.append(LegacyComponentSerializer.legacySection().deserialize(org.spigotmc.SpigotConfig.unknownCommandMessage));
 +               }
 +            } else {
-+               builder.color(net.kyori.adventure.text.format.NamedTextColor.RED).append(PaperBrigadier.componentFromMessage(commandsyntaxexception.getRawMessage()));
++               builder.color(net.kyori.adventure.text.format.NamedTextColor.RED).append(LegacyComponentSerializer.legacySection().deserialize(CraftChatMessage.fromComponent(ComponentUtils.m_130729_(commandsyntaxexception.getRawMessage()))));
 +               // Paper end
 +               if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
 +                  int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
@@ -202,7 +199,7 @@
 +                  }
 +
 +                  mutablecomponent1.m_7220_(Component.m_237115_("command.context.here").m_130944_(ChatFormatting.RED, ChatFormatting.ITALIC));
-+                  builder.append(net.kyori.adventure.text.Component.newline()).append(PaperAdventure.asAdventure(mutablecomponent1));
++                  builder.append(net.kyori.adventure.text.Component.newline()).append(LegacyComponentSerializer.legacySection().deserialize(CraftChatMessage.fromComponent(mutablecomponent1)));
 +               }
 +            }
 +            org.bukkit.event.command.UnknownCommandEvent event = new org.bukkit.event.command.UnknownCommandEvent(commandsourcestack.getBukkitSender(), p_242841_, org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty() ? null : builder.build());
