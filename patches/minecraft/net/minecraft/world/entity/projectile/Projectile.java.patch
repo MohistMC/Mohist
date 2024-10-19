@@ -35,7 +35,7 @@
  
     }
  
-@@ -132,6 +_,16 @@
+@@ -132,24 +_,42 @@
        this.m_20256_(this.m_20184_().m_82520_(vec3.f_82479_, p_37252_.m_20096_() ? 0.0D : vec3.f_82480_, vec3.f_82481_));
     }
  
@@ -50,9 +50,33 @@
 +   // CraftBukkit end
 +
     protected void m_6532_(HitResult p_37260_) {
-       HitResult.Type hitresult$type = p_37260_.m_6662_();
-       if (hitresult$type == HitResult.Type.ENTITY) {
-@@ -150,6 +_,11 @@
+-      HitResult.Type hitresult$type = p_37260_.m_6662_();
+-      if (hitresult$type == HitResult.Type.ENTITY) {
+-         this.m_5790_((EntityHitResult)p_37260_);
+-         this.m_9236_().m_214171_(GameEvent.f_157777_, p_37260_.m_82450_(), GameEvent.Context.m_223719_(this, (BlockState)null));
+-      } else if (hitresult$type == HitResult.Type.BLOCK) {
+-         BlockHitResult blockhitresult = (BlockHitResult)p_37260_;
+-         this.m_8060_(blockhitresult);
+-         BlockPos blockpos = blockhitresult.m_82425_();
+-         this.m_9236_().m_220407_(GameEvent.f_157777_, blockpos, GameEvent.Context.m_223719_(this, this.m_9236_().m_8055_(blockpos)));
++      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_37260_);
++      this.hitCancelled = event != null && event.isCancelled();
++      if (p_37260_.m_6662_() == HitResult.Type.BLOCK || !this.hitCancelled) {
++         HitResult.Type hitresult$type = p_37260_.m_6662_();
++         if (hitresult$type == HitResult.Type.ENTITY) {
++            this.m_5790_((EntityHitResult) p_37260_);
++            this.m_9236_().m_214171_(GameEvent.f_157777_, p_37260_.m_82450_(), GameEvent.Context.m_223719_(this, (BlockState) null));
++         } else if (hitresult$type == HitResult.Type.BLOCK) {
++            BlockHitResult blockhitresult = (BlockHitResult) p_37260_;
++            this.m_8060_(blockhitresult);
++            BlockPos blockpos = blockhitresult.m_82425_();
++            this.m_9236_().m_220407_(GameEvent.f_157777_, blockpos, GameEvent.Context.m_223719_(this, this.m_9236_().m_8055_(blockpos)));
++         }
+       }
+-
+    }
+ 
+    protected void m_5790_(EntityHitResult p_37259_) {
     }
  
     protected void m_8060_(BlockHitResult p_37258_) {
