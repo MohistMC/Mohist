@@ -186,7 +186,7 @@ def sharedDeps = {
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
 
-    compileOnly "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}" // Mmohist TODO
+    compileOnly "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}" // Mohist TODO
     installer "org.ow2.asm:asm:${ASM_VERSION}"
     installer "org.ow2.asm:asm-commons:${ASM_VERSION}"
     installer "org.ow2.asm:asm-tree:${ASM_VERSION}"

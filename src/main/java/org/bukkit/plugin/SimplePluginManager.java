@@ -269,9 +269,9 @@ public final class SimplePluginManager implements PluginManager {
                             dependencies.remove(plugin);
 
                             server.getLogger().log(
-                                Level.SEVERE,
-                                MohistMC.i18n.as( "mohist.i18n.44", entry.getValue().getPath(),  directory.getPath(),
-                                new UnknownDependencyException(MohistMC.i18n.as("mohist.i18n.45",dependency, dependency ))));
+                                    Level.SEVERE,
+                                    MohistMC.i18n.as("mohist.i18n.44", directory.getPath(), entry.getValue().getPath()),
+                                    new UnknownDependencyException(MohistMC.i18n.as("mohist.i18n.45", dependency, dependency)));
                             break;
                         }
                     }
@@ -340,11 +340,11 @@ public final class SimplePluginManager implements PluginManager {
                                 loadedPlugins.add(loadedPlugin.getName());
                                 loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
                             } else {
-                                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.46", file.getPath(), directory.getPath()));
+                                server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.46", directory.getPath(), file.getPath()));
                             }
                             break;
                         } catch (InvalidPluginException ex) {
-                            server.getLogger().log(Level.SEVERE,MohistMC.i18n.as("mohist.i18n.47", file.getPath(), directory.getPath()), ex);
+                            server.getLogger().log(Level.SEVERE, MohistMC.i18n.as("mohist.i18n.47", directory.getPath(), file.getPath()), ex);
                         }
                     }
                 }
