@@ -1,4 +1,4 @@
-package com.destroystokyo.paper.event.player;
+package com.mohistmc.mohist.paper.event.player;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.Location;

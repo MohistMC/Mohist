@@ -16,13 +16,14 @@ public class ZipTree {
 
     public static void getFileContent(Object fileInPath) throws IOException {
         BufferedReader br = null;
-        if (fileInPath == null) {
-            return;
-        }
-        if (fileInPath instanceof String) {
-            br = new BufferedReader(new FileReader((String) fileInPath));
-        } else if (fileInPath instanceof InputStream) {
-            br = new BufferedReader(new InputStreamReader((InputStream) fileInPath));
+        switch (fileInPath) {
+            case null -> {
+                return;
+            }
+            case String s -> br = new BufferedReader(new FileReader(s));
+            case InputStream inputStream -> br = new BufferedReader(new InputStreamReader(inputStream));
+            default -> {
+            }
         }
         String line;
         while ((line = br.readLine()) != null) {

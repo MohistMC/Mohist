@@ -120,7 +120,7 @@ public class v_1_21_R1 {
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
                 if (!infoLines.isEmpty()) {
-                    storedServerMD5 = infoLines.get(0);
+                    storedServerMD5 = infoLines.getFirst();
                 }
                 if (infoLines.size() > 1) {
                     storedLzmaMD5 = infoLines.get(1);

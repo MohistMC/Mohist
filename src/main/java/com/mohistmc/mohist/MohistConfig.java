@@ -47,7 +47,7 @@ public class MohistConfig {
 
             Discord: https://discord.gg/mohistmc
             Forums: https://mohistmc.com/
-                        
+            
             """.split("\\n"));
     /*========================================================================*/
     public static YamlConfiguration config;

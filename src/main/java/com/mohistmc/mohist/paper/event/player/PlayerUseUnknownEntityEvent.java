@@ -1,4 +1,4 @@
-package com.destroystokyo.paper.event.player;
+package com.mohistmc.mohist.paper.event.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
