@@ -8,27 +8,53 @@ package net.minecraftforge.common.data;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.Tags.Fluids;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
-public final class ForgeFluidTagsProvider extends FluidTagsProvider
-{
-    public ForgeFluidTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper)
-    {
+import static net.minecraftforge.common.Tags.Fluids.*;
+
+@ApiStatus.Internal
+public final class ForgeFluidTagsProvider extends FluidTagsProvider {
+    public ForgeFluidTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, "forge", existingFileHelper);
     }
 
     @Override
-    public void addTags(HolderLookup.Provider lookupProvider)
-    {
-        tag(Fluids.MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
+    public void addTags(HolderLookup.Provider lookupProvider) {
+        tag(WATER).add(net.minecraft.world.level.material.Fluids.WATER).add(net.minecraft.world.level.material.Fluids.FLOWING_WATER);
+        tag(LAVA).add(net.minecraft.world.level.material.Fluids.LAVA).add(net.minecraft.world.level.material.Fluids.FLOWING_LAVA);
+        tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
+        tag(GASEOUS);
+        tag(HONEY);
+        tag(POTION);
+        tag(SUSPICIOUS_STEW);
+        tag(MUSHROOM_STEW);
+        tag(RABBIT_STEW);
+        tag(BEETROOT_SOUP);
+        tag(HIDDEN_FROM_RECIPE_VIEWERS);
+
+        // Backwards compat definitions for pre-1.21 legacy `forge:` tags.
+        // TODO: Remove backwards compat tag entries in 1.22
+        tag(forgeTagKey("milk"))
+                .addOptional(ForgeMod.MILK.getId())
+                .addOptional(ForgeMod.FLOWING_MILK.getId());
+    }
+
+    private static TagKey<Fluid> forgeTagKey(String path) {
+        return FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", path));
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Forge Fluid Tags";
     }
 }

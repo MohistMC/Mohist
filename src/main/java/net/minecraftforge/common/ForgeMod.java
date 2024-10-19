@@ -42,9 +42,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
+import net.minecraftforge.common.data.ForgeEnchantmentTagsProvider;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
+import net.minecraftforge.common.data.ForgeStructureTagsProvider;
 import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -387,12 +389,9 @@ public class ForgeMod {
             event.dataPackRegistry(ForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
             event.dataPackRegistry(ForgeRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
         });
-        modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
-        modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
-        modEventBus.register(this);
         for (DeferredRegister<?> r : registries) {
             r.register(modEventBus);
         }
@@ -421,14 +420,6 @@ public class ForgeMod {
         addAlias(ForgeRegistries.ATTRIBUTES, ResourceLocation.fromNamespaceAndPath("forge", "attack_range"), ResourceLocation.fromNamespaceAndPath("forge", "entity_reach"));
     }
 
-    public void preInit(FMLCommonSetupEvent evt) {
-        //VersionChecker.startVersionCheck();
-        //VanillaPacketSplitter.register();
-    }
-
-    public void loadComplete(FMLLoadCompleteEvent event) {
-    }
-
     public void serverStopping(ServerStoppingEvent evt) {
         WorldWorkerManager.clear();
     }
@@ -450,7 +441,7 @@ public class ForgeMod {
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
             .add(PackMetadataSection.TYPE, new PackMetadataSection(
                 Component.translatable("pack.forge.description"),
-                DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                DetectedVersion.BUILT_IN.getPackVersion(PackType.SERVER_DATA),
                 Optional.empty() //Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
             ))
         );
@@ -459,9 +450,11 @@ public class ForgeMod {
         gen.addProvider(event.includeServer(), new ForgeItemTagsProvider(packOutput, lookupProvider, blockTags.contentsGetter(), existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeFluidTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new ForgeEnchantmentTagsProvider(packOutput, lookupProvider, existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeRecipeProvider(packOutput, lookupProvider));
         gen.addProvider(event.includeServer(), new ForgeLootTableProvider(packOutput, lookupProvider));
         gen.addProvider(event.includeServer(), new ForgeBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new ForgeStructureTagsProvider(packOutput, lookupProvider, existingFileHelper));
 
         gen.addProvider(event.includeClient(), new ForgeSpriteSourceProvider(packOutput, existingFileHelper));
         gen.addProvider(event.includeClient(), new VanillaSoundDefinitionsProvider(packOutput, existingFileHelper));
@@ -543,7 +536,7 @@ public class ForgeMod {
     // net.minecraft.client.multiplayer.resolver.ServerRedirectHandler.createDnsSrvRedirectHandler uses DNSContextFactory
     // to resolve DNS records, and that is initialized reflectively by NamingManager. Which in module land isn't allowed.
     // So hack it so it is. this is equivalent to doing --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming
-    private void hackDNSResolver() {
+    private static void hackDNSResolver() {
         try {
             var target = Class.forName("com.sun.jndi.dns.DnsContextFactory");
             var reader = Class.forName("javax.naming.spi.NamingManager");
