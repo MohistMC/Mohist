@@ -1345,7 +1345,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean getKeepSpawnInMemory() {
-        return this.getGameRuleValue(GameRule.SPAWN_RADIUS) > 0;
+        return this.getGameRuleValue(GameRule.SPAWN_CHUNK_RADIUS) > 0;
     }
 
     @Override

@@ -904,8 +904,10 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         ItemEnchantments.Mutable list = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
 
-        for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-            list.set(CraftEnchantment.bukkitToMinecraftHolder(entry.getKey()), entry.getValue());
+        if (enchantments != null) {
+            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                list.set(CraftEnchantment.bukkitToMinecraftHolder(entry.getKey()), entry.getValue());
+            }
         }
 
         list.showInTooltip = !this.hasItemFlag(itemFlag);

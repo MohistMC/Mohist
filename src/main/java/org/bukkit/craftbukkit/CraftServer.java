@@ -388,6 +388,7 @@ public final class CraftServer implements Server {
         this.minimumAPI = ApiVersion.getOrCreateVersion(this.configuration.getString("settings.minimum-api"));
         this.loadIcon();
         loadCompatibilities();
+        CraftMagicNumbers.INSTANCE.getCommodore().updateReroute(activeCompatibilities::contains);
 
         // Set map color cache
         if (this.configuration.getBoolean("settings.use-map-color-cache")) {
