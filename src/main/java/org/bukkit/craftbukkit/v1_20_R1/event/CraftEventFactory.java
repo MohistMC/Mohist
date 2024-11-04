@@ -1277,12 +1277,12 @@ public class CraftEventFactory {
         // Paper end
     }
 
+    public static boolean alreadyProcessed;
     @Deprecated // Paper - use method that acknowledges title overrides
     public static AbstractContainerMenu callInventoryOpenEvent(ServerPlayer player, AbstractContainerMenu container, boolean cancelled) {
         // Paper start
         return callInventoryOpenEventWithTitle(player, container, cancelled).getSecond();
     }
-    public static boolean alreadyProcessed;
     public static com.mojang.datafixers.util.Pair<net.kyori.adventure.text.@org.jetbrains.annotations.Nullable Component, @org.jetbrains.annotations.Nullable AbstractContainerMenu> callInventoryOpenEventWithTitle(ServerPlayer player, AbstractContainerMenu container, boolean cancelled) {
         // Paper end
         if (player.containerMenu != player.inventoryMenu && !alreadyProcessed) { // fire INVENTORY_CLOSE if one already open
