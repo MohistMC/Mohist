@@ -447,6 +447,18 @@ public abstract class InventoryView {
         return getPlayer().setWindowProperty(prop, value);
     }
 
+    // Paper start
+    /**
+     * Get the title of this inventory window.
+     *
+     * @return The title.
+     */
+    @NotNull
+    public /*abstract*/ net.kyori.adventure.text.Component title() {
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(this.getTitle());
+    }
+    // Paper end
+
     /**
      * Get the title of this inventory window.
      *

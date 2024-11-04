@@ -1269,11 +1269,22 @@ public class CraftEventFactory {
     }
 
     public static AbstractContainerMenu callInventoryOpenEvent(ServerPlayer player, AbstractContainerMenu container) {
-        return callInventoryOpenEvent(player, container, false);
+        // Paper start
+        return callInventoryOpenEventWithTitle(player, container).getSecond();
+    }
+    public static com.mojang.datafixers.util.Pair<net.kyori.adventure.text.@org.jetbrains.annotations.Nullable Component, @org.jetbrains.annotations.Nullable AbstractContainerMenu> callInventoryOpenEventWithTitle(ServerPlayer player, AbstractContainerMenu container) {
+        return CraftEventFactory.callInventoryOpenEventWithTitle(player, container, false);
+        // Paper end
     }
 
-    public static boolean alreadyProcessed;
+    @Deprecated // Paper - use method that acknowledges title overrides
     public static AbstractContainerMenu callInventoryOpenEvent(ServerPlayer player, AbstractContainerMenu container, boolean cancelled) {
+        // Paper start
+        return callInventoryOpenEventWithTitle(player, container, cancelled).getSecond();
+    }
+    public static boolean alreadyProcessed;
+    public static com.mojang.datafixers.util.Pair<net.kyori.adventure.text.@org.jetbrains.annotations.Nullable Component, @org.jetbrains.annotations.Nullable AbstractContainerMenu> callInventoryOpenEventWithTitle(ServerPlayer player, AbstractContainerMenu container, boolean cancelled) {
+        // Paper end
         if (player.containerMenu != player.inventoryMenu && !alreadyProcessed) { // fire INVENTORY_CLOSE if one already open
             player.connection.handleContainerClose(new ServerboundContainerClosePacket(player.containerMenu.containerId));
             alreadyProcessed = false;
@@ -1289,10 +1300,10 @@ public class CraftEventFactory {
 
         if (event.isCancelled()) {
             container.transferTo(player.containerMenu, craftPlayer);
-            return null;
+            return com.mojang.datafixers.util.Pair.of(null, null); // Paper - title override
         }
 
-        return container;
+        return com.mojang.datafixers.util.Pair.of(event.titleOverride(), container); // Paper - title override
     }
 
     public static ItemStack callPreCraftEvent(Container matrix, Container resultInventory, ItemStack result, InventoryView lastCraftView, boolean isRepair) {

@@ -77,6 +77,13 @@ public class CraftInventoryView extends InventoryView {
         return CraftItemStack.asCraftMirror(container.getSlot(slot).getItem());
     }
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component title() {
+        return com.mohistmc.paper.adventure.PaperAdventure.asAdventure(this.container.getTitle()); // Mohist - Use Mohist's PaperAdventure
+    }
+    // Paper end
+
     @Override
     public String getTitle() {
         return title;

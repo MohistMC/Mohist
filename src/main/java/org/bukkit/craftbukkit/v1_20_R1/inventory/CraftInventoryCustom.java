@@ -41,6 +41,16 @@ public class CraftInventoryCustom extends CraftInventory {
         super(new MinecraftInventory(owner, items));
     }
 
+    // Paper start
+    public String getTitle() {
+        return ((MinecraftInventory) inventory).getTitle(); // Mohist - We don't have Paper's custom holder here
+    }
+
+    public net.kyori.adventure.text.Component title() {
+        return ((MinecraftInventory) inventory).title(); // Mohist - We don't have Paper's custom holder here
+    }
+    // Paper end
+
     static class MinecraftInventory implements Container {
         private final NonNullList<ItemStack> items;
         private int maxStack = MAX_STACK;

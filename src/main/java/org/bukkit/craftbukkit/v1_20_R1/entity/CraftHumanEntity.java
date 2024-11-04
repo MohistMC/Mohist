@@ -324,12 +324,19 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(windowType != null, "Unknown windowType");
         AbstractContainerMenu container = new CraftContainer(inventory, player, player.nextContainerCounterInt());
 
-        container = CraftEventFactory.callInventoryOpenEvent(player, container);
+        // Paper start
+        final com.mojang.datafixers.util.Pair<net.kyori.adventure.text.Component, AbstractContainerMenu> result = CraftEventFactory.callInventoryOpenEventWithTitle(player, container);
+        container = result.getSecond();
+        // Paper end
         if (container == null) return;
 
-        String title = container.getBukkitView().getTitle();
+        //String title = container.getBukkitView().getTitle(); // Paper - comment
+        net.kyori.adventure.text.Component adventure$title = container.getBukkitView().title(); // Paper
+        if (adventure$title == null) adventure$title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(container.getBukkitView().getTitle()); // Paper
+        if (result.getFirst() != null) adventure$title = result.getFirst(); // Paper
 
-        player.connection.send(new ClientboundOpenScreenPacket(container.containerId, windowType, CraftChatMessage.fromString(title)[0]));
+        //player.connection.send(new ClientboundOpenScreenPacket(container.containerId, windowType, CraftChatMessage.fromString(title)[0])); // Paper - comment
+        if (!player.isImmobile()) player.connection.send(new ClientboundOpenScreenPacket(container.containerId, windowType, com.mohistmc.paper.adventure.PaperAdventure.asVanilla(adventure$title))); // Paper // Mohist - Use Mohist's PaperAdventure
         player.containerMenu = container;
         player.initMenu(container);
     }
