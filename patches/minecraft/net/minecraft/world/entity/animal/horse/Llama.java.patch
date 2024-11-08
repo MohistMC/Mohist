@@ -15,3 +15,12 @@
        this.f_19804_.m_135381_(f_30745_, Math.max(1, Math.min(5, p_30841_)));
     }
  
+@@ -261,7 +_,7 @@
+       return SoundEvents.f_12097_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12095_;
+    }
+ 

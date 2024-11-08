@@ -129,6 +129,15 @@
                       }
  
                       return true;
+@@ -491,7 +_,7 @@
+ 
+    private void m_31653_(DamageSource p_31654_) {
+       this.m_31566_();
+-      this.m_6668_(p_31654_);
++      this.dropAllDeathLoot(p_31654_);
+ 
+       for(int i = 0; i < this.f_31538_.size(); ++i) {
+          ItemStack itemstack = this.f_31538_.get(i);
 @@ -592,7 +_,24 @@
        return this.m_31666_();
     }
@@ -170,5 +179,14 @@
 -   private void m_31681_(boolean p_31682_) {
 +   public void m_31681_(boolean p_31682_) {
        this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 16, p_31682_));
+    }
+ 
+@@ -727,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11681_;
     }
  

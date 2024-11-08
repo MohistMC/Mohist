@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/MagmaCube.java
 +++ b/net/minecraft/world/entity/monster/MagmaCube.java
-@@ -67,17 +_,28 @@
+@@ -67,19 +_,30 @@
        float f = (float)this.m_33632_() * 0.1F;
        this.m_20334_(vec3.f_82479_, (double)(this.m_6118_() + f), vec3.f_82481_);
        this.f_19812_ = true;
@@ -23,11 +23,22 @@
 +         onSuper.run();
        }
  
-+   }
-+
+    }
+ 
 +   @Override
 +   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
 +      this.jumpInLiquidInternal(() -> type == net.minecraftforge.common.ForgeMod.LAVA_TYPE.get(), () -> super.jumpInFluid(type));
++   }
++
+    protected boolean m_7483_() {
+       return this.m_21515_();
+    }
+@@ -92,7 +_,7 @@
+       return this.m_33633_() ? SoundEvents.f_12110_ : SoundEvents.f_12109_;
     }
  
-    protected boolean m_7483_() {
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return this.m_33633_() ? SoundEvents.f_12101_ : SoundEvents.f_12108_;
+    }
+ 

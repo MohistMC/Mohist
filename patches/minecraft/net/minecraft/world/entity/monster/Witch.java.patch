@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/monster/Witch.java
 +++ b/net/minecraft/world/entity/monster/Witch.java
+@@ -83,7 +_,7 @@
+       return SoundEvents.f_12552_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12550_;
+    }
+ 
 @@ -117,7 +_,7 @@
                    List<MobEffectInstance> list = PotionUtils.m_43547_(itemstack);
                    if (list != null) {

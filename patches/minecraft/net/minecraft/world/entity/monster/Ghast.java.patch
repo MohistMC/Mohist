@@ -1,5 +1,19 @@
 --- a/net/minecraft/world/entity/monster/Ghast.java
 +++ b/net/minecraft/world/entity/monster/Ghast.java
+@@ -105,11 +_,11 @@
+       return SoundEvents.f_11921_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11920_;
+    }
+ 
+-   protected float m_6121_() {
++   public float m_6121_() { // Mohist - PAIL protected -> public
+       return 5.0F;
+    }
+ 
 @@ -259,6 +_,8 @@
                    }
  

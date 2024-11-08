@@ -8,6 +8,24 @@
  
  public class Bat extends AmbientCreature {
     public static final float f_148698_ = 74.48451F;
+@@ -54,7 +_,7 @@
+       this.f_19804_.m_135372_(f_27407_, (byte)0);
+    }
+ 
+-   protected float m_6121_() {
++   public float m_6121_() { // Mohist - PAIL protected -> public
+       return 0.1F;
+    }
+ 
+@@ -71,7 +_,7 @@
+       return SoundEvents.f_11733_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11732_;
+    }
+ 
 @@ -125,16 +_,16 @@
                 this.f_20885_ = (float)this.f_19796_.m_188503_(360);
              }

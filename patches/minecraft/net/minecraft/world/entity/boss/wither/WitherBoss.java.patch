@@ -30,6 +30,15 @@
  
  public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob {
     private static final EntityDataAccessor<Integer> f_31420_ = SynchedEntityData.m_135353_(WitherBoss.class, EntityDataSerializers.f_135028_);
+@@ -134,7 +_,7 @@
+       return SoundEvents.f_12557_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12556_;
+    }
+ 
 @@ -219,14 +_,37 @@
           int k1 = this.m_31502_() - 1;
           this.f_31430_.m_142711_(1.0F - (float)k1 / 220.0F);

@@ -10,6 +10,15 @@
           this.m_146850_(GameEvent.f_157810_);
           this.f_28231_ = this.f_19796_.m_188503_(6000) + 6000;
        }
+@@ -112,7 +_,7 @@
+       return SoundEvents.f_11753_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11751_;
+    }
+ 
 @@ -152,7 +_,7 @@
        return this.m_28264_();
     }

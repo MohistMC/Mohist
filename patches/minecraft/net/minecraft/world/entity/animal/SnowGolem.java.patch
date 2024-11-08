@@ -69,7 +69,14 @@
        }
  
     }
-@@ -189,5 +_,22 @@
+@@ -183,11 +_,28 @@
+    }
+ 
+    @Nullable
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12477_;
+    }
  
     public Vec3 m_7939_() {
        return new Vec3(0.0D, (double)(0.75F * this.m_20192_()), (double)(this.m_20205_() * 0.4F));

@@ -36,6 +36,15 @@
              this.m_21053_(p_28357_);
              this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
              this.m_21508_(EquipmentSlot.MAINHAND);
+@@ -302,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11802_;
+    }
+ 
 @@ -445,7 +_,7 @@
        }
  

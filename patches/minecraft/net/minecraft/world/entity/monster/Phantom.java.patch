@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/monster/Phantom.java
 +++ b/net/minecraft/world/entity/monster/Phantom.java
+@@ -178,7 +_,7 @@
+       return SoundEvents.f_12231_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12229_;
+    }
+ 
+@@ -186,7 +_,7 @@
+       return MobType.f_21641_;
+    }
+ 
+-   protected float m_6121_() {
++   public float m_6121_() { // Mohist - PAIL protected -> public
+       return 1.0F;
+    }
+ 
 @@ -226,7 +_,7 @@
  
                 for(Player player : list) {

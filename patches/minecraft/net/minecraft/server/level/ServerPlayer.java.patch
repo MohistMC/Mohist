@@ -368,7 +368,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -563,16 +_,53 @@
+@@ -563,34 +_,79 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -384,6 +384,12 @@
        boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_);
 -      if (flag) {
 -         Component component = this.m_21231_().m_19293_();
+-         this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
+-            int i = 256;
+-            String s = component.m_130668_(256);
+-            Component component1 = Component.m_237110_("death.attack.message_too_long", Component.m_237113_(s).m_130940_(ChatFormatting.YELLOW));
+-            Component component2 = Component.m_237110_("death.attack.even_more_magic", this.m_5446_()).m_130938_((p_143420_) -> {
+-               return p_143420_.m_131144_(new HoverEvent(HoverEvent.Action.f_130831_, component1));
 +      // CraftBukkit start - fire PlayerDeathEvent
 +      if (this.m_213877_()) {
 +         return;
@@ -406,7 +412,16 @@
 +      String deathmessage = defaultMessage.getString();
 +
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-+      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
++      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, com.mohistmc.paper.adventure.PaperAdventure.asAdventure(defaultMessage), defaultMessage.getString(), keepInventory); // Paper - Adventure // Mohist - Mohist PaperAdventure
++      // Paper start - cancellable death event
++      if (event.isCancelled()) {
++         // make compatible with plugins that might have already set the health in an event listener
++         if (this.m_21223_() <= 0) {
++            this.m_21153_((float) event.getReviveHealth());
++         }
++         return;
++      }
++      // Paper end
 +
 +      // SPIGOT-943 - only call if they have an inventory open
 +      if (this.f_36096_ != this.f_36095_) {
@@ -414,17 +429,42 @@
 +         this.m_6915_();
 +      }
 +
-+      String deathMessage = event.getDeathMessage();
-+      if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
-+         Component component;
-+         if (deathMessage.equals(deathmessage)) {
-+            component = this.m_21231_().m_19293_();
-+         } else {
-+            component = CraftChatMessage.fromStringOrNull(deathMessage);
-+         }
-          this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
-             int i = 256;
-             String s = component.m_130668_(256);
++      net.kyori.adventure.text.Component deathMessage = event.deathMessage() != null ? event.deathMessage() : net.kyori.adventure.text.Component.empty(); // Paper - Adventure
++
++      if (deathMessage != null && deathMessage != net.kyori.adventure.text.Component.empty() && flag) { // Paper - Adventure // TODO: allow plugins to override?
++         Component ichatbasecomponent = com.mohistmc.paper.adventure.PaperAdventure.asVanilla(deathMessage); // Paper - Adventure // Mohist - Mohist PaperAdventure
++
++         this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), ichatbasecomponent), PacketSendListener.m_243073_(() -> {
++            boolean flag1 = true;
++            String s = ichatbasecomponent.m_130668_(256);
++            net.minecraft.network.chat.MutableComponent ichatmutablecomponent = Component.m_237110_("death.attack.message_too_long", Component.m_237113_(s).m_130940_(ChatFormatting.YELLOW));
++            net.minecraft.network.chat.MutableComponent ichatmutablecomponent1 = Component.m_237110_("death.attack.even_more_magic", this.m_5446_()).m_130938_((chatmodifier) -> {
++               return chatmodifier.m_131144_(new HoverEvent(HoverEvent.Action.f_130831_, ichatmutablecomponent));
+             });
+-            return new ClientboundPlayerCombatKillPacket(this.m_19879_(), component2);
++
++            return new ClientboundPlayerCombatKillPacket(this.m_19879_(), ichatmutablecomponent1);
+          }));
+-         Team team = this.m_5647_();
+-         if (team != null && team.m_7468_() != Team.Visibility.ALWAYS) {
+-            if (team.m_7468_() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
+-               this.f_8924_.m_6846_().m_215621_(this, component);
+-            } else if (team.m_7468_() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
+-               this.f_8924_.m_6846_().m_215649_(this, component);
++         Team scoreboardteambase = this.m_5647_();
++
++         if (scoreboardteambase != null && scoreboardteambase.m_7468_() != Team.Visibility.ALWAYS) {
++            if (scoreboardteambase.m_7468_() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
++               this.f_8924_.m_6846_().m_215621_(this, ichatbasecomponent);
++            } else if (scoreboardteambase.m_7468_() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
++               this.f_8924_.m_6846_().m_215649_(this, ichatbasecomponent);
+             }
+          } else {
+-            this.f_8924_.m_6846_().m_240416_(component, false);
++            this.f_8924_.m_6846_().m_240416_(ichatbasecomponent, false);
+          }
+       } else {
+          this.f_8906_.m_9829_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), CommonComponents.f_237098_));
 @@ -601,11 +_,16 @@
           this.m_9215_();
        }
@@ -433,7 +473,7 @@
 -         this.m_6668_(p_9035_);
 +      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
 +      if (!event.getKeepInventory()) {
-+         m_6668_(p_9035_);
++         dropAllDeathLoot(p_9035_);
        }
  
 -      this.m_36329_().m_83427_(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);

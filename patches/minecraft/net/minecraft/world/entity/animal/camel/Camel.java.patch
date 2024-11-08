@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
+@@ -298,7 +_,7 @@
+       return SoundEvents.f_243764_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_243972_;
+    }
+ 
 @@ -307,7 +_,7 @@
     }
  

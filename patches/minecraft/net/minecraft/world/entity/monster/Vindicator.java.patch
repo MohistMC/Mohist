@@ -9,3 +9,12 @@
  
     public Vindicator(EntityType<? extends Vindicator> p_34074_, Level p_34075_) {
        super(p_34074_, p_34075_);
+@@ -155,7 +_,7 @@
+       return SoundEvents.f_12576_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12578_;
+    }
+ 

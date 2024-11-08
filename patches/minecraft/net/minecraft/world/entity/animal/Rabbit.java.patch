@@ -25,6 +25,15 @@
        this.f_21345_.m_25352_(1, new FloatGoal(this));
        this.f_21345_.m_25352_(1, new ClimbOnTopOfPowderSnowGoal(this, this.m_9236_()));
        this.f_21345_.m_25352_(1, new Rabbit.RabbitPanicGoal(this, 2.2D));
+@@ -287,7 +_,7 @@
+       return SoundEvents.f_12353_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_12352_;
+    }
+ 
 @@ -524,7 +_,7 @@
  
        public boolean m_8036_() {

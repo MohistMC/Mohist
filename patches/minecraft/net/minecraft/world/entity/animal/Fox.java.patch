@@ -19,12 +19,27 @@
           int i = itemstack.m_41613_();
           if (i > 1) {
              this.m_28605_(itemstack.m_41620_(i - 1));
-@@ -653,13 +_,16 @@
+@@ -644,7 +_,7 @@
     }
  
-    protected void m_6668_(DamageSource p_28536_) {
-+      super.m_6668_(p_28536_);
+    @Nullable
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11946_;
+    }
+ 
+@@ -652,14 +_,21 @@
+       return this.m_28566_().contains(p_28530_);
+    }
+ 
+-   protected void m_6668_(DamageSource p_28536_) {
++   // Mohist start - Incompatible signature change, unnecessary override
++   /*
++   protected void dropAllDeathLoot(DamageSource p_28536_) {
++      super.dropAllDeathLoot(p_28536_);
 +   }
++   */
++   // Mohist end
 +   protected void m_5907_() { // Forge: move extra drops to dropEquipment to allow them to be captured by LivingDropsEvent
 +      super.m_5907_();
        ItemStack itemstack = this.m_6844_(EquipmentSlot.MAINHAND);

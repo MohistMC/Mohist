@@ -28,6 +28,15 @@
        }
  
     }
+@@ -158,7 +_,7 @@
+       return SoundEvents.f_11836_;
+    }
+ 
+-   protected SoundEvent m_5592_() {
++   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
+       return SoundEvents.f_11835_;
+    }
+ 
 @@ -196,9 +_,19 @@
  
     public void m_8038_(ServerLevel p_32286_, LightningBolt p_32287_) {
