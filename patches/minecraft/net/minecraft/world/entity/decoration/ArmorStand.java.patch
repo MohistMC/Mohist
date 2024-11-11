@@ -120,24 +120,50 @@
              if (p_31579_.m_269533_(DamageTypeTags.f_268415_)) {
                 this.m_31653_(p_31579_);
                 this.m_6074_();
-@@ -422,7 +_,7 @@
+@@ -422,7 +_,11 @@
                       } else {
                          this.m_31646_(p_31579_);
                          this.m_31565_();
 -                        this.m_6074_();
-+                        this.m_146870_(); // CraftBukkit - SPIGOT-4890: remain as this.discard() since above damagesource method will call death event
++                        // Mohist start - Paper's cancellable death event
++                        org.bukkit.event.entity.EntityDeathEvent deathEvent = mohist$lastDeathEvent;
++                        mohist$lastDeathEvent = null;
++                        if (!deathEvent.isCancelled()) this.m_146870_(); // CraftBukkit - SPIGOT-4890: remain as this.discard() since above damagesource method will call death event
++                        // Mohist end
                       }
  
                       return true;
+@@ -471,7 +_,11 @@
+       f -= p_31650_;
+       if (f <= 0.5F) {
+          this.m_31653_(p_31649_);
+-         this.m_6074_();
++         // Mohist start - Paper's cancellable death event
++         org.bukkit.event.entity.EntityDeathEvent event = mohist$lastDeathEvent;
++         mohist$lastDeathEvent = null;
++         if (!event.isCancelled()) this.m_6074_();
++         // Mohist end
+       } else {
+          this.m_21153_(f);
+          this.m_146852_(GameEvent.f_223706_, p_31649_.m_7639_());
 @@ -491,7 +_,7 @@
  
     private void m_31653_(DamageSource p_31654_) {
        this.m_31566_();
 -      this.m_6668_(p_31654_);
-+      this.dropAllDeathLoot(p_31654_);
++      // this.dropAllDeathLoot(p_31654_); // CraftBukkit - moved down
  
        for(int i = 0; i < this.f_31538_.size(); ++i) {
           ItemStack itemstack = this.f_31538_.get(i);
+@@ -508,7 +_,7 @@
+             this.f_31539_.set(j, ItemStack.f_41583_);
+          }
+       }
+-
++      this.m_6668_(p_31654_); // CraftBukkit - moved from above
+    }
+ 
+    private void m_31566_() {
 @@ -592,7 +_,24 @@
        return this.m_31666_();
     }

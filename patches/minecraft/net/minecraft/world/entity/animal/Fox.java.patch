@@ -28,18 +28,33 @@
        return SoundEvents.f_11946_;
     }
  
-@@ -652,14 +_,21 @@
+@@ -652,14 +_,37 @@
        return this.m_28566_().contains(p_28530_);
     }
  
--   protected void m_6668_(DamageSource p_28536_) {
-+   // Mohist start - Incompatible signature change, unnecessary override
-+   /*
-+   protected void dropAllDeathLoot(DamageSource p_28536_) {
-+      super.dropAllDeathLoot(p_28536_);
++   @Override
++   // Paper start - Cancellable death event
+    protected void m_6668_(DamageSource p_28536_) {
++      ItemStack itemstack = this.m_6844_(EquipmentSlot.MAINHAND).m_41777_(); // Paper - modified by supercall
++
++      super.m_6668_(p_28536_); // Mohist - moved from down as Paper does
++      org.bukkit.event.entity.EntityDeathEvent deathEvent;
++      deathEvent = mohist$lastDeathEvent;
++
++      // Below is code to drop
++
++      if (deathEvent == null || deathEvent.isCancelled()) {
++         return; // Mohist - For better mod compatibility
++      }
++      // Paper end
++
++      if (!itemstack.m_41619_()) {
++         this.m_19983_(itemstack);
++         this.m_8061_(EquipmentSlot.MAINHAND, ItemStack.f_41583_);
++      }
++
++      // super.dropAllDeathLoot(p_28536_); // Mohist - moved up
 +   }
-+   */
-+   // Mohist end
 +   protected void m_5907_() { // Forge: move extra drops to dropEquipment to allow them to be captured by LivingDropsEvent
 +      super.m_5907_();
        ItemStack itemstack = this.m_6844_(EquipmentSlot.MAINHAND);

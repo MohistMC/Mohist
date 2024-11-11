@@ -751,31 +751,106 @@
        }
     }
  
-@@ -1278,6 +_,7 @@
+@@ -1278,36 +_,79 @@
     }
  
     public void m_6667_(DamageSource p_21014_) {
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_21014_)) return;
        if (!this.m_213877_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
-          LivingEntity livingentity = this.m_21232_();
-@@ -1290,7 +_,7 @@
-          }
- 
-          if (!this.m_9236_().f_46443_ && this.m_8077_()) {
+-         LivingEntity livingentity = this.m_21232_();
+-         if (this.f_20897_ >= 0 && livingentity != null) {
+-            livingentity.m_5993_(this, this.f_20897_, p_21014_);
+-         }
+-
+-         if (this.m_5803_()) {
+-            this.m_5796_();
+-         }
+-
+-         if (!this.m_9236_().f_46443_ && this.m_8077_()) {
 -            f_201943_.info("Named entity {} died: {}", this, this.m_21231_().m_19293_().getString());
-+            if (org.spigotmc.SpigotConfig.logNamedDeaths) f_201943_.info("Named entity {} died: {}", this, this.m_21231_().m_19293_().getString());
-          }
+-         }
++         LivingEntity entityliving = this.m_21232_();
++            /* // Paper - move down to make death event cancellable - this is the awardKillScore below
++            if (this.deathScore >= 0 && entityliving != null) {
++                entityliving.awardKillScore(this, this.deathScore, p_21014_);
++            }
++
++            if (this.isSleeping()) {
++                this.stopSleeping();
++            }
++
++            if (!this.level().isClientSide && this.hasCustomName()) {
++                if (org.spigotmc.SpigotConfig.logNamedDeaths) LivingEntity.LOGGER.info("Named entity {} died: {}", this, this.getCombatTracker().getDeathMessage().getString()); // Spigot
++            }
++             */ // Paper - move down to make death event cancellable - this is the awardKillScore below
  
           this.f_20890_ = true;
-@@ -1300,7 +_,7 @@
-             ServerLevel serverlevel = (ServerLevel)level;
-             if (entity == null || entity.m_214076_(serverlevel, this)) {
+-         this.m_21231_().m_19296_();
+-         Level level = this.m_9236_();
+-         if (level instanceof ServerLevel) {
+-            ServerLevel serverlevel = (ServerLevel)level;
+-            if (entity == null || entity.m_214076_(serverlevel, this)) {
++         // Paper - moved into if below
++         Level world = this.m_9236_();
++
++         if (world instanceof ServerLevel) {
++            ServerLevel worldserver = (ServerLevel) world;
++            // Paper - move below into if for onKill
++
++            // Paper start
++            this.m_6668_(p_21014_);
++            // Mohist start - For better mod compatibility
++            org.bukkit.event.entity.EntityDeathEvent deathEvent = mohist$lastDeathEvent;
++            mohist$lastDeathEvent = null;
++            // Mohist end
++            if (deathEvent == null || !deathEvent.isCancelled()) {
++               // if (this.deathScore >= 0 && entityliving != null) { // Paper moved to be run earlier in #dropAllDeathLoot before destroying the drop items in CraftEventFactory#callEntityDeathEvent
++               //     entityliving.awardKillScore(this, this.deathScore, p_21014_);
++               // }
++               // Paper start - clear equipment if event is not cancelled
++               if (this instanceof Mob) {
++                  for (EquipmentSlot slot : this.clearedEquipmentSlots) {
++                     this.m_8061_(slot, ItemStack.f_41583_);
++                  }
++                  this.clearedEquipmentSlots.clear();
++               }
++               // Paper end
++
++               if (this.m_5803_()) {
++                  this.m_5796_();
++               }
++
++               if (!this.m_9236_().f_46443_ && this.m_8077_()) {
++                  if (org.spigotmc.SpigotConfig.logNamedDeaths) LivingEntity.f_201943_.info("Named entity {} died: {}", this, this.m_21231_().m_19293_().getString()); // Spigot
++               }
++
++               this.m_21231_().m_19296_();
++               if (entity != null) {
++                  entity.m_214076_((ServerLevel) this.m_9236_(), this);
++               }
                 this.m_146850_(GameEvent.f_223707_);
 -               this.m_6668_(p_21014_);
-+               this.dropAllDeathLoot(p_21014_);
-                this.m_21268_(livingentity);
+-               this.m_21268_(livingentity);
++            } else {
++               this.f_20890_ = false;
++               this.m_21153_((float) deathEvent.getReviveHealth());
              }
+ 
+-            this.m_9236_().m_7605_(this, (byte)3);
++            // Paper end
++            this.m_21268_(entityliving);
+          }
+ 
+-         this.m_20124_(Pose.DYING);
++         // Paper start
++         if (this.f_20890_) { // Paper
++            this.m_9236_().m_7605_(this, (byte) 3);
++            this.m_20124_(Pose.DYING);
++         }
++         // Paper end
+       }
+    }
  
 @@ -1315,17 +_,26 @@
        if (!this.m_9236_().f_46443_) {
@@ -808,47 +883,44 @@
                 this.m_9236_().m_7967_(itementity);
              }
           }
-@@ -1333,31 +_,70 @@
+@@ -1333,31 +_,71 @@
        }
     }
  
--   protected void m_6668_(DamageSource p_21192_) {
--      Entity entity = p_21192_.m_7639_();
++   // Paper start
++   protected boolean clearEquipmentSlots = true;
++   protected Set<EquipmentSlot> clearedEquipmentSlots = new java.util.HashSet<>();
++   protected @org.jetbrains.annotations.Nullable org.bukkit.event.entity.EntityDeathEvent mohist$lastDeathEvent; // Mohist - For better mod compatibility
+    protected void m_6668_(DamageSource p_21192_) {
++      // Paper end
+       Entity entity = p_21192_.m_7639_();
 -      int i;
 -      if (entity instanceof Player) {
 -         i = EnchantmentHelper.m_44930_((LivingEntity)entity);
 -      } else {
 -         i = 0;
 -      }
-+   // Paper start
-+   protected boolean clearEquipmentSlots = true;
-+   protected Set<EquipmentSlot> clearedEquipmentSlots = new java.util.HashSet<>();
-+   protected org.bukkit.event.entity.EntityDeathEvent dropAllDeathLoot(DamageSource source) {
-+      // Paper end
-+      Entity entity = source.m_7639_();
-+      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, source);
++      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_21192_);
 +      this.captureDrops(new java.util.ArrayList<>());
  
        boolean flag = this.f_20889_ > 0;
 +
 +      this.m_5907_(); // CraftBukkit - from below
        if (this.m_6125_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_)) {
--         this.m_7625_(p_21192_, flag);
--         this.m_7472_(p_21192_, i, flag);
-+         this.m_7625_(source, flag);
+          this.m_7625_(p_21192_, flag);
 +         // Paper start
 +         final boolean prev = this.clearEquipmentSlots;
 +         this.clearEquipmentSlots = false;
 +         this.clearedEquipmentSlots.clear();
 +         // Paper end
-+         this.m_7472_(source, i, flag);
+          this.m_7472_(p_21192_, i, flag);
 +         this.clearEquipmentSlots = prev; // Paper
        }
 +      // CraftBukkit start - Call death event // Paper start - call advancement triggers with correct entity equipment
 +      org.bukkit.event.entity.EntityDeathEvent deathEvent = CraftEventFactory.callEntityDeathEvent(this, this.drops, () -> {
 +         final LivingEntity entityliving = this.m_21232_();
 +         if (this.f_20897_ >= 0 && entityliving != null) {
-+            entityliving.m_5993_(this, this.f_20897_, source);
++            entityliving.m_5993_(this, this.f_20897_, p_21192_);
 +         }
 +      }); // Paper end
 +      this.postDeathDropItems(deathEvent); // Paper
@@ -861,10 +933,10 @@
 +
 +      // Forge start
 +      Collection<ItemEntity> drops = captureDrops(null);
-+      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, source, drops, i, f_20889_ > 0))
++      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_21192_, drops, i, f_20889_ > 0))
 +         drops.forEach(e -> m_9236_().m_7967_(e));
 +      // Forge end
-+      return deathEvent; // Paper
++      mohist$lastDeathEvent = deathEvent; // Mohist - Use alternative way to pass the event out
     }
  
     protected void m_5907_() {
