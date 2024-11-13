@@ -16,12 +16,3 @@
        if (!this.m_20067_()) {
           this.m_9236_().m_5898_((Player)null, 1048, this.m_20183_(), 0);
        }
-@@ -102,7 +_,7 @@
-       return SoundEvents.f_12381_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12424_;
-    }
- 

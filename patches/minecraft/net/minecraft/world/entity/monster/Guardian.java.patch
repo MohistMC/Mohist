@@ -17,15 +17,6 @@
        this.f_19804_.m_135381_(f_32807_, p_32818_);
     }
  
-@@ -169,7 +_,7 @@
-       return this.m_20072_() ? SoundEvents.f_12005_ : SoundEvents.f_12006_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return this.m_20072_() ? SoundEvents.f_12002_ : SoundEvents.f_12003_;
-    }
- 
 @@ -335,9 +_,9 @@
  
     }

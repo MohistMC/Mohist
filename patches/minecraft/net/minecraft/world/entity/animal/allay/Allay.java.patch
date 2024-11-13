@@ -29,20 +29,6 @@
     protected Brain.Provider<Allay> m_5490_() {
        return Brain.m_21923_(f_218301_, f_218297_);
     }
-@@ -186,11 +_,11 @@
-       return SoundEvents.f_215675_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_215672_;
-    }
- 
--   protected float m_6121_() {
-+   public float m_6121_() { // Mohist - PAIL protected -> public
-       return 0.4F;
-    }
- 
 @@ -207,7 +_,7 @@
     public void m_8107_() {
        super.m_8107_();

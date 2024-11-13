@@ -39,15 +39,6 @@
           if (itementity != null) {
              itementity.m_20256_(itementity.m_20184_().m_82520_((double)((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F), (double)(this.f_19796_.m_188501_() * 0.05F), (double)((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F)));
           }
-@@ -287,7 +_,7 @@
-       return SoundEvents.f_12343_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12342_;
-    }
- 
 @@ -344,6 +_,12 @@
     }
  

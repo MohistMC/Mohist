@@ -18,15 +18,6 @@
           this.m_21053_(p_29121_);
           ItemStack itemstack = p_29121_.m_32055_();
           this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
-@@ -651,7 +_,7 @@
-    }
- 
-    @Nullable
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12180_;
-    }
- 
 @@ -828,7 +_,7 @@
  
        protected void m_5766_(Mob p_29295_, LivingEntity p_29296_) {

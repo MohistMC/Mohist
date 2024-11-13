@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Evoker.java
 +++ b/net/minecraft/world/entity/monster/Evoker.java
-@@ -108,7 +_,7 @@
-       return SoundEvents.f_11861_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_11864_;
-    }
- 
 @@ -248,6 +_,7 @@
                 vex.m_33994_(Evoker.this);
                 vex.m_34033_(blockpos);

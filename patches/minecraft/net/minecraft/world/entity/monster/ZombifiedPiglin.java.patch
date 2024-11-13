@@ -49,12 +49,3 @@
     }
  
     public static boolean m_219173_(EntityType<ZombifiedPiglin> p_219174_, LevelAccessor p_219175_, MobSpawnType p_219176_, BlockPos p_219177_, RandomSource p_219178_) {
-@@ -203,7 +_,7 @@
-       return SoundEvents.f_12613_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12612_;
-    }
- 

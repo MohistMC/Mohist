@@ -1,19 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -163,11 +_,11 @@
-       return SoundEvents.f_12621_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12618_;
-    }
- 
--   protected float m_6121_() {
-+   public float m_6121_() { // Mohist - PAIL protected -> public
-       return 0.4F;
-    }
- 
 @@ -283,15 +_,19 @@
           return false;
        } else {

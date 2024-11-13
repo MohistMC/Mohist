@@ -9,12 +9,3 @@
           return AbstractIllager.IllagerArmPose.CROSSBOW_HOLD;
        } else {
           return this.m_5912_() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;
-@@ -170,7 +_,7 @@
-       return SoundEvents.f_12307_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12309_;
-    }
- 

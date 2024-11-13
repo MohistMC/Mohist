@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/animal/frog/Tadpole.java
 +++ b/net/minecraft/world/entity/animal/frog/Tadpole.java
-@@ -113,7 +_,7 @@
-    }
- 
-    @Nullable
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_215758_;
-    }
- 
 @@ -208,7 +_,14 @@
              }
  

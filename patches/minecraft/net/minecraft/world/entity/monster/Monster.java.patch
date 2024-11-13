@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Monster.java
 +++ b/net/minecraft/world/entity/monster/Monster.java
-@@ -66,7 +_,7 @@
-       return SoundEvents.f_12039_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12038_;
-    }
- 
 @@ -121,9 +_,9 @@
        if (p_33038_.m_41720_() instanceof ProjectileWeaponItem) {
           Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_33038_.m_41720_()).m_6442_();

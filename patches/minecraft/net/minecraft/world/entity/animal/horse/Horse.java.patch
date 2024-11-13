@@ -9,7 +9,7 @@
        this.m_30736_(p_30700_.m_30985_() & 255 | p_30701_.m_30869_() << 8 & '\uff00');
     }
  
-@@ -144,13 +_,15 @@
+@@ -144,6 +_,8 @@
           this.m_5496_(SoundEvents.f_11974_, p_30709_.m_56773_() * 0.6F, p_30709_.m_56774_());
        }
  
@@ -18,11 +18,3 @@
     }
  
     protected SoundEvent m_7515_() {
-       return SoundEvents.f_11971_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_11975_;
-    }
- 

@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Spider.java
 +++ b/net/minecraft/world/entity/monster/Spider.java
-@@ -95,7 +_,7 @@
-       return SoundEvents.f_12434_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_12433_;
-    }
- 
 @@ -119,7 +_,12 @@
     }
  

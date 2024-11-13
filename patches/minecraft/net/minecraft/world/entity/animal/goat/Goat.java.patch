@@ -20,15 +20,6 @@
     private boolean f_149348_;
     private int f_149349_;
  
-@@ -116,7 +_,7 @@
-       return this.m_149397_() ? SoundEvents.f_144146_ : SoundEvents.f_144166_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return this.m_149397_() ? SoundEvents.f_144172_ : SoundEvents.f_144164_;
-    }
- 
 @@ -192,8 +_,15 @@
     public InteractionResult m_6071_(Player p_149379_, InteractionHand p_149380_) {
        ItemStack itemstack = p_149379_.m_21120_(p_149380_);

@@ -8,15 +8,6 @@
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.level.Level;
-@@ -48,7 +_,7 @@
-       return this.m_20072_() ? SoundEvents.f_11884_ : SoundEvents.f_11885_;
-    }
- 
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return this.m_20072_() ? SoundEvents.f_11881_ : SoundEvents.f_11882_;
-    }
- 
 @@ -60,7 +_,8 @@
        super.m_8024_();
        if ((this.f_19797_ + this.m_19879_()) % 1200 == 0) {
