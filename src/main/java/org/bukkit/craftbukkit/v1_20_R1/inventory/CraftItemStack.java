@@ -28,12 +28,19 @@ import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.ENCHANTMEN
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
 
+    // Paper start - override isEmpty to use vanilla's impl
+    @Override
+    public boolean isEmpty() {
+        return handle == null || handle.isEmpty();
+    }
+    // Paper end
+
     public static net.minecraft.world.item.ItemStack asNMSCopy(ItemStack original) {
         if (original instanceof CraftItemStack) {
             CraftItemStack stack = (CraftItemStack) original;
             return stack.handle == null ? net.minecraft.world.item.ItemStack.EMPTY : stack.handle.copy();
         }
-        if (original == null || original.getType() == Material.AIR) {
+        if (original == null || original.isEmpty()) { // Paper - use isEmpty
             return net.minecraft.world.item.ItemStack.EMPTY;
         }
 
@@ -177,6 +184,13 @@ public final class CraftItemStack extends ItemStack {
     public int getMaxStackSize() {
         return (handle == null) ? Material.AIR.getMaxStackSize() : handle.getItem().getMaxStackSize();
     }
+
+    // Paper start
+    @Override
+    public int getMaxItemUseDuration() {
+        return handle == null ? 0 : handle.getUseDuration();
+    }
+    // Paper end
 
     @Override
     public void addUnsafeEnchantment(Enchantment ench, int level) {
