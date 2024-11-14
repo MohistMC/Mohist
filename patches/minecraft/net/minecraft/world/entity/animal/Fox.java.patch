@@ -19,15 +19,7 @@
           int i = itemstack.m_41613_();
           if (i > 1) {
              this.m_28605_(itemstack.m_41620_(i - 1));
-@@ -644,7 +_,7 @@
-    }
- 
-    @Nullable
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_11946_;
-    }
- 
+
 @@ -652,14 +_,37 @@
        return this.m_28566_().contains(p_28530_);
     }

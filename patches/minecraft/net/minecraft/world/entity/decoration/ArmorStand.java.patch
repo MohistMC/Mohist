@@ -206,13 +206,3 @@
 +   public void m_31681_(boolean p_31682_) {
        this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 16, p_31682_));
     }
- 
-@@ -727,7 +_,7 @@
-    }
- 
-    @Nullable
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_11681_;
-    }
- 

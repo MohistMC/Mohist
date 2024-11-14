@@ -975,15 +975,7 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
-@@ -1404,7 +_,7 @@
-    }
- 
-    @Nullable
--   protected SoundEvent m_5592_() {
-+   public SoundEvent m_5592_() { // Mohist - PAIL protected -> public
-       return SoundEvents.f_11910_;
-    }
- 
+
 @@ -1445,6 +_,36 @@
        return p_21202_.m_41616_();
     }
@@ -1453,15 +1445,7 @@
     public abstract void m_8061_(EquipmentSlot p_21036_, ItemStack p_21037_);
  
     protected void m_181122_(ItemStack p_181123_) {
-@@ -1901,7 +_,7 @@
- 
-    }
- 
--   protected float m_6121_() {
-+   public float m_6121_() { // Mohist - PAIL protected -> public
-       return 1.0F;
-    }
- 
+
 @@ -1955,14 +_,17 @@
        }
  
