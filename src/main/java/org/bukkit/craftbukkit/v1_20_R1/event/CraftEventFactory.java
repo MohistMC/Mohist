@@ -929,10 +929,10 @@ public class CraftEventFactory {
     private static void populateFields(net.minecraft.world.entity.LivingEntity victim, EntityDeathEvent event) {
         event.setReviveHealth(event.getEntity().getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue());
         event.setShouldPlayDeathSound(!victim.silentDeath && !victim.isSilent());
-        net.minecraft.sounds.SoundEvent soundEffect = victim.getDeathSound();
+        net.minecraft.sounds.SoundEvent soundEffect = victim.getDeathSound0(); // Mohist - use delegate to avoid a lot of AT
         event.setDeathSound(soundEffect != null ? org.bukkit.craftbukkit.v1_20_R1.CraftSound.getBukkit(soundEffect) : null);
         event.setDeathSoundCategory(org.bukkit.SoundCategory.valueOf(victim.getSoundSource().name()));
-        event.setDeathSoundVolume(victim.getSoundVolume());
+        event.setDeathSoundVolume(victim.getSoundVolume0()); // Mohist - use delegate to avoid a lot of AT
         event.setDeathSoundPitch(victim.getVoicePitch());
     }
 

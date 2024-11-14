@@ -975,7 +975,6 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
-
 @@ -1445,6 +_,36 @@
        return p_21202_.m_41616_();
     }
@@ -1445,7 +1444,15 @@
     public abstract void m_8061_(EquipmentSlot p_21036_, ItemStack p_21037_);
  
     protected void m_181122_(ItemStack p_181123_) {
-
+@@ -1905,6 +_,8 @@
+       return 1.0F;
+    }
+ 
++   public float getSoundVolume0() { return m_6121_(); } // Mohist - avoid a lot of AT
++
+    public float m_6100_() {
+       return this.m_6162_() ? (this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.2F + 1.5F : (this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.2F + 1.0F;
+    }
 @@ -1955,14 +_,17 @@
        }
  
