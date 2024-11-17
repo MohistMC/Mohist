@@ -1009,7 +1009,7 @@
           this.m_36397_(p_9016_.m_36344_());
        }
  
-@@ -1135,6 +_,15 @@
+@@ -1135,6 +_,16 @@
        this.m_36362_(p_9016_.m_36331_());
        this.m_36364_(p_9016_.m_36332_());
        this.m_219749_(p_9016_.m_219759_());
@@ -1022,6 +1022,7 @@
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
 +      this.tabListHeader = p_9016_.tabListHeader;
 +      this.tabListFooter = p_9016_.tabListFooter;
++      this.language = p_9016_.language; // Mohist - Language not synchronized when respawn
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
