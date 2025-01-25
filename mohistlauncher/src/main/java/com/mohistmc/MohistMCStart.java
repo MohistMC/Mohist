@@ -49,7 +49,15 @@ public class MohistMCStart {
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
     }
+    public static boolean isJavaSupported() {
+        //1.20.1 needs JRE 17 or above. Because sun.misc.unsafe was removed in JRE 23, Mohist can't start with JRE 23.
+        //See github issue #3490: https://github.com/MohistMC/Mohist/issues/3490 AND JEP 471: https://openjdk.org/jeps/471
+        String javaVersion = System.getProperty("java.version");
+        String[] versionParts = javaVersion.split("\\.");
+        int majorVersion = Integer.parseInt(versionParts[1]);
 
+        return majorVersion >= 17 && majorVersion < 23;
+    }
     public static void main(String[] args) throws Exception {
         mainArgs.addAll(List.of(args));
         jarTool = new JarTool(MohistMCStart.class);
@@ -69,6 +77,9 @@ public class MohistMCStart {
                     System.getProperty("java.version"),
                     ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
             );
+            if (!isJavaSupported()) {
+                System.out.println("Your Java Version is not supported. Please use Java version between 17 and 22.");
+            }
             if (i18n.isCN()) {
                 System.out.printf("官方交流QQ群: 570870451%n");
                 System.out.printf("官网(中国)已开放: https://www.mohistmc.cn/%n");
