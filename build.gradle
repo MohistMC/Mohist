@@ -1,4 +1,4 @@
-import com.mohistmc.tasks.JenkinsNumber
+import com.mohistmc.tasks.BuildNumber
 import net.minecraftforge.forge.tasks.*
 import net.minecraftforge.forge.tasks.checks.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
@@ -39,7 +39,7 @@ ext {
     GIT_INFO = gradleutils.gitInfo
     VERSION = MC_VERSION + "-" + project.forge_version
     FORGE_VERSION = project.forge_version
-    MOHIST_VERSION = JenkinsNumber.info()
+    MOHIST_VERSION = BuildNumber.string()
     ADVENTURE_VERSION = '4.14.0'
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -52,7 +52,8 @@ ext {
     BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
 }
 
-println('Version: ' + VERSION +
+println('Mohist Version: ' + MOHIST_VERSION +
+        ' Forge Version: ' + VERSION +
         ' Java: ' + System.getProperty('java.version') +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
