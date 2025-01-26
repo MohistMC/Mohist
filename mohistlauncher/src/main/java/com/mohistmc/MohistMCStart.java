@@ -65,6 +65,11 @@ public class MohistMCStart {
                     %s - %s, Java(%s) %s
                     """;
             System.out.printf((test) + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
+            if (i18n.isCN()) {
+                System.out.printf("官方交流QQ群: 570870451%n");
+                System.out.printf("官网(中国)已开放: https://www.mohistmc.cn/%n");
+                System.out.printf("爱发电: https://afdian.com/a/MohistMC%n");
+            }
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
