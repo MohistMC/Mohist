@@ -170,8 +170,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     public void tryDefineClass(String internalName) {
         if (!internalName.startsWith(PREFIX)) {
-            // throw new NoClassDefFoundError(internalName);
-            return;
+            throw new NoClassDefFoundError(internalName);
         }
         ClassWriter writer = new ClassWriter(0);
         writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_DEPRECATED, internalName, null, "java/lang/Object", new String[]{});
