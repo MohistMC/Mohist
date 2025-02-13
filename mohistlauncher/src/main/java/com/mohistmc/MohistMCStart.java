@@ -66,9 +66,13 @@ public class MohistMCStart {
                     ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
             );
             if (i18n.isCN()) {
-                System.out.printf("官方交流QQ群: 570870451%n");
-                System.out.printf("官网(中国)已开放: https://www.mohistmc.cn/%n");
-                System.out.printf("爱发电: https://afdian.com/a/MohistMC%n");
+                System.out.println("+------------------------------------------------------+");
+                System.out.println("|                                                      |");
+                System.out.println("| 官方交流QQ群: 570870451                              |");
+                System.out.println("| 官网(中国): https://www.mohistmc.cn/                 |");
+                System.out.println("| 爱发电: https://afdian.com/a/MohistMC                |");
+                System.out.println("|                                                      |");
+                System.out.println("+------------------------------------------------------+");
             }
         }
 
@@ -76,14 +80,13 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        // if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
-
         ZipTree.init();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             DefaultLibraries.run();
         }
 
+        CustomLibraries.loadCustomLibs();
         if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             v_1_20_R2.run();
         }
@@ -92,7 +95,6 @@ public class MohistMCStart {
             AutoDeleteMods.jar();
         }
 
-        CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
         for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
             forgeArgs.add(arg.split(" ")[0]);
