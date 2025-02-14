@@ -18,7 +18,7 @@ ext {
     GIT_INFO = gradleutils.gitInfo
     VERSION = project.MC_VERSION + "-" + project.forge_version
     FORGE_VERSION = project.forge_version
-    MOHIST_VERSION = JenkinsNumber.info()
+    MOHIST_VERSION = gradleutils.gitInfo.abbreviatedId
 }
 
 tasks.register('setup') {
