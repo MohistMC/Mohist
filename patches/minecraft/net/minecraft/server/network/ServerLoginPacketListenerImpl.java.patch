@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.server.network;
  
  import com.google.common.primitives.Ints;
 +import com.mohistmc.mohist.MohistConfig;
++import com.mohistmc.mohist.paper.proxy.VelocityProxy;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import com.mojang.authlib.yggdrasil.ProfileResult;
@@ -22,7 +23,7 @@
  import net.minecraft.network.protocol.configuration.ConfigurationProtocols;
  import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket;
  import net.minecraft.network.protocol.login.ClientboundGameProfilePacket;
-@@ -36,21 +_,48 @@
+@@ -36,21 +_,47 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
  import net.minecraft.server.MinecraftServer;
@@ -31,7 +32,7 @@
  import net.minecraft.util.Crypt;
  import net.minecraft.util.CryptException;
  import net.minecraft.util.RandomSource;
- import net.minecraft.util.StringUtil;
+-import net.minecraft.util.StringUtil;
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.util.Waitable;
@@ -136,8 +137,8 @@
 +                if (MohistConfig.velocity_enabled) {
 +                    this.velocityLoginMessageId = java.util.concurrent.ThreadLocalRandom.current().nextInt();
 +                    net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
-+                    buf.writeByte(com.mohistmc.mohist.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
-+                    net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket.PlayerInfoChannelPayload(com.mohistmc.mohist.paper.proxy.VelocityProxy.PLAYER_INFO_CHANNEL, buf));
++                    buf.writeByte(VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++                    net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket.PlayerInfoChannelPayload(VelocityProxy.PLAYER_INFO_CHANNEL, buf));
 +                    this.connection.send(packet1);
 +                    return;
 +                }

@@ -8,6 +8,9 @@ package net.minecraftforge.fml.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.mojang.logging.LogUtils;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -52,11 +55,24 @@ public class ConfigTracker {
         }
     }
 
+    // TODO: [FML] This is only called for the server (outside of forceUnload)
+    // rethink config implementation for eventual FML rewrite
     public void unloadConfigs(ModConfig.Type type, Path configBasePath) {
         LOGGER.debug(CONFIG, "Unloading configs type {}", type);
         for (ModConfig config : this.configSets.get(type)) {
             closeConfig(config, configBasePath);
         }
+        ConfigFileTypeHandler.get(type).stopWatcher();
+    }
+
+    // If there is a better way to do this, please tell me. Because this is FUCKED
+    public void forceUnload() {
+        // This is how ModStateProvider handles loading configs. So we're doing the same but with unloadConfigs instead
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> this.unloadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+        this.unloadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
+
+        // just in case server watcher is still alive somehow...
+        ConfigFileTypeHandler.get(ModConfig.Type.SERVER).stopWatcher();
     }
 
     private static void openConfig(final ModConfig config, final Path configBasePath) {

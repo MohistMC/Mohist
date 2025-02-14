@@ -29,21 +29,23 @@ public class ForgeConfig {
 
         public final BooleanValue advertiseDedicatedServerToLan;
 
+        public final BooleanValue useItemWithDurationZero;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
-                   .push("server");
+                    .push("server");
 
             removeErroringBlockEntities = builder
                     .comment("Set this to true to remove any BlockEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
                     .translation("forge.configgui.removeErroringBlockEntities")
                     .worldRestart()
-                    .define("removeErroringBlockEntities", false);
+                    .define("removeErroringBlockEntities", true);
 
             removeErroringEntities = builder
                     .comment("Set this to true to remove any Entity (Note: Does not include BlockEntities) that throws an error in its tick method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
                     .translation("forge.configgui.removeErroringEntities")
                     .worldRestart()
-                    .define("removeErroringEntities", false);
+                    .define("removeErroringEntities", true);
 
             fullBoundingBoxLadders = builder
                     .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
@@ -61,7 +63,16 @@ public class ForgeConfig {
                     .translation("forge.configgui.advertiseDedicatedServerToLan")
                     .define("advertiseDedicatedServerToLan", true);
 
+            useItemWithDurationZero = builder
+                    .comment("Set this to true to enable living entities to use items with durations of 0. Fixes being able to use Eyes of Ender repeatedly by holding down the use button. Disabled by default as it could change interactions with items of existing mods.")
+                    .translation("forge.configgui.useItemWithDurationZero")
+                    .define("useItemWithDurationZero", false);
+
             builder.pop();
+        }
+
+        public final int getUseItemDuration() {
+            return useItemWithDurationZero.get() ? 0 : 1;
         }
     }
 
@@ -106,27 +117,29 @@ public class ForgeConfig {
 
         public final BooleanValue stabilizeDirectionGetNearest;
 
+        public final BooleanValue allowMipmapLowering;
+
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
-                   .push("client");
+                    .push("client");
 
             alwaysSetupTerrainOffThread = builder
-                .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
-                        "May increase FPS significantly, but may also cause weird rendering lag.",
-                        "Not recommended for computers without a significant number of cores available.")
-                .translation("forge.configgui.alwaysSetupTerrainOffThread")
-                .define("alwaysSetupTerrainOffThread", false);
+                    .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
+                            "May increase FPS significantly, but may also cause weird rendering lag.",
+                            "Not recommended for computers without a significant number of cores available.")
+                    .translation("forge.configgui.alwaysSetupTerrainOffThread")
+                    .define("alwaysSetupTerrainOffThread", false);
 
             experimentalForgeLightPipelineEnabled = builder
-                .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                .translation("forge.configgui.forgeLightPipelineEnabled")
-                .define("experimentalForgeLightPipelineEnabled", false);
+                    .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                    .translation("forge.configgui.forgeLightPipelineEnabled")
+                    .define("experimentalForgeLightPipelineEnabled", false);
 
             showLoadWarnings = builder
-                .comment("When enabled, Forge will show any warnings that occurred during loading.")
-                .translation("forge.configgui.showLoadWarnings")
-                .define("showLoadWarnings", true);
+                    .comment("When enabled, Forge will show any warnings that occurred during loading.")
+                    .translation("forge.configgui.showLoadWarnings")
+                    .define("showLoadWarnings", true);
 
             useCombinedDepthStencilAttachment = builder
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
@@ -147,6 +160,11 @@ public class ForgeConfig {
                     .translation("forge.configgui.stabilizeDirectionGetNearest")
                     .define("stabilizeDirectionGetNearest", true);
 
+            allowMipmapLowering = builder
+                    .comment("When enabled, Forge will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.")
+                    .translation("forge.configgui.allowMipmapLowering")
+                    .define("allowMipmapLowering", false);
+
             builder.pop();
         }
 
@@ -158,6 +176,10 @@ public class ForgeConfig {
 
         public final boolean showLoadWarnings() {
             return clientSpec.isLoaded() ? showLoadWarnings.get() : showLoadWarnings.getDefault();
+        }
+
+        public final boolean allowMipmapLowering() {
+            return clientSpec.isLoaded() ? allowMipmapLowering.get() : allowMipmapLowering.getDefault();
         }
     }
 

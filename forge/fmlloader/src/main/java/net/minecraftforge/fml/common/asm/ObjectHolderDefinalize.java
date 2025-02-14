@@ -8,6 +8,7 @@ package net.minecraftforge.fml.common.asm;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,6 +36,9 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
             new VanillaObjectHolderData("net.minecraft.core.particles.ParticleTypes", "particle_type", "net.minecraft.core.particles.ParticleType"),
             new VanillaObjectHolderData("net.minecraft.sounds.SoundEvents", "sound_event", "net.minecraft.sounds.SoundEvent")
     ).collect(Collectors.toUnmodifiableMap(VanillaObjectHolderData::holderClass, Function.identity()));
+    private static final Set<String> VANILLA_OBJECT_HOLDER_CLASSES = VANILLA_OBJECT_HOLDERS.keySet().stream()
+            .map(it -> it.replace('.', '/'))
+            .collect(Collectors.toUnmodifiableSet());
     private static final String OBJECT_HOLDER = "Lnet/minecraftforge/registries/ObjectHolder;"; //Don't directly reference this to prevent class loading.
     private static final int PUBLIC_STATIC_FINAL_FLAGS = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
 
@@ -47,9 +51,26 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
     private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
-    {
-        return isEmpty ? NAY : YAY;
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
+        if (isEmpty)
+            return NAY;
+
+        // Let's skip processing classes that definitely don't have object holders
+        String internalName = classType.getInternalName();
+
+        // Forge classes that aren't in the debug package (that package is used for tests)
+        if (internalName.startsWith("net/minecraftforge/") && !internalName.substring(18).contains("debug"))
+            return NAY;
+
+        // Vanilla classes that don't have object holders
+        if (internalName.startsWith("com/mojang/"))
+            return NAY;
+
+        // ...except specific ones we added to the VANILLA_OBJECT_HOLDERS map
+        if (internalName.startsWith("net/minecraft/") && !VANILLA_OBJECT_HOLDER_CLASSES.contains(internalName))
+            return NAY;
+
+        return YAY;
     }
 
     private static boolean hasHolder(List<AnnotationNode> lst) {

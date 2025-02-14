@@ -177,7 +177,7 @@
          }
      }
  
-@@ -293,6 +_,13 @@
+@@ -293,6 +_,14 @@
          if (this.queryThreadGs4 != null) {
              this.queryThreadGs4.stop();
          }
@@ -187,6 +187,7 @@
 +            this.dediLanPinger = null;
 +        }
 +
++        net.minecraftforge.fml.config.ConfigTracker.INSTANCE.forceUnload();
 +        Runtime.getRuntime().halt(0);
      }
  

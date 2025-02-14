@@ -141,8 +141,6 @@
   "commands.config.getwithtype": "Config for %s of type %s found at %s",
   "commands.config.noconfig": "Config for %s of type %s not found",
 
-  "forge.update.beta.1": "%sWARNING: %sForge Beta",
-  "forge.update.beta.2": "Major issues may arise, verify before reporting.",
   "forge.update.newversion": "New Forge version available: %s",
   "forge.menu.updatescreen.title": "Mod Update",
 
@@ -170,6 +168,8 @@
   "forge.configgui.skipEmptyShapelessCheck":  "Skip checking for empty ingredients in Shapeless Recipe Deserialization",
   "forge.configgui.forceSystemNanoTime.tooltip": "Force the use of System.nanoTime instead of glfwGetTime as the main client Time provider.",
   "forge.configgui.forceSystemNanoTime": "Force System.nanoTime",
+  "forge.configgui.useItemWithDurationZero": "Allow Use Item with Duration of 0",
+  "forge.configgui.useItemWithDurationZero.tooltip": "Set this to true to enable living entities to use items with durations of 0. Fixes being able to use Eyes of Ender repeatedly by holding down the use button. Disabled by default as it could change interactions with items of existing mods.",
 
   "forge.configgui.zoomInMissingModelTextInGui.tooltip": "Toggle off to make missing model text in the gui fit inside the slot.",
   "forge.configgui.zoomInMissingModelTextInGui": "Zoom in Missing model text in the GUI",
@@ -185,6 +185,8 @@
   "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading",
   "forge.configgui.showLoadWarnings.tooltip": "When enabled, Forge will show any warnings that occurred during loading.",
   "forge.configgui.showLoadWarnings": "Show Load Warnings",
+  "forge.configgui.allowMipmapLowering.tooltip": "When enabled, Forge will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.",
+  "forge.configgui.allowMipmapLowering": "Allow mipmap lowering",
 
   "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
   "forge.configgui.disableVersionCheck": "Disable Forge Version Check",

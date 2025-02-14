@@ -14,6 +14,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -25,8 +26,65 @@ import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
 
 public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
-    static final ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
     private static final Path defaultConfigPath = FMLPaths.GAMEDIR.get().resolve(FMLConfig.getConfigValue(FMLConfig.ConfigValue.DEFAULT_CONFIG_PATH));
+
+    private static final ConfigFileTypeHandler CLIENT = new ConfigFileTypeHandler(ModConfig.Type.CLIENT);
+    private static final ConfigFileTypeHandler COMMON = new ConfigFileTypeHandler(ModConfig.Type.COMMON);
+    private static final ConfigFileTypeHandler SERVER = new ConfigFileTypeHandler(ModConfig.Type.SERVER);
+
+    private final @Nullable ModConfig.Type type;
+    private @Nullable FileWatcher watcher;
+
+    // exists for bin compat
+    public ConfigFileTypeHandler() {
+        this(null);
+    }
+
+    private ConfigFileTypeHandler(@Nullable ModConfig.Type type) {
+        this.type = type;
+    }
+
+    /**
+     * Gets the handler for the given {@link ModConfig.Type}.
+     *
+     * @param type The type to get the handler for
+     * @return The handler
+     */
+    static ConfigFileTypeHandler get(ModConfig.Type type) {
+        return switch (type) {
+            case CLIENT -> CLIENT;
+            case COMMON -> COMMON;
+            case SERVER -> SERVER;
+        };
+    }
+
+    /**
+     * Gets the {@link FileWatcher} for this handler, creating it if it doesn't exist and/or has been stopped.
+     *
+     * @return The watcher
+     *
+     * @apiNote This is package-private so modders can't just call {@link FileWatcher#stop()} and fuck up everything.
+     */
+    FileWatcher getWatcher() {
+        if (this.watcher == null) {
+            LOGGER.debug(CONFIG, "Starting watcher for handler: {}", this);
+            this.watcher = new FileWatcher();
+        }
+
+        return this.watcher;
+    }
+
+    /**
+     * Stops the {@link FileWatcher} for this handler, and sets it to null afterward. Use this instead of
+     * {@link FileWatcher#stop()}.
+     */
+    void stopWatcher() {
+        if (this.watcher == null) return;
+
+        LOGGER.debug(CONFIG, "Stopping watcher for hander: {}", this);
+        this.watcher.stop();
+        this.watcher = null;
+    }
 
     public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
         return (c) -> {
@@ -37,7 +95,7 @@ public class ConfigFileTypeHandler {
                     onFileNotFound((newfile, configFormat)-> setupConfigFile(c, newfile, configFormat)).
                     writingMode(WritingMode.REPLACE).
                     build();
-            LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
+            LOGGER.debug(CONFIG, "Built TOML config for {}", configPath);
             try
             {
                 configData.load();
@@ -46,9 +104,9 @@ public class ConfigFileTypeHandler {
             {
                 throw new ConfigLoadingException(c, ex);
             }
-            LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
-            FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
-            LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath.toString());
+            LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath);
+            this.getWatcher().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
+            LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath);
             return configData;
         };
     }
@@ -56,9 +114,9 @@ public class ConfigFileTypeHandler {
     public void unload(Path configBasePath, ModConfig config) {
         Path configPath = configBasePath.resolve(config.getFileName());
         try {
-            FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(config.getFileName()));
+            this.getWatcher().removeWatch(configPath);
         } catch (RuntimeException e) {
-            LOGGER.error("Failed to remove config {} from tracker!", configPath.toString(), e);
+            LOGGER.error("Failed to remove config {} from tracker!", configPath, e);
         }
     }
 
@@ -107,6 +165,11 @@ public class ConfigFileTypeHandler {
         {
             LOGGER.warn(CONFIG, "Failed to back up config file {}", commentedFileConfig.getNioPath(), exception);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigFileTypeHandler[" + (type != null ? type : "UNKNOWN") + "]";
     }
 
     private record ConfigWatcher(

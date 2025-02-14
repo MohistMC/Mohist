@@ -25,15 +25,12 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.client.gui.LoadingErrorScreen;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.server.LanguageHook;
 
-@OnlyIn(Dist.CLIENT)
 public class ClientModLoader {
     private static final Logger LOGGER = LogManager.getLogger();
     private static boolean loading;

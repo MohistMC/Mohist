@@ -11,6 +11,8 @@ dependencies {
     compileOnly(libs.nulls)
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
+    implementation(libs.unsafe)
+    implementation(libs.securemodules)
 }
 
 java {

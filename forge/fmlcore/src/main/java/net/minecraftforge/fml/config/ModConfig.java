@@ -30,7 +30,7 @@ public class ModConfig
         this.spec = spec;
         this.fileName = fileName;
         this.container = container;
-        this.configHandler = ConfigFileTypeHandler.TOML;
+        this.configHandler = ConfigFileTypeHandler.get(type);
         ConfigTracker.INSTANCE.trackConfig(this);
     }
 

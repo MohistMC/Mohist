@@ -352,15 +352,7 @@ public class ForgeHooksClient {
     }
 
     public static void renderMainMenu(TitleScreen gui, GuiGraphics graphics, Font font, int width, int height, int alpha) {
-        VersionChecker.Status status = getForgeVersionStatus();
 
-        if (status == VersionChecker.Status.BETA || status == VersionChecker.Status.BETA_OUTDATED) {
-            // Render a warning at the top of the screen
-            Component line = Component.translatable("forge.update.beta.1", ChatFormatting.RED, ChatFormatting.RESET).withStyle(ChatFormatting.RED);
-            graphics.drawCenteredString(font, line, width / 2, 4, 0xFFFFFF | alpha);
-            line = Component.translatable("forge.update.beta.2");
-            graphics.drawCenteredString(font, line, width / 2, 4 + (font.lineHeight + 1), 0xFFFFFF | alpha);
-        }
     }
 
     public static String forgeStatusLine;

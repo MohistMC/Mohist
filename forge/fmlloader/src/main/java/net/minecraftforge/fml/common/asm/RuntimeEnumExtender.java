@@ -48,9 +48,15 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
-    {
-        return isEmpty ? NAY : YAY;
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
+        if (isEmpty)
+            return NAY;
+
+        String internalName = classType.getInternalName();
+        if (internalName.startsWith("net/minecraftforge/") || internalName.startsWith("com/mojang/"))
+            return NAY;
+
+        return YAY;
     }
 
     @Override
@@ -59,14 +65,13 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
             return ComputeFlags.NO_REWRITE;
 
+        if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName()))
+            return ComputeFlags.NO_REWRITE;
+
         Type array = Type.getType("[" + classType.getDescriptor());
         String arrayDesc = array.getDescriptor();
 
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.equals(arrayDesc) && ((f.access & FLAGS) == FLAGS)).findFirst().orElse(null);
-
-        if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
-            return ComputeFlags.NO_REWRITE;
-        }
 
         //Static methods named "create" with first argument as a string
         List<MethodNode> candidates = classNode.methods.stream()

@@ -151,6 +151,14 @@
              this.screen = p_91153_;
              if (this.screen != null) {
                  this.screen.added();
+@@ -1088,6 +_,7 @@
+             this.resourceManager.close();
+             FreeTypeUtil.destroy();
+             Util.shutdownExecutors();
++            net.minecraftforge.fml.config.ConfigTracker.INSTANCE.forceUnload();
+         } catch (Throwable throwable) {
+             LOGGER.error("Shutdown failure!", throwable);
+             throw throwable;
 @@ -1155,9 +_,11 @@
          this.mouseHandler.handleAccumulatedMovement();
          this.profiler.pop();

@@ -54,6 +54,9 @@ public class FMLLoader {
         LOGGER.debug(CORE, "Detected version data : {}", versionInfo);
         LOGGER.debug(CORE, "FML {} loading", LauncherVersion.getVersion());
 
+        // Allows us to communicate properties with other services through ModLauncher
+        setupBlackboardKeys();
+
         checkPackage(ITransformationService.class, "4.0", "ModLauncher");
         accessTransformer  = getPlugin(env, "accesstransformer",  "1.0", "AccessTransformer");
         /*eventBus       =*/ getPlugin(env, "eventbus",           "1.0", "EventBus");
@@ -116,6 +119,12 @@ public class FMLLoader {
           }
 
           return providers.get(0);
+    }
+
+    private static void setupBlackboardKeys() {
+        LOGGER.debug(CORE, "Requesting CoreMods to not apply the fix for ASMAPI.findFirstInstructionBefore by default");
+        var blackboardKey = TypesafeMap.Key.getOrCreate(Launcher.INSTANCE.blackboard(), "coremods.use_old_findFirstInstructionBefore", Boolean.class);
+        Launcher.INSTANCE.blackboard().<Boolean>computeIfAbsent(blackboardKey, k -> true);
     }
 
     static void setupLaunchHandler(final IEnvironment environment, final Map<String, Object> arguments) {

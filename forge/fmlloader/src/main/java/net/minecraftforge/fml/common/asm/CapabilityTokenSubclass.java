@@ -50,7 +50,14 @@ public class CapabilityTokenSubclass implements ILaunchPluginService {
 
     @Override
     public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
-        return isEmpty ? NAY : YAY;
+        if (isEmpty)
+            return NAY;
+
+        String internalName = classType.getInternalName();
+        if (internalName.startsWith("net/minecraft/") || internalName.startsWith("com/mojang/"))
+            return NAY;
+        
+        return YAY;
     }
 
     @Override

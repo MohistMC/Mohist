@@ -352,7 +352,7 @@
      protected void blockUsingShield(LivingEntity p_36295_) {
          super.blockUsingShield(p_36295_);
 -        if (p_36295_.canDisableShield()) {
-+        if (p_36295_.getMainHandItem().canDisableShield(this.useItem, this, p_36295_)) {
++        if (p_36295_.getWeaponItem().canDisableShield(this.useItem, this, p_36295_)) {
              this.disableShield();
          }
      }

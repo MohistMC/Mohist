@@ -4,7 +4,7 @@
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.21.1--52.0.20-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.21.1.html)
+[![](https://img.shields.io/badge/Forge-1.21.1--52.0.47-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.21.1.html)
 [![](https://img.shields.io/badge/JDK-21.0.3-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-21-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.7-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.7/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -17,7 +17,7 @@
 Progress
 ------
 
-- [ ] Rectify Forge([**c22589b5b**](https://github.com/MinecraftForge/MinecraftForge/commit/c22589b5b))
+- [ ] Rectify Forge([**667a16443**](https://github.com/MinecraftForge/MinecraftForge/commit/667a16443))
 - [x] Start patch
     * [x] Bukkit([**bb4e97c6**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/bb4e97c6))
     * [ ] CraftBukkit([**0a7bd6c81**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/0a7bd6c81))

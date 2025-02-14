@@ -10,7 +10,7 @@
              if (optional.isEmpty()) {
                  return InteractionResult.PASS;
              } else {
-@@ -113,5 +_,16 @@
+@@ -113,5 +_,21 @@
      private Optional<BlockState> getStripped(BlockState p_150691_) {
          return Optional.ofNullable(STRIPPABLES.get(p_150691_.getBlock()))
              .map(p_150689_ -> p_150689_.defaultBlockState().setValue(RotatedPillarBlock.AXIS, p_150691_.getValue(RotatedPillarBlock.AXIS)));
@@ -25,5 +25,10 @@
 +    public static BlockState getAxeStrippingState(BlockState originalState) {
 +        Block block = STRIPPABLES.get(originalState.getBlock());
 +        return block != null ? block.defaultBlockState().setValue(RotatedPillarBlock.AXIS, originalState.getValue(RotatedPillarBlock.AXIS)) : null;
++    }
++
++    @Override
++    public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
++        return true;
      }
  }
