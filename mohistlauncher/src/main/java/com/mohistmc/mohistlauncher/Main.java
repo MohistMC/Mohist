@@ -60,8 +60,13 @@ public class Main {
                     """;
             System.out.printf(test + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
             if (i18n.isCN()) {
-                System.out.printf("官方交流QQ群: 158638%n");
-                System.out.printf("国内官网已开放: https://www.mohistmc.cn/%n");
+                System.out.println("+------------------------------------------------------+");
+                System.out.println("|                                                      |");
+                System.out.println("| 官方交流QQ群: 570870451                              |");
+                System.out.println("| 官网(中国): https://www.mohistmc.cn/                 |");
+                System.out.println("| 爱发电: https://afdian.com/a/MohistMC                |");
+                System.out.println("|                                                      |");
+                System.out.println("+------------------------------------------------------+");
             }
         }
 
