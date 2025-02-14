@@ -131,7 +131,7 @@
 +   public void ignite() {
 +      boolean i = ignited.getAndSet(true);
 +      if (isIgnited() != i) {
-+         com.destroystokyo.paper.event.entity.CreeperIgniteEvent event = new com.destroystokyo.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
++         com.mohistmc.mohist.paper.event.entity.CreeperIgniteEvent event = new com.mohistmc.mohist.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
 +          Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            this.entityData.set(DATA_IS_IGNITED, event.isIgnited());

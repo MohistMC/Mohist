@@ -1200,7 +1200,7 @@
 +    }
 +
 +    private void callPlayerUseUnknownEntityEvent(ServerboundInteractPacket packet, InteractionHand hand, @Nullable net.minecraft.world.phys.Vec3 vector) {
-+        this.cserver.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent(
++        this.cserver.getPluginManager().callEvent(new com.mohistmc.mohist.paper.event.player.PlayerUseUnknownEntityEvent(
 +                this.getCraftPlayer(),
 +                packet.getEntityId(),
 +                packet.isAttack(),
