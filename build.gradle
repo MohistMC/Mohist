@@ -559,28 +559,6 @@ project(':mohist') {
         changing = true
     }
 
-    task downloadMultipleFiles(type: Download) {
-        src([
-                'https://maven.mohistmc.com/libraries/1.12.2/mohist/libraries.zip'
-        ])
-        dest layout.buildDirectory.dir("libraries")
-    }
-
-    task packageLibraries(type: Zip, dependsOn: [downloadMultipleFiles]) {
-        archiveFileName = 'libraries.zip'
-        destinationDirectory = file("build/distributions")
-        outputs.upToDateWhen {
-            false // TODO: Not 100% sure how to make this task re-run when libraries are changed...
-        }
-
-        configurations.installer.resolvedConfiguration.resolvedArtifacts.collect {
-            def moduleVersion = it.moduleVersion
-            from (it.file) {
-                into ("${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
-            }
-        }
-    }
-
     universalJar {
         archiveClassifier = 'server'
         dependsOn(deobfDataLzma)
@@ -609,14 +587,6 @@ project(':mohist') {
                     manifest.attributes(values, pkg)
                 }
             }
-        }
-
-        from(zipTree(packageLibraries.outputs.getFiles().asPath)) {
-            into 'META-INF/libraries'
-        }
-
-        from(zipTree(downloadMultipleFiles.outputs.getFiles().asPath)) {
-            into 'META-INF/libraries'
         }
     }
 
