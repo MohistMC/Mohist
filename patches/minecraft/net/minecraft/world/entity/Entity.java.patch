@@ -18,7 +18,7 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.BlockParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -116,9 +_,39 @@
+@@ -116,9 +_,40 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -52,6 +52,7 @@
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
  import org.slf4j.Logger;
++import org.spigotmc.ActivationRange;
 +import org.spigotmc.AsyncCatcher;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -95,7 +96,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -230,13 +_,88 @@
+@@ -230,13 +_,93 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -176,7 +177,12 @@
        this.f_185933_ = ChunkPos.f_186419_;
 +      // Spigot start
 +      if (p_19871_ != null && p_19871_ instanceof ServerLevel) {
-+         this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, p_19871_.spigotConfig);
++         var config = p_19871_.spigotConfig;
++         if (config != null) {
++            this.defaultActivationState = ActivationRange.initializeEntityActivationState(this, config);
++         } else {
++            this.defaultActivationState = false;
++         }
 +      } else {
 +         this.defaultActivationState = false;
 +      }
@@ -1196,6 +1202,16 @@
     }
  
     protected float m_6380_(Pose p_19976_, EntityDimensions p_19977_) {
+@@ -2664,6 +_,9 @@
+    }
+ 
+    public Iterable<Entity> m_146897_() {
++      if (this.f_19823_.isEmpty()) {
++         return Collections.emptyList();
++      }
+       return () -> {
+          return this.m_146920_().iterator();
+       };
 @@ -2727,7 +_,7 @@
        return SoundSource.NEUTRAL;
     }

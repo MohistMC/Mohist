@@ -46,7 +46,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      *   Drinking Potions/Milk
      *   Guarding with a sword
      *
-     * Cancel the event, or set the duration or {@literal <=} 0 to prevent it from processing.
+     * Cancel the event, or set the duration or {@literal <} 0 to prevent it from processing.
      *
      */
     @Cancelable

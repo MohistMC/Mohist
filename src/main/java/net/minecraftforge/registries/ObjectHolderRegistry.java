@@ -91,6 +91,10 @@ public class ObjectHolderRegistry
             .filter(a -> OBJECT_HOLDER.equals(a.annotationType()) || MOD.equals(a.annotationType()))
             .toList();
 
+        if (annotations.stream().noneMatch(a -> OBJECT_HOLDER.equals(a.annotationType())))
+            return; // No object holders found, skip the rest of the processing
+
+
         Map<Type, String> classModIds = Maps.newHashMap();
         Map<Type, Class<?>> classCache = Maps.newHashMap();
 

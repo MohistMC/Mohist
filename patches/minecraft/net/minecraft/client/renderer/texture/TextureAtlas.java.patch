@@ -22,7 +22,7 @@
        int j1 = Mth.m_14173_(i1);
 -      int k1;
 +      int k1 = p_118311_;
-+      if (false) // FORGE: do not lower the mipmap level
++      if (net.minecraftforge.common.ForgeConfig.CLIENT.allowMipmapLowering()) // FORGE: do not lower the mipmap level
        if (j1 < p_118311_) {
           f_118261_.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.f_118265_, p_118311_, j1, i1);
           k1 = j1;

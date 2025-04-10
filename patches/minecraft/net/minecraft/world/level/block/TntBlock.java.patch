@@ -38,12 +38,12 @@
        }
     }
  
-+   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
++   @Deprecated //Forge: Prefer using IForgeBlock#onCaughtFire
     public static void m_57433_(Level p_57434_, BlockPos p_57435_) {
        m_57436_(p_57434_, p_57435_, (LivingEntity)null);
     }
  
-+   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
++   @Deprecated //Forge: Prefer using IForgeBlock#onCaughtFire
     private static void m_57436_(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
        if (!p_57437_.f_46443_) {
           PrimedTnt primedtnt = new PrimedTnt(p_57437_, (double)p_57438_.m_123341_() + 0.5D, (double)p_57438_.m_123342_(), (double)p_57438_.m_123343_() + 0.5D, p_57439_);

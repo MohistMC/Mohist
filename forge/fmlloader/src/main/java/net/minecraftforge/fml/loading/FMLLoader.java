@@ -66,6 +66,9 @@ public class FMLLoader
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
 
+        // Allows us to communicate properties with other services through ModLauncher
+        setupBlackboardKeys();
+
         accessTransformer = (AccessTransformerService) environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> {
             LOGGER.error(CORE, "Access Transformer library is missing, we need this to run");
             return new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run");
@@ -125,6 +128,12 @@ public class FMLLoader
             LOGGER.error(CORE, "Failed to load NightConfig");
             throw new IncompatibleEnvironmentException("Missing NightConfig");
         }
+    }
+
+    private static void setupBlackboardKeys() {
+        LOGGER.debug(CORE, "Requesting CoreMods to not apply the fix for ASMAPI.findFirstInstructionBefore by default");
+        var blackboardKey = TypesafeMap.Key.getOrCreate(Launcher.INSTANCE.blackboard(), "coremods.use_old_findFirstInstructionBefore", Boolean.class);
+        Launcher.INSTANCE.blackboard().<Boolean>computeIfAbsent(blackboardKey, k -> true);
     }
 
     static void setupLaunchHandler(final IEnvironment environment, final Map<String, Object> arguments)

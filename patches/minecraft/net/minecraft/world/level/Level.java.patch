@@ -515,7 +515,7 @@
                    this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -865,6 +_,18 @@
+@@ -865,13 +_,75 @@
        return this.f_46420_;
     }
  
@@ -534,7 +534,10 @@
     public final boolean m_46659_() {
        return this.f_46424_;
     }
-@@ -874,4 +_,54 @@
+ 
+-   protected abstract LevelEntityGetter<Entity> m_142646_();
++   public abstract LevelEntityGetter<Entity> m_142646_();
+ 
     public long m_183596_() {
        return (long)(this.f_186455_++);
     }

@@ -18,11 +18,11 @@
 
 package com.mohistmc;
 
-import com.mohistmc.action.v_1_19.v_1_19;
+import com.mohistmc.action.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.feature.DefaultLibraries;
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.libraries.CustomLibraries;
-import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.feature.CustomLibraries;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
@@ -53,14 +53,14 @@ public class MohistMCStart {
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("show_logo", true)) {
             String test = """
-
+                    
                      ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗
                      ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝
                      ██╔████╔██║ ██║   ██║ ███████║ ██║ ███████╗    ██║
                      ██║╚██╔╝██║ ██║   ██║ ██╔══██║ ██║ ╚════██║    ██║
                      ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║
                      ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
-                                        
+                    
                     
                     %s - %s, Java(%s) %s
                     """;

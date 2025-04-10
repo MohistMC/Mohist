@@ -20,7 +20,6 @@ package com.mohistmc.config;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 
 import java.io.File;
@@ -62,15 +61,6 @@ public class MohistConfigUtil {
             save();
         }
         return yml.getBoolean(key, true);
-    }
-
-    public static String defaultSource() {
-        String key = "mohist.libraries_downloadsource";
-        if (yml.get(key) == null) {
-            yml.set(key, DownloadSource.defaultSource.name());
-            save();
-        }
-        return yml.getString(key, DownloadSource.defaultSource.name());
     }
 
     public static boolean aBoolean(String key, boolean defaultReturn) {

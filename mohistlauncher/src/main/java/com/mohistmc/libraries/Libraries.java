@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,26 @@
 
 package com.mohistmc.libraries;
 
-import com.mohistmc.util.JarLoader;
-import com.mohistmc.util.JarTool;
-
+import com.mohistmc.tools.SHA256;
 import java.io.File;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class CustomLibraries {
+@Data
+@AllArgsConstructor
+public class Libraries {
 
-    public static File file = new File(JarTool.getJarDir() + "/libraries/customize_libraries");
+    String path;
+    String sha256;
+    long size;
+    boolean installer;
 
-    public static void loadCustomLibs() throws Exception {
-        if (!file.exists()) file.mkdirs();
+    public static Libraries from(String line) {
+        String[] parts = line.split("\\|");
+        return new Libraries(parts[0], parts[1], Long.parseLong(parts[2]), Boolean.parseBoolean(parts[3]));
+    }
 
-        for (File lib : file.listFiles((dir, name) -> name.endsWith(".jar"))) {
-            if (!DefaultLibraries.getDefaultLibs().keySet().toString().contains(lib.getName()))
-                JarLoader.loadJar(lib.toPath());
-            System.out.println(lib.getName() + " custom library loaded successfully.");
-        }
+    public static Libraries from(File file) {
+        return new Libraries(file.getAbsolutePath(), SHA256.as(file), file.length(), false);
     }
 }

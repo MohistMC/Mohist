@@ -1,10 +1,8 @@
-package com.mohistmc.action.v_1_19;
+package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.action.Action;
-import com.mohistmc.action.Version;
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.tools.MD5Util;
+import com.mohistmc.tools.SHA256;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MohistModuleManager;
@@ -150,24 +148,26 @@ public class v_1_19 implements Version {
                 unmute();
             }
 
-            String storedServerMD5 = null;
-            String storedMohistMD5 = null;
-            String serverMD5 = MD5Util.get(serverJar);
-            String mohistMD5 = MD5Util.get(JarTool.getFile());
+            String storedServerSHA256 = null;
+            String storedMohistSHA256 = null;
+            String serverSHA256 = SHA256.as(serverJar);
+            String mohistSHA256 = SHA256.as(JarTool.getFile());
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
-                if (infoLines.size() > 0)
-                    storedServerMD5 = infoLines.get(0);
-                if (infoLines.size() > 1)
-                    storedMohistMD5 = infoLines.get(1);
+                if (!infoLines.isEmpty()) {
+                    storedServerSHA256 = infoLines.get(0);
+                }
+                if (infoLines.size() > 1) {
+                    storedMohistSHA256 = infoLines.get(1);
+                }
             }
 
             if (!serverJar.exists()
-                    || storedServerMD5 == null
-                    || storedMohistMD5 == null
-                    || !storedServerMD5.equals(serverMD5)
-                    || !storedMohistMD5.equals(mohistMD5)) {
+                    || storedServerSHA256 == null
+                    || storedMohistSHA256 == null
+                    || !storedServerSHA256.equals(serverSHA256)
+                    || !storedMohistSHA256.equals(mohistSHA256)) {
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
@@ -186,12 +186,12 @@ public class v_1_19 implements Version {
                                 libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
                         ))));
                 unmute();
-                serverMD5 = MD5Util.get(serverJar);
+                serverSHA256 = SHA256.as(serverJar);
             }
 
             FileWriter fw = new FileWriter(installInfo);
-            fw.write(serverMD5 + "\n");
-            fw.write(mohistMD5);
+            fw.write(serverSHA256 + "\n");
+            fw.write(mohistSHA256);
             fw.close();
 
             System.out.println(I18n.as("installation.finished"));
