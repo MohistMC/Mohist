@@ -18,12 +18,13 @@ buildscript {
             name = "juanmuscaria"
             url = "https://github.com/juanmuscaria/maven/raw/master"
         }
-
+        gradlePluginPortal()
         mavenCentral()
     }
     dependencies {
         classpath 'com.anatawa12.forge:ForgeGradle:1.2-1.1.0'
         classpath 'io.github.cruciblemc:CrucibleGradle:1.1-SNAPSHOT'
+        classpath("org.ajoberstar.grgit:org.ajoberstar.grgit.gradle.plugin:4.1.1")
     }
 }
 
@@ -31,6 +32,7 @@ apply plugin: 'base'
 apply plugin: 'maven-publish'
 apply plugin: 'crucible'
 apply plugin: 'java'
+apply plugin: 'org.ajoberstar.grgit'
 
 repositories {
     mavenLocal()
@@ -85,7 +87,7 @@ group = 'com.mohistmc'
 
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "10.13.4.1614"
-version = '1.7.10-' + mohist_api()
+version = '1.7.10-' + grgit.head().abbreviatedId
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
@@ -176,21 +178,5 @@ def generateClasspath(boolean legacy = false) {
     }
     classpath += " libraries/net/minecraft/server/1.7.10/server-1.7.10.jar"
     return classpath.trim()
-}
-
-static def mohist_api() {
-    try {
-        URL url = new URL("https://mohistmc.com/api/v2/projects/mohist/1.7.10/builds/latest")
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection()
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
-        conn.connect()
-        def root = conn.content.text
-        def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parseText(root)
-
-        return Integer.valueOf(data.build.number) + 1
-    } catch (Exception ignored) {
-        return 'dev'
-    }
 }
 
