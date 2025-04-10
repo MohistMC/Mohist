@@ -28,7 +28,7 @@ import org.objectweb.asm.ClassReader
 
 plugins {
     id 'org.ajoberstar.grgit' version '4.1.1'
-    id 'de.undercouch.download' version '3.3.0'
+    id 'de.undercouch.download' version '5.6.0'
     id 'com.github.ben-manes.versions' version '0.22.0'
     id 'eclipse'
 }
@@ -149,7 +149,7 @@ project(':mohist') {
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     }
 
-    version = '1.12.2-' + mohist_api()
+    version = '1.12.2-' + grgit.head().abbreviatedId
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
@@ -554,6 +554,33 @@ project(':mohist') {
         }
     }
 
+    task downloadInstaller(type: DownloadMavenArtifact) {
+        artifact = 'net.minecraftforge:installer:2.1.+:shrunk'
+        changing = true
+    }
+
+    task downloadMultipleFiles(type: Download) {
+        src([
+                'https://maven.mohistmc.com/libraries/1.12.2/mohist/libraries.zip'
+        ])
+        dest layout.buildDirectory.dir("libraries")
+    }
+
+    task packageLibraries(type: Zip, dependsOn: [downloadMultipleFiles]) {
+        archiveFileName = 'libraries.zip'
+        destinationDirectory = file("build/distributions")
+        outputs.upToDateWhen {
+            false // TODO: Not 100% sure how to make this task re-run when libraries are changed...
+        }
+
+        configurations.installer.resolvedConfiguration.resolvedArtifacts.collect {
+            def moduleVersion = it.moduleVersion
+            from (it.file) {
+                into ("${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
+            }
+        }
+    }
+
     universalJar {
         archiveClassifier = 'server'
         dependsOn(deobfDataLzma)
@@ -583,11 +610,14 @@ project(':mohist') {
                 }
             }
         }
-    }
 
-    task downloadInstaller(type: DownloadMavenArtifact) {
-        artifact = 'net.minecraftforge:installer:2.1.+:shrunk'
-        changing = true
+        from(zipTree(packageLibraries.outputs.getFiles().asPath)) {
+            into 'META-INF/libraries'
+        }
+
+        from(zipTree(downloadMultipleFiles.outputs.getFiles().asPath)) {
+            into 'META-INF/libraries'
+        }
     }
 
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar']) {
@@ -813,20 +843,4 @@ def getClasspath(project, libs, artifact) {
 task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
-}
-
-static def mohist_api() {
-    try {
-        URL url = new URL("https://mohistmc.com/api/v2/projects/mohist/1.12.2/builds/latest")
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection()
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
-        conn.connect()
-        def root = conn.content.text
-        def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parseText(root)
-
-        return Integer.valueOf(data.build.number) + 1
-    } catch (Exception ignored) {
-        return 'dev'
-    }
 }

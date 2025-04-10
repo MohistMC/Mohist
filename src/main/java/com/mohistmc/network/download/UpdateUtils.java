@@ -1,15 +1,18 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.util.JarTool;
+import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.Message;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -71,5 +74,25 @@ public class UpdateUtils {
 
     public static long getSizeOfDirectory(File path) throws IOException {
         return Files.walk(path.toPath()).parallel().filter(p -> !p.toFile().isDirectory()).count();
+    }
+
+    protected boolean copyFileFromJar(File file, String pathInJar) {
+        InputStream is = UpdateUtils.class.getClassLoader().getResourceAsStream(pathInJar);
+
+        if (!file.exists() || file.length() <= 1) {
+            file.getParentFile().mkdirs();
+            if (is != null) {
+                try {
+                    file.createNewFile();
+                    Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    return true;
+                } catch (IOException ignored) {
+                }
+            } else {
+                System.out.println("[Mohist] The file " + file.getPath()+ " doesn't exists in the Mohist jar !");
+                return false;
+            }
+        }
+        return true;
     }
 }

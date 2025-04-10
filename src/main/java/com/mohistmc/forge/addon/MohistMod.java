@@ -26,7 +26,6 @@ public class MohistMod extends DummyModContainer implements CustomMod {
                 "  \"description\": \"Mohist built-in mark.\",\n" +
                 "  \"version\": \"" + MohistMC.getVersion() + "\",\n" +
                 "  \"mcversion\": \"1.12.2\",\n" +
-                "  \"logoFile\": \"/mohist_logo.png\",\n" +
                 "  \"url\": \"https://mohistmc.com/\",\n" +
                 "  \"updateUrl\": \"\",\n" +
                 "  \"authors\": [\"MohistMC\"],\n" +
