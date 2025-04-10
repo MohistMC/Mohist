@@ -232,9 +232,27 @@
        }
  
     }
-@@ -641,6 +_,7 @@
+@@ -633,6 +_,15 @@
+    }
+ 
+    public void m_8647_(Entity p_8648_) {
++      // Spigot start
++      if (!org.spigotmc.ActivationRange.checkIfActive(p_8648_)) {
++         p_8648_.f_19797_++;
++         if (p_8648_.canUpdate()) {
++            p_8648_.inactiveTick();
++         }
++         return;
++      }
++      // Spigot end
+       p_8648_.m_146867_();
+       ProfilerFiller profilerfiller = this.m_46473_();
+       ++p_8648_.f_19797_;
+@@ -640,7 +_,9 @@
+          return Registry.f_122826_.m_7981_(p_8648_.m_6095_()).toString();
        });
        profilerfiller.m_6174_("tickNonPassenger");
++      if (p_8648_.canUpdate())
        p_8648_.m_8119_();
 +      p_8648_.postTick(); // CraftBukkit
        this.m_46473_().m_7238_();

@@ -141,7 +141,11 @@ public class ActivationRange
             ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, 256, animalActivationRange );
             ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, 256, monsterActivationRange );
 
-            world.getEntities().get(maxBB, ActivationRange::activateEntity);
+            try {
+                world.getEntities().get(maxBB, ActivationRange::activateEntity);
+            } catch (Exception ex ) {
+                // Ignore this exception.
+            }
         }
     }
 

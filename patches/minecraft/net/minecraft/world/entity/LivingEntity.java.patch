@@ -1261,7 +1261,7 @@
        ItemStack itemstack = this.m_21120_(p_21159_);
        if (!itemstack.m_41619_() && !this.m_6117_()) {
 +         int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.m_41779_());
-+         if (duration <= 0) return;
++         if (duration < net.minecraftforge.common.ForgeConfig.SERVER.getUseItemDuration()) return;
           this.f_20935_ = itemstack;
 -         this.f_20936_ = itemstack.m_41779_();
 +         this.f_20936_ = duration;
