@@ -30,6 +30,17 @@ public class MohistMC {
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run();
+
+        
+        System.out.println(); 
+        System.out.println("    /\\_/\\"); 
+        System.out.println("   ( o.o )");
+        System.out.println("    > ^ <");
+        System.out.println(); 
+        System.out.println("    meow");
+        System.out.println(" modded by c0re");
+        System.out.println(); 
+
         if (MohistConfigUtil.bMohist("showlogo")) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
