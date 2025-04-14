@@ -24,6 +24,7 @@ import com.mohistmc.mohistlauncher.action.v_1_21_R1;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.feature.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
+import com.mohistmc.mohistlauncher.util.ExceptionHandler;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MojangEulaUtil;
 import java.text.SimpleDateFormat;
@@ -41,6 +42,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         DataParser.parseVersions();
         MohistConfigUtil.init();
         MohistConfigUtil.i18n();
