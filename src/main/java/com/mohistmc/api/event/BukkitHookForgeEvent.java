@@ -31,7 +31,7 @@ public class BukkitHookForgeEvent extends org.bukkit.event.Event {
     private final Event event;
 
     public BukkitHookForgeEvent(Event event) {
-        super(!Bukkit.getServer().isPrimaryThread());
+        super(true);
         this.event = event;
     }
 

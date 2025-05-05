@@ -446,7 +446,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,36 +_,83 @@
+@@ -561,36 +_,85 @@
     }
  
     private void func_73051_P() {
@@ -532,7 +532,9 @@
        } else {
 +         if (!ActivationRange.checkIfActive(p_217479_1_)) {
 +            p_217479_1_.field_70173_aa++;
-+            p_217479_1_.inactiveTick();
++            if (p_217479_1_.canUpdate()) {
++               p_217479_1_.inactiveTick();
++            }
 +            return;
 +         }
           p_217479_1_.func_226286_f_(p_217479_1_.func_226277_ct_(), p_217479_1_.func_226278_cu_(), p_217479_1_.func_226281_cx_());
