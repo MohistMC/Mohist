@@ -19,7 +19,7 @@ public class ForgeEventHandler implements IEventBusInvokeDispatcher {
 
     @Override
     public void invoke(IEventListener eventListener, Event event) {
-        if (BukkitHookForgeEvent.getHandlerList().getRegisteredListeners().length > 0) {
+        if (BukkitHookForgeEvent.getHandlerList().getRegisteredListeners().length > 0 && !Bukkit.getServer().isPrimaryThread()) {
             Bukkit.getPluginManager().callEvent(new BukkitHookForgeEvent(event));
         }
     }
