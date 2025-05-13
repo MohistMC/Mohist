@@ -590,13 +590,21 @@
                 }
  
                 p_217464_1_.field_70175_ag = false;
-@@ -687,13 +_,15 @@
+@@ -687,13 +_,23 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
 +         MinecraftForge.EVENT_BUS.post(new Save(this));
           serverchunkprovider.func_217210_a(p_217445_2_);
 +
++         // CraftBukkit start
++         ServerWorld worldserver1 = this;
++         if (worldserver1.getWorld().isBukkit() && worldserver1 != this.field_73061_a.func_241755_D_()) {
++            this.worldDataServer.func_230393_a_(worldserver1.func_175723_af().func_235927_t_());
++            this.worldDataServer.func_230414_b_(this.field_73061_a.func_201300_aS().func_201380_c());
++            this.convertable.func_237288_a_(this.field_73061_a.func_244267_aX(), this.worldDataServer, this.field_73061_a.func_184103_al().func_72378_q());
++         }
++         // CraftBukkit end
        }
     }
  

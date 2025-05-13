@@ -1056,8 +1056,9 @@ public final class CraftServer implements Server {
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, null, ex);
         }
-
-        worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
+        String worldname = world.getName().contains("DIM") ? world.getName() : world.getName().toLowerCase(java.util.Locale.ENGLISH);
+        worlds.remove(worldname);
+        Level2LevelStem.plugin_worlds.remove(worldname);
         console.levels.remove(handle.dimension());
         return true;
     }
@@ -1066,7 +1067,9 @@ public final class CraftServer implements Server {
         if (world == null) {
             return;
         }
-        this.worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
+        String worldname = world.getWorld().getName().contains("DIM") ? world.getWorld().getName() :world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH);
+        this.worlds.remove(worldname);
+        Level2LevelStem.plugin_worlds.remove(worldname);
     }
 
     public DedicatedServer getServer() {
@@ -1076,8 +1079,9 @@ public final class CraftServer implements Server {
     @Override
     public World getWorld(String name) {
         Validate.notNull(name, "Name cannot be null");
-
-        return worlds.get(name.toLowerCase(java.util.Locale.ENGLISH));
+        name = name.startsWith("dim") ? name.toUpperCase() : name;
+        String worldname = name.startsWith("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        return worlds.get(worldname);
     }
 
     @Override
@@ -1096,7 +1100,8 @@ public final class CraftServer implements Server {
             //System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
             return;
         }
-        worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
+        String worldname = world.getName().contains("DIM") ? world.getName() : world.getName().toLowerCase(java.util.Locale.ENGLISH);
+        worlds.put(worldname, world);
     }
 
     @Override

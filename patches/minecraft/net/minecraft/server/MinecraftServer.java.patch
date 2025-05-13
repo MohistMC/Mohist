@@ -306,46 +306,41 @@
        ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
        serverchunkprovider.func_212863_j_().func_215598_a(500);
        this.field_211151_aa = Util.func_211177_b();
-       serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+-      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 -
 -      while(serverchunkprovider.func_217229_b() != 441) {
 -         this.field_211151_aa = Util.func_211177_b() + 10L;
 -         this.func_213202_o();
-+      while (serverchunkprovider.func_217229_b() < 441) {
-+         // CraftBukkit start
-+         this.executeModerately();
-+         // CraftBukkit end
++      if (serverworld.getWorld().getKeepSpawnInMemory()) {
++         serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++         while (serverchunkprovider.func_217229_b() < 441) {
++            // CraftBukkit start
++            this.executeModerately();
++            // CraftBukkit end
++         }
        }
  
 -      this.field_211151_aa = Util.func_211177_b() + 10L;
 -      this.func_213202_o();
--
--      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
--         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
--         if (forcedchunkssavedata != null) {
--            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
--
--            while(longiterator.hasNext()) {
--               long i = longiterator.nextLong();
--               ChunkPos chunkpos = new ChunkPos(i);
--               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
 +      // CraftBukkit start
 +      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
 +      this.executeModerately();
 +      for (ServerWorld serverLevel : this.field_71305_c.values()) {
-+         if (serverLevel.getWorld().getKeepSpawnInMemory()) {
-+            ForcedChunksSaveData forcedchunkssavedata = serverworld.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+
-+            if (forcedchunkssavedata != null) {
-+               LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+
-+               while (longiterator.hasNext()) {
-+                  long i = longiterator.nextLong();
-+                  ChunkPos chunkpos = new ChunkPos(i);
-+                  serverworld.func_72863_F().func_217206_a(chunkpos, true);
-+               }
-+               net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld, forcedchunkssavedata);
++         ForcedChunksSaveData forcedchunkssavedata = serverLevel.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
+ 
+-      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
+-         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
+          if (forcedchunkssavedata != null) {
+             LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
+ 
+-            while(longiterator.hasNext()) {
++            while (longiterator.hasNext()) {
+                long i = longiterator.nextLong();
+                ChunkPos chunkpos = new ChunkPos(i);
+-               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++               serverLevel.func_72863_F().func_217206_a(chunkpos, true);
              }
++            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverLevel, forcedchunkssavedata);
           }
        }
  
@@ -372,13 +367,17 @@
           }
        }
  
-@@ -534,6 +_,15 @@
-       iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
+@@ -531,9 +_,18 @@
+ 
+       ServerWorld serverworld1 = this.func_241755_D_();
+       IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
+-      iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
++      if (serverworld1 != null) iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
 +      // Mohist start - Fixed bukkit world not saving level.dat file
 +      for (ServerWorld world : this.func_212370_w()) {
-+         if (world.convertable != this.field_71310_m) {
++         if (!world.getWorld().isBukkit() && world.convertable != this.field_71310_m) {
 +            world.worldDataServer.func_230393_a_(world.func_175723_af().func_235927_t_());
 +            world.worldDataServer.func_230414_b_(this.func_201300_aS().func_201380_c());
 +            world.convertable.func_237288_a_(this.func_244267_aX(), world.worldDataServer, this.func_184103_al().func_72378_q());
@@ -388,7 +387,7 @@
        return flag;
     }
  
-@@ -541,19 +_,42 @@
+@@ -541,19 +_,41 @@
        this.func_71260_j();
     }
  
@@ -411,6 +410,11 @@
 +      }
 +      // CraftBukkit end
 +      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.7"));
++      // CraftBukkit start
++      if (this.server != null) {
++         this.server.disablePlugins();
++      }
++      // CraftBukkit end
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
@@ -420,18 +424,10 @@
 +         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.8"));
           this.field_71318_t.func_72389_g();
           this.field_71318_t.func_72392_r();
--      }
--
--      field_147145_h.info("Saving worlds");
 +         try { Thread.sleep(100); } catch (InterruptedException ex) {} // CraftBukkit - SPIGOT-625 - give server at least a chance to send packets
-+      }
-+
-+      // CraftBukkit start
-+      if (this.server != null) {
-+         this.server.disablePlugins();
-+      }
-+      // CraftBukkit end
-+
+       }
+ 
+-      field_147145_h.info("Saving worlds");
 +      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.9"));
  
        for(ServerWorld serverworld : this.func_212370_w()) {
@@ -639,7 +635,7 @@
           }
  
        }
-@@ -678,17 +_,39 @@
+@@ -678,17 +_,36 @@
     }
  
     private boolean func_212379_aT() {
@@ -663,16 +659,12 @@
 +
 +   private void executeModerately() {
 +      this.func_213160_bf();
-+      while (!processQueue.isEmpty()) {
-+         processQueue.remove().run();
-+      }
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
  
     protected void func_213202_o() {
--      this.func_213160_bf();
-+      //this.runAllTasks(); // Paper - move this into the tick method for timings
+       this.func_213160_bf();
        this.func_213161_c(() -> {
 -         return !this.func_212379_aT();
 +         return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
@@ -711,7 +703,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -785,41 +_,48 @@
+@@ -785,41 +_,51 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -759,8 +751,12 @@
        this.field_71304_b.func_76320_a("commandFunctions");
        this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_219895_b("levels");
- 
+-
 -      for(ServerWorld serverworld : this.func_212370_w()) {
++      // Run tasks that are waiting on processing
++      while (!processQueue.isEmpty()) {
++         processQueue.remove().run();
++      }
 +      for(ServerWorld serverworld : this.getWorldArray()) {
 +         long tickStart = Util.func_211178_c();
           this.field_71304_b.func_194340_a(() -> {
