@@ -6,6 +6,7 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import com.mohistmc.MohistMC;
+import com.mohistmc.api.event.BukkitHookForgeEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -616,6 +617,9 @@ public final class SimplePluginManager implements PluginManager {
             }
         } else {
             if (!isPrimary) {
+                if (event instanceof BukkitHookForgeEvent || event.getEventName().equals("ForgeEvent")) {
+                    return;
+                }
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from another thread.");
             }
         }
