@@ -30,7 +30,6 @@ public class EventDispatcherRegistry {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new PlayerEventDispatcher());
-        MinecraftForge.EVENT_BUS.register(new BucketEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new WorldEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new ItemEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
