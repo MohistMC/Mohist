@@ -10,4 +10,7 @@ public class ExceptionHandler {
         String msg = i18n.get("errhandler.j2se.ram").replace("<J2SEMem>", J2SEMem + " MB").replace("<RemainderMem>", RemainderMem + " MB").replace("<MemOfUsing>", UsedMem + " MB");
         System.out.println(msg);
     }
+    public void IO(){
+        System.out.println(i18n.get("errhandler.j2se.IOException"));
+    }
 }

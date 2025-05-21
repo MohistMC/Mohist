@@ -1,12 +1,15 @@
 package com.mohistmc;
 
 import com.mohistmc.configuration.MohistConfigUtil;
+import com.mohistmc.features.errhandler.ExceptionHandler;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.DownloadJava;
 import com.mohistmc.network.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.i18n;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -20,12 +23,14 @@ public class MohistMC {
         return MohistMC.class.getPackage().getImplementationVersion() != null ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
+      ExceptionHandler eHandler = new ExceptionHandler();
+      try{
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
-            DownloadJava.run(args);
+          DownloadJava.run(args);
         if(MohistConfigUtil.bMohist("showlogo")) {
-            String test =
+          String test =
                      "\n" +
                      " ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗\n" +
                      " ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝\n" +
@@ -36,16 +41,16 @@ public class MohistMC {
                      "\n"+
                      "\n"+
                      "%s, Java(%s) %s";
-            System.out.println(String.format(test, getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")) + i18n.get("forge.serverlanunchwrapper.1"));
+          System.out.println(String.format(test, getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")) + i18n.get("forge.serverlanunchwrapper.1"));
         }
 
         if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.loadDefaultLibs();
         CustomLibraries.loadCustomLibs();
 
         if (!EulaUtil.hasAcceptedEULA()) {
-            System.out.println(i18n.get("eula"));
-            while (!"true".equals(new Scanner(System.in).next())) ;
-            EulaUtil.writeInfos();
+          System.out.println(i18n.get("eula"));
+          while (!"true".equals(new Scanner(System.in).next())) ;
+          EulaUtil.writeInfos();
         }
 
         System.out.println(i18n.get("mohist.start"));
@@ -54,13 +59,21 @@ public class MohistMC {
         System.arraycopy(args, 0, allArgs, 2, args.length);
 
         try {
-            Class.forName("net.minecraft.launchwrapper.Launch",true, MohistMC.class.getClassLoader()).getMethod("main", String[].class).invoke(null, (Object) allArgs);
-            Class.forName("org.objectweb.asm.Type",true, MohistMC.class.getClassLoader());
+          Class.forName("net.minecraft.launchwrapper.Launch",true, MohistMC.class.getClassLoader()).getMethod("main", String[].class).invoke(null, (Object) allArgs);
+          Class.forName("org.objectweb.asm.Type",true, MohistMC.class.getClassLoader());
         } catch (Exception e) {
-            System.out.println(i18n.get("mohist.start.error"));
-            e.printStackTrace(System.err);
-            System.exit(1);
+          System.out.println(i18n.get("mohist.start.error"));
+          e.printStackTrace(System.err);
+          System.exit(1);
         }
+      }catch (IOException e){
+        eHandler.IO();
+      }catch (OutOfMemoryError e){
+        eHandler.RAMError();
+      }catch (Exception e){
+        System.out.println("我们遇到了一个无法修复的错误：");
+        e.printStackTrace();
+      }
     }
 
 }
