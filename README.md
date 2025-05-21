@@ -2,13 +2,12 @@
   <h1>Mohist 1.7.10</h1>
   <h3>This version is end of life. <a href="https://wiki.mohistmc.com/#/about/end-of-life">See more</a></h3>
 
-[![](https://ci.codemc.org/buildStatus/icon?job=MohistMC%2FMohist-1.7.10)](https://ci.codemc.org/job/MohistMC/job/Mohist-1.7.10/)
 ![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars)
 ![](https://img.shields.io/github/license/MohistMC/Mohist.svg)
 [![](https://img.shields.io/badge/Forge-1.7.10--10.13.4.1614-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.7.10.html)
 [![](https://img.shields.io/badge/Spigot-1.7.10-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/OracleJdk-8u241-brightgreen.svg?colorB=469C00)
-![](https://img.shields.io/badge/Gradle-2.8-brightgreen.svg?colorB=469C00)
+![](https://img.shields.io/badge/Gradle-8.8-brightgreen.svg?colorB=469C00)
 ![](https://img.shields.io/badge/ideaIU-jbr8-brightgreen.svg?colorB=469C00)
 
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -19,7 +18,8 @@
 Getting Help
 ------
 
-[MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
+[MohistWiki](https://mohistmc.com/mohist/docs) (Here is everything you need related to Mohist)  
+[MohistWiki CN](https://www.mohistmc.cn/docs/mohist) (Here is everything you need related to Mohist)
 
 Upstream Projects
 ------
@@ -32,7 +32,6 @@ Upstream Projects
 
 A Special Thanks To:
 -------------
-<a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
 
 <a href="https://www.bisecthosting.com/mohistmc"><img src="https://www.bisecthosting.com/partners/custom-banners/118608b8-6e45-4301-b244-41934cdac6d1.png"></a>
 
