@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.mohistmc.MohistMC;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -563,22 +564,7 @@ public final class SimplePluginManager implements PluginManager {
         }
     }
 
-    private void fireEvent(Event event) { callEvent(event); } // Paper - support old method incase plugin uses reflection
-
-    /**
-     * Calls an event with the given details.
-     * <p>
-     * This method only synchronizes when the event is not asynchronous.
-     *
-     * @param event Event details
-     */
-    public void callEvent(Event event) {
-        if (event.isAsynchronous() && this.server.isPrimaryThread()) {
-            throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
-        }
-        if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
-            throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
-        }
+    private void fireEvent(@NotNull Event event) {
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
         if (listeners.length == 0) {
@@ -602,12 +588,40 @@ public final class SimplePluginManager implements PluginManager {
                             plugin.getDescription().getAuthors(),
                             plugin.getDescription().getFullName(),
                             ex.getMessage()
-                            ));
+                    ));
                 }
             } catch (Throwable ex) {
                 server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);
             }
         }
+    }
+
+    /**
+     * Calls an event with the given details.
+     * <p>
+     * This method only synchronizes when the event is not asynchronous.
+     *
+     * @param event Event details
+     */
+    public void callEvent(Event event) {
+        // KTP start - optimize spigot event bus
+        final boolean isAsync = event.isAsynchronous();
+        final boolean isPrimary = server.isPrimaryThread(); // Cache to prevent multiple thread object comparisons.
+        if (isAsync) {
+            if (Thread.holdsLock(this)) {
+                throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
+            }
+            if (isPrimary) {
+                throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
+            }
+        } else {
+            if (!isPrimary) {
+                throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from another thread.");
+            }
+        }
+        // KTP end - optimize spigot event bus
+
+        fireEvent(event);
     }
 
     @Override
