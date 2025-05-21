@@ -3,11 +3,10 @@
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.4)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.4)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/badge/Forge-1.19.4--45.3.3-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.4.html)
 [![](https://img.shields.io/badge/jdk-17.0.7-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
-[![](https://img.shields.io/badge/Gradle-7.5.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5.1/release-notes.html)
+[![](https://img.shields.io/badge/Gradle-8.8-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.8/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/mohistmc)
@@ -31,7 +30,8 @@ Progress
 Getting Help
 ------
 
-  [MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
+[MohistWiki](https://mohistmc.com/mohist/docs) (Here is everything you need related to Mohist)  
+[MohistWiki CN](https://www.mohistmc.cn/docs/mohist) (Here is everything you need related to Mohist)
 
 Upstream Projects
 ------
@@ -39,14 +39,9 @@ Upstream Projects
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - plugin support.
-* [**Purpur**](https://github.com/PurpurMC/Purpur.git) - plugin support.
-* [**Pufferfish**](https://github.com/pufferfish-gg/Pufferfish.git) - plugin support.
-* [**Mirai**](https://github.com/etil2jz/Mirai.git) - plugin support.
 
 Special Thanks To:
 -------------
-<a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
 
 <a href="https://www.bisecthosting.com/mohistmc"><img src="https://www.bisecthosting.com/partners/custom-banners/118608b8-6e45-4301-b244-41934cdac6d1.png"></a>
 
