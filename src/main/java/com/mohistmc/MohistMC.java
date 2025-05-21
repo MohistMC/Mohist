@@ -4,8 +4,7 @@ import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.DownloadJava;
-import com.mohistmc.network.UpdateUtils;
-import com.mohistmc.util.EulaUtil;
+import com.mohistmc.util.*;
 import com.mohistmc.util.i18n.i18n;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -21,6 +20,9 @@ public class MohistMC {
     }
 
     public static void main(String[] args) throws Exception {
+        if (i18n.isCN()) {
+            Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        }
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run(args);
@@ -37,6 +39,15 @@ public class MohistMC {
                      "\n"+
                      "%s, Java(%s) %s";
             System.out.println(String.format(test, getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")) + i18n.get("forge.serverlanunchwrapper.1"));
+        }
+        if (i18n.isCN()) {
+            System.out.println("+------------------------------------------------------+");
+            System.out.println("|                                                      |");
+            System.out.println("| 官方交流QQ群: 570870451                              |");
+            System.out.println("| 官网(中国): https://www.mohistmc.cn/                 |");
+            System.out.println("| 爱发电: https://afdian.com/a/MohistMC                |");
+            System.out.println("|                                                      |");
+            System.out.println("+------------------------------------------------------+");
         }
 
         if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.loadDefaultLibs();

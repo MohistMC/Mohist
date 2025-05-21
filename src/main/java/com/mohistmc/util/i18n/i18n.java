@@ -42,6 +42,10 @@ public class i18n {
         return rb.getLocale().toString();
     }
 
+    public static boolean isCN() {
+        return isLang("CN");
+    }
+
     public static boolean isLang(String lang) {
         return Locale.getDefault().getCountry().equals(lang) || isTimezone("Asia/Shanghai") || rb.getLocale().getCountry().equals(lang);
     }
