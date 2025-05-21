@@ -102,6 +102,9 @@ public class BlockEventDispatcher {
                 BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock, replacedBlockState, againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
                 placeEvent.setCancelled(event.isCanceled());
                 Bukkit.getPluginManager().callEvent(placeEvent);
+                if (placeEvent.isCancelled()) {
+                    player.updateInventory();
+                }
                 event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
             }
         }
