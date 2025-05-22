@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -593,6 +594,8 @@ public class ForgeHooks {
             ichat.appendText(string.substring(lastEnd));
         return ichat;
     }
+
+    public static AtomicBoolean isDropItems = new AtomicBoolean(true);
 
     public static int onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, BlockPos pos) {
         // Tell client the block is gone immediately then process events

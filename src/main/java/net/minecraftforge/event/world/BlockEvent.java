@@ -43,6 +43,8 @@ import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 
+import static net.minecraftforge.common.ForgeHooks.isDropItems;
+
 public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
@@ -127,13 +129,13 @@ public class BlockEvent extends Event
 
             // Cauldron start - handle event on bukkit side
             org.bukkit.event.block.BlockBreakEvent bukkitEvent = CraftEventFactory.callBlockBreakEvent(world, pos, state, (EntityPlayerMP) player);
-
+            isDropItems.set(bukkitEvent.isDropItems());
             if(bukkitEvent.isCancelled()){
-                this.setCanceled(true);
+                setCanceled(true);
             }
             else
             {
-                this.exp = bukkitEvent.getExpToDrop();
+                setExpToDrop(bukkitEvent.getExpToDrop());
             }
             // Cauldron end
         }
