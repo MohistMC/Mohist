@@ -1,15 +1,13 @@
 package com.mohistmc;
 
 import com.mohistmc.configuration.MohistConfigUtil;
-import com.mohistmc.features.errhandler.ExceptionHandler;
+import com.mohistmc.util.ExceptionHandler;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.DownloadJava;
-import com.mohistmc.network.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.i18n;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
