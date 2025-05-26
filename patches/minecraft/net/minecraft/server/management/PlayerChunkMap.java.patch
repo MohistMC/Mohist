@@ -48,7 +48,80 @@
      }
  
      public WorldServer func_72688_a()
-@@ -183,6 +189,9 @@
+@@ -62,45 +68,41 @@
+ 
+     public Iterator<Chunk> func_187300_b()
+     {
+-        final Iterator<PlayerChunkMapEntry> iterator = this.field_111193_e.iterator();
+-        return new AbstractIterator<Chunk>()
+-        {
+-            protected Chunk computeNext()
+-            {
+-                while (true)
+-                {
+-                    if (iterator.hasNext())
+-                    {
+-                        PlayerChunkMapEntry playerchunkmapentry = iterator.next();
+-                        Chunk chunk = playerchunkmapentry.func_187266_f();
++        try {
++            final Iterator<PlayerChunkMapEntry> iterator = this.field_111193_e.iterator();
++            return new AbstractIterator<Chunk>() {
++                protected Chunk computeNext() {
++                    while (true) {
++                        if (iterator.hasNext()) {
++                            PlayerChunkMapEntry playerchunkmapentry = iterator.next();
++                            Chunk chunk = playerchunkmapentry.func_187266_f();
+ 
+-                        if (chunk == null)
+-                        {
+-                            continue;
+-                        }
++                            if (chunk == null) {
++                                continue;
++                            }
+ 
+-                        if (!chunk.func_177423_u() && chunk.func_177419_t())
+-                        {
+-                            return chunk;
+-                        }
++                            if (!chunk.func_177423_u() && chunk.func_177419_t()) {
++                                return chunk;
++                            }
+ 
+-                        if (!chunk.func_186035_j())
+-                        {
++                            if (!chunk.func_186035_j()) {
++                                return chunk;
++                            }
++
++                            if (!playerchunkmapentry.func_187271_a(128.0D, PlayerChunkMap.field_187308_a)) {
++                                continue;
++                            }
++
+                             return chunk;
+                         }
+ 
+-                        if (!playerchunkmapentry.func_187271_a(128.0D, PlayerChunkMap.field_187308_a))
+-                        {
+-                            continue;
+-                        }
+-
+-                        return chunk;
++                        return (Chunk) this.endOfData();
+                     }
+-
+-                    return (Chunk)this.endOfData();
+                 }
+-            }
+-        };
++            };
++        } catch (Exception t) {
++            return Collections.emptyIterator();
++        }
+     }
+ 
+     public void func_72693_b()
+@@ -183,6 +185,9 @@
                              break;
                          }
                      }
@@ -58,7 +131,7 @@
                  }
              }
          }
-@@ -213,7 +222,7 @@
+@@ -213,7 +218,7 @@
          {
              WorldProvider worldprovider = this.field_72701_a.field_73011_w;
  
@@ -67,7 +140,7 @@
              {
                  this.field_72701_a.func_72863_F().func_73240_a();
              }
-@@ -257,6 +266,16 @@
+@@ -257,6 +262,16 @@
          return playerchunkmapentry;
      }
  
@@ -84,7 +157,7 @@
      public void func_180244_a(BlockPos p_180244_1_)
      {
          int i = p_180244_1_.func_177958_n() >> 4;
-@@ -276,14 +295,26 @@
+@@ -276,14 +291,26 @@
          p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
          p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
  
@@ -114,7 +187,7 @@
          this.field_72699_b.add(p_72683_1_);
          this.func_187306_e();
      }
-@@ -293,10 +324,13 @@
+@@ -293,10 +320,13 @@
          int i = (int)p_72695_1_.field_71131_d >> 4;
          int j = (int)p_72695_1_.field_71132_e >> 4;
  
@@ -130,7 +203,7 @@
                  PlayerChunkMapEntry playerchunkmapentry = this.func_187301_b(k, l);
  
                  if (playerchunkmapentry != null)
-@@ -337,19 +371,23 @@
+@@ -337,19 +367,23 @@
          {
              int k = (int)p_72685_1_.field_71131_d >> 4;
              int l = (int)p_72685_1_.field_71132_e >> 4;
@@ -157,7 +230,7 @@
                          }
  
                          if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
-@@ -367,6 +405,12 @@
+@@ -367,6 +401,12 @@
                  p_72685_1_.field_71131_d = p_72685_1_.field_70165_t;
                  p_72685_1_.field_71132_e = p_72685_1_.field_70161_v;
                  this.func_187306_e();
@@ -170,7 +243,7 @@
              }
          }
      }
-@@ -377,6 +421,7 @@
+@@ -377,6 +417,7 @@
          return playerchunkmapentry != null && playerchunkmapentry.func_187275_d(p_72694_1_) && playerchunkmapentry.func_187274_e();
      }
  
@@ -178,7 +251,7 @@
      public void func_152622_a(int p_152622_1_)
      {
          p_152622_1_ = MathHelper.func_76125_a(p_152622_1_, 3, 32);
-@@ -387,43 +432,54 @@
+@@ -387,43 +428,54 @@
  
              for (EntityPlayerMP entityplayermp : Lists.newArrayList(this.field_72699_b))
              {
@@ -259,7 +332,7 @@
  
      private void func_187306_e()
      {
-@@ -456,11 +512,73 @@
+@@ -456,11 +508,73 @@
          this.field_72697_d.remove(p_187305_1_);
          this.field_187310_g.remove(p_187305_1_);
          this.field_187311_h.remove(p_187305_1_);

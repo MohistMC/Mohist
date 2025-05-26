@@ -1,5 +1,6 @@
 package com.mohistmc.libraries;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
@@ -10,7 +11,11 @@ import com.mohistmc.util.i18n.Message;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -24,8 +29,6 @@ public class DefaultLibraries {
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
-        System.out.println(Message.getFormatString("libraries.downloadsource", new Object[]{DownloadSource.get()}));
-        String url = DownloadSource.get().getUrl();
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
@@ -51,23 +54,35 @@ public class DefaultLibraries {
 
         for (File lib : defaultLibs) {
             lib.getParentFile().mkdirs();
-            String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-            System.out.println(Message.getString("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 70000000d) + "%"); //Global percentage
-
+            String url = "META-INF/" + lib.getPath().replaceAll("\\\\", "/");
             try {
-                UpdateUtils.downloadFile(u, lib);
+                if (copyFileFromJar(lib, url)) {
+                    fail.remove(lib);
+                }
                 currentSize.addAndGet(lib.length());
-                fail.remove(u.replace(url, ""));
             } catch (Exception e) {
-                System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
                 lib.delete();
-                fail.put(u.replace(url, ""), lib.getAbsolutePath());
             }
         }
-        /*FINISHED | RECHECK IF A FILE FAILED*/
-        if (!fail.isEmpty()) {
-            run();
-        } else System.out.println(Message.getString("libraries.checking.end"));
+    }
+
+    protected static boolean copyFileFromJar(File file, String pathInJar) {
+        InputStream is = MohistMC.class.getClassLoader().getResourceAsStream(pathInJar);
+        if (file.exists()) return true;
+        file.getParentFile().mkdirs();
+        if (is != null) {
+            try {
+                file.createNewFile();
+                Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                return true;
+            } catch (IOException ignored) {
+            }
+        } else {
+            System.out.println("[Mohist] The file " + pathInJar + " doesn't exists in the Mohist jar !");
+            return false;
+        }
+
+        return true;
     }
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
@@ -76,7 +91,7 @@ public class DefaultLibraries {
         String str;
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");
-            temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
+            temp.put(new File(s[0]), s[1]);
         }
         b.close();
         return temp;

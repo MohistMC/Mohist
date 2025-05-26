@@ -252,6 +252,8 @@ project(':mohist') {
         installer "org.slf4j:slf4j-api:1.7.30"
         installer "org.slf4j:slf4j-nop:1.7.30"
 
+        installer 'net.java.dev.jna:jna:4.4.0'
+
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
@@ -559,9 +561,17 @@ project(':mohist') {
         changing = true
     }
 
+    task downloadMultipleFiles(type: Download) {
+        src([
+                'https://maven.mohistmc.com/libraries/1.12.2/mohist/libraries.zip'
+        ])
+        dest layout.buildDirectory.dir("libraries")
+    }
+
     universalJar {
         archiveClassifier = 'server'
         dependsOn(deobfDataLzma)
+        dependsOn(downloadMultipleFiles)
         from(deobfDataLzma.output){
             rename{"deobfuscation_data-${MC_VERSION}.lzma"}
         }
@@ -569,6 +579,18 @@ project(':mohist') {
         from(genRuntimeBinPatches.output) {
             rename{'binpatches.pack.lzma'}
         }
+
+        configurations.installer.resolvedConfiguration.resolvedArtifacts.collect {
+            def moduleVersion = it.moduleVersion
+            from (it.file) {
+                into ("META-INF/libraries/${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
+            }
+        }
+
+        from(zipTree(downloadMultipleFiles.outputs.getFiles().asPath)) {
+            into 'META-INF/libraries'
+        }
+
         doFirst {
             def classpath = new StringBuilder()
             def artifacts = getArtifacts(project, project.configurations.installer, false)
@@ -662,61 +684,6 @@ project(':mohist') {
             sources sourceSets.test.java.srcDirs
         }
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact universalJar
-                artifact userdevJar
-                artifact sourcesJar
-
-                pom {
-                    name = 'mohist'
-                    groupId = 'com.mohistmc'
-                    artifactId = 'mohist'
-                    version = project.version
-                    description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
-                    url = 'https://github.com/MohistMC/Mohist'
-
-                    scm {
-                        url = 'https://github.com/MohistMC/Mohist'
-                        connection = 'scm:git:git://github.com/MohistMC/Mohist.git'
-                        developerConnection = 'scm:git:git://github.com/MohistMC/Mohist.git'
-                    }
-
-                    issueManagement {
-                        system = 'github'
-                        url = 'https://github.com/MohistMC/Mohist/issues'
-                    }
-
-                    licenses {
-                        license {
-                            name = ' GPL-3.0'
-                            url = 'https://github.com/MohistMC/Mohist/blob/1.12.2/LICENSE'
-                            distribution = 'repo'
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                credentials {
-                    username = System.getenv("OSSRH_USERNAME")
-                    password = System.getenv("OSSRH_PASSWORD")
-                }
-                def releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"
-                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                url = project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            }
-        }
-    }
-    signing {
-        def signingKey = System.getenv("GPG_PRIVATE_KEY")
-        def signingPassword = System.getenv("GPG_PASSPHRASE")
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign publishing.publications.mavenJava
     }
 }
 

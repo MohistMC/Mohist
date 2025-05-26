@@ -9,7 +9,9 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
+import com.mohistmc.util.Logo;
 import com.mohistmc.util.i18n.Message;
+import java.lang.management.ManagementFactory;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
@@ -31,14 +33,23 @@ public class MohistMC {
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run();
         if (MohistConfigUtil.bMohist("showlogo")) {
-            System.out.println("\n" + "\n" +
-                    " __    __   ______   __  __   __   ______   ______  \n" +
-                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                    "                                                    \n" + "\n");
-            System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
+            System.out.printf("%n%s%n%s - %s  Java(%s) %s PID: %s%n",
+                    Logo.asMohist(),
+                    Message.getString("mohist.launch.welcomemessage"),
+                    getVersion(),
+                    System.getProperty("java.class.version"),
+                    System.getProperty("java.version"),
+                    ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+            );
+            if (Message.isCN()) {
+                System.out.println("+------------------------------------------------------+");
+                System.out.println("|                                                      |");
+                System.out.println("| 官方交流QQ群: 570870451                              |");
+                System.out.println("| 官网(中国): https://www.mohistmc.cn/                 |");
+                System.out.println("| 爱发电: https://afdian.com/a/MohistMC                |");
+                System.out.println("|                                                      |");
+                System.out.println("+------------------------------------------------------+");
+            }
         }
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
