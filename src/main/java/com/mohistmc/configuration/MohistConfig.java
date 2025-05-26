@@ -100,6 +100,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting showlogo = new BoolSetting(this, "mohist.showlogo", true);
     public final BoolSetting World_Directory_Client = new BoolSetting(this, "world.directory_in_client", true);
     public final BoolSetting bukkitPermissionsHandler = new BoolSetting(this, "mohist.BukkitPermissionsHandler", true);
+    public final BoolSetting interact_with_self = new BoolSetting(this, "interact_with_self", false);
 
     public final BoolSetting disableforgegenerate_global = new BoolSetting(this, "world.disableforgegenerate.global.enable", false);
     public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", DownloadSource.MOHIST.name());

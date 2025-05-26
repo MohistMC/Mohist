@@ -1348,7 +1348,7 @@
          WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
          Entity entity = p_147340_1_.func_149564_a(worldserver);
 +        // Spigot Start
-+        if ( entity == field_147369_b && !field_147369_b.func_175149_v() )
++        if (!MohistConfig.instance.interact_with_self.getValue() && entity == field_147369_b && !field_147369_b.func_175149_v() )
 +        {
 +            disconnect( "Cannot interact with self!" );
 +            return;
