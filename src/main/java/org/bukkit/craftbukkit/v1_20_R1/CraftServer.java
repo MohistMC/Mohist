@@ -1223,6 +1223,15 @@ public final class CraftServer implements Server {
         return null;
     }
 
+    // Paper start
+    @Override
+    public World getWorld(NamespacedKey worldKey) {
+        ServerLevel worldServer = console.getLevel(ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, CraftNamespacedKey.toMinecraft(worldKey)));
+        if (worldServer == null) return null;
+        return worldServer.getWorld();
+    }
+    // Paper end
+
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
         if (getWorld(world.getUID()) != null) {

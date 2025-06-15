@@ -657,6 +657,17 @@ public interface Server extends PluginMessageRecipient {
     @Nullable
     public World getWorld(@NotNull UUID uid);
 
+    // Paper start
+    /**
+     * Gets the world from the given NamespacedKey
+     *
+     * @param worldKey the NamespacedKey of the world to retrieve
+     * @return a world with the given NamespacedKey, or null if none exists
+     */
+    @Nullable
+    public World getWorld(@NotNull NamespacedKey worldKey);
+    // Paper end
+
     /**
      * Create a new virtual {@link WorldBorder}.
      * <p>

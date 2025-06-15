@@ -758,6 +758,18 @@ public final class Bukkit {
     public static World getWorld(@NotNull UUID uid) {
         return server.getWorld(uid);
     }
+    // Paper start
+    /**
+     * Gets the world from the given NamespacedKey
+     *
+     * @param worldKey the NamespacedKey of the world to retrieve
+     * @return a world with the given NamespacedKey, or null if none exists
+     */
+    @Nullable
+    public static World getWorld(@NotNull NamespacedKey worldKey) {
+        return server.getWorld(worldKey);
+    }
+    // Paper end
 
     /**
      * Create a new virtual {@link WorldBorder}.
