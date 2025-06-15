@@ -19,7 +19,7 @@ import java.util.function.Predicate;
  * A RegionAccessor gives access to getting, modifying and spawning {@link Biome}, {@link BlockState} and {@link Entity},
  * as well as generating some basic structures.
  */
-public interface RegionAccessor {
+public interface RegionAccessor extends Keyed { // Paper
 
     /**
      * Gets the {@link Biome} at the given {@link Location}.
@@ -397,4 +397,15 @@ public interface RegionAccessor {
      * {@link HeightMap}
      */
     public int getHighestBlockYAt(@NotNull Location location, @NotNull HeightMap heightMap);
+
+    // Paper start
+    /**
+     * Get the world's key
+     *
+     * @return the world's key
+     */
+    @NotNull
+    @Override
+    NamespacedKey getKey();
+    // Paper end
 }
