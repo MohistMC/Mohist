@@ -112,6 +112,9 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
+                if (packet.getDispatcher() == null) {
+                    return ImmutableList.of();
+                }
                 return ImmutableList.of(packet.getDispatcher());
             }
         },
