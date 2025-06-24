@@ -96,7 +96,7 @@ project(':mohist') {
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
     group = 'com.mohistmc'
 
     sourceSets {

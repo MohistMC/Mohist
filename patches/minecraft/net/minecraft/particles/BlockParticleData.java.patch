@@ -1,9 +1,19 @@
 --- a/net/minecraft/particles/BlockParticleData.java
 +++ b/net/minecraft/particles/BlockParticleData.java
-@@ -54,4 +_,15 @@
+@@ -23,7 +_,7 @@
+       }
+    };
+    private final ParticleType<BlockParticleData> field_197586_b;
+-   private final BlockState field_197587_c;
++   public final BlockState field_197587_c;
+ 
+    public static Codec<BlockParticleData> func_239800_a_(ParticleType<BlockParticleData> p_239800_0_) {
+       return BlockState.field_235877_b_.xmap((p_239801_1_) -> {
+@@ -53,5 +_,16 @@
+    @OnlyIn(Dist.CLIENT)
     public BlockState func_197584_c() {
        return this.field_197587_c;
-    }
++   }
 +
 +   //FORGE: Add a source pos property, so we can provide models with additional model data
 +   private net.minecraft.util.math.BlockPos pos;
@@ -14,5 +24,5 @@
 +
 +   public net.minecraft.util.math.BlockPos getPos() {
 +      return pos;
-+   }
+    }
  }

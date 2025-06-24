@@ -1,10 +1,12 @@
 --- a/net/minecraft/resources/DataPackRegistries.java
 +++ b/net/minecraft/resources/DataPackRegistries.java
-@@ -15,7 +_,7 @@
+@@ -14,8 +_,8 @@
+ 
  public class DataPackRegistries implements AutoCloseable {
     private static final CompletableFuture<Unit> field_240951_a_ = CompletableFuture.completedFuture(Unit.INSTANCE);
-    private final IReloadableResourceManager field_240952_b_ = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
+-   private final IReloadableResourceManager field_240952_b_ = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
 -   private final Commands field_240953_c_;
++   public final IReloadableResourceManager field_240952_b_ = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
 +   public Commands field_240953_c_;
     private final RecipeManager field_240954_d_ = new RecipeManager();
     private final NetworkTagManager field_240955_e_ = new NetworkTagManager();
