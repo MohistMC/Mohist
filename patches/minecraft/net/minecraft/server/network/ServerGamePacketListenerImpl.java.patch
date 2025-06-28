@@ -85,7 +85,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -171,14 +_,62 @@
+@@ -171,14 +_,63 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -136,6 +136,7 @@
 +import org.bukkit.inventory.InventoryView;
 +import org.bukkit.inventory.SmithingInventory;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
  public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
     static final Logger LOGGER = LogUtils.getLogger();
@@ -615,7 +616,7 @@
                          this.player.doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
                       }
                    }
-@@ -931,28 +_,86 @@
+@@ -931,28 +_,91 @@
        return false;
     }
  
@@ -640,37 +641,42 @@
 +   }
 +
 +   public boolean teleport(double d0, double d1, double d2, float f, float f1, Set<RelativeMovement> set, PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
-+      org.bukkit.entity.Player player = this.getCraftPlayer();
-+      Location from = player.getLocation();
++       org.bukkit.entity.Player player = this.getCraftPlayer();
++       Location from = player.getLocation();
 +
-+      double x = d0;
-+      double y = d1;
-+      double z = d2;
-+      float yaw = f;
-+      float pitch = f1;
++       double x = d0;
++       double y = d1;
++       double z = d2;
++       float yaw = f;
++       float pitch = f1;
 +
-+      Location to = new Location(this.getCraftPlayer().getWorld(), x, y, z, yaw, pitch);
-+      // SPIGOT-5171: Triggered on join
-+      if (from.equals(to)) {
-+         this.internalTeleport(d0, d1, d2, f, f1, set);
-+         return false; // CraftBukkit - Return event status
-+      }
++       Location to = new Location(this.getCraftPlayer().getWorld(), x, y, z, yaw, pitch);
++       // SPIGOT-5171: Triggered on join
++       if (from.equals(to)) {
++           this.internalTeleport(d0, d1, d2, f, f1, set);
++           return false; // CraftBukkit - Return event status
++       }
 +
-+      PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
-+      this.cserver.getPluginManager().callEvent(event);
++       if (!AsyncCatcher.catchAsync()) {
++           PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
++           this.cserver.getPluginManager().callEvent(event);
 +
-+      if (event.isCancelled() || !to.equals(event.getTo())) {
-+         set.clear(); // Can't relative teleport
-+         to = event.isCancelled() ? event.getFrom() : event.getTo();
-+         d0 = to.getX();
-+         d1 = to.getY();
-+         d2 = to.getZ();
-+         f = to.getYaw();
-+         f1 = to.getPitch();
-+      }
++           if (event.isCancelled() || !to.equals(event.getTo())) {
++               set.clear(); // Can't relative teleport
++               to = event.isCancelled() ? event.getFrom() : event.getTo();
++               d0 = to.getX();
++               d1 = to.getY();
++               d2 = to.getZ();
++               f = to.getYaw();
++               f1 = to.getPitch();
++           }
 +
-+      this.internalTeleport(d0, d1, d2, f, f1, set);
-+      return event.isCancelled(); // CraftBukkit - Return event status
++           this.internalTeleport(d0, d1, d2, f, f1, set);
++           return event.isCancelled(); // CraftBukkit - Return event status
++       } else {
++           this.internalTeleport(d0, d1, d2, f, f1, set);
++          return false;
++       }
 +   }
 +
 +   public void teleport(Location dest) {

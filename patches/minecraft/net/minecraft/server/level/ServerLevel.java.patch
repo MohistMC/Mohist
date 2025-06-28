@@ -94,7 +94,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,24 +_,86 @@
+@@ -188,24 +_,88 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -152,7 +152,9 @@
        this.serverLevelData = p_215002_;
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
-+      K.setWorld(this);
++      if (K != null) {
++         K.setWorld(this);
++      }
 +      if (biomeProvider != null) {
 +         WorldInfo worldInfo = new CraftWorldInfo(K, p_215001_, environment, p_215004_.type().value());
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
@@ -644,7 +646,7 @@
     }
  
     @Nullable
-@@ -1367,17 +_,42 @@
+@@ -1367,17 +_,43 @@
        }
     }
  
@@ -686,6 +688,7 @@
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
 +      capabilityData = net.minecraftforge.common.util.LevelCapabilityData.compute(this.getDataStorage(), getCapabilities());
++      capabilityData.setCapabilities(getCapabilities());
     }
  
     public LevelEntityGetter<Entity> getEntities() {
