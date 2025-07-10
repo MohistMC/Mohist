@@ -855,7 +855,11 @@ public class ForgeChunkManager
         }
         ticket.requestedChunks.remove(chunk);
         MinecraftForge.EVENT_BUS.post(new UnforceChunkEvent(ticket, chunk));
-        LinkedHashMultimap<ChunkPos, Ticket> copy = LinkedHashMultimap.create(forcedChunks.get(ticket.world));
+        ImmutableSetMultimap<ChunkPos, Ticket> current = forcedChunks.get(ticket.world);
+        if (current == null) {
+            return;
+        }
+        LinkedHashMultimap<ChunkPos, Ticket> copy = LinkedHashMultimap.create(current);
         copy.remove(chunk, ticket);
         ImmutableSetMultimap<ChunkPos, Ticket> newMap = ImmutableSetMultimap.copyOf(copy);
         forcedChunks.put(ticket.world,newMap);
