@@ -47,9 +47,9 @@
        PoiManager poimanager = this.f_77648_.m_8904_();
        int i = p_192987_ ? 16 : 128;
 -      poimanager.m_27056_(this.f_77648_, p_192986_, i);
-+      int newi = searchRadius.get() == -1 ? i : searchRadius.getAndSet(-1);
++      int i = searchRadius.get() == -1 ? i : searchRadius.getAndSet(-1);
 +      // CraftBukkit end
-+      poimanager.m_27056_(this.f_77648_, p_192986_, newi);
++      poimanager.m_27056_(this.f_77648_, p_192986_, i);
        Optional<PoiRecord> optional = poimanager.m_27166_((p_230634_) -> {
           return p_230634_.m_203565_(PoiTypes.f_218064_);
        }, p_192986_, i, PoiManager.Occupancy.ANY).filter((p_192981_) -> {
