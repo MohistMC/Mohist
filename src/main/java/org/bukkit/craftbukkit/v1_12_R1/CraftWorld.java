@@ -1031,8 +1031,8 @@ public class CraftWorld implements World {
         AxisAlignedBB bb = new AxisAlignedBB(location.getX() - x, location.getY() - y, location.getZ() - z, location.getX() + x, location.getY() + y, location.getZ() + z);
         List<net.minecraft.entity.Entity> entityList = getHandle().getEntitiesInAABBexcluding(null, bb, null);
         List<Entity> bukkitEntityList = new ArrayList<>(entityList.size());
-        for (Object entity : entityList) {
-            bukkitEntityList.add(((net.minecraft.entity.Entity) entity).getBukkitEntity());
+        for (net.minecraft.entity.Entity entity : entityList) {
+            bukkitEntityList.add(entity.getBukkitEntity());
         }
         return bukkitEntityList;
     }
