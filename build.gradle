@@ -1,6 +1,5 @@
 import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
-import com.mohistmc.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
@@ -46,9 +45,9 @@ ext {
     JARJAR_VERSION = '0.3.19'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.3.10'
-    FORGE_VERSION = '40.3.10'
-    MOHIST_VERSION = JenkinsNumber.info()
+    VERSION = '1.18.2-40.3.11'
+    FORGE_VERSION = '40.3.11'
+    MOHIST_VERSION = gradleutils.gitInfo.abbreviatedId
 
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
@@ -865,7 +864,7 @@ project(':forge') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = "1.18.2-" + JenkinsNumber.info()
+        archiveVersion = "1.18.2-" + MOHIST_VERSION
         destinationDirectory = file('build/libs')
 
         def CLASS_PATH = getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
