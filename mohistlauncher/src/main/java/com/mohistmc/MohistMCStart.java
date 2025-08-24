@@ -23,10 +23,12 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.DefaultLibraries;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.feature.CustomLibraries;
+import com.mohistmc.tools.Logo;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -52,23 +54,22 @@ public class MohistMCStart {
         MohistConfigUtil.i18n();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("show_logo", true)) {
-            String test = """
-                    
-                     ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗
-                     ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝
-                     ██╔████╔██║ ██║   ██║ ███████║ ██║ ███████╗    ██║
-                     ██║╚██╔╝██║ ██║   ██║ ██╔══██║ ██║ ╚════██║    ██║
-                     ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║
-                     ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
-                    
-                    
-                    %s - %s, Java(%s) %s
-                    """;
-            System.out.printf((test) + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
+            System.out.printf("%n%s%n%s - %s, Java(%s) %s PID: %s%n",
+                    Logo.asMohist(),
+                    i18n.as("mohist.launch.welcomemessage"),
+                    getVersion(),
+                    System.getProperty("java.class.version"),
+                    System.getProperty("java.version"),
+                    ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+            );
             if (i18n.isCN()) {
-                System.out.printf("官方交流QQ群: 570870451%n");
-                System.out.printf("官网(中国)已开放: https://www.mohistmc.cn/%n");
-                System.out.printf("爱发电: https://afdian.com/a/MohistMC%n");
+                System.out.println("+------------------------------------------------------+");
+                System.out.println("|                                                      |");
+                System.out.println("| 官方交流QQ群: 570870451                              |");
+                System.out.println("| 官网(中国): https://www.mohistmc.cn/                 |");
+                System.out.println("| 爱发电: https://ifdian.net/a/MohistMC                |");
+                System.out.println("|                                                      |");
+                System.out.println("+------------------------------------------------------+");
             }
         }
 
