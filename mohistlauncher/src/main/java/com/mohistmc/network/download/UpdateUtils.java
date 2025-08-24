@@ -20,6 +20,7 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.mjson.Json;
 import com.mohistmc.tools.ConnectionUtil;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.tools.NumberUtil;
@@ -36,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import mjson.Json;
 
 public class UpdateUtils {
 

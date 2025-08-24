@@ -68,7 +68,7 @@ public class MohistMCStart {
                 System.out.println("|                                                      |");
                 System.out.println("| 官方交流QQ群: 570870451                              |");
                 System.out.println("| 官网(中国): https://www.mohistmc.cn/                 |");
-                System.out.println("| 爱发电: https://afdian.net/a/MohistMC                |");
+                System.out.println("| 爱发电: https://ifdian.net/a/MohistMC                |");
                 System.out.println("|                                                      |");
                 System.out.println("+------------------------------------------------------+");
             }
