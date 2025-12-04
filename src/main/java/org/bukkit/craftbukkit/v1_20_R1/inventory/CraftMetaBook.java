@@ -429,7 +429,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
     // Spigot start
     private BookMeta.Spigot spigot = new SpigotMeta();
-    private class SpigotMeta extends BookMeta.Spigot {
+    public class SpigotMeta extends BookMeta.Spigot {
 
         private String pageToJSON(String page) {
             if (CraftMetaBook.this instanceof CraftMetaBookSigned) {
