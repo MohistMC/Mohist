@@ -22,12 +22,12 @@ plugins {
     id 'de.undercouch.download' version '5.4.0'
     id 'net.minecraftforge.gradle.patcher' version '[6.0.16,6.2)' apply false
     id 'net.minecraftforge.gradle.mcp' version '[6.0.16,6.2)' apply false
+    id 'net.minecraftforge.gradlejarsigner' version '1.0.4'
 }
 
 init() //Init all our extension methods!
 
 ext {
-    JAR_SIGNER = null
     MAPPING_CHANNEL = 'official'
     MAPPING_VERSION = '1.18.2'
     MC_VERSION = '1.18.2'
@@ -45,8 +45,8 @@ ext {
     JARJAR_VERSION = '0.3.19'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.3.11'
-    FORGE_VERSION = '40.3.11'
+    VERSION = '1.18.2-40.3.12'
+    FORGE_VERSION = '40.3.12'
     MOHIST_VERSION = gradleutils.gitInfo.abbreviatedId
 
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
@@ -188,7 +188,7 @@ def sharedDeps = {
     installer 'io.izzel:tools:1.3.0'
     installer 'com.mohistmc:dynamicenum:0.3'
     installer 'com.mohistmc:librariesvault:1.18.2'
-    installer 'com.mohistmc:json:0.2'
+    installer 'com.mohistmc:json:0.5'
     installer 'com.mohistmc:tools:0.5.1'
     installer 'com.mohistmc:i18n:0.6'
 
@@ -262,27 +262,6 @@ def sharedFmlonlyForge = { Project prj ->
         changing = true
     }
 
-    prj.afterEvaluate {
-        [prj.tasks.universalJar, prj.tasks.installerJar].each { t ->
-            def signTask = prj.task([type: SignJar, dependsOn: t], "sign${t.name.capitalize()}") {
-                onlyIf {
-                    JAR_SIGNER != null && t.state.failure == null
-                }
-                def jarsigner = JAR_SIGNER == null ? [:] : JAR_SIGNER
-                alias = 'forge'
-                storePass = jarsigner.storepass
-                keyPass = jarsigner.keypass
-                keyStore = jarsigner.keystore
-                inputFile = t.archiveFile.get().asFile
-                outputFile = t.archiveFile.get().asFile
-                doFirst {
-                    prj.logger.lifecycle('Signing: ' + inputFile)
-                }
-            }
-            t.finalizedBy(signTask)
-        }
-    }
-
     eclipse.project.resourceFilter {
         appliesTo = 'FOLDERS'
         type = 'EXCLUDE_ALL'
@@ -336,6 +315,7 @@ def sharedFmlonlyForge = { Project prj ->
                 //rename 'run.sh',  "run_forge_${VERSION.replace('-', '_').sh"
                 //rename 'run.bat', "run_forge_${VERSION.replace('-', '_').bat"
             }
+            jarSigner.sign(it)
         }
     }
 }
@@ -643,7 +623,7 @@ project(':forge') {
         }
     }
 
-    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, 'signUniversalJar']) {
+    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, universalJar]) {
         ext {
             // remove :fatjar
             BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
@@ -972,9 +952,10 @@ project(':forge') {
                 }
             }
         }
+        jarSigner.sign(it)
     }
 
-    task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
+    task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, universalJar, launcherJson]) {
         archiveBaseName = 'mohist'
         archiveVersion = MC_VERSION + "-" + FORGE_VERSION + "-" + MOHIST_VERSION
         packedDependencies = PACKED_DEPS
