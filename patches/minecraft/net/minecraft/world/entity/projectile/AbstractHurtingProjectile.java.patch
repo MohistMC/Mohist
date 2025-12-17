@@ -47,10 +47,15 @@
 +               CraftEventFactory.callProjectileHitEvent(this, hitresult);
 +            }
 +            // CraftBukkit end
++            else{
++               if (hitresult.m_6662_() != HitResult.Type.MISS) {
++                  this.m_6532_(hitresult);}
++               }
++
           }
  
           this.m_20101_();
-@@ -143,6 +_,11 @@
+@@ -148,6 +_,11 @@
           Entity entity = p_36839_.m_7639_();
           if (entity != null) {
              if (!this.m_9236_().f_46443_) {
